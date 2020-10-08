@@ -1,0 +1,96 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>ChensGradiusMod</AssemblyName>
+    <RootNamespace>ChensGradiusMod</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Items\EqpLunar\**" />
+    <Compile Remove="Items\TBoss\**" />
+    <Compile Remove="Items\TLunar\**" />
+    <EmbeddedResource Remove="Items\EqpLunar\**" />
+    <EmbeddedResource Remove="Items\TBoss\**" />
+    <EmbeddedResource Remove="Items\TLunar\**" />
+    <None Remove="Items\EqpLunar\**" />
+    <None Remove="Items\TBoss\**" />
+    <None Remove="Items\TLunar\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ClassicItems_Assets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>lib\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>lib\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="BetterUI">
+      <HintPath>lib\BetterUI.dll</HintPath>
+    </Reference>
+    <Reference Include="ItemStats">
+      <HintPath>lib\ItemStats.dll</HintPath>
+    </Reference>
+    <Reference Include="MMHOOK_Assembly-CSharp">
+      <HintPath>lib\MMHOOK_Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>lib\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>lib\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="R2API">
+      <HintPath>lib\R2API.dll</HintPath>
+    </Reference>
+    <Reference Include="ShareSuite">
+      <HintPath>lib\ShareSuite.dll</HintPath>
+    </Reference>
+    <Reference Include="TILER2">
+      <HintPath>lib\TILER2.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Postprocessing.Runtime">
+      <HintPath>lib\Unity.Postprocessing.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>lib\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>lib\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>lib\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Networking">
+      <HintPath>lib\UnityEngine.Networking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>lib\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>lib\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>lib\UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Build\" />
+    <Folder Include="Items\GradiusOption\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="del &quot;$(ProjectDir)Build\*&quot; /Q&#xD;&#xA;xcopy &quot;$(ProjectDir)bin\Debug\netstandard2.0\$(TargetFileName)&quot; &quot;$(ProjectDir)Build&quot; /Y&#xD;&#xA;&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)NetworkWeaver&quot; /Y&#xD;&#xA;cd &quot;$(ProjectDir)NetworkWeaver&quot;&#xD;&#xA;Unity.UNetWeaver.exe &quot;..\lib\UnityEngine.CoreModule.dll&quot; &quot;..\lib\UnityEngine.Networking.dll&quot; &quot;Patched/&quot; &quot;$(TargetFileName)&quot; &quot;$(ProjectDir)lib&quot;&#xD;&#xA;&#xD;&#xA;xcopy &quot;$(ProjectDir)NetworkWeaver\Patched\$(TargetFileName)&quot; &quot;$(ProjectDir)Build&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)ModMeta&quot; &quot;$(ProjectDir)Build&quot; /Y&#xD;&#xA;xcopy &quot;$(ProjectDir)README.md&quot; &quot;$(ProjectDir)Build&quot; /Y&#xD;&#xA;del &quot;$(ProjectDir)NetworkWeaver\Patched\$(TargetFileName)&quot; /Q&#xD;&#xA;&#xD;&#xA;cd &quot;$(ProjectDir)\Build&quot;&#xD;&#xA;del Build.zip&#xD;&#xA;7z a Build.zip .\* -x!Build.zip -x!old_*&#xD;&#xA;&#xD;&#xA;xcopy &quot;$(ProjectDir)Build\$(TargetFileName)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Risk of Rain 2\r2modman\BepInEx\plugins\Chen-ChensClassicItems&quot; /Y" />
+  </Target>
+
+  <ProjectExtensions><VisualStudio><UserProperties modmeta_4manifest_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
+</Project>
