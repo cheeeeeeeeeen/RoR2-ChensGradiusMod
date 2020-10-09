@@ -26,7 +26,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "1.3.0";
+            "1.3.1";
 
         public const string ModName = "ChensGradiusMod";
         public const string ModGuid = "com.Chen.ChensGradiusMod";
@@ -47,21 +47,14 @@ namespace Chen.GradiusMod
             var i7 = Input.GetKeyDown(KeyCode.F7);
             if (i3 || i4 || i5 || i6 || i7)
             {
-                ArtifactDef commandArtifact = ArtifactCatalog.FindArtifactDef("Command");
-                bool commandStatus = RunArtifactManager.instance.IsArtifactEnabled(commandArtifact);
-                if (!commandStatus) RunArtifactManager.instance.SetArtifactEnabledServer(commandArtifact, true);
-
                 Transform trans = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
-
                 List<PickupIndex> spawnList;
                 if (i3) spawnList = Run.instance.availableTier1DropList;
                 else if (i4) spawnList = Run.instance.availableTier2DropList;
                 else if (i5) spawnList = Run.instance.availableTier3DropList;
                 else if (i6) spawnList = Run.instance.availableEquipmentDropList;
                 else spawnList = Run.instance.availableLunarDropList;
-
                 PickupDropletController.CreatePickupDroplet(spawnList[Run.instance.spawnRng.RangeInt(0, spawnList.Count)], trans.position, new Vector3(0f, -5f, 0f));
-                if (!commandStatus) RunArtifactManager.instance.SetArtifactEnabledServer(commandArtifact, false);
             }
         }
 

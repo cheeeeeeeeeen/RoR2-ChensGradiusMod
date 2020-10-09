@@ -94,10 +94,11 @@ namespace Chen.GradiusMod
 
             onBehav += () =>
             {
-                gradiusOptionPrefab = Resources.Load<GameObject>("@ChensClassicItems:assets/option/optionorb.prefab");
+                regDef.pickupModelPrefab.transform.localScale *= .5f;
+
+                gradiusOptionPrefab = Resources.Load<GameObject>("@ChensGradiusMod:assets/option/orb/optionorb.prefab");
                 if (gradiusOptionPrefab)
                 {
-                    gradiusOptionPrefab.AddComponent<NetworkIdentity>();
                     gradiusOptionPrefab.AddComponent<OptionBehavior>();
                     gradiusOptionPrefab.AddComponent<Flicker>();
                     GradiusModPlugin._logger.LogDebug("Successfully initialized OptionOrb prefab.");
@@ -185,11 +186,11 @@ namespace Chen.GradiusMod
         {
             // This hook runs on Client and on Server
             orig(self);
-            int newCount = GetCount(self);
-            if (self.master && newCount > 0)
+            if (self.master)
             {
                 GameObject masterObject = self.master.gameObject;
                 OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(masterObject);
+                int newCount = GetCount(self);
                 int oldCount = masterTracker.optionItemCount;
                 int diff = newCount - oldCount;
                 if (diff != 0)
