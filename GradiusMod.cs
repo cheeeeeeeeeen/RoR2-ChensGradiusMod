@@ -1,12 +1,14 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
 using R2API;
 using R2API.Networking;
 using R2API.Utils;
+#if DEBUG
 using RoR2;
 using System.Collections.Generic;
+#endif
 using System.Reflection;
 using TILER2;
 using UnityEngine;
