@@ -35,10 +35,14 @@ namespace Chen.GradiusMod
         public bool gatlingSoundCopy { get; private set; } = false;
 
         [AutoItemConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
-                        "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience." +
+                        "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
                         "Disable this if you are experiencing FPS drops or network lag.",
                         AutoItemConfigFlags.PreventNetMismatch)]
         public bool flamethrowerOptionSyncEffect { get; private set; } = true;
+
+        [AutoItemConfig("Experimental; not yet ready. Set to true for the Orbs to have the Option Pickup model in the center. Client only. " +
+                        "Turning this off could probably lessen resource usage.")]
+        public bool includeModelInsideOrb { get; private set; } = false;
 
         public override bool itemAIB { get; protected set; } = true;
 
@@ -48,7 +52,7 @@ namespace Chen.GradiusMod
 
         protected override string NewLangDesc(string langid = null)
         {
-            return $"Deploy <style=cIsDamage>1</style> <style=cStack>(+1 for each stack)</style> Option for <style=cIsDamage>each of your owned drone</style>. " +
+            return $"Deploy <style=cIsDamage>1</style> <style=cStack>(+1 per stack)</style> Option for <style=cIsDamage>each drone you own</style>. " +
                    $"Options will copy all the attacks of the drone for <style=cIsDamage>{Pct(damageMultiplier, 0)}</style> of the damage dealt.";
         }
 
@@ -60,11 +64,15 @@ namespace Chen.GradiusMod
             "There is little chance for anybody to be able to find me, but I will still take my chance. \n\n" +
             "I wield the ultimate technology of the Gradius Federation: the Options, we call them. Some call them Multiples from the neighboring planets of Gradius. " +
             "These advanced bots are able to duplicate any form of attack that is attached to it. It will make sense once you power me back up. " +
+            "They emit beautiful light, as if they look like a bright sunset. Charming, isn't it? I hope that kept you interested. " +
             "I will teach you how to install them, and how to integrate them with any kind of machinery.\n\n" +
-            "I can feel my power draining, but that's all I have to say. Saving as an audio log... Placing the file on main boot sequences... and done.\n\n" +
+            "I can feel my power draining, but that's all I have to say. Saving as an audio log... Placing the file in the main boot sequences... and done.\n\n" +
             "Don't mind that. I will be seeing you s---\"\n\n" +
-            "\"That's it. That's the audio log that went with this lifeless computer.\"\n\n" +
-            "\"Our engineer will be able to do something about it. It sounds really useful. Quickly, now. Off you go.\"";
+            "\"That's it. That's the audio log that went with this lifeless computer,\" I said to the Captain.\n\n" +
+            "\"Our engineer will be able to do something about it. It sounds really useful. Quickly, now. Off you go.\"\n\n" +
+            "As I make my way to our machine specialist, I pondered about what the computer logged. Gradius Federation? I have not heard anything about it.\n\n" +
+            "It sounds like this item came from a far away place. The A.I. took their chance, and now she's coming back live again. " +
+            "Makes me imagine the world is small when it's really not. Well, that's it for my personal log.";
 
         public static GameObject gradiusOptionPrefab;
         public static GameObject flamethrowerEffectPrefab;
@@ -94,9 +102,12 @@ namespace Chen.GradiusMod
 
             onBehav += () =>
             {
-                regDef.pickupModelPrefab.transform.localScale *= .5f;
+                regDef.pickupModelPrefab.transform.localScale *= 2f;
 
-                gradiusOptionPrefab = Resources.Load<GameObject>("@ChensGradiusMod:assets/option/orb/optionorb.prefab");
+                string path;
+                if (includeModelInsideOrb) path = "@ChensGradiusMod:assets/option/orb/optionorbwithmodel.prefab";
+                else path = "@ChensGradiusMod:assets/option/orb/optionorb.prefab";
+                gradiusOptionPrefab = Resources.Load<GameObject>(path);
                 if (gradiusOptionPrefab)
                 {
                     gradiusOptionPrefab.AddComponent<OptionBehavior>();

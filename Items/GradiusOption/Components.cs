@@ -35,7 +35,7 @@ namespace Chen.GradiusMod
                 if (owner && ot)
                 {
                     t.position = ot.flightPath[numbering * ot.distanceInterval - 1];
-                    gameObject.transform.rotation = owner.transform.rotation;
+                    if (GradiusOption.instance.includeModelInsideOrb) gameObject.transform.rotation = owner.transform.rotation;
                 }
                 else
                 {
@@ -243,10 +243,11 @@ namespace Chen.GradiusMod
     public class Flicker : MonoBehaviour
     {
         // Child Objects in Order:
-        // 0. sphere1: Light
-        // 1. sphere2: Light
-        // 2. sphere3: Light
-        // 3. sphere4: MeshRenderer, MeshFilter
+        // 0. sphere1:     Light
+        // 1. sphere2:     Light
+        // 2. sphere3:     Light
+        // 3. sphere4:     MeshRenderer, MeshFilter
+        // 4. OptionModel: The option model
 
         private readonly float baseValue = 1f;
         private readonly float amplitude = .25f;
@@ -286,6 +287,10 @@ namespace Chen.GradiusMod
                     case "sphere4":
                         originalLocalScale = child.transform.localScale;
                         meshObject = child;
+                        break;
+
+                    case "OptionModel":
+                        child.transform.localScale = new Vector3(.06f, .06f, .06f);
                         break;
                 }
             }

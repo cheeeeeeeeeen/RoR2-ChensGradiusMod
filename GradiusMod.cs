@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
@@ -67,7 +67,7 @@ namespace Chen.GradiusMod
             _logger = Logger;
 
 #if DEBUG
-            Logger.LogWarning("Running test build with debug enabled! If you're seeing this after downloading the mod from Thunderstore, please panic.");
+            Logger.LogWarning("Running test build with debug enabled!");
             On.RoR2.Networking.GameNetworkManager.OnClientConnect += (self, user, t) => { };
 #endif
 
