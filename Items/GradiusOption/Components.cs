@@ -65,7 +65,7 @@ namespace Chen.GradiusMod
 
         private float DecideDistance()
         {
-            return (int)Math.Ceiling(numbering / 3f) * ot.distanceAxis;
+            return Mathf.CeilToInt(numbering / 3f) * ot.distanceAxis;
         }
 
         private Vector3 DecideAxis(bool positioning = false)

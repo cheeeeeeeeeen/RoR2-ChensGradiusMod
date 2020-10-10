@@ -10,7 +10,7 @@ Use **r2modman** mod manager to install this mod.
 
 ## Features
 
-![Gradius' Option](https://i.imgur.com/LJMmJkx.png)
+![Gradius' Option](https://puu.sh/GBI6M.png)
 **Gradius' Option**
 - A new Red Item added to Risk of Rain 2. Upon receiving this item, all owned drones of the receiver will gain an Option/Multiple for each stack.
 - Gradius is known for its feature of Options/Multiples where in these weapons are invulnerable to all damage, and are able to copy the full arsenal of the main ship.
@@ -23,6 +23,11 @@ Use **r2modman** mod manager to install this mod.
 - Discord: `Chen#1218`
 
 ## Changelog
+
+**1.3.2**
+- Update the icon for Gradius' Option.
+- Let Turret Drones have Rotate Options, Options that orbit around the turret.
+- Resize the Pickup models for Options as they were too large.
 
 **1.3.1**
 - Pull Gradius' Option from ChensClassicItems to a separate mod.
