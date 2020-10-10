@@ -19,12 +19,14 @@ namespace Chen.GradiusMod
 
         private Transform t;
         private OptionTracker ot;
+        private Vector3 axis;
         private bool init = true;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Awake()
         {
             t = gameObject.transform;
+            axis = Vector3.zero;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -34,7 +36,12 @@ namespace Chen.GradiusMod
             {
                 if (owner && ot)
                 {
-                    t.position = ot.flightPath[numbering * ot.distanceInterval - 1];
+                    if (owner.name.Contains("Turret1"))
+                    {
+                        t.position = owner.transform.position + (t.position - owner.transform.position).normalized * DecideDistance();
+                        t.RotateAround(owner.transform.position, DecideAxis(), ot.rotateOptionSpeed * Time.deltaTime);
+                    }
+                    else t.position = ot.flightPath[numbering * ot.distanceInterval - 1];
                     if (GradiusOption.instance.includeModelInsideOrb) gameObject.transform.rotation = owner.transform.rotation;
                 }
                 else
@@ -52,7 +59,57 @@ namespace Chen.GradiusMod
             {
                 init = false;
                 ot = owner.GetComponent<OptionTracker>();
+                if (owner.name.Contains("Turret1")) t.position += DecideAxis(true) * DecideDistance();
             }
+        }
+
+        private float DecideDistance()
+        {
+            return (int)Math.Ceiling(numbering / 3f) * ot.distanceAxis;
+        }
+
+        private Vector3 DecideAxis(bool positioning = false)
+        {
+            if ((numbering + 2) % 3 == 0)
+            {
+                if (numbering % 2 == 0)
+                {
+                    if (positioning) axis = Vector3.up;
+                    else axis = Vector3.forward;
+                }
+                else
+                {
+                    if (positioning) axis = Vector3.down;
+                    else axis = Vector3.back;
+                }
+            }
+            else if ((numbering + 1) % 3 == 0)
+            {
+                if (numbering % 2 == 0)
+                {
+                    if (positioning) axis = Vector3.left;
+                    else axis = Vector3.up;
+                }
+                else
+                {
+                    if (positioning) axis = Vector3.right;
+                    else axis = Vector3.down;
+                }
+            }
+            else if (numbering % 3 == 0)
+            {
+                if (numbering % 2 == 0)
+                {
+                    if (positioning) axis = Vector3.forward;
+                    else axis = Vector3.left;
+                }
+                else
+                {
+                    if (positioning) axis = Vector3.back;
+                    else axis = Vector3.right;
+                }
+            }
+            return axis;
         }
     }
 
@@ -61,6 +118,8 @@ namespace Chen.GradiusMod
         public List<Vector3> flightPath { get; private set; } = new List<Vector3>();
         public List<GameObject> existingOptions { get; private set; } = new List<GameObject>();
         public int distanceInterval { get; private set; } = 20;
+        public float distanceAxis { get; private set; } = .2f;
+        public float rotateOptionSpeed { get; private set; } = 200f;
         public CharacterMaster masterCharacterMaster { get; private set; }
         public OptionMasterTracker masterOptionTracker { get; private set; }
         public CharacterMaster characterMaster { get; private set; }
@@ -86,7 +145,7 @@ namespace Chen.GradiusMod
         {
             if (!init && masterOptionTracker && characterMaster)
             {
-                if (previousPosition != t.position || characterMaster.name.Contains("Turret1"))
+                if (!characterMaster.name.Contains("Turret1") && previousPosition != t.position)
                 {
                     flightPath.Insert(0, t.position);
                     if (flightPath.Count > masterOptionTracker.optionItemCount * distanceInterval) flightPath.RemoveAt(flightPath.Count - 1);
@@ -170,6 +229,7 @@ namespace Chen.GradiusMod
 
         private void ManageFlightPath(int difference)
         {
+            if (characterMaster.name.Contains("Turret1")) return;
             int flightPathCap = masterOptionTracker.optionItemCount * distanceInterval;
             if (difference > 0) while (flightPath.Count < flightPathCap) flightPath.Add(t.position);
             else if (difference < 0) while (flightPath.Count >= flightPathCap) flightPath.RemoveAt(flightPath.Count - 1);
