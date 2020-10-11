@@ -28,7 +28,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "1.3.3";
+            "1.3.4";
 
         public const string ModName = "ChensGradiusMod";
         public const string ModGuid = "com.Chen.ChensGradiusMod";
