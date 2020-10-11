@@ -24,6 +24,9 @@ Use **r2modman** mod manager to install this mod.
 
 ## Changelog
 
+**1.3.3**
+- Disable debug version. I am so sorry.
+
 **1.3.2**
 - Update the icon for Gradius' Option.
 - Let Turret Drones have Rotate Options, Options that orbit around the turret.
