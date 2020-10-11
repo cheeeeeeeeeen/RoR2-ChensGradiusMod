@@ -36,13 +36,17 @@ namespace Chen.GradiusMod
 
         [AutoItemConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
                         "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
-                        "Disable this if you are experiencing FPS drops or network lag.",
-                        AutoItemConfigFlags.PreventNetMismatch)]
+                        "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool flamethrowerOptionSyncEffect { get; private set; } = true;
 
-        [AutoItemConfig("Experimental; not yet ready. Set to true for the Orbs to have the Option Pickup model in the center. Client only. " +
-                        "Turning this off could probably lessen resource usage.")]
+        [AutoItemConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only." +
+                        "Turning this off could lessen resource usage.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = false;
+
+        [AutoItemConfig("Amount of delay in seconds for syncing Option Spawning to fire. Increase this if Options are not spawning for clients. Server only. " +
+                        "Setting to 0 (not recommended) will have no delay, and Options may not spawn in clients.",
+                        AutoItemConfigFlags.PreventNetMismatch, 0f, float.MaxValue)]
+        public float spawnSyncSeconds { get; private set; } = .1f;
 
         public override bool itemAIB { get; protected set; } = true;
 
@@ -110,6 +114,7 @@ namespace Chen.GradiusMod
                 gradiusOptionPrefab = Resources.Load<GameObject>(path);
                 if (gradiusOptionPrefab)
                 {
+                    gradiusOptionPrefab.AddComponent<NetworkIdentity>();
                     gradiusOptionPrefab.AddComponent<OptionBehavior>();
                     gradiusOptionPrefab.AddComponent<Flicker>();
                     GradiusModPlugin._logger.LogDebug("Successfully initialized OptionOrb prefab.");
@@ -121,6 +126,7 @@ namespace Chen.GradiusMod
                 GradiusModPlugin._logger.LogDebug("Registering custom network messages needed for GradiusOption...");
                 NetworkingAPI.RegisterMessageType<SpawnOptionsForClients>();
                 NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
+                if (includeModelInsideOrb) NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
 
                 if (Compat_ItemStats.enabled)
                 {
@@ -231,14 +237,14 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!NetworkServer.active) return;
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
                 float healRate = (HealBeam.healCoefficient * self.damageStat / self.duration) * damageMultiplier;
                 Transform transform = option.transform;
                 if (transform && self.target)
                 {
                     GameObject gameObject = Object.Instantiate(HealBeam.healBeamPrefab, transform);
-                    HealBeamController hbc = option.GetComponent<OptionBehavior>().healBeamController = gameObject.GetComponent<HealBeamController>();
+                    HealBeamController hbc = behavior.healBeamController = gameObject.GetComponent<HealBeamController>();
                     hbc.healRate = healRate;
                     hbc.target = self.target;
                     hbc.ownership.ownerObject = option.gameObject;
@@ -250,10 +256,9 @@ namespace Chen.GradiusMod
         private void HealBeam_OnExit(On.EntityStates.Drone.DroneWeapon.HealBeam.orig_OnExit orig, HealBeam self)
         {
             orig(self);
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
-                OptionBehavior behavior = option.GetComponent<OptionBehavior>();
-                if (behavior && behavior.healBeamController) behavior.healBeamController.BreakServer();
+                if (behavior.healBeamController) behavior.healBeamController.BreakServer();
             }, false);
         }
 
@@ -261,7 +266,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!NetworkServer.active) return;
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (HealBeamController.GetHealBeamCountForOwner(self.gameObject) < self.maxSimultaneousBeams && self.targetHurtBox)
                 {
@@ -269,7 +274,7 @@ namespace Chen.GradiusMod
                     if (transform)
                     {
                         GameObject gameObject = Object.Instantiate(self.healBeamPrefab, transform);
-                        HealBeamController hbc = option.GetComponent<OptionBehavior>().healBeamController = gameObject.GetComponent<HealBeamController>();
+                        HealBeamController hbc = gameObject.GetComponent<HealBeamController>();
                         hbc.healRate = self.healRateCoefficient * self.damageStat * self.attackSpeedStat * damageMultiplier;
                         hbc.target = self.targetHurtBox;
                         hbc.ownership.ownerObject = option.gameObject;
@@ -285,14 +290,13 @@ namespace Chen.GradiusMod
             orig(self);
             if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone") && flamethrowerOptionSyncEffect)
             {
-                FireForAllMinions(self, (option, target) =>
+                FireForAllMinions(self, (option, behavior, target) =>
                 {
                     if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.endAttackSoundString, option);
-                    OptionBehavior behavior = option.GetComponent<OptionBehavior>();
-                    if (behavior && behavior.flamethrower)
+                    if (behavior.flamethrower)
                     {
                         EntityState.Destroy(behavior.flamethrower);
-                        FlamethrowerSync(self, (networkIdentity, optionTracker) =>
+                        OptionSync(self, (networkIdentity, optionTracker) =>
                         {
                             optionTracker.netIds.Add(Tuple.Create(
                                 MessageType.Destroy, networkIdentity.netId, (short)behavior.numbering,
@@ -311,32 +315,28 @@ namespace Chen.GradiusMod
             orig(self);
             if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone") && flamethrowerOptionSyncEffect)
             {
-                FireForAllMinions(self, (option, target) =>
+                FireForAllMinions(self, (option, behavior, target) =>
                 {
                     bool perMinionOldBegunFlamethrower = oldBegunFlamethrower;
-                    OptionBehavior behavior = option.GetComponent<OptionBehavior>();
                     Vector3 direction = (target.transform.position - option.transform.position).normalized;
                     if (self.stopwatch >= self.entryDuration && !perMinionOldBegunFlamethrower)
                     {
                         perMinionOldBegunFlamethrower = true;
-                        if (behavior)
+                        if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.startAttackSoundString, option);
+                        behavior.flamethrower = Object.Instantiate(self.flamethrowerEffectPrefab, option.transform);
+                        behavior.flamethrower.GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
+                        OptionSync(self, (networkIdentity, optionTracker) =>
                         {
-                            if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.startAttackSoundString, option);
-                            behavior.flamethrower = Object.Instantiate(self.flamethrowerEffectPrefab, option.transform);
-                            behavior.flamethrower.GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
-                            FlamethrowerSync(self, (networkIdentity, optionTracker) =>
-                            {
-                                optionTracker.netIds.Add(Tuple.Create(
-                                    MessageType.Create, networkIdentity.netId, (short)behavior.numbering,
-                                    self.flamethrowerDuration, Vector3.zero
-                                ));
-                            });
-                        }
+                            optionTracker.netIds.Add(Tuple.Create(
+                                MessageType.Create, networkIdentity.netId, (short)behavior.numbering,
+                                self.flamethrowerDuration, Vector3.zero
+                            ));
+                        });
                     }
                     if (perMinionOldBegunFlamethrower && behavior.flamethrower)
                     {
                         behavior.flamethrower.transform.forward = direction;
-                        FlamethrowerSync(self, (networkIdentity, optionTracker) =>
+                        OptionSync(self, (networkIdentity, optionTracker) =>
                         {
                             if (!optionTracker.netIds.Exists((t) => {
                                 return t.Item1 == MessageType.Redirect && t.Item2 == networkIdentity.netId && t.Item3 == (short)behavior.numbering;
@@ -358,7 +358,7 @@ namespace Chen.GradiusMod
             orig(self, muzzleString);
             if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
-                FireForAllMinions(self, (option, target) =>
+                FireForAllMinions(self, (option, behavior, target) =>
                 {
                     if (self.isAuthority)
                     {
@@ -415,7 +415,7 @@ namespace Chen.GradiusMod
         private void FireGatling_OnEnter(On.EntityStates.Drone.DroneWeapon.FireGatling.orig_OnEnter orig, FireGatling self)
         {
             orig(self);
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (gatlingSoundCopy) Util.PlaySound(FireGatling.fireGatlingSoundString, option);
                 if (FireGatling.effectPrefab)
@@ -446,7 +446,7 @@ namespace Chen.GradiusMod
         private void FireTurret_OnEnter(On.EntityStates.Drone.DroneWeapon.FireTurret.orig_OnEnter orig, FireTurret self)
         {
             orig(self);
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
                 Util.PlaySound(FireTurret.attackSoundString, option);
                 if (FireTurret.effectPrefab)
@@ -477,7 +477,7 @@ namespace Chen.GradiusMod
         private void FireMegaTurret_FireBullet(On.EntityStates.Drone.DroneWeapon.FireMegaTurret.orig_FireBullet orig, FireMegaTurret self, string muzzleString)
         {
             orig(self, muzzleString);
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
                 Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
                 if (FireMegaTurret.effectPrefab)
@@ -508,7 +508,7 @@ namespace Chen.GradiusMod
         private void FireMissileBarrage_FireMissile(On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.orig_FireMissile orig, FireMissileBarrage self, string targetMuzzle)
         {
             orig(self, targetMuzzle);
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (FireMissileBarrage.effectPrefab)
                 {
@@ -539,7 +539,7 @@ namespace Chen.GradiusMod
         private void FireTwinRocket_FireProjectile(On.EntityStates.Drone.DroneWeapon.FireTwinRocket.orig_FireProjectile orig, FireTwinRocket self, string muzzleString)
         {
             orig(self, muzzleString);
-            FireForAllMinions(self, (option, target) =>
+            FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (FireTwinRocket.muzzleEffectPrefab)
                 {
@@ -585,7 +585,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        private void FireForAllMinions(BaseState self, Action<GameObject, GameObject> actionToRun, bool needTarget = true)
+        private void FireForAllMinions(BaseState self, Action<GameObject, OptionBehavior, GameObject> actionToRun, bool needTarget = true)
         {
             OptionTracker optionTracker = self.characterBody.GetComponent<OptionTracker>();
             if (!optionTracker) return;
@@ -598,17 +598,37 @@ namespace Chen.GradiusMod
             }
             foreach (GameObject option in optionTracker.existingOptions)
             {
-                actionToRun(option, target);
+                OptionBehavior behavior = option.GetComponent<OptionBehavior>();
+                if (behavior)
+                {
+                    if (includeModelInsideOrb && target)
+                    {
+                        behavior.target = target;
+                        NetworkIdentity targetNetworkIdentity = target.GetComponent<NetworkIdentity>();
+                        if (targetNetworkIdentity)
+                        {
+                            OptionSync(self, (networkIdentity, nullTracker) =>
+                            {
+                                optionTracker.targetIds.Add(Tuple.Create(
+                                    GameObjectType.Body, networkIdentity.netId, (short)behavior.numbering, targetNetworkIdentity.netId
+                                ));
+                            }, false);
+                        }
+                    }
+                    GradiusModPlugin._logger.LogDebug("action to run");
+                    actionToRun(option, behavior, target);
+                }
             }
         }
 
-        private void FlamethrowerSync(MageWeapon.Flamethrower self, Action<NetworkIdentity, OptionTracker> actionToRun)
+        private void OptionSync(BaseState self, Action<NetworkIdentity, OptionTracker> actionToRun, bool queryTracker = true)
         {
             if (!NetworkServer.active) return;
             NetworkIdentity networkIdentity = self.characterBody.gameObject.GetComponent<NetworkIdentity>();
             if (!networkIdentity) return;
-            OptionTracker tracker = self.characterBody.gameObject.GetComponent<OptionTracker>();
-            if (tracker) actionToRun(networkIdentity, tracker);
+            OptionTracker tracker = null;
+            if (queryTracker) tracker = self.characterBody.gameObject.GetComponent<OptionTracker>();
+            if (!queryTracker || tracker) actionToRun(networkIdentity, tracker);
         }
 
         private bool FilterDrones(string name) => DronesList.Exists((item) => name.Contains(item));

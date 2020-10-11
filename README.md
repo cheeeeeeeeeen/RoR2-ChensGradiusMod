@@ -24,6 +24,12 @@ Use **r2modman** mod manager to install this mod.
 
 ## Changelog
 
+**1.3.4**
+- Fix more syncing and networking issues. Hopefully that is all of them.
+- Add a sync setting for spawning as it fails when the syncing of options comes first before syncing the drone body.
+- Implement a cosmetic feature to include the Option model inside the Orb. Configurable to turn it off for simplicity and better performance.
+- Optimize some parts of code where there were repetitions.
+
 **1.3.3**
 - Disable debug version. I am so sorry.
 

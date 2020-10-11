@@ -2,6 +2,7 @@
 using R2API.Networking.Interfaces;
 using RoR2;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -16,10 +17,14 @@ namespace Chen.GradiusMod
         public int numbering = 0;
         public GameObject flamethrower;
         public HealBeamController healBeamController;
+        public GameObject target;
 
         private Transform t;
-        private OptionTracker ot;
+        private Transform ownerT;
+        private InputBankTest ownerIbt;
+        private OptionTracker ownerOt;
         private Vector3 axis;
+        private Quaternion oldRotation;
         private bool init = true;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -34,19 +39,26 @@ namespace Chen.GradiusMod
         {
             if (!init)
             {
-                if (owner && ot)
+                if (owner && ownerOt)
                 {
+                    oldRotation = t.rotation;
                     if (owner.name.Contains("Turret1"))
                     {
-                        t.position = owner.transform.position + (t.position - owner.transform.position).normalized * DecideDistance();
-                        t.RotateAround(owner.transform.position, DecideAxis(), ot.rotateOptionSpeed * Time.deltaTime);
+                        t.position = ownerT.position + (t.position - ownerT.position).normalized * DecideDistance();
+                        t.RotateAround(ownerT.position, DecideAxis(), ownerOt.rotateOptionSpeed * Time.deltaTime);
                     }
-                    else t.position = ot.flightPath[numbering * ot.distanceInterval - 1];
-                    if (GradiusOption.instance.includeModelInsideOrb) gameObject.transform.rotation = owner.transform.rotation;
+                    else t.position = ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1];
+                    if (GradiusOption.instance.includeModelInsideOrb)
+                    {
+                        Vector3 direction;
+                        if (target) direction = (target.transform.position - t.position).normalized;
+                        else direction = ownerIbt.aimDirection;
+                        t.rotation = Quaternion.Lerp(oldRotation, Util.QuaternionSafeLookRotation(direction), ownerOt.optionLookSpeed);
+                    }
                 }
                 else
                 {
-                    GradiusModPlugin._logger.LogWarning($"OptionBehavior.Update: Lost owner or ot. Destroying this Option. numbering = {numbering}");
+                    GradiusModPlugin._logger.LogWarning($"OptionBehavior.Update: Lost owner or ownerOt. Destroying this Option. numbering = {numbering}");
                     Destroy(gameObject);
                 }
             }
@@ -58,14 +70,16 @@ namespace Chen.GradiusMod
             if (init && owner)
             {
                 init = false;
-                ot = owner.GetComponent<OptionTracker>();
+                ownerT = owner.transform;
+                ownerIbt = owner.GetComponent<InputBankTest>();
+                ownerOt = owner.GetComponent<OptionTracker>();
                 if (owner.name.Contains("Turret1")) t.position += DecideAxis(true) * DecideDistance();
             }
         }
 
         private float DecideDistance()
         {
-            return Mathf.CeilToInt(numbering / 3f) * ot.distanceAxis;
+            return Mathf.CeilToInt(numbering / 3f) * ownerOt.distanceAxis;
         }
 
         private Vector3 DecideAxis(bool positioning = false)
@@ -118,8 +132,9 @@ namespace Chen.GradiusMod
         public List<Vector3> flightPath { get; private set; } = new List<Vector3>();
         public List<GameObject> existingOptions { get; private set; } = new List<GameObject>();
         public int distanceInterval { get; private set; } = 20;
-        public float distanceAxis { get; private set; } = .2f;
+        public float distanceAxis { get; private set; } = .3f;
         public float rotateOptionSpeed { get; private set; } = 200f;
+        public float optionLookSpeed { get; private set; } = .15f;
         public CharacterMaster masterCharacterMaster { get; private set; }
         public OptionMasterTracker masterOptionTracker { get; private set; }
         public CharacterMaster characterMaster { get; private set; }
@@ -127,6 +142,8 @@ namespace Chen.GradiusMod
 
         public List<Tuple<MessageType, NetworkInstanceId, short, float, Vector3>> netIds { get; private set; } =
             new List<Tuple<MessageType, NetworkInstanceId, short, float, Vector3>>();
+        public List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>> targetIds { get; private set; } =
+            new List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>>();
 
         private Vector3 previousPosition = new Vector3();
         private bool init = true;
@@ -206,6 +223,7 @@ namespace Chen.GradiusMod
                 flightPath.Clear();
                 previousOptionItemCount = 0;
             }
+            SyncTargets();
         }
 
         private void SyncFlamethrowerEffects()
@@ -223,6 +241,24 @@ namespace Chen.GradiusMod
                     float duration = listCopy[i].Item4;
                     Vector3 direction = listCopy[i].Item5;
                     new SyncFlamethrowerEffectForClients(messageType, netId, numbering, duration, direction).Send(NetworkDestination.Clients);
+                }
+            }
+        }
+
+        private void SyncTargets()
+        {
+            if (GradiusOption.instance.includeModelInsideOrb && NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && targetIds.Count > 0)
+            {
+                Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>[] listCopy = new Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>[targetIds.Count];
+                targetIds.CopyTo(listCopy);
+                targetIds.Clear();
+                for (int i = 0; i < listCopy.Length; i++)
+                {
+                    GameObjectType gameObjectType = listCopy[i].Item1;
+                    NetworkInstanceId netId = listCopy[i].Item2;
+                    short numbering = listCopy[i].Item3;
+                    NetworkInstanceId targetId = listCopy[i].Item4;
+                    new SyncOptionTargetForClients(gameObjectType, netId, numbering, targetId).Send(NetworkDestination.Clients);
                 }
             }
         }
@@ -265,9 +301,15 @@ namespace Chen.GradiusMod
                     GameObjectType bodyOrMaster = listCopy[i].Item1;
                     NetworkInstanceId netId = listCopy[i].Item2;
                     short numbering = listCopy[i].Item3;
-                    new SpawnOptionsForClients(bodyOrMaster, netId, numbering).Send(NetworkDestination.Clients);
+                    StartCoroutine(SpawnOptionForClient(bodyOrMaster, netId, numbering));
                 }
             }
+        }
+
+        private IEnumerator SpawnOptionForClient(GameObjectType bodyOrMaster, NetworkInstanceId netId, short numbering)
+        {
+            yield return new WaitForSeconds(GradiusOption.instance.spawnSyncSeconds);
+            new SpawnOptionsForClients(bodyOrMaster, netId, numbering).Send(NetworkDestination.Clients);
         }
 
         public static OptionMasterTracker GetOrCreateComponent(CharacterMaster me)
@@ -351,6 +393,7 @@ namespace Chen.GradiusMod
 
                     case "OptionModel":
                         child.transform.localScale = new Vector3(.06f, .06f, .06f);
+                        child.transform.Rotate(Vector3.up, -90);
                         break;
                 }
             }
