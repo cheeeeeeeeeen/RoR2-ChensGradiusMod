@@ -6,7 +6,7 @@ This mod aims to implement features from the Gradius series as well as from othe
 
 ## Installation
 
-Use **r2modman** mod manager to install this mod.
+Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager to install this mod.
 
 ## Features
 
@@ -19,8 +19,10 @@ Use **r2modman** mod manager to install this mod.
 
 ## Contact
 
+- Issue Page: https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/issues
 - Email: `blancfaye7@gmail.com`
 - Discord: `Chen#1218`
+- RoR2 Modding Server: https://discord.com/invite/5MbXZvd
 
 ## Changelog
 
