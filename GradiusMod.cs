@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
@@ -21,7 +21,7 @@ namespace Chen.GradiusMod
     [BepInDependency(R2API.R2API.PluginGUID, R2API.R2API.PluginVersion)]
     [BepInDependency(TILER2Plugin.ModGuid, TILER2Plugin.ModVer)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-    [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(ResourcesAPI))]
+    [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(ResourcesAPI), nameof(SoundAPI))]
     public class GradiusModPlugin : BaseUnityPlugin
     {
         public const string ModVer =
@@ -47,10 +47,18 @@ namespace Chen.GradiusMod
             var i5 = Input.GetKeyDown(KeyCode.F5);
             var i6 = Input.GetKeyDown(KeyCode.F6);
             var i7 = Input.GetKeyDown(KeyCode.F7);
-            if (i3 || i4 || i5 || i6 || i7)
+            var i8 = Input.GetKeyDown(KeyCode.F8);
+            if (i3 || i4 || i5 || i6 || i7 || i8)
             {
-                Transform trans = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
+                CharacterMaster master = PlayerCharacterMasterController.instances[0].master;
+                CharacterBody body = master.GetBody();
+                Transform trans = body.gameObject.transform;
                 List<PickupIndex> spawnList;
+                if (i8)
+                {
+                    OptionMasterTracker.SpawnOption(trans.gameObject, 1);
+                    return;
+                }
                 if (i3) spawnList = Run.instance.availableTier1DropList;
                 else if (i4) spawnList = Run.instance.availableTier2DropList;
                 else if (i5) spawnList = Run.instance.availableTier3DropList;
@@ -79,6 +87,14 @@ namespace Chen.GradiusMod
                 ResourcesAPI.AddProvider(provider);
             }
 
+            Logger.LogDebug("Loading sounds...");
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChensGradiusMod.chensgradiusmod_soundbank.bnk"))
+            {
+                var bytes = new byte[stream.Length];
+                stream.Read(bytes, 0, bytes.Length);
+                SoundAPI.SoundBanks.Add(bytes);
+            }
+
             cfgFile = new ConfigFile(Path.Combine(Paths.ConfigPath, ModGuid + ".cfg"), true);
 
             Logger.LogDebug("Loading global configs... No global configs found.");
@@ -91,14 +107,6 @@ namespace Chen.GradiusMod
             {
                 x.SetupConfig(cfgFile);
                 x.SetupAttributes("CHENSGRADIUSMOD", "CGM");
-                if (x is Equipment equipment)
-                    Logger.LogMessage($"Equipment CGM : {x.itemCodeName} : {(int)equipment.regIndex}");
-                else if (x is Item item)
-                    Logger.LogMessage($"Item CGM : {x.itemCodeName} : {(int)item.regIndex}");
-                else if (x is Artifact artifact)
-                    Logger.LogMessage($"Artifact CGM : {x.itemCodeName} : {(int)artifact.regIndex}");
-                else
-                    Logger.LogMessage($"Other CGM : {x.itemCodeName}");
                 x.SetupBehavior();
             }
 

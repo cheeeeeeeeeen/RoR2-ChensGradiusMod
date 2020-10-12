@@ -29,7 +29,9 @@ Use **r2modman** mod manager to install this mod.
 - Add a sync setting for spawning as it fails when the syncing of options comes first before syncing the drone body.
 - Implement a cosmetic feature to include the Option model inside the Orb. Configurable to turn it off for simplicity and better performance.
 - Optimize some parts of code where there were repetitions.
-- Improve the movement of Turret Drones' Rotate options.
+- Improve the movement of Turret Drones' Rotate options so it looks cleaner.
+- Pause Options when the game is paused.
+- Add a sound effect when acquiring an Option.
 
 **1.3.3**
 - Disable debug version. I am so sorry.
