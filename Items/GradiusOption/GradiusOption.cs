@@ -350,7 +350,8 @@ namespace Chen.GradiusMod
                         behavior.flamethrower.transform.forward = direction;
                         OptionSync(self, (networkIdentity, optionTracker) =>
                         {
-                            if (!optionTracker.netIds.Exists((t) => {
+                            if (!optionTracker.netIds.Exists((t) =>
+                            {
                                 return t.Item1 == MessageType.Redirect && t.Item2 == networkIdentity.netId && t.Item3 == (short)behavior.numbering;
                             }))
                             {

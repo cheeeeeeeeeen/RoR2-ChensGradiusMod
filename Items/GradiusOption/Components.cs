@@ -100,6 +100,7 @@ namespace Chen.GradiusMod
 
         public List<Tuple<MessageType, NetworkInstanceId, short, float, Vector3>> netIds { get; private set; } =
             new List<Tuple<MessageType, NetworkInstanceId, short, float, Vector3>>();
+
         public List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>> targetIds { get; private set; } =
             new List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>>();
 

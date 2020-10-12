@@ -3,8 +3,8 @@ using R2API.Networking.Interfaces;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
-using MageWeapon = EntityStates.Mage.Weapon;
 using static Chen.GradiusMod.SpawnOptionsForClients;
+using MageWeapon = EntityStates.Mage.Weapon;
 
 namespace Chen.GradiusMod
 {
