@@ -39,7 +39,7 @@ namespace Chen.GradiusMod
                         "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool flamethrowerOptionSyncEffect { get; private set; } = true;
 
-        [AutoItemConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only." +
+        [AutoItemConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
                         "Turning this off could lessen resource usage.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = false;
 
@@ -47,6 +47,10 @@ namespace Chen.GradiusMod
                         "Setting to 0 (not recommended) will have no delay, and Options may not spawn in clients.",
                         AutoItemConfigFlags.PreventNetMismatch, 0f, float.MaxValue)]
         public float spawnSyncSeconds { get; private set; } = .1f;
+
+        [AutoItemConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones. Client only.",
+                        AutoItemConfigFlags.None, 0, 2)]
+        public int playOptionGetSoundEffect { get; private set; } = 1;
 
         public override bool itemAIB { get; protected set; } = true;
 
@@ -80,6 +84,10 @@ namespace Chen.GradiusMod
 
         public static GameObject gradiusOptionPrefab;
         public static GameObject flamethrowerEffectPrefab;
+        public static uint getOptionSoundId = 649757048;
+        public static uint getOptionLowSoundId = 553829614;
+        public static uint loseOptionSoundId = 2603869165;
+        public static uint loseOptionLowSoundId = 4084766013;
 
         private static readonly List<string> DronesList = new List<string>
         {
@@ -216,15 +224,19 @@ namespace Chen.GradiusMod
                     GradiusModPlugin._logger.LogMessage($"OnInventoryChanged: OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
                     if (diff > 0)
                     {
+                        if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionSoundId, self.gameObject);
                         LoopAllMinionOwnerships(self.master, (minion) =>
                         {
+                            if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionLowSoundId, minion);
                             for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
                         });
                     }
                     else
                     {
+                        if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionSoundId, self.gameObject);
                         LoopAllMinionOwnerships(self.master, (minion) =>
                         {
+                            if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionLowSoundId, self.gameObject);
                             OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
                             if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
                         });
@@ -615,7 +627,6 @@ namespace Chen.GradiusMod
                             }, false);
                         }
                     }
-                    GradiusModPlugin._logger.LogDebug("action to run");
                     actionToRun(option, behavior, target);
                 }
             }
