@@ -1,6 +1,7 @@
 ﻿using R2API.Networking;
 using R2API.Networking.Interfaces;
 using RoR2;
+using RoR2.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,37 +24,35 @@ namespace Chen.GradiusMod
         private Transform ownerT;
         private InputBankTest ownerIbt;
         private OptionTracker ownerOt;
-        private Vector3 axis;
-        private Quaternion oldRotation;
         private bool init = true;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Awake()
         {
             t = gameObject.transform;
-            axis = Vector3.zero;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Update()
         {
-            if (!init)
+            if (!PauseScreenController.paused && !init)
             {
                 if (owner && ownerOt)
                 {
-                    oldRotation = t.rotation;
                     if (owner.name.Contains("Turret1"))
                     {
-                        t.position = ownerT.position + (t.position - ownerT.position).normalized * DecideDistance();
-                        t.RotateAround(ownerT.position, DecideAxis(), ownerOt.rotateOptionSpeed * Time.deltaTime);
+                        t.position = Vector3.Lerp(t.position,
+                                                  ownerT.position + DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis,
+                                                  ownerOt.optionLookRate);
                     }
                     else t.position = ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1];
                     if (GradiusOption.instance.includeModelInsideOrb)
                     {
                         Vector3 direction;
                         if (target) direction = (target.transform.position - t.position).normalized;
-                        else direction = ownerIbt.aimDirection;
-                        t.rotation = Quaternion.Lerp(oldRotation, Util.QuaternionSafeLookRotation(direction), ownerOt.optionLookSpeed);
+                        else if (ownerIbt) direction = ownerIbt.aimDirection;
+                        else direction = (ownerT.position - t.position).normalized;
+                        t.rotation = Quaternion.Lerp(t.rotation, Util.QuaternionSafeLookRotation(direction), ownerOt.optionLookRate);
                     }
                 }
                 else
@@ -67,63 +66,21 @@ namespace Chen.GradiusMod
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void FixedUpdate()
         {
-            if (init && owner)
+            if (!PauseScreenController.paused && init && owner)
             {
                 init = false;
                 ownerT = owner.transform;
                 ownerIbt = owner.GetComponent<InputBankTest>();
                 ownerOt = owner.GetComponent<OptionTracker>();
-                if (owner.name.Contains("Turret1")) t.position += DecideAxis(true) * DecideDistance();
             }
         }
 
-        private float DecideDistance()
+        private Vector3 DecidePosition(float baseAngle)
         {
-            return Mathf.CeilToInt(numbering / 3f) * ownerOt.distanceAxis;
-        }
-
-        private Vector3 DecideAxis(bool positioning = false)
-        {
-            if ((numbering + 2) % 3 == 0)
-            {
-                if (numbering % 2 == 0)
-                {
-                    if (positioning) axis = Vector3.up;
-                    else axis = Vector3.forward;
-                }
-                else
-                {
-                    if (positioning) axis = Vector3.down;
-                    else axis = Vector3.back;
-                }
-            }
-            else if ((numbering + 1) % 3 == 0)
-            {
-                if (numbering % 2 == 0)
-                {
-                    if (positioning) axis = Vector3.left;
-                    else axis = Vector3.up;
-                }
-                else
-                {
-                    if (positioning) axis = Vector3.right;
-                    else axis = Vector3.down;
-                }
-            }
-            else if (numbering % 3 == 0)
-            {
-                if (numbering % 2 == 0)
-                {
-                    if (positioning) axis = Vector3.forward;
-                    else axis = Vector3.left;
-                }
-                else
-                {
-                    if (positioning) axis = Vector3.back;
-                    else axis = Vector3.right;
-                }
-            }
-            return axis;
+            Vector3 relativePosition = Quaternion.AngleAxis(baseAngle, ownerT.up) * -ownerT.forward;
+            float angleDifference = 360f / ownerOt.existingOptions.Count;
+            relativePosition = Quaternion.AngleAxis(angleDifference * numbering, ownerT.up) * relativePosition;
+            return relativePosition.normalized;
         }
     }
 
@@ -132,9 +89,10 @@ namespace Chen.GradiusMod
         public List<Vector3> flightPath { get; private set; } = new List<Vector3>();
         public List<GameObject> existingOptions { get; private set; } = new List<GameObject>();
         public int distanceInterval { get; private set; } = 20;
-        public float distanceAxis { get; private set; } = .3f;
-        public float rotateOptionSpeed { get; private set; } = 200f;
-        public float optionLookSpeed { get; private set; } = .15f;
+        public float distanceAxis { get; private set; } = 1.2f;
+        public float rotateOptionAngleSpeed { get; private set; } = 2f;
+        public float currentOptionAngle { get; private set; } = 0f;
+        public float optionLookRate { get; private set; } = .15f;
         public CharacterMaster masterCharacterMaster { get; private set; }
         public OptionMasterTracker masterOptionTracker { get; private set; }
         public CharacterMaster characterMaster { get; private set; }
@@ -148,7 +106,6 @@ namespace Chen.GradiusMod
         private Vector3 previousPosition = new Vector3();
         private bool init = true;
         private int previousOptionItemCount = 0;
-
         private Transform t;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -160,9 +117,17 @@ namespace Chen.GradiusMod
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Update()
         {
+            if (PauseScreenController.paused) return;
             if (!init && masterOptionTracker && characterMaster)
             {
-                if (!characterMaster.name.Contains("Turret1") && previousPosition != t.position)
+                if (characterMaster.name.Contains("Turret1") && masterOptionTracker.optionItemCount > 0)
+                {
+                    if (masterOptionTracker.optionItemCount % 2 == 0) currentOptionAngle += rotateOptionAngleSpeed;
+                    else currentOptionAngle -= rotateOptionAngleSpeed;
+                    if (currentOptionAngle >= 360f) currentOptionAngle = 360f - currentOptionAngle;
+                    else if (currentOptionAngle <= 0f) currentOptionAngle += 360f;
+                }
+                else if (previousPosition != t.position)
                 {
                     flightPath.Insert(0, t.position);
                     if (flightPath.Count > masterOptionTracker.optionItemCount * distanceInterval) flightPath.RemoveAt(flightPath.Count - 1);
@@ -175,6 +140,7 @@ namespace Chen.GradiusMod
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void FixedUpdate()
         {
+            if (PauseScreenController.paused) return;
             if (!masterOptionTracker)
             {
                 characterBody = gameObject.GetComponent<CharacterBody>();
@@ -291,7 +257,7 @@ namespace Chen.GradiusMod
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void FixedUpdate()
         {
-            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && netIds.Count > 0)
+            if (!PauseScreenController.paused && NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && netIds.Count > 0)
             {
                 Tuple<GameObjectType, NetworkInstanceId, short>[] listCopy = new Tuple<GameObjectType, NetworkInstanceId, short>[netIds.Count];
                 netIds.CopyTo(listCopy);
@@ -348,8 +314,9 @@ namespace Chen.GradiusMod
         // 0. sphere1:     Light
         // 1. sphere2:     Light
         // 2. sphere3:     Light
-        // 3. sphere4:     MeshRenderer, MeshFilter
-        // 4. OptionModel: The option model
+        // 3. sphere4:     MeshRenderer, MeshFilter (only in OptionOrb)
+        // 4. sphere5:     MeshRenderer, MeshFilter (only in OptionOrbWithModel)
+        // 5. OptionModel: The option model (only in OptionOrbWithModel)
 
         private readonly float baseValue = 1f;
         private readonly float amplitude = .25f;
@@ -391,9 +358,12 @@ namespace Chen.GradiusMod
                         meshObject = child;
                         break;
 
-                    case "OptionModel":
-                        child.transform.localScale = new Vector3(.06f, .06f, .06f);
-                        child.transform.Rotate(Vector3.up, -90);
+                    case "sphere5":
+                        child.transform.localScale *= 1.5f;
+                        break;
+
+                    case "option":
+                        child.transform.localScale = new Vector3(2f, 2f, 2f);
                         break;
                 }
             }
@@ -402,11 +372,12 @@ namespace Chen.GradiusMod
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Update()
         {
+            if (PauseScreenController.paused) return;
             for (int i = 0; i < lightObjects.Length; i++)
             {
                 lightObjects[i].range = originalRange[i] * Wave(ampMultiplier[i]);
             }
-            meshObject.transform.localScale = originalLocalScale * Wave(ampMultiplier[3]);
+            if (meshObject && originalLocalScale != null) meshObject.transform.localScale = originalLocalScale * Wave(ampMultiplier[3]);
         }
 
         private float Wave(float ampMultiplier)
