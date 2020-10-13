@@ -18,12 +18,19 @@ namespace Chen.GradiusMod
         public int numbering = 0;
         public GameObject flamethrower;
         public HealBeamController healBeamController;
+        public GameObject laserChargeEffect;
+        public GameObject laserFireEffect;
+        public LineRenderer laserLineEffect;
+        public ChildLocator laserChildLocator;
+        public Transform laserFireEffectEnd;
+        public GameObject fistChargeEffect;
+        public GameObject rockChargeEffect;
         public GameObject target;
+        public OptionTracker ownerOt;
 
         private Transform t;
         private Transform ownerT;
         private InputBankTest ownerIbt;
-        private OptionTracker ownerOt;
         private bool init = true;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -39,11 +46,11 @@ namespace Chen.GradiusMod
             {
                 if (owner && ownerOt)
                 {
-                    if (owner.name.Contains("Turret1"))
+                    if (Helper.IsRotateUser(owner.name))
                     {
-                        t.position = Vector3.Lerp(t.position,
-                                                  ownerT.position + DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis,
-                                                  ownerOt.optionLookRate);
+                        float multiplier = Helper.RotateMultiplier(owner.name);
+                        Vector3 newPosition = ownerT.position + DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis * multiplier;
+                        t.position = Vector3.Lerp(t.position, newPosition, ownerOt.optionLookRate);
                     }
                     else t.position = ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1];
                     if (GradiusOption.instance.includeModelInsideOrb)
@@ -75,7 +82,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        private Vector3 DecidePosition(float baseAngle)
+        public Vector3 DecidePosition(float baseAngle)
         {
             Vector3 relativePosition = Quaternion.AngleAxis(baseAngle, ownerT.up) * -ownerT.forward;
             float angleDifference = 360f / ownerOt.existingOptions.Count;
@@ -121,7 +128,7 @@ namespace Chen.GradiusMod
             if (PauseScreenController.paused) return;
             if (!init && masterOptionTracker && characterMaster)
             {
-                if (characterMaster.name.Contains("Turret1") && masterOptionTracker.optionItemCount > 0)
+                if (Helper.IsRotateUser(characterMaster.name) && masterOptionTracker.optionItemCount > 0)
                 {
                     if (masterOptionTracker.optionItemCount % 2 == 0) currentOptionAngle += rotateOptionAngleSpeed;
                     else currentOptionAngle -= rotateOptionAngleSpeed;
@@ -232,7 +239,7 @@ namespace Chen.GradiusMod
 
         private void ManageFlightPath(int difference)
         {
-            if (characterMaster.name.Contains("Turret1")) return;
+            if (Helper.IsRotateUser(characterMaster.name)) return;
             int flightPathCap = masterOptionTracker.optionItemCount * distanceInterval;
             if (difference > 0) while (flightPath.Count < flightPathCap) flightPath.Add(t.position);
             else if (difference < 0) while (flightPath.Count >= flightPathCap) flightPath.RemoveAt(flightPath.Count - 1);
@@ -389,5 +396,27 @@ namespace Chen.GradiusMod
 
             return (y * amplitude * ampMultiplier) + baseValue;
         }
+    }
+
+    public static class Helper
+    {
+        public static bool IsRotateUser(string name)
+        {
+            return name.Contains("Turret1") || name.Contains("TitanGold");
+        }
+
+        public static float RotateMultiplier(string name)
+        {
+            float multiplier = 1f;
+            if (name.Contains("TitanGold")) multiplier *= 12f;
+            return multiplier;
+        }
+
+        public static void Log(object data)
+        {
+            _.LogMessage(data);
+        }
+
+        public static BepInEx.Logging.ManualLogSource _ => GradiusModPlugin._logger;
     }
 }

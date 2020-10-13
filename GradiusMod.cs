@@ -1,16 +1,12 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
 using R2API;
 using R2API.Networking;
 using R2API.Utils;
-
-#if DEBUG
 using RoR2;
 using System.Collections.Generic;
-#endif
-
 using System.Reflection;
 using TILER2;
 using UnityEngine;
@@ -50,13 +46,14 @@ namespace Chen.GradiusMod
             var i6 = Input.GetKeyDown(KeyCode.F6);
             var i7 = Input.GetKeyDown(KeyCode.F7);
             var i8 = Input.GetKeyDown(KeyCode.F8);
-            if (i3 || i4 || i5 || i6 || i7 || i8)
+            var i9 = Input.GetKeyDown(KeyCode.F9);
+            if (i3 || i4 || i5 || i6 || i7 || i8 || i9)
             {
                 CharacterMaster master = PlayerCharacterMasterController.instances[0].master;
                 CharacterBody body = master.GetBody();
                 Transform trans = body.gameObject.transform;
                 List<PickupIndex> spawnList;
-                if (i8)
+                if (i9)
                 {
                     OptionMasterTracker.SpawnOption(trans.gameObject, 1);
                     return;
@@ -65,7 +62,8 @@ namespace Chen.GradiusMod
                 else if (i4) spawnList = Run.instance.availableTier2DropList;
                 else if (i5) spawnList = Run.instance.availableTier3DropList;
                 else if (i6) spawnList = Run.instance.availableEquipmentDropList;
-                else spawnList = Run.instance.availableLunarDropList;
+                else if (i7) spawnList = Run.instance.availableLunarDropList;
+                else spawnList = Run.instance.availableBossDropList;
                 PickupDropletController.CreatePickupDroplet(spawnList[Run.instance.spawnRng.RangeInt(0, spawnList.Count)], trans.position, new Vector3(0f, -5f, 0f));
             }
         }

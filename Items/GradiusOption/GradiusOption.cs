@@ -1,5 +1,6 @@
 ﻿using EntityStates;
 using EntityStates.Drone.DroneWeapon;
+using EntityStates.TitanMonster;
 using R2API.Networking;
 using RoR2;
 using RoR2.CharacterAI;
@@ -89,7 +90,7 @@ namespace Chen.GradiusMod
         public static uint loseOptionSoundId = 2603869165;
         public static uint loseOptionLowSoundId = 4084766013;
 
-        private static readonly List<string> DronesList = new List<string>
+        private static readonly List<string> MinionsList = new List<string>
         {
             "BackupDrone",
             "BackupDroneOld",
@@ -101,7 +102,9 @@ namespace Chen.GradiusMod
             "MegaDrone",
             "DroneMissile",
             "MissileDrone",
-            "Turret1"
+            "Turret1",
+            "TitanGold",
+            "BeetleGuard"
         };
 
         public GradiusOption()
@@ -166,6 +169,18 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter += HealBeam_OnEnter;
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit += HealBeam_OnExit;
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter += StartHealBeam_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter += ChargeMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit += ChargeMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.Update += ChargeMegaLaser_Update;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter += FireMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnExit += FireMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate += FireGoldMegaLaser_FixedUpdate;
+            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack += FireGoldFist_PlacePredictedAttack;
+            On.EntityStates.TitanMonster.FireFist.OnEnter += FireFist_OnEnter;
+            On.EntityStates.TitanMonster.FireFist.OnExit += FireFist_OnExit;
+            On.EntityStates.TitanMonster.RechargeRocks.OnEnter += RechargeRocks_OnEnter;
+            On.EntityStates.TitanMonster.RechargeRocks.OnExit += RechargeRocks_OnExit;
+            On.RoR2.TitanRockController.Start += TitanRockController_Start;
         }
 
         protected override void UnloadBehavior()
@@ -183,14 +198,27 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter -= HealBeam_OnEnter;
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit -= HealBeam_OnExit;
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.Update -= ChargeMegaLaser_Update;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter -= FireMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnExit -= FireMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate -= FireGoldMegaLaser_FixedUpdate;
+            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack -= FireGoldFist_PlacePredictedAttack;
+            On.EntityStates.TitanMonster.FireFist.OnEnter -= FireFist_OnEnter;
+            On.EntityStates.TitanMonster.FireFist.OnExit -= FireFist_OnExit;
+            On.EntityStates.TitanMonster.RechargeRocks.OnEnter -= RechargeRocks_OnEnter;
+            On.EntityStates.TitanMonster.RechargeRocks.OnExit -= RechargeRocks_OnExit;
+            On.RoR2.TitanRockController.Start -= TitanRockController_Start;
         }
 
         private CharacterBody CharacterMaster_SpawnBody(On.RoR2.CharacterMaster.orig_SpawnBody orig, CharacterMaster self, GameObject bodyPrefab, Vector3 position, Quaternion rotation)
         {
             // This hook is only ran in the server.
             CharacterBody result = orig(self, bodyPrefab, position, rotation);
-            if (result && NetworkServer.active && FilterDrones(result.name) && self.minionOwnership)
+            if (result && NetworkServer.active && FilterMinions(result.name) && self.minionOwnership)
             {
+                AssignAurelioniteOwner(result);
                 CharacterMaster masterMaster = self.minionOwnership.ownerMaster;
                 if (masterMaster)
                 {
@@ -577,6 +605,223 @@ namespace Chen.GradiusMod
             });
         }
 
+        private void ChargeMegaLaser_OnEnter(On.EntityStates.TitanMonster.ChargeMegaLaser.orig_OnEnter orig, ChargeMegaLaser self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                Transform transform = option.transform;
+                if (self.effectPrefab)
+                {
+                    behavior.laserChargeEffect = Object.Instantiate(self.effectPrefab, transform.position, transform.rotation);
+                    behavior.laserChargeEffect.transform.parent = transform;
+                    ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
+                    if (component) component.newDuration = self.duration;
+                }
+                if (self.laserPrefab)
+                {
+                    behavior.laserFireEffect = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
+                    behavior.laserFireEffect.transform.parent = transform;
+                    behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
+                }
+            });
+        }
+
+        private void ChargeMegaLaser_OnExit(On.EntityStates.TitanMonster.ChargeMegaLaser.orig_OnExit orig, ChargeMegaLaser self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
+                if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
+                if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserFireEffect);
+            });
+        }
+
+        private void ChargeMegaLaser_Update(On.EntityStates.TitanMonster.ChargeMegaLaser.orig_Update orig, ChargeMegaLaser self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (behavior.laserFireEffect && behavior.laserLineEffect)
+                {
+                    float range = 1000f;
+                    Vector3 position = option.transform.position;
+                    Vector3 direction = self.GetAimRay().direction;
+                    if (target) direction = target.transform.position - position;
+                    else if (self.lockedOnHurtBox) direction = self.lockedOnHurtBox.transform.position - position;
+
+                    Vector3 point = direction.normalized * range;
+                    if (Physics.Raycast(position, point, out RaycastHit raycastHit, range, LayerIndex.world.mask | LayerIndex.defaultLayer.mask))
+                    {
+                        point = raycastHit.point;
+                    }
+
+                    behavior.laserLineEffect.SetPosition(0, position);
+                    behavior.laserLineEffect.SetPosition(1, point);
+
+                    float indicatorSize;
+                    if (self.duration - self.age > .5f) indicatorSize = self.age / self.duration;
+                    else indicatorSize = (self.laserOn ? 1f : 0f);
+                    indicatorSize *= ChargeMegaLaser.laserMaxWidth;
+                    behavior.laserLineEffect.startWidth = indicatorSize;
+                    behavior.laserLineEffect.endWidth = indicatorSize;
+                }
+            });
+        }
+
+        private void FireMegaLaser_OnEnter(On.EntityStates.TitanMonster.FireMegaLaser.orig_OnEnter orig, FireMegaLaser self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                behavior.laserFireEffect = Object.Instantiate(self.laserPrefab, option.transform.position, option.transform.rotation);
+                behavior.laserFireEffect.transform.parent = option.transform;
+                behavior.laserChildLocator = behavior.laserFireEffect.GetComponent<ChildLocator>();
+                behavior.laserFireEffectEnd = behavior.laserChildLocator.FindChild("LaserEnd");
+            });
+        }
+
+        private void FireMegaLaser_OnExit(On.EntityStates.TitanMonster.FireMegaLaser.orig_OnExit orig, FireMegaLaser self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
+                if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
+                if (behavior.laserFireEffectEnd) EntityState.Destroy(behavior.laserFireEffectEnd);
+            });
+        }
+
+        private void FireGoldMegaLaser_FixedUpdate(On.EntityStates.TitanMonster.FireGoldMegaLaser.orig_FixedUpdate orig, FireGoldMegaLaser self)
+        {
+            float oldFireStopwatch = self.fireStopwatch + Time.fixedDeltaTime;
+            float oldProjectileStopwatch = self.projectileStopwatch + Time.fixedDeltaTime * self.attackSpeedStat;
+            orig(self);
+            if (self.isAuthority)
+            {
+                if (!self.lockedOnHurtBox && self.foundAnyTarget) return;
+                if ((!self.inputBank || !self.inputBank.skill4.down) && self.stopwatch > FireMegaLaser.minimumDuration) return;
+                if (self.stopwatch > FireMegaLaser.maximumDuration) return;
+            }
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                Vector3 position = option.transform.position;
+                Vector3 direction = self.GetAimRay().direction;
+                if (target) direction = target.transform.position - position;
+                else if (self.lockedOnHurtBox) direction = self.lockedOnHurtBox.transform.position - position;
+
+                Vector3 point = direction.normalized * FireMegaLaser.maxDistance;
+                if (Physics.Raycast(position, point, out RaycastHit raycastHit1, FireMegaLaser.maxDistance,
+                                    LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.Ignore))
+                {
+                    point = raycastHit1.point;
+                }
+                Ray ray = new Ray(position, point - position);
+                bool flag = false;
+                if (behavior.laserFireEffect && behavior.laserChildLocator)
+                {
+                    if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit raycastHit2, ray.direction.magnitude,
+                                        LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                    {
+                        point = raycastHit2.point;
+                        if (Physics.Raycast(point - ray.direction * .1f, -ray.direction, out RaycastHit raycastHit3, raycastHit2.distance,
+                                            LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                        {
+                            point = ray.GetPoint(0.1f);
+                            flag = true;
+                        }
+                    }
+                    behavior.laserFireEffect.transform.rotation = Util.QuaternionSafeLookRotation(point - position);
+                    behavior.laserFireEffectEnd.transform.position = point;
+                }
+
+                if (oldFireStopwatch > 1f / FireMegaLaser.fireFrequency)
+                {
+                    if (!flag) self.FireBullet(option.transform, ray, "MuzzleLaser", (point - ray.origin).magnitude + .1f);
+                }
+                if (self.isAuthority && oldProjectileStopwatch >= 1f / FireGoldMegaLaser.projectileFireFrequency)
+                {
+                    direction = Util.ApplySpread(direction, FireGoldMegaLaser.projectileMinSpread, FireGoldMegaLaser.projectileMaxSpread, 1f, 1f, 0f, 0f);
+                    ProjectileManager.instance.FireProjectile(FireGoldMegaLaser.projectilePrefab, position, Util.QuaternionSafeLookRotation(direction),
+                                                              self.gameObject, self.damageStat * FireMegaLaser.damageCoefficient, 0f,
+                                                              Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
+                }
+            });
+        }
+
+        private void FireGoldFist_PlacePredictedAttack(On.EntityStates.TitanMonster.FireGoldFist.orig_PlacePredictedAttack orig, FireGoldFist self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                int fistNumber = 0;
+                float multiplier = Helper.RotateMultiplier(behavior.owner.name);
+                Vector3 predictedTargetPosition = self.predictedTargetPosition + behavior.DecidePosition(behavior.ownerOt.currentOptionAngle) * multiplier;
+                Vector3 a = Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f) * Vector3.forward;
+                int halfCount = FireGoldFist.fistCount / 2;
+                for (int i = -halfCount; i < halfCount; i++)
+                {
+                    Vector3 fistPosition = predictedTargetPosition + a * FireGoldFist.distanceBetweenFists * i;
+                    if (Physics.Raycast(new Ray(fistPosition + Vector3.up * 30f, Vector3.down), out RaycastHit raycastHit, 60f,
+                                        LayerIndex.world.mask, QueryTriggerInteraction.Ignore))
+                    {
+                        fistPosition = raycastHit.point;
+                    }
+                    self.PlaceSingleDelayBlast(fistPosition, FireGoldFist.delayBetweenFists * fistNumber++);
+                }
+            });
+        }
+
+        private void FireFist_OnEnter(On.EntityStates.TitanMonster.FireFist.orig_OnEnter orig, FireFist self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                behavior.fistChargeEffect = Object.Instantiate(self.chargeEffectPrefab, option.transform);
+            });
+        }
+
+        private void FireFist_OnExit(On.EntityStates.TitanMonster.FireFist.orig_OnExit orig, FireFist self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);
+            });
+        }
+
+        private void RechargeRocks_OnEnter(On.EntityStates.TitanMonster.RechargeRocks.orig_OnEnter orig, RechargeRocks self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (RechargeRocks.effectPrefab)
+                {
+                    behavior.rockChargeEffect = Object.Instantiate(RechargeRocks.effectPrefab, option.transform.position, option.transform.rotation);
+                    behavior.rockChargeEffect.transform.parent = option.transform;
+                    ScaleParticleSystemDuration component = behavior.rockChargeEffect.GetComponent<ScaleParticleSystemDuration>();
+                    if (component) component.newDuration = self.duration;
+                }
+            });
+        }
+
+        private void RechargeRocks_OnExit(On.EntityStates.TitanMonster.RechargeRocks.orig_OnExit orig, RechargeRocks self)
+        {
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (behavior.rockChargeEffect) EntityState.Destroy(behavior.rockChargeEffect);
+            });
+        }
+
+        private void TitanRockController_Start(On.RoR2.TitanRockController.orig_Start orig, TitanRockController self)
+        {
+            orig(self);
+            OptionTracker tracker = self.ownerCharacterBody.GetComponent<OptionTracker>();
+            if (tracker) self.fireInterval /= tracker.existingOptions.Count + 1;
+        }
+
         private void LoopAllMinionOwnerships(CharacterMaster ownerMaster, Action<GameObject> actionToRun)
         {
             MinionOwnership[] minionOwnerships = Object.FindObjectsOfType<MinionOwnership>();
@@ -585,7 +830,7 @@ namespace Chen.GradiusMod
                 if (minionOwnership && minionOwnership.ownerMaster && minionOwnership.ownerMaster == ownerMaster)
                 {
                     CharacterMaster minionMaster = minionOwnership.GetComponent<CharacterMaster>();
-                    if (minionMaster && FilterDrones(minionMaster.name))
+                    if (minionMaster && FilterMinions(minionMaster.name))
                     {
                         CharacterBody minionBody = minionMaster.GetBody();
                         if (minionBody)
@@ -643,6 +888,25 @@ namespace Chen.GradiusMod
             if (!queryTracker || tracker) actionToRun(networkIdentity, tracker);
         }
 
-        private bool FilterDrones(string name) => DronesList.Exists((item) => name.Contains(item));
+        private bool FilterMinions(string name) => MinionsList.Exists((item) => name.Contains(item));
+
+        private void AssignAurelioniteOwner(CharacterBody body)
+        {
+            if (body.name.Contains("TitanGold"))
+            {
+                CharacterMaster trueMaster = null;
+                foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
+                {
+                    if (!trueMaster || pcmc.master.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP))
+                    {
+                        trueMaster = pcmc.master;
+                    }
+                }
+                if (trueMaster)
+                {
+                    body.master.minionOwnership.SetOwner(trueMaster);
+                }
+            }
+        }
     }
 }
