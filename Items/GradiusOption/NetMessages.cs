@@ -258,4 +258,59 @@ namespace Chen.GradiusMod
             behavior.target = target;
         }
     }
+
+    public class SyncAurelioniteOwner : INetMessage
+    {
+        private NetworkInstanceId masterNetId;
+        private NetworkInstanceId aurelioniteNetId;
+
+        public SyncAurelioniteOwner()
+        {
+        }
+
+        public SyncAurelioniteOwner(NetworkInstanceId masterNetId, NetworkInstanceId aurelioniteNetId)
+        {
+            this.masterNetId = masterNetId;
+            this.aurelioniteNetId = aurelioniteNetId;
+        }
+
+        public void Serialize(NetworkWriter writer)
+        {
+            writer.Write(masterNetId);
+            writer.Write(aurelioniteNetId);
+        }
+
+        public void Deserialize(NetworkReader reader)
+        {
+            masterNetId = reader.ReadNetworkId();
+            aurelioniteNetId = reader.ReadNetworkId();
+        }
+
+        public void OnReceived()
+        {
+            if (NetworkServer.active) return;
+            GameObject masterObject = Util.FindNetworkObject(masterNetId);
+            if (!masterObject)
+            {
+                GradiusModPlugin._logger.LogWarning("SyncAurelioniteOwner: masterObject is null.");
+                return;
+            }
+            GameObject goldObject = Util.FindNetworkObject(aurelioniteNetId);
+            if (!goldObject)
+            {
+                GradiusModPlugin._logger.LogWarning("SyncAurelioniteOwner: goldObject is null.");
+                return;
+            }
+            CharacterMaster masterMaster = masterObject.GetComponent<CharacterMaster>();
+            CharacterMaster goldMaster = goldObject.GetComponent<CharacterMaster>();
+            if (!masterMaster || !goldMaster)
+            {
+                GradiusModPlugin._logger.LogWarning("SyncAurelioniteOwner: One of the master components is null.");
+                return;
+            }
+            goldMaster.minionOwnership.ownerMasterId = masterNetId;
+            MinionOwnership.MinionGroup.SetMinionOwner(goldMaster.minionOwnership, masterNetId);
+            GradiusModPlugin._logger.LogMessage("SyncAurelioniteOwner: Set that owner.");
+        }
+    }
 }

@@ -138,6 +138,7 @@ namespace Chen.GradiusMod
                 NetworkingAPI.RegisterMessageType<SpawnOptionsForClients>();
                 NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
                 if (includeModelInsideOrb) NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
+                NetworkingAPI.RegisterMessageType<SyncAurelioniteOwner>();
 
                 if (Compat_ItemStats.enabled)
                 {
@@ -218,7 +219,7 @@ namespace Chen.GradiusMod
             CharacterBody result = orig(self, bodyPrefab, position, rotation);
             if (result && NetworkServer.active && FilterMinions(result.name) && self.minionOwnership)
             {
-                AssignAurelioniteOwner(result);
+                AssignAurelioniteOwner(result.master);
                 CharacterMaster masterMaster = self.minionOwnership.ownerMaster;
                 if (masterMaster)
                 {
@@ -241,8 +242,7 @@ namespace Chen.GradiusMod
             orig(self);
             if (self.master)
             {
-                GameObject masterObject = self.master.gameObject;
-                OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(masterObject);
+                OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(self.master);
                 int newCount = GetCount(self);
                 int oldCount = masterTracker.optionItemCount;
                 int diff = newCount - oldCount;
@@ -890,23 +890,28 @@ namespace Chen.GradiusMod
 
         private bool FilterMinions(string name) => MinionsList.Exists((item) => name.Contains(item));
 
-        private void AssignAurelioniteOwner(CharacterBody body)
+        private void AssignAurelioniteOwner(CharacterMaster goldMaster)
         {
-            if (body.name.Contains("TitanGold"))
+            if (!goldMaster.name.Contains("TitanGold")) return;
+            CharacterMaster trueMaster = null;
+            foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
             {
-                CharacterMaster trueMaster = null;
-                foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
+                if (!trueMaster || pcmc.master.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP))
                 {
-                    if (!trueMaster || pcmc.master.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP))
-                    {
-                        trueMaster = pcmc.master;
-                    }
-                }
-                if (trueMaster)
-                {
-                    body.master.minionOwnership.SetOwner(trueMaster);
+                    trueMaster = pcmc.master;
                 }
             }
+            if (!trueMaster) return;
+            goldMaster.minionOwnership.SetOwner(trueMaster);
+            OptionMasterTracker tracker = OptionMasterTracker.GetOrCreateComponent(trueMaster);
+            NetworkIdentity netTrueMaster = trueMaster.gameObject.GetComponent<NetworkIdentity>();
+            NetworkIdentity netGoldMaster = goldMaster.gameObject.GetComponent<NetworkIdentity>();
+            if (!netTrueMaster || !netGoldMaster)
+            {
+                Helper._.LogWarning("AssignAurelioniteOwner: Network Identity is missing!");
+                return;
+            }
+            tracker.aurelioniteOwner = Tuple.Create(netTrueMaster.netId, netGoldMaster.netId);
         }
     }
 }

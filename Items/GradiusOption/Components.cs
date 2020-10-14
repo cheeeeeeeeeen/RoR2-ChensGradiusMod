@@ -261,21 +261,31 @@ namespace Chen.GradiusMod
     {
         public int optionItemCount = 0;
         public List<Tuple<GameObjectType, NetworkInstanceId, short>> netIds { get; private set; } = new List<Tuple<GameObjectType, NetworkInstanceId, short>>();
+        public Tuple<NetworkInstanceId, NetworkInstanceId> aurelioniteOwner { get; set; } = null;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void FixedUpdate()
         {
-            if (!PauseScreenController.paused && NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && netIds.Count > 0)
+            if (!PauseScreenController.paused && NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady())
             {
-                Tuple<GameObjectType, NetworkInstanceId, short>[] listCopy = new Tuple<GameObjectType, NetworkInstanceId, short>[netIds.Count];
-                netIds.CopyTo(listCopy);
-                netIds.Clear();
-                for (int i = 0; i < listCopy.Length; i++)
+                if (netIds.Count > 0)
                 {
-                    GameObjectType bodyOrMaster = listCopy[i].Item1;
-                    NetworkInstanceId netId = listCopy[i].Item2;
-                    short numbering = listCopy[i].Item3;
-                    StartCoroutine(SpawnOptionForClient(bodyOrMaster, netId, numbering));
+                    Tuple<GameObjectType, NetworkInstanceId, short>[] listCopy = new Tuple<GameObjectType, NetworkInstanceId, short>[netIds.Count];
+                    netIds.CopyTo(listCopy);
+                    netIds.Clear();
+                    for (int i = 0; i < listCopy.Length; i++)
+                    {
+                        GameObjectType bodyOrMaster = listCopy[i].Item1;
+                        NetworkInstanceId netId = listCopy[i].Item2;
+                        short numbering = listCopy[i].Item3;
+                        StartCoroutine(SpawnOptionForClient(bodyOrMaster, netId, numbering));
+                    }
+                }
+                if (aurelioniteOwner != null)
+                {
+                    NetworkInstanceId masterId = aurelioniteOwner.Item1;
+                    NetworkInstanceId goldId = aurelioniteOwner.Item2;
+                    StartCoroutine(SyncAurelioniteForClient(masterId, goldId));
                 }
             }
         }
@@ -284,6 +294,13 @@ namespace Chen.GradiusMod
         {
             yield return new WaitForSeconds(GradiusOption.instance.spawnSyncSeconds);
             new SpawnOptionsForClients(bodyOrMaster, netId, numbering).Send(NetworkDestination.Clients);
+        }
+
+        private IEnumerator SyncAurelioniteForClient(NetworkInstanceId masterId, NetworkInstanceId goldId)
+        {
+            aurelioniteOwner = null;
+            yield return new WaitForSeconds(GradiusOption.instance.spawnSyncSeconds);
+            new SyncAurelioniteOwner(masterId, goldId).Send(NetworkDestination.Clients);
         }
 
         public static OptionMasterTracker GetOrCreateComponent(CharacterMaster me)
