@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.SpawnOptionsForClients;
-using static Chen.GradiusMod.SyncFlamethrowerEffectForClients;
 
 namespace Chen.GradiusMod
 {
@@ -105,11 +104,14 @@ namespace Chen.GradiusMod
         public CharacterMaster characterMaster { get; private set; }
         public CharacterBody characterBody { get; private set; }
 
-        public List<Tuple<MessageType, NetworkInstanceId, short, float, Vector3>> netIds { get; private set; } =
-            new List<Tuple<MessageType, NetworkInstanceId, short, float, Vector3>>();
+        public List<Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>> flameNetIds { get; private set; } =
+            new List<Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>>();
 
         public List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>> targetIds { get; private set; } =
             new List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>>();
+
+        public List<Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>> aurelioniteNetIds { get; private set; } =
+            new List<Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>>();
 
         private Vector3 previousPosition = new Vector3();
         private bool init = true;
@@ -143,6 +145,7 @@ namespace Chen.GradiusMod
                 previousPosition = t.position;
             }
             SyncFlamethrowerEffects();
+            SyncAurelioniteEffects();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -202,19 +205,42 @@ namespace Chen.GradiusMod
 
         private void SyncFlamethrowerEffects()
         {
-            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && netIds.Count > 0)
+            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && flameNetIds.Count > 0)
             {
-                Tuple<MessageType, NetworkInstanceId, short, float, Vector3>[] listCopy = new Tuple<MessageType, NetworkInstanceId, short, float, Vector3>[netIds.Count];
-                netIds.CopyTo(listCopy);
-                netIds.Clear();
+                Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>[] listCopy =
+                    new Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>[flameNetIds.Count];
+                flameNetIds.CopyTo(listCopy);
+                flameNetIds.Clear();
                 for (int i = 0; i < listCopy.Length; i++)
                 {
-                    MessageType messageType = listCopy[i].Item1;
+                    SyncFlamethrowerEffectForClients.MessageType messageType = listCopy[i].Item1;
                     NetworkInstanceId netId = listCopy[i].Item2;
                     short numbering = listCopy[i].Item3;
                     float duration = listCopy[i].Item4;
                     Vector3 direction = listCopy[i].Item5;
                     new SyncFlamethrowerEffectForClients(messageType, netId, numbering, duration, direction).Send(NetworkDestination.Clients);
+                }
+            }
+        }
+
+        private void SyncAurelioniteEffects()
+        {
+            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && aurelioniteNetIds.Count > 0)
+            {
+                Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>[] listCopy =
+                    new Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>[aurelioniteNetIds.Count];
+                aurelioniteNetIds.CopyTo(listCopy);
+                aurelioniteNetIds.Clear();
+                for (int i = 0; i < listCopy.Length; i++)
+                {
+                    SyncAurelioniteEffectsForClients.MessageType messageType = listCopy[i].Item1;
+                    NetworkInstanceId netId = listCopy[i].Item2;
+                    short numbering = listCopy[i].Item3;
+                    float duration = listCopy[i].Item4;
+                    Vector3 point = listCopy[i].Item5;
+                    float indicatorSize = listCopy[i].Item6;
+                    new SyncAurelioniteEffectsForClients(messageType, netId, numbering, duration, point, indicatorSize).Send(NetworkDestination.Clients);
+                    Helper.Log(listCopy[i]);
                 }
             }
         }
@@ -429,10 +455,7 @@ namespace Chen.GradiusMod
             return multiplier;
         }
 
-        public static void Log(object data)
-        {
-            _.LogMessage(data);
-        }
+        public static void Log(object data) => _.LogMessage(data);
 
         public static BepInEx.Logging.ManualLogSource _ => GradiusModPlugin._logger;
     }

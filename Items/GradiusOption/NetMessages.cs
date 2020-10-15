@@ -1,4 +1,5 @@
 ﻿using EntityStates;
+using EntityStates.TitanMonster;
 using R2API.Networking.Interfaces;
 using RoR2;
 using UnityEngine;
@@ -45,7 +46,7 @@ namespace Chen.GradiusMod
             GameObject ownerObject = Util.FindNetworkObject(ownerId);
             if (!ownerObject)
             {
-                GradiusModPlugin._logger.LogWarning("SpawnOptionsForClients: ownerObject is null.");
+                Helper._.LogWarning("SpawnOptionsForClients: ownerObject is null.");
                 return;
             }
             switch (bodyOrMaster)
@@ -58,7 +59,7 @@ namespace Chen.GradiusMod
                     CharacterMaster ownerMaster = ownerObject.GetComponent<CharacterMaster>();
                     if (!ownerMaster)
                     {
-                        GradiusModPlugin._logger.LogWarning("SpawnOptionsForClients: ownerMaster is null.");
+                        Helper._.LogWarning("SpawnOptionsForClients: ownerMaster is null.");
                         return;
                     }
                     TrySpawnOption(ownerMaster.GetBody());
@@ -70,7 +71,7 @@ namespace Chen.GradiusMod
         {
             if (!ownerBody)
             {
-                GradiusModPlugin._logger.LogWarning("SpawnOptionsForClients: ownerBody is null.");
+                Helper._.LogWarning("SpawnOptionsForClients: ownerBody is null.");
                 return;
             }
             OptionMasterTracker.SpawnOption(ownerBody.gameObject, numbering);
@@ -128,20 +129,20 @@ namespace Chen.GradiusMod
             GameObject bodyObject = Util.FindNetworkObject(ownerBodyId);
             if (!bodyObject)
             {
-                GradiusModPlugin._logger.LogWarning($"SyncFlamethrowerEffectForClients: bodyObject is null.");
+                Helper._.LogWarning($"SyncFlamethrowerEffectForClients: bodyObject is null.");
                 return;
             }
             OptionTracker tracker = bodyObject.GetComponent<OptionTracker>();
             if (!tracker)
             {
-                GradiusModPlugin._logger.LogWarning($"SyncFlamethrowerEffectForClients: tracker is null.");
+                Helper._.LogWarning($"SyncFlamethrowerEffectForClients: tracker is null.");
                 return;
             }
             GameObject option = tracker.existingOptions[optionNumbering - 1];
             OptionBehavior behavior = option.GetComponent<OptionBehavior>();
             if (!behavior)
             {
-                GradiusModPlugin._logger.LogWarning($"SyncFlamethrowerEffectForClients: behavior is null.");
+                Helper._.LogWarning($"SyncFlamethrowerEffectForClients: behavior is null.");
                 return;
             }
             switch (messageType)
@@ -214,13 +215,13 @@ namespace Chen.GradiusMod
             GameObject ownerObject = Util.FindNetworkObject(ownerId);
             if (!ownerObject)
             {
-                GradiusModPlugin._logger.LogWarning("SyncOptionTargetForClients: ownerObject is null.");
+                Helper._.LogWarning("SyncOptionTargetForClients: ownerObject is null.");
                 return;
             }
             GameObject targetObject = Util.FindNetworkObject(targetId);
             if (!targetObject)
             {
-                GradiusModPlugin._logger.LogWarning("SyncOptionTargetForClients: targetObject is null.");
+                Helper._.LogWarning("SyncOptionTargetForClients: targetObject is null.");
                 return;
             }
             OptionTracker tracker = null;
@@ -234,13 +235,13 @@ namespace Chen.GradiusMod
                     CharacterMaster ownerMaster = ownerObject.GetComponent<CharacterMaster>();
                     if (!ownerMaster)
                     {
-                        GradiusModPlugin._logger.LogWarning("SpawnOptionsForClients: ownerMaster is null.");
+                        Helper._.LogWarning("SpawnOptionsForClients: ownerMaster is null.");
                         return;
                     }
                     GameObject bodyObject = ownerMaster.GetBodyObject();
                     if (!bodyObject)
                     {
-                        GradiusModPlugin._logger.LogWarning("SpawnOptionsForClients: bodyObject is null.");
+                        Helper._.LogWarning("SpawnOptionsForClients: bodyObject is null.");
                         return;
                     }
                     tracker = bodyObject.GetComponent<OptionTracker>();
@@ -292,25 +293,187 @@ namespace Chen.GradiusMod
             GameObject masterObject = Util.FindNetworkObject(masterNetId);
             if (!masterObject)
             {
-                GradiusModPlugin._logger.LogWarning("SyncAurelioniteOwner: masterObject is null.");
+                Helper._.LogWarning("SyncAurelioniteOwner: masterObject is null.");
                 return;
             }
             GameObject goldObject = Util.FindNetworkObject(aurelioniteNetId);
             if (!goldObject)
             {
-                GradiusModPlugin._logger.LogWarning("SyncAurelioniteOwner: goldObject is null.");
+                Helper._.LogWarning("SyncAurelioniteOwner: goldObject is null.");
                 return;
             }
             CharacterMaster masterMaster = masterObject.GetComponent<CharacterMaster>();
             CharacterMaster goldMaster = goldObject.GetComponent<CharacterMaster>();
             if (!masterMaster || !goldMaster)
             {
-                GradiusModPlugin._logger.LogWarning("SyncAurelioniteOwner: One of the master components is null.");
+                Helper._.LogWarning("SyncAurelioniteOwner: One of the master components is null.");
                 return;
             }
             goldMaster.minionOwnership.ownerMasterId = masterNetId;
             MinionOwnership.MinionGroup.SetMinionOwner(goldMaster.minionOwnership, masterNetId);
-            GradiusModPlugin._logger.LogMessage("SyncAurelioniteOwner: Set that owner.");
+        }
+    }
+
+    public class SyncAurelioniteEffectsForClients : INetMessage
+    {
+        private MessageType messageType;
+        private NetworkInstanceId ownerBodyId;
+        private short optionNumbering;
+        private float duration;
+        private Vector3 point;
+        private float indicatorSize;
+
+        public SyncAurelioniteEffectsForClients()
+        {
+        }
+
+        public SyncAurelioniteEffectsForClients(MessageType messageType, NetworkInstanceId id, short numbering, float duration, Vector3 point, float indicatorSize)
+        {
+            this.messageType = messageType;
+            ownerBodyId = id;
+            optionNumbering = numbering;
+            this.duration = duration;
+            this.point = point;
+            this.indicatorSize = indicatorSize;
+        }
+
+        public void Serialize(NetworkWriter writer)
+        {
+            writer.Write((byte)messageType);
+            writer.Write(ownerBodyId);
+            writer.Write(optionNumbering);
+            writer.Write(duration);
+            writer.Write(point);
+            writer.Write(indicatorSize);
+        }
+
+        public void Deserialize(NetworkReader reader)
+        {
+            messageType = (MessageType)reader.ReadByte();
+            ownerBodyId = reader.ReadNetworkId();
+            optionNumbering = reader.ReadInt16();
+            duration = reader.ReadSingle();
+            point = reader.ReadVector3();
+            indicatorSize = reader.ReadSingle();
+        }
+
+        public void OnReceived()
+        {
+            if (NetworkServer.active) return;
+            GameObject goldObject = Util.FindNetworkObject(ownerBodyId);
+            if (!goldObject)
+            {
+                Helper._.LogWarning("SyncAurelioniteEffectsForClients: goldObject is null.");
+                return;
+            }
+            OptionTracker tracker = goldObject.GetComponent<OptionTracker>();
+            if (!tracker)
+            {
+                Helper._.LogWarning($"SyncAurelioniteEffectsForClients: tracker is null.");
+                return;
+            }
+            GameObject option = tracker.existingOptions[optionNumbering - 1];
+            OptionBehavior behavior = option.GetComponent<OptionBehavior>();
+            if (!behavior)
+            {
+                Helper._.LogWarning($"SyncAurelioniteEffectsForClients: behavior is null.");
+                return;
+            }
+
+            Transform transform = option.transform;
+            Vector3 position = transform.position;
+            switch (messageType)
+            {
+                case MessageType.CreateLaserCharge:
+                    Helper.Log("SyncAurelioniteEffectsForClients: Performing CreateLaserCharge.");
+                    if (!(EntityState.Instantiate(typeof(ChargeMegaLaser)) is ChargeMegaLaser cmlState))
+                    {
+                        Helper._.LogWarning($"SyncAurelioniteEffectsForClients: cmlState is null.");
+                        return;
+                    }
+                    if (cmlState.effectPrefab)
+                    {
+                        Helper.Log("SyncAurelioniteEffectsForClients: Found effect prefab.");
+                        behavior.laserChargeEffect = Object.Instantiate(cmlState.effectPrefab, position, transform.rotation);
+                        behavior.laserChargeEffect.transform.parent = transform;
+                        ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
+                        if (component) component.newDuration = duration;
+                    }
+                    if (cmlState.laserPrefab)
+                    {
+                        Helper.Log("SyncAurelioniteEffectsForClients: Found laser prefab.");
+                        behavior.laserFireEffect = Object.Instantiate(cmlState.laserPrefab, position, transform.rotation);
+                        behavior.laserFireEffect.transform.parent = transform;
+                        behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
+                    }
+                    break;
+
+                case MessageType.DestroyLaserCharge:
+                    Helper.Log("SyncAurelioniteEffectsForClients: Performing DestroyLaserCharge.");
+                    if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
+                    if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
+                    if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserLineEffect);
+                    break;
+
+                case MessageType.UpdateLaserCharge:
+                    if (behavior.laserFireEffect && behavior.laserLineEffect)
+                    {
+                        behavior.laserLineEffect.SetPosition(0, position);
+                        behavior.laserLineEffect.SetPosition(1, point);
+                        behavior.laserLineEffect.startWidth = indicatorSize;
+                        behavior.laserLineEffect.endWidth = indicatorSize;
+                    }
+                    break;
+
+                case MessageType.CreateLaserFire:
+                    if (!(EntityState.Instantiate(typeof(FireMegaLaser)) is FireMegaLaser fmlState))
+                    {
+                        Helper._.LogWarning($"SyncAurelioniteEffectsForClients: fmlState is null.");
+                        return;
+                    }
+                    if (!fmlState.laserPrefab) return;
+                    behavior.laserFireEffect = Object.Instantiate(fmlState.laserPrefab, position, transform.rotation);
+                    behavior.laserFireEffect.transform.parent = transform;
+                    behavior.laserChildLocator = behavior.laserFireEffect.GetComponent<ChildLocator>();
+                    behavior.laserFireEffectEnd = behavior.laserChildLocator.FindChild("LaserEnd");
+                    break;
+
+                case MessageType.DestroyLaserFire:
+                    if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
+                    if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
+                    if (behavior.laserFireEffectEnd) EntityState.Destroy(behavior.laserFireEffectEnd);
+                    break;
+
+                case MessageType.FixedUpdateGoldLaserFire:
+                    behavior.laserFireEffect.transform.rotation = Util.QuaternionSafeLookRotation(point - position);
+                    behavior.laserFireEffectEnd.transform.position = point;
+                    break;
+
+                case MessageType.CreateFist:
+                    if (!(EntityState.Instantiate(typeof(FireFist)) is FireFist ffState))
+                    {
+                        Helper._.LogWarning($"SyncAurelioniteEffectsForClients: ffState is null.");
+                        return;
+                    }
+                    if (ffState.chargeEffectPrefab) behavior.fistChargeEffect = Object.Instantiate(ffState.chargeEffectPrefab, transform);
+                    break;
+
+                case MessageType.DestroyFist:
+                    if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);
+                    break;
+            }
+        }
+
+        public enum MessageType : byte
+        {
+            CreateLaserCharge,
+            DestroyLaserCharge,
+            UpdateLaserCharge,
+            CreateLaserFire,
+            DestroyLaserFire,
+            FixedUpdateGoldLaserFire,
+            CreateFist,
+            DestroyFist
         }
     }
 }
