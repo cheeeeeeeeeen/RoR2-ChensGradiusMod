@@ -1,4 +1,5 @@
 ﻿using EntityStates;
+using EntityStates.Drone.DroneWeapon;
 using EntityStates.TitanMonster;
 using R2API.Networking.Interfaces;
 using RoR2;
@@ -154,6 +155,7 @@ namespace Chen.GradiusMod
                     break;
 
                 case MessageType.Destroy:
+                    if (GradiusOption.instance.flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.endAttackSoundString, option);
                     if (behavior.flamethrower) EntityState.Destroy(behavior.flamethrower);
                     break;
 
@@ -385,7 +387,6 @@ namespace Chen.GradiusMod
             switch (messageType)
             {
                 case MessageType.CreateLaserCharge:
-                    Helper.Log("SyncAurelioniteEffectsForClients: Performing CreateLaserCharge.");
                     if (!(EntityState.Instantiate(typeof(ChargeMegaLaser)) is ChargeMegaLaser cmlState))
                     {
                         Helper._.LogWarning($"SyncAurelioniteEffectsForClients: cmlState is null.");
@@ -393,7 +394,6 @@ namespace Chen.GradiusMod
                     }
                     if (cmlState.effectPrefab)
                     {
-                        Helper.Log("SyncAurelioniteEffectsForClients: Found effect prefab.");
                         behavior.laserChargeEffect = Object.Instantiate(cmlState.effectPrefab, position, transform.rotation);
                         behavior.laserChargeEffect.transform.parent = transform;
                         ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
@@ -401,7 +401,6 @@ namespace Chen.GradiusMod
                     }
                     if (cmlState.laserPrefab)
                     {
-                        Helper.Log("SyncAurelioniteEffectsForClients: Found laser prefab.");
                         behavior.laserFireEffect = Object.Instantiate(cmlState.laserPrefab, position, transform.rotation);
                         behavior.laserFireEffect.transform.parent = transform;
                         behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
@@ -409,7 +408,6 @@ namespace Chen.GradiusMod
                     break;
 
                 case MessageType.DestroyLaserCharge:
-                    Helper.Log("SyncAurelioniteEffectsForClients: Performing DestroyLaserCharge.");
                     if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
                     if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
                     if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserLineEffect);
@@ -432,6 +430,11 @@ namespace Chen.GradiusMod
                         return;
                     }
                     if (!fmlState.laserPrefab) return;
+                    if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy)
+                    {
+                        Util.PlaySound(FireMegaLaser.playAttackSoundString, option);
+                        Util.PlaySound(FireMegaLaser.playLoopSoundString, option);
+                    }
                     behavior.laserFireEffect = Object.Instantiate(fmlState.laserPrefab, position, transform.rotation);
                     behavior.laserFireEffect.transform.parent = transform;
                     behavior.laserChildLocator = behavior.laserFireEffect.GetComponent<ChildLocator>();
@@ -439,6 +442,7 @@ namespace Chen.GradiusMod
                     break;
 
                 case MessageType.DestroyLaserFire:
+                    if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
                     if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
                     if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
                     if (behavior.laserFireEffectEnd) EntityState.Destroy(behavior.laserFireEffectEnd);
@@ -474,6 +478,66 @@ namespace Chen.GradiusMod
             FixedUpdateGoldLaserFire,
             CreateFist,
             DestroyFist
+        }
+    }
+
+    public class SyncSimpleSound : INetMessage
+    {
+        private NetworkInstanceId ownerBodyId;
+        private short optionNumbering;
+        private string soundString;
+        private float scale;
+
+        public SyncSimpleSound()
+        {
+        }
+
+        public SyncSimpleSound(NetworkInstanceId ownerBodyId, short optionNumbering, string soundString, float scale)
+        {
+            this.ownerBodyId = ownerBodyId;
+            this.optionNumbering = optionNumbering;
+            this.soundString = soundString;
+            this.scale = scale;
+        }
+
+        public void Serialize(NetworkWriter writer)
+        {
+            writer.Write(ownerBodyId);
+            writer.Write(optionNumbering);
+            writer.Write(soundString);
+            writer.Write(scale);
+        }
+
+        public void Deserialize(NetworkReader reader)
+        {
+            ownerBodyId = reader.ReadNetworkId();
+            optionNumbering = reader.ReadInt16();
+            soundString = reader.ReadString();
+            scale = reader.ReadSingle();
+        }
+
+        public void OnReceived()
+        {
+            if (NetworkServer.active) return;
+            GameObject bodyObject = Util.FindNetworkObject(ownerBodyId);
+            if (!bodyObject)
+            {
+                Helper._.LogWarning($"SyncSimpleSound: bodyObject is null.");
+                return;
+            }
+            OptionTracker tracker = bodyObject.GetComponent<OptionTracker>();
+            if (!tracker)
+            {
+                Helper._.LogWarning($"SyncSimpleSound: tracker is null.");
+                return;
+            }
+            GameObject option = tracker.existingOptions[optionNumbering - 1];
+            if (soundString == FireGatling.fireGatlingSoundString && !GradiusOption.instance.gatlingSoundCopy) return;
+            if (soundString == FireTurret.attackSoundString && !GradiusOption.instance.gunnerSoundCopy) return;
+            if (soundString == FireMegaTurret.attackSoundString && !GradiusOption.instance.tc280SoundCopy) return;
+
+            if (scale < 0) Util.PlaySound(soundString, option);
+            else Util.PlayScaledSound(soundString, option, scale);
         }
     }
 }

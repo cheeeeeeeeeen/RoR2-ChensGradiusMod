@@ -2,6 +2,7 @@
 using EntityStates.Drone.DroneWeapon;
 using EntityStates.TitanMonster;
 using R2API.Networking;
+using R2API.Networking.Interfaces;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Projectile;
@@ -34,14 +35,28 @@ namespace Chen.GradiusMod
         [AutoItemConfig("Set to true for Options/Multiples of Gatling Turrets to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
         public bool gatlingSoundCopy { get; private set; } = false;
 
+        [AutoItemConfig("Set to true for Options/Multiples of Gunner Drones to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
+        public bool gunnerSoundCopy { get; private set; } = false;
+
+        [AutoItemConfig("Set to true for Options/Multiples of TC-280 drones to generate gun shot sounds. Client only. WARNING: Turning this on may cause earrape.")]
+        public bool tc280SoundCopy { get; private set; } = false;
+
+        [AutoItemConfig("Set to true for Options/Multiples of Aurelionite to generate a mega laser sound. Client only. WARNING: Turning this on may cause earrape.")]
+        public bool aurelioniteMegaLaserSoundCopy { get; private set; } = false;
+
         [AutoItemConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
                         "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
                         "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool flamethrowerOptionSyncEffect { get; private set; } = true;
 
+        [AutoItemConfig("Allows displaying and syncing some of Aurelionite's Options/Multiples. This reduces the effects generated. Damage will stay the same." +
+                        "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                        "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
+        public bool aurelioniteOptionSyncEffect { get; private set; } = true;
+
         [AutoItemConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
                         "Turning this off could lessen resource usage.", AutoItemConfigFlags.PreventNetMismatch)]
-        public bool includeModelInsideOrb { get; private set; } = false;
+        public bool includeModelInsideOrb { get; private set; } = true;
 
         [AutoItemConfig("Amount of delay in seconds for syncing Option Spawning to fire. Increase this if Options are not spawning for clients. Server only. " +
                         "Setting to 0 (not recommended) will have no delay, and Options may not spawn in clients.",
@@ -141,6 +156,7 @@ namespace Chen.GradiusMod
                 if (includeModelInsideOrb) NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
                 NetworkingAPI.RegisterMessageType<SyncAurelioniteOwner>();
                 NetworkingAPI.RegisterMessageType<SyncAurelioniteEffectsForClients>();
+                NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
 
                 if (Compat_ItemStats.enabled)
                 {
@@ -458,6 +474,10 @@ namespace Chen.GradiusMod
             FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (gatlingSoundCopy) Util.PlaySound(FireGatling.fireGatlingSoundString, option);
+                OptionSync(self, (networkIdentity, optionTracker) =>
+                {
+                    new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireGatling.fireGatlingSoundString, -1).Send(NetworkDestination.Clients);
+                }, false);
                 if (FireGatling.effectPrefab)
                 {
                     EffectManager.SimpleMuzzleFlash(FireGatling.effectPrefab, option, "Muzzle", false);
@@ -488,7 +508,11 @@ namespace Chen.GradiusMod
             orig(self);
             FireForAllMinions(self, (option, behavior, target) =>
             {
-                Util.PlaySound(FireTurret.attackSoundString, option);
+                if (gunnerSoundCopy) Util.PlaySound(FireTurret.attackSoundString, option);
+                OptionSync(self, (networkIdentity, optionTracker) =>
+                {
+                    new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString, -1).Send(NetworkDestination.Clients);
+                }, false);
                 if (FireTurret.effectPrefab)
                 {
                     EffectManager.SimpleMuzzleFlash(FireTurret.effectPrefab, option, "Muzzle", false);
@@ -519,7 +543,12 @@ namespace Chen.GradiusMod
             orig(self, muzzleString);
             FireForAllMinions(self, (option, behavior, target) =>
             {
-                Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
+                if (tc280SoundCopy) Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
+                OptionSync(self, (networkIdentity, optionTracker) =>
+                {
+                    new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString,
+                                        FireMegaTurret.attackSoundPlaybackCoefficient).Send(NetworkDestination.Clients);
+                }, false);
                 if (FireMegaTurret.effectPrefab)
                 {
                     EffectManager.SimpleMuzzleFlash(FireMegaTurret.effectPrefab, option, muzzleString, false);
@@ -552,7 +581,7 @@ namespace Chen.GradiusMod
             {
                 if (FireMissileBarrage.effectPrefab)
                 {
-                    EffectManager.SimpleMuzzleFlash(FireMissileBarrage.effectPrefab, option, targetMuzzle, false);
+                    EffectManager.SimpleMuzzleFlash(FireMissileBarrage.effectPrefab, option, targetMuzzle, true);
                 }
                 if (self.isAuthority)
                 {
@@ -607,6 +636,7 @@ namespace Chen.GradiusMod
         private void ChargeMegaLaser_OnEnter(On.EntityStates.TitanMonster.ChargeMegaLaser.orig_OnEnter orig, ChargeMegaLaser self)
         {
             orig(self);
+            if (!aurelioniteOptionSyncEffect) return;
             FireForAllMinions(self, (option, behavior, target) =>
             {
                 Transform transform = option.transform;
@@ -636,6 +666,7 @@ namespace Chen.GradiusMod
         private void ChargeMegaLaser_OnExit(On.EntityStates.TitanMonster.ChargeMegaLaser.orig_OnExit orig, ChargeMegaLaser self)
         {
             orig(self);
+            if (!aurelioniteOptionSyncEffect) return;
             FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
@@ -654,6 +685,7 @@ namespace Chen.GradiusMod
         private void ChargeMegaLaser_Update(On.EntityStates.TitanMonster.ChargeMegaLaser.orig_Update orig, ChargeMegaLaser self)
         {
             orig(self);
+            if (!aurelioniteOptionSyncEffect) return;
             FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (behavior.laserFireEffect && behavior.laserLineEffect)
@@ -701,9 +733,14 @@ namespace Chen.GradiusMod
         private void FireMegaLaser_OnEnter(On.EntityStates.TitanMonster.FireMegaLaser.orig_OnEnter orig, FireMegaLaser self)
         {
             orig(self);
-            if (!self.laserPrefab) return;
+            if (!aurelioniteOptionSyncEffect || !self.laserPrefab) return;
             FireForAllMinions(self, (option, behavior, target) =>
             {
+                if (aurelioniteMegaLaserSoundCopy)
+                {
+                    Util.PlaySound(FireMegaLaser.playAttackSoundString, option);
+                    Util.PlaySound(FireMegaLaser.playLoopSoundString, option);
+                }
                 if (self.laserPrefab)
                 {
                     Transform transform = option.transform;
@@ -725,8 +762,10 @@ namespace Chen.GradiusMod
         private void FireMegaLaser_OnExit(On.EntityStates.TitanMonster.FireMegaLaser.orig_OnExit orig, FireMegaLaser self)
         {
             orig(self);
+            if (!aurelioniteOptionSyncEffect) return;
             FireForAllMinions(self, (option, behavior, target) =>
             {
+                if (aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
                 if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
                 if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
                 if (behavior.laserFireEffectEnd) EntityState.Destroy(behavior.laserFireEffectEnd);
@@ -830,6 +869,7 @@ namespace Chen.GradiusMod
         private void FireFist_OnEnter(On.EntityStates.TitanMonster.FireFist.orig_OnEnter orig, FireFist self)
         {
             orig(self);
+            if (!aurelioniteOptionSyncEffect) return;
             FireForAllMinions(self, (option, behavior, target) =>
             {
                 behavior.fistChargeEffect = Object.Instantiate(self.chargeEffectPrefab, option.transform);
@@ -846,6 +886,7 @@ namespace Chen.GradiusMod
         private void FireFist_OnExit(On.EntityStates.TitanMonster.FireFist.orig_OnExit orig, FireFist self)
         {
             orig(self);
+            if (!aurelioniteOptionSyncEffect) return;
             FireForAllMinions(self, (option, behavior, target) =>
             {
                 if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);

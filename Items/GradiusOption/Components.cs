@@ -240,7 +240,6 @@ namespace Chen.GradiusMod
                     Vector3 point = listCopy[i].Item5;
                     float indicatorSize = listCopy[i].Item6;
                     new SyncAurelioniteEffectsForClients(messageType, netId, numbering, duration, point, indicatorSize).Send(NetworkDestination.Clients);
-                    Helper.Log(listCopy[i]);
                 }
             }
         }
