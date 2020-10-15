@@ -1,8 +1,8 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "1.4.0",
+  "version_number": "1.4.1",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Aurelionite is now able to use Options/Multiples. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Disable debug mode. I AM SORRY. Aurelionite is now able to use Options/Multiples. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "tristanmcpherson-R2API-2.5.14",
     "ThinkInvis-TILER2-2.2.3"

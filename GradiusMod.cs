@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
@@ -26,7 +26,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "1.4.0";
+            "1.4.1";
 
         public const string ModName = "ChensGradiusMod";
         public const string ModGuid = "com.Chen.ChensGradiusMod";
