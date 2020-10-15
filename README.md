@@ -31,6 +31,7 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Allow Aruelionite from a Halcyon Seed to utilize Options.
 - The owner of Aurelionite will be assigned to the player with the highest Halcyon Seed count.
 - Fully compatible with multiplayer. Post an issue report or contact me if there are bugs.
+- Change most of the defaults of config. Add more config options for adjusting effects.
 
 **1.3.4**
 - Fix more syncing and networking issues. Hopefully that is all of them.

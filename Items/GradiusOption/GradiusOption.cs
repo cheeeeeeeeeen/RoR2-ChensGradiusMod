@@ -49,7 +49,7 @@ namespace Chen.GradiusMod
                         "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool flamethrowerOptionSyncEffect { get; private set; } = true;
 
-        [AutoItemConfig("Allows displaying and syncing some of Aurelionite's Options/Multiples. This reduces the effects generated. Damage will stay the same." +
+        [AutoItemConfig("Allows displaying and syncing some of Aurelionite's Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
                         "Server and Client. The server and client must have the same settings for an optimized experience. " +
                         "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool aurelioniteOptionSyncEffect { get; private set; } = true;
@@ -65,7 +65,7 @@ namespace Chen.GradiusMod
 
         [AutoItemConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones. Client only.",
                         AutoItemConfigFlags.None, 0, 2)]
-        public int playOptionGetSoundEffect { get; private set; } = 1;
+        public int playOptionGetSoundEffect { get; private set; } = 2;
 
         public override bool itemAIB { get; protected set; } = true;
 
