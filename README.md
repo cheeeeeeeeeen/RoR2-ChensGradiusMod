@@ -16,6 +16,7 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Gradius is known for its feature of Options/Multiples where in these weapons are invulnerable to all damage, and are able to copy the full arsenal of the main ship.
 - For this mod, the Options/Multiples will only copy the main attacks of the drone.
 - All vanilla drones are supported. Only Equipment Drone is the exception.
+- Aurelionite is also able to utilize Options/Multiples. Aurelionite will attack with more lasers and spikes. Its Rock Turret will also attack faster.
 
 ## Contact
 
@@ -25,6 +26,11 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - RoR2 Modding Server: https://discord.com/invite/5MbXZvd
 
 ## Changelog
+
+**1.4.0**
+- Allow Aruelionite from a Halcyon Seed to utilize Options.
+- The owner of Aurelionite will be assigned to the player with the highest Halcyon Seed count.
+- Fully compatible with multiplayer. Post an issue report or contact me if there are bugs.
 
 **1.3.4**
 - Fix more syncing and networking issues. Hopefully that is all of them.

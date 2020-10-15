@@ -1,8 +1,8 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "1.3.4",
+  "version_number": "1.4.0",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Fix more networking bugs experienced in Multiplayer. Improve Turret Drones' Rotate options. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Aurelionite is now able to use Options/Multiples. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "tristanmcpherson-R2API-2.5.14",
     "ThinkInvis-TILER2-2.2.3"
