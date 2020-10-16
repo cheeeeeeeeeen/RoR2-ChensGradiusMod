@@ -15,8 +15,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - A new Red Item added to Risk of Rain 2. Upon receiving this item, all owned drones of the receiver will gain an Option/Multiple for each stack.
 - Gradius is known for its feature of Options/Multiples where in these weapons are invulnerable to all damage, and are able to copy the full arsenal of the main ship.
 - For this mod, the Options/Multiples will only copy the main attacks of the drone.
-- All vanilla drones are supported. Only Equipment Drone is the exception.
-- Aurelionite is also able to utilize Options/Multiples. Aurelionite will attack with more lasers and spikes. Its Rock Turret will also attack faster.
+- All vanilla minions (both mechanical and organic) are supported. Only Equipment Drone is the exception.
+- Options/Multiples are able to duplicate all attacks of Aurelionite.
+- Options/Multiples will only duplicate the ranged attack of Beetle Guards.
 
 ## Contact
 
@@ -26,6 +27,12 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - RoR2 Modding Server: https://discord.com/invite/5MbXZvd
 
 ## Changelog
+
+**1.5.0**
+- Only spawn options for an allied Aurelionite.
+- Support Squid Polyps and Beetle Guards to be able to utilize the Options.
+- Add more config options to make effects adjustable.
+- Allow some drones to sync sound effects for Options. Configurable.
 
 **1.4.1**
 - Disable debug version. Again. I am so sorry. Again.
