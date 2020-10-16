@@ -3,7 +3,6 @@ using EntityStates.BeetleGuardMonster;
 using EntityStates.Drone.DroneWeapon;
 using EntityStates.Squid.SquidWeapon;
 using EntityStates.TitanMonster;
-using R2API;
 using R2API.Networking;
 using R2API.Networking.Interfaces;
 using RoR2;
@@ -31,8 +30,24 @@ namespace Chen.GradiusMod
         public override ReadOnlyCollection<ItemTag> itemTags => new ReadOnlyCollection<ItemTag>(new[] { ItemTag.Utility });
 
         [AutoUpdateEventInfo(AutoUpdateEventFlags.InvalidateDescToken)]
-        [AutoItemConfig("Damage multiplier of Options/Multiples. Also applies for Healing Drones. 1 = 100%.", AutoItemConfigFlags.None, 0f, float.MaxValue)]
+        [AutoItemConfig("Damage multiplier of Options/Multiples. Also applies for Healing Drones. 1 = 100%. Server only.", AutoItemConfigFlags.None, 0f, float.MaxValue)]
         public float damageMultiplier { get; private set; } = 1f;
+
+        [AutoItemConfig("Whether to support Auelionite in using Options. Set to true to enable. All attacks of Aurelionite will be copied by the Options/Multiples. " +
+                        "Server and Client.", AutoItemConfigFlags.PreventNetMismatch)]
+        public bool allowAurelionite { get; private set; } = false;
+
+        [AutoItemConfig("Whether to support Beetle Guards in using Options. Set to true to enable. Only their ranged attacks are copied. Server and Client.",
+                        AutoItemConfigFlags.PreventNetMismatch)]
+        public bool allowBeetleGuard { get; private set; } = false;
+
+        [AutoItemConfig("Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactrions with other mods. " +
+                        "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoItemConfigFlags.PreventNetMismatch)]
+        public bool allowSquidPolyp { get; private set; } = true;
+
+        [AutoItemConfig("Determines the Option/Multiple movement type. 0 = Regular, 1 = Rotate. Server and Client.",
+                        AutoItemConfigFlags.PreventNetMismatch, 0, 1)]
+        public int beetleGuardOptionType { get; private set; } = 1;
 
         [AutoItemConfig("Set to true for Options/Multiples of Flame Drones to generate a flamethrower sound. Client only. WARNING: Turning this on may cause earrape.")]
         public bool flamethrowerSoundCopy { get; private set; } = false;
@@ -139,37 +154,13 @@ namespace Chen.GradiusMod
             {
                 modelPathName = "@ChensGradiusMod:assets/option/model/optionmodel.prefab";
                 iconPathName = "@ChensGradiusMod:assets/option/icon/gradiusoption_icon.png";
+                PostProcessConfiguration();
             };
 
             onBehav += () =>
             {
-                regDef.pickupModelPrefab.transform.localScale *= 2f;
-
-                string path;
-                if (includeModelInsideOrb) path = "@ChensGradiusMod:assets/option/orb/optionorbwithmodel.prefab";
-                else path = "@ChensGradiusMod:assets/option/orb/optionorb.prefab";
-                gradiusOptionPrefab = Resources.Load<GameObject>(path);
-                if (gradiusOptionPrefab)
-                {
-                    gradiusOptionPrefab.AddComponent<NetworkIdentity>();
-                    gradiusOptionPrefab.AddComponent<OptionBehavior>();
-                    gradiusOptionPrefab.AddComponent<Flicker>();
-                    Helper._.LogDebug("Successfully initialized OptionOrb prefab.");
-                }
-                else Helper._.LogError("Failed to create GradiusOption: Resource not found or is null.");
-
-                flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
-                laserChargeEffectPrefab = Resources.Load<GameObject>("Assets/PrefabInstance/ChargeGolemGold.prefab");
-
-                Helper._.LogDebug("Registering custom network messages needed for GradiusOption...");
-                NetworkingAPI.RegisterMessageType<SpawnOptionsForClients>();
-                NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
-                if (includeModelInsideOrb) NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
-                NetworkingAPI.RegisterMessageType<SyncAurelioniteOwner>();
-                NetworkingAPI.RegisterMessageType<SyncAurelioniteEffectsForClients>();
-                if (beetleGuardOptionSyncEffect) NetworkingAPI.RegisterMessageType<SyncBeetleGuardEffectsForClients>();
-                NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
-
+                InitializeAssets();
+                RegisterNetworkMessages();
                 if (Compat_ItemStats.enabled)
                 {
                     Compat_ItemStats.CreateItemStatDef(regItem.ItemDef,
@@ -245,6 +236,56 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter -= FireSunder_OnEnter;
             On.EntityStates.BeetleGuardMonster.FireSunder.OnExit -= FireSunder_OnExit;
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
+        }
+
+        private void PostProcessConfiguration()
+        {
+            if (!allowAurelionite)
+            {
+                MinionsList.Remove("TitanGoldAlly");
+                aurelioniteMegaLaserSoundCopy = false;
+                aurelioniteOptionSyncEffect = false;
+            }
+            if (!allowBeetleGuard)
+            {
+                MinionsList.Remove("BeetleGuardAlly");
+                beetleGuardChargeSoundCopy = false;
+                beetleGuardOptionSyncEffect = false;
+            }
+            if (!allowSquidPolyp) MinionsList.Remove("SquidTurret");
+        }
+
+        private void InitializeAssets()
+        {
+            regDef.pickupModelPrefab.transform.localScale *= 2f;
+
+            string path;
+            if (includeModelInsideOrb) path = "@ChensGradiusMod:assets/option/orb/optionorbwithmodel.prefab";
+            else path = "@ChensGradiusMod:assets/option/orb/optionorb.prefab";
+            gradiusOptionPrefab = Resources.Load<GameObject>(path);
+            if (gradiusOptionPrefab)
+            {
+                gradiusOptionPrefab.AddComponent<NetworkIdentity>();
+                gradiusOptionPrefab.AddComponent<OptionBehavior>();
+                gradiusOptionPrefab.AddComponent<Flicker>();
+                Helper._.LogDebug("Successfully initialized OptionOrb prefab.");
+            }
+            else Helper._.LogError("Failed to create GradiusOption: Resource not found or is null.");
+
+            flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
+            laserChargeEffectPrefab = Resources.Load<GameObject>("Assets/PrefabInstance/ChargeGolemGold.prefab");
+        }
+
+        private void RegisterNetworkMessages()
+        {
+            Helper._.LogDebug("Registering custom network messages needed for GradiusOption...");
+            NetworkingAPI.RegisterMessageType<SpawnOptionsForClients>();
+            NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
+            NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
+            NetworkingAPI.RegisterMessageType<SyncAurelioniteOwner>();
+            NetworkingAPI.RegisterMessageType<SyncAurelioniteEffectsForClients>();
+            NetworkingAPI.RegisterMessageType<SyncBeetleGuardEffectsForClients>();
+            NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
         }
 
         private CharacterBody CharacterMaster_SpawnBody(On.RoR2.CharacterMaster.orig_SpawnBody orig, CharacterMaster self, GameObject bodyPrefab, Vector3 position, Quaternion rotation)
@@ -362,7 +403,7 @@ namespace Chen.GradiusMod
         private void Flamethrower_OnExit(On.EntityStates.Mage.Weapon.Flamethrower.orig_OnExit orig, MageWeapon.Flamethrower self)
         {
             orig(self);
-            if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone") && flamethrowerOptionSyncEffect)
+            if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
                 FireForAllMinions(self, (option, behavior, target) =>
                 {
@@ -387,7 +428,7 @@ namespace Chen.GradiusMod
             // This hook only runs in the server.
             bool oldBegunFlamethrower = self.hasBegunFlamethrower;
             orig(self);
-            if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone") && flamethrowerOptionSyncEffect)
+            if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
                 FireForAllMinions(self, (option, behavior, target) =>
                 {
@@ -438,51 +479,27 @@ namespace Chen.GradiusMod
                 {
                     if (self.isAuthority)
                     {
-                        if (flamethrowerOptionSyncEffect)
+                        BulletAttack attack = new BulletAttack
                         {
-                            new BulletAttack
-                            {
-                                owner = self.gameObject,
-                                weapon = option,
-                                origin = option.transform.position,
-                                aimVector = (target.transform.position - option.transform.position).normalized,
-                                minSpread = 0f,
-                                damage = self.tickDamageCoefficient * self.damageStat * damageMultiplier,
-                                force = MageWeapon.Flamethrower.force * damageMultiplier,
-                                muzzleName = muzzleString,
-                                hitEffectPrefab = MageWeapon.Flamethrower.impactEffectPrefab,
-                                isCrit = self.isCrit,
-                                radius = MageWeapon.Flamethrower.radius,
-                                falloffModel = BulletAttack.FalloffModel.None,
-                                stopperMask = LayerIndex.world.mask,
-                                procCoefficient = MageWeapon.Flamethrower.procCoefficientPerTick,
-                                maxDistance = self.maxDistance,
-                                damageType = (Util.CheckRoll(MageWeapon.Flamethrower.ignitePercentChance, self.characterBody.master) ? DamageType.IgniteOnHit : DamageType.Generic)
-                            }.Fire();
-                        }
-                        else
-                        {
-                            new BulletAttack
-                            {
-                                owner = self.gameObject,
-                                weapon = option,
-                                origin = option.transform.position,
-                                aimVector = (target.transform.position - option.transform.position).normalized,
-                                minSpread = 0f,
-                                damage = self.tickDamageCoefficient * self.damageStat * damageMultiplier,
-                                force = MageWeapon.Flamethrower.force * damageMultiplier,
-                                muzzleName = muzzleString,
-                                hitEffectPrefab = MageWeapon.Flamethrower.impactEffectPrefab,
-                                isCrit = self.isCrit,
-                                radius = MageWeapon.Flamethrower.radius,
-                                falloffModel = BulletAttack.FalloffModel.None,
-                                stopperMask = LayerIndex.world.mask,
-                                procCoefficient = MageWeapon.Flamethrower.procCoefficientPerTick,
-                                maxDistance = self.maxDistance,
-                                damageType = (Util.CheckRoll(MageWeapon.Flamethrower.ignitePercentChance, self.characterBody.master) ? DamageType.IgniteOnHit : DamageType.Generic),
-                                tracerEffectPrefab = FireGatling.tracerEffectPrefab
-                            }.Fire();
-                        }
+                            owner = self.gameObject,
+                            weapon = option,
+                            origin = option.transform.position,
+                            aimVector = (target.transform.position - option.transform.position).normalized,
+                            minSpread = 0f,
+                            damage = self.tickDamageCoefficient * self.damageStat * damageMultiplier,
+                            force = MageWeapon.Flamethrower.force * damageMultiplier,
+                            muzzleName = muzzleString,
+                            hitEffectPrefab = MageWeapon.Flamethrower.impactEffectPrefab,
+                            isCrit = self.isCrit,
+                            radius = MageWeapon.Flamethrower.radius,
+                            falloffModel = BulletAttack.FalloffModel.None,
+                            stopperMask = LayerIndex.world.mask,
+                            procCoefficient = MageWeapon.Flamethrower.procCoefficientPerTick,
+                            maxDistance = self.maxDistance,
+                            damageType = (Util.CheckRoll(MageWeapon.Flamethrower.ignitePercentChance, self.characterBody.master) ? DamageType.IgniteOnHit : DamageType.Generic),
+                        };
+                        if (!flamethrowerOptionSyncEffect) attack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
+                        attack.Fire();
                     }
                 });
             }

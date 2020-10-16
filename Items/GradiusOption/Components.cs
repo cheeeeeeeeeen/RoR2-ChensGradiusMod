@@ -475,8 +475,8 @@ namespace Chen.GradiusMod
     {
         public static bool IsRotateUser(string name)
         {
-            return name.Contains("Turret1") || name.Contains("TitanGoldAlly") ||
-                   name.Contains("SquidTurret") || name.Contains("BeetleGuard");
+            return name.Contains("Turret1") || name.Contains("TitanGoldAlly") || name.Contains("SquidTurret")
+                   || (GradiusOption.instance.beetleGuardOptionType == 1 && name.Contains("BeetleGuardAlly"));
         }
 
         public static float RotateMultiplier(string name)
