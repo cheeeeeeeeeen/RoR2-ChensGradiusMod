@@ -1,14 +1,19 @@
 ﻿using EntityStates;
+using EntityStates.BeetleGuardMonster;
 using EntityStates.Drone.DroneWeapon;
+using EntityStates.Squid.SquidWeapon;
 using EntityStates.TitanMonster;
+using R2API;
 using R2API.Networking;
 using R2API.Networking.Interfaces;
 using RoR2;
 using RoR2.CharacterAI;
+using RoR2.Orbs;
 using RoR2.Projectile;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using TILER2;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -44,6 +49,9 @@ namespace Chen.GradiusMod
         [AutoItemConfig("Set to true for Options/Multiples of Aurelionite to generate a mega laser sound. Client only. WARNING: Turning this on may cause earrape.")]
         public bool aurelioniteMegaLaserSoundCopy { get; private set; } = false;
 
+        [AutoItemConfig("Set to true for Options/Multiples of Beetle Guards to generate sound effects upon charging. Client only. WARNING: Turning this on may cause earrape.")]
+        public bool beetleGuardChargeSoundCopy { get; private set; } = false;
+
         [AutoItemConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
                         "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
                         "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
@@ -53,6 +61,11 @@ namespace Chen.GradiusMod
                         "Server and Client. The server and client must have the same settings for an optimized experience. " +
                         "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
         public bool aurelioniteOptionSyncEffect { get; private set; } = true;
+
+        [AutoItemConfig("Allows displaying and syncing some of allied Beelte Guards' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+                        "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                        "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
+        public bool beetleGuardOptionSyncEffect { get; private set; } = true;
 
         [AutoItemConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
                         "Turning this off could lessen resource usage.", AutoItemConfigFlags.PreventNetMismatch)]
@@ -107,19 +120,17 @@ namespace Chen.GradiusMod
 
         private static readonly List<string> MinionsList = new List<string>
         {
-            "BackupDrone",
-            "BackupDroneOld",
+            "DroneBackup",
             "Drone1",
             "Drone2",
             "EmergencyDrone",
-            //"EquipmentDrone",
             "FlameDrone",
             "MegaDrone",
             "DroneMissile",
-            "MissileDrone",
             "Turret1",
-            "TitanGold",
-            "BeetleGuard"
+            "TitanGoldAlly",
+            "BeetleGuardAlly",
+            "SquidTurret"
         };
 
         public GradiusOption()
@@ -156,6 +167,7 @@ namespace Chen.GradiusMod
                 if (includeModelInsideOrb) NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
                 NetworkingAPI.RegisterMessageType<SyncAurelioniteOwner>();
                 NetworkingAPI.RegisterMessageType<SyncAurelioniteEffectsForClients>();
+                if (beetleGuardOptionSyncEffect) NetworkingAPI.RegisterMessageType<SyncBeetleGuardEffectsForClients>();
                 NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
 
                 if (Compat_ItemStats.enabled)
@@ -198,6 +210,10 @@ namespace Chen.GradiusMod
             On.EntityStates.TitanMonster.FireFist.OnEnter += FireFist_OnEnter;
             On.EntityStates.TitanMonster.FireFist.OnExit += FireFist_OnExit;
             On.RoR2.TitanRockController.Start += TitanRockController_Start;
+            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow += FireSpine_FireOrbArrow;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter += FireSunder_OnEnter;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit += FireSunder_OnExit;
+            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
         }
 
         protected override void UnloadBehavior()
@@ -225,13 +241,17 @@ namespace Chen.GradiusMod
             On.EntityStates.TitanMonster.FireFist.OnEnter -= FireFist_OnEnter;
             On.EntityStates.TitanMonster.FireFist.OnExit -= FireFist_OnExit;
             On.RoR2.TitanRockController.Start -= TitanRockController_Start;
+            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow -= FireSpine_FireOrbArrow;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter -= FireSunder_OnEnter;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit -= FireSunder_OnExit;
+            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
         }
 
         private CharacterBody CharacterMaster_SpawnBody(On.RoR2.CharacterMaster.orig_SpawnBody orig, CharacterMaster self, GameObject bodyPrefab, Vector3 position, Quaternion rotation)
         {
             // This hook is only ran in the server.
             CharacterBody result = orig(self, bodyPrefab, position, rotation);
-            if (result && NetworkServer.active && FilterMinions(result.name) && self.minionOwnership)
+            if (result && NetworkServer.active && FilterMinions(self) && self.minionOwnership)
             {
                 AssignAurelioniteOwner(result.master);
                 CharacterMaster masterMaster = self.minionOwnership.ownerMaster;
@@ -907,6 +927,94 @@ namespace Chen.GradiusMod
             if (tracker) self.fireInterval /= tracker.existingOptions.Count + 1;
         }
 
+        private void FireSpine_FireOrbArrow(On.EntityStates.Squid.SquidWeapon.FireSpine.orig_FireOrbArrow orig, FireSpine self)
+        {
+            bool oldFireArrow = self.hasFiredArrow;
+            orig(self);
+            if (oldFireArrow || !NetworkServer.active) return;
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                HurtBox hurtBox = self.enemyFinder.GetResults().FirstOrDefault();
+                SquidOrb squidOrb = new SquidOrb
+                {
+                    damageValue = self.characterBody.damage * FireSpine.damageCoefficient,
+                    isCrit = Util.CheckRoll(self.characterBody.crit, self.characterBody.master),
+                    teamIndex = TeamComponent.GetObjectTeam(self.gameObject),
+                    attacker = self.gameObject,
+                    procCoefficient = FireSpine.damageCoefficient,
+                    origin = option.transform.position,
+                    target = hurtBox
+                };
+                if (FireSpine.muzzleflashEffectPrefab)
+                {
+                    EffectManager.SimpleMuzzleFlash(FireSpine.muzzleflashEffectPrefab, option, "Muzzle", true);
+                }
+                OrbManager.instance.AddOrb(squidOrb);
+            });
+        }
+
+        private void FireSunder_OnEnter(On.EntityStates.BeetleGuardMonster.FireSunder.orig_OnEnter orig, FireSunder self)
+        {
+            orig(self);
+            if (!beetleGuardOptionSyncEffect) return;
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (beetleGuardChargeSoundCopy) Util.PlaySound(FireSunder.initialAttackSoundString, option);
+                if (FireSunder.chargeEffectPrefab) behavior.sunderEffect = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
+                OptionSync(self, (networkIdentity, optionTracker) =>
+                {
+                    optionTracker.guardNetIds.Add(Tuple.Create(
+                        SyncBeetleGuardEffectsForClients.MessageType.Create, networkIdentity.netId, (short)behavior.numbering
+                    ));
+                });
+            });
+        }
+
+        private void FireSunder_OnExit(On.EntityStates.BeetleGuardMonster.FireSunder.orig_OnExit orig, FireSunder self)
+        {
+            orig(self);
+            if (!beetleGuardOptionSyncEffect) return;
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
+                OptionSync(self, (networkIdentity, optionTracker) =>
+                {
+                    optionTracker.guardNetIds.Add(Tuple.Create(
+                        SyncBeetleGuardEffectsForClients.MessageType.Destroy, networkIdentity.netId, (short)behavior.numbering
+                    ));
+                });
+            });
+        }
+
+        private void FireSunder_FixedUpdate(On.EntityStates.BeetleGuardMonster.FireSunder.orig_FixedUpdate orig, FireSunder self)
+        {
+            bool oldHasAttacked = self.hasAttacked;
+            orig(self);
+            FireForAllMinions(self, (option, behavior, target) =>
+            {
+                if (self.modelAnimator && self.modelAnimator.GetFloat("FireSunder.activate") > 0.5f && !oldHasAttacked)
+                {
+                    if (self.isAuthority && self.modelTransform && FireSunder.projectilePrefab)
+                    {
+                        Ray aimRay = new Ray(option.transform.position, (target.transform.position - option.transform.position).normalized);
+                        ProjectileManager.instance.FireProjectile(FireSunder.projectilePrefab, aimRay.origin, Util.QuaternionSafeLookRotation(aimRay.direction),
+                                                                  self.gameObject, self.damageStat * FireSunder.damageCoefficient, FireSunder.forceMagnitude,
+                                                                  Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
+                    }
+                    if (beetleGuardOptionSyncEffect)
+                    {
+                        if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
+                        OptionSync(self, (networkIdentity, optionTracker) =>
+                        {
+                            optionTracker.guardNetIds.Add(Tuple.Create(
+                                SyncBeetleGuardEffectsForClients.MessageType.Destroy, networkIdentity.netId, (short)behavior.numbering
+                            ));
+                        });
+                    }
+                }
+            });
+        }
+
         private void LoopAllMinionOwnerships(CharacterMaster ownerMaster, Action<GameObject> actionToRun)
         {
             MinionOwnership[] minionOwnerships = Object.FindObjectsOfType<MinionOwnership>();
@@ -915,7 +1023,7 @@ namespace Chen.GradiusMod
                 if (minionOwnership && minionOwnership.ownerMaster && minionOwnership.ownerMaster == ownerMaster)
                 {
                     CharacterMaster minionMaster = minionOwnership.GetComponent<CharacterMaster>();
-                    if (minionMaster && FilterMinions(minionMaster.name))
+                    if (FilterMinions(minionMaster))
                     {
                         CharacterBody minionBody = minionMaster.GetBody();
                         if (minionBody)
@@ -973,7 +1081,7 @@ namespace Chen.GradiusMod
             if (!queryTracker || tracker) actionToRun(networkIdentity, tracker);
         }
 
-        private bool FilterMinions(string name) => MinionsList.Exists((item) => name.Contains(item));
+        private bool FilterMinions(CharacterMaster master) => master && MinionsList.Exists((item) => master.name.Contains(item));
 
         private void AssignAurelioniteOwner(CharacterMaster goldMaster)
         {

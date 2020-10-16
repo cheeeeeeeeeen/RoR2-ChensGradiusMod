@@ -1,4 +1,5 @@
 ﻿using EntityStates;
+using EntityStates.BeetleGuardMonster;
 using EntityStates.Drone.DroneWeapon;
 using EntityStates.TitanMonster;
 using R2API.Networking.Interfaces;
@@ -478,6 +479,79 @@ namespace Chen.GradiusMod
             FixedUpdateGoldLaserFire,
             CreateFist,
             DestroyFist
+        }
+    }
+
+    public class SyncBeetleGuardEffectsForClients : INetMessage
+    {
+        private MessageType messageType;
+        private NetworkInstanceId ownerBodyId;
+        private short optionNumbering;
+
+        public SyncBeetleGuardEffectsForClients()
+        {
+        }
+
+        public SyncBeetleGuardEffectsForClients(MessageType messageType, NetworkInstanceId id, short numbering)
+        {
+            this.messageType = messageType;
+            ownerBodyId = id;
+            optionNumbering = numbering;
+        }
+
+        public void Serialize(NetworkWriter writer)
+        {
+            writer.Write((byte)messageType);
+            writer.Write(ownerBodyId);
+            writer.Write(optionNumbering);
+        }
+
+        public void Deserialize(NetworkReader reader)
+        {
+            messageType = (MessageType)reader.ReadByte();
+            ownerBodyId = reader.ReadNetworkId();
+            optionNumbering = reader.ReadInt16();
+        }
+
+        public void OnReceived()
+        {
+            if (NetworkServer.active) return;
+            GameObject beetleObject = Util.FindNetworkObject(ownerBodyId);
+            if (!beetleObject)
+            {
+                Helper._.LogWarning("SyncBeetleGuardEffectsForClients: beetleObject is null.");
+                return;
+            }
+            OptionTracker tracker = beetleObject.GetComponent<OptionTracker>();
+            if (!tracker)
+            {
+                Helper._.LogWarning($"SyncBeetleGuardEffectsForClients: tracker is null.");
+                return;
+            }
+            GameObject option = tracker.existingOptions[optionNumbering - 1];
+            OptionBehavior behavior = option.GetComponent<OptionBehavior>();
+            if (!behavior)
+            {
+                Helper._.LogWarning($"SyncBeetleGuardEffectsForClients: behavior is null.");
+                return;
+            }
+            switch (messageType)
+            {
+                case MessageType.Create:
+                    if (GradiusOption.instance.beetleGuardChargeSoundCopy) Util.PlaySound(FireSunder.initialAttackSoundString, option);
+                    if (FireSunder.chargeEffectPrefab) behavior.sunderEffect = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
+                    break;
+
+                case MessageType.Destroy:
+                    if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
+                    break;
+            }
+        }
+
+        public enum MessageType : byte
+        {
+            Create,
+            Destroy
         }
     }
 

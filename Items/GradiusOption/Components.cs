@@ -24,12 +24,15 @@ namespace Chen.GradiusMod
         public Transform laserFireEffectEnd;
         public GameObject fistChargeEffect;
         public GameObject rockChargeEffect;
+        public GameObject sunderEffect;
         public GameObject target;
         public OptionTracker ownerOt;
 
         private Transform t;
         private Transform ownerT;
         private InputBankTest ownerIbt;
+        private CharacterMaster ownerMaster;
+        private CharacterBody ownerBody;
         private bool init = true;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -43,12 +46,13 @@ namespace Chen.GradiusMod
         {
             if (!PauseScreenController.paused && !init)
             {
-                if (owner && ownerOt)
+                if (owner && ownerBody && ownerMaster && ownerOt)
                 {
-                    if (Helper.IsRotateUser(owner.name))
+                    if (Helper.IsRotateUser(ownerMaster.name))
                     {
-                        float multiplier = Helper.RotateMultiplier(owner.name);
-                        Vector3 newPosition = ownerT.position + DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis * multiplier;
+                        float multiplier = Helper.RotateMultiplier(ownerMaster.name);
+                        Vector3 newPosition = DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis * multiplier;
+                        newPosition = ownerT.position + Helper.RotateOffset(ownerMaster.name) + newPosition;
                         t.position = Vector3.Lerp(t.position, newPosition, ownerOt.optionLookRate);
                     }
                     else t.position = ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1];
@@ -63,7 +67,7 @@ namespace Chen.GradiusMod
                 }
                 else
                 {
-                    GradiusModPlugin._logger.LogWarning($"OptionBehavior.Update: Lost owner or ownerOt. Destroying this Option. numbering = {numbering}");
+                    GradiusModPlugin._logger.LogWarning($"OptionBehavior.Update: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
                     Destroy(gameObject);
                 }
             }
@@ -78,6 +82,8 @@ namespace Chen.GradiusMod
                 ownerT = owner.transform;
                 ownerIbt = owner.GetComponent<InputBankTest>();
                 ownerOt = owner.GetComponent<OptionTracker>();
+                ownerBody = owner.GetComponent<CharacterBody>();
+                ownerMaster = ownerBody.master;
             }
         }
 
@@ -113,6 +119,9 @@ namespace Chen.GradiusMod
         public List<Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>> aurelioniteNetIds { get; private set; } =
             new List<Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>>();
 
+        public List<Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>> guardNetIds { get; private set; } =
+            new List<Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>>();
+
         private Vector3 previousPosition = new Vector3();
         private bool init = true;
         private int previousOptionItemCount = 0;
@@ -144,8 +153,12 @@ namespace Chen.GradiusMod
                 }
                 previousPosition = t.position;
             }
-            SyncFlamethrowerEffects();
-            SyncAurelioniteEffects();
+            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady())
+            {
+                SyncFlamethrowerEffects();
+                SyncAurelioniteEffects();
+                SyncBeetleGuardEffects();
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -205,7 +218,7 @@ namespace Chen.GradiusMod
 
         private void SyncFlamethrowerEffects()
         {
-            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && flameNetIds.Count > 0)
+            if (flameNetIds.Count > 0)
             {
                 Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>[] listCopy =
                     new Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>[flameNetIds.Count];
@@ -225,7 +238,7 @@ namespace Chen.GradiusMod
 
         private void SyncAurelioniteEffects()
         {
-            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && aurelioniteNetIds.Count > 0)
+            if (aurelioniteNetIds.Count > 0)
             {
                 Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>[] listCopy =
                     new Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>[aurelioniteNetIds.Count];
@@ -240,6 +253,24 @@ namespace Chen.GradiusMod
                     Vector3 point = listCopy[i].Item5;
                     float indicatorSize = listCopy[i].Item6;
                     new SyncAurelioniteEffectsForClients(messageType, netId, numbering, duration, point, indicatorSize).Send(NetworkDestination.Clients);
+                }
+            }
+        }
+
+        private void SyncBeetleGuardEffects()
+        {
+            if (guardNetIds.Count > 0)
+            {
+                Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>[] listCopy =
+                    new Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>[guardNetIds.Count];
+                guardNetIds.CopyTo(listCopy);
+                guardNetIds.Clear();
+                for (int i = 0; i < listCopy.Length; i++)
+                {
+                    SyncBeetleGuardEffectsForClients.MessageType messageType = listCopy[i].Item1;
+                    NetworkInstanceId netId = listCopy[i].Item2;
+                    short numbering = listCopy[i].Item3;
+                    new SyncBeetleGuardEffectsForClients(messageType, netId, numbering).Send(NetworkDestination.Clients);
                 }
             }
         }
@@ -444,14 +475,23 @@ namespace Chen.GradiusMod
     {
         public static bool IsRotateUser(string name)
         {
-            return name.Contains("Turret1") || name.Contains("TitanGold");
+            return name.Contains("Turret1") || name.Contains("TitanGoldAlly") ||
+                   name.Contains("SquidTurret") || name.Contains("BeetleGuard");
         }
 
         public static float RotateMultiplier(string name)
         {
             float multiplier = 1f;
-            if (name.Contains("TitanGold")) multiplier *= 12f;
+            if (name.Contains("TitanGoldAlly")) multiplier *= 12f;
+            if (name.Contains("BeetleGuardAlly")) multiplier *= 4f;
             return multiplier;
+        }
+
+        public static Vector3 RotateOffset(string name)
+        {
+            Vector3 offset = Vector3.zero;
+            if (name.Contains("SquidTurret")) offset.y += 1;
+            return offset;
         }
 
         public static void Log(object data) => _.LogMessage(data);
