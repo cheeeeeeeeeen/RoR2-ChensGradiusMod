@@ -436,22 +436,22 @@ namespace Chen.GradiusMod
                         Util.PlaySound(FireMegaLaser.playAttackSoundString, option);
                         Util.PlaySound(FireMegaLaser.playLoopSoundString, option);
                     }
-                    behavior.laserFireEffect = Object.Instantiate(fmlState.laserPrefab, position, transform.rotation);
-                    behavior.laserFireEffect.transform.parent = transform;
+                    behavior.laserFire = Object.Instantiate(fmlState.laserPrefab, position, transform.rotation);
+                    behavior.laserFire.transform.parent = transform;
                     behavior.laserChildLocator = behavior.laserFireEffect.GetComponent<ChildLocator>();
-                    behavior.laserFireEffectEnd = behavior.laserChildLocator.FindChild("LaserEnd");
+                    behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
                     break;
 
                 case MessageType.DestroyLaserFire:
                     if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
-                    if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
+                    if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
                     if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
-                    if (behavior.laserFireEffectEnd) EntityState.Destroy(behavior.laserFireEffectEnd);
+                    if (behavior.laserFireEnd) EntityState.Destroy(behavior.laserFireEnd);
                     break;
 
                 case MessageType.FixedUpdateGoldLaserFire:
-                    behavior.laserFireEffect.transform.rotation = Util.QuaternionSafeLookRotation(point - position);
-                    behavior.laserFireEffectEnd.transform.position = point;
+                    behavior.laserFire.transform.rotation = Util.QuaternionSafeLookRotation(point - position);
+                    behavior.laserFireEnd.transform.position = point;
                     break;
 
                 case MessageType.CreateFist:

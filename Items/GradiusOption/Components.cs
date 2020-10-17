@@ -19,9 +19,10 @@ namespace Chen.GradiusMod
         public HealBeamController healBeamController;
         public GameObject laserChargeEffect;
         public GameObject laserFireEffect;
+        public GameObject laserFire;
         public LineRenderer laserLineEffect;
         public ChildLocator laserChildLocator;
-        public Transform laserFireEffectEnd;
+        public Transform laserFireEnd;
         public GameObject fistChargeEffect;
         public GameObject rockChargeEffect;
         public GameObject sunderEffect;
@@ -85,6 +86,9 @@ namespace Chen.GradiusMod
                 ownerBody = owner.GetComponent<CharacterBody>();
                 ownerMaster = ownerBody.master;
             }
+            //if (ownerMaster.name.Contains("TitanGoldAlly") && )
+            //{
+            //}
         }
 
         public Vector3 DecidePosition(float baseAngle)
