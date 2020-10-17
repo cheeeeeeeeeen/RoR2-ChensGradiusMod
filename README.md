@@ -28,6 +28,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**1.5.1**
+- Fix a nasty bug where the Options do seem ignorant of the master's attacks, resulting to sometimes not copying the attacks.
+- The issue where Aurelionite Option effects linger is also now fixed. It is related to the nasty bug discovered.
+
 **1.5.0**
 - Only spawn options for an allied Aurelionite.
 - Support Squid Polyps and Beetle Guards to be able to utilize the Options.
