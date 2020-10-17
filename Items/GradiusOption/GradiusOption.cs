@@ -191,6 +191,7 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter += HealBeam_OnEnter;
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit += HealBeam_OnExit;
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter += StartHealBeam_OnEnter;
+            On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter += ChargeMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit += ChargeMegaLaser_OnExit;
             On.EntityStates.TitanMonster.ChargeMegaLaser.Update += ChargeMegaLaser_Update;
@@ -222,6 +223,7 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter -= HealBeam_OnEnter;
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit -= HealBeam_OnExit;
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
+            On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent -= HealBeamController_HealBeamAlreadyExists_GO_HC;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
             On.EntityStates.TitanMonster.ChargeMegaLaser.Update -= ChargeMegaLaser_Update;
@@ -346,6 +348,28 @@ namespace Chen.GradiusMod
                     }
                 }
             }
+        }
+
+        private bool HealBeamController_HealBeamAlreadyExists_GO_HC(
+            On.RoR2.HealBeamController.orig_HealBeamAlreadyExists_GameObject_HealthComponent orig,
+            GameObject owner, HealthComponent targetHealthComponent
+        )
+        {
+            // Note that this is incompatible with other mods. This applies a fix on Emergency Drone.
+            List<HealBeamController> instancesList = InstanceTracker.GetInstancesList<HealBeamController>();
+            for (int i = 0; i < instancesList.Count; i++)
+            {
+                HealBeamController hbc = instancesList[i];
+                if (!hbc || !hbc.target || !hbc.target.healthComponent || !targetHealthComponent || !hbc.ownership || !hbc.ownership.ownerObject)
+                {
+                    continue;
+                }
+                if (hbc.target.healthComponent == targetHealthComponent && hbc.ownership.ownerObject == owner)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void HealBeam_OnEnter(On.EntityStates.Drone.DroneWeapon.HealBeam.orig_OnEnter orig, HealBeam self)
