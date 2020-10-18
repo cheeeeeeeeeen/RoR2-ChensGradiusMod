@@ -24,14 +24,14 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "1.5.1";
+            "1.6.0";
 
         public const string ModName = "ChensGradiusMod";
         public const string ModGuid = "com.Chen.ChensGradiusMod";
 
         private static ConfigFile cfgFile;
 
-        internal static FilingDictionary<ItemBoilerplate> chensItemList = new FilingDictionary<ItemBoilerplate>();
+        internal static FilingDictionary<CatalogBoilerplate> chensItemList = new FilingDictionary<CatalogBoilerplate>();
         internal static BepInEx.Logging.ManualLogSource _logger;
 
 #if DEBUG
@@ -98,13 +98,19 @@ namespace Chen.GradiusMod
             Logger.LogDebug("Loading global configs... No global configs found.");
 
             Logger.LogDebug("Instantiating item classes...");
-            chensItemList = ItemBoilerplate.InitAll("ChensGradiusMod");
+            chensItemList = T2Module.InitAll<CatalogBoilerplate>(new T2Module.ModInfo
+            {
+                displayName = "Chen's Gradius Mod",
+                longIdentifier = "ChensGradiusMod",
+                shortIdentifier = "CGM",
+                mainConfigFile = cfgFile
+            });
 
             Logger.LogDebug("Loading item configs and registering items and their behaviors...");
-            foreach (ItemBoilerplate x in chensItemList)
+            foreach (CatalogBoilerplate x in chensItemList)
             {
-                x.SetupConfig(cfgFile);
-                x.SetupAttributes("CHENSGRADIUSMOD", "CGM");
+                x.SetupConfig();
+                x.SetupAttributes();
                 x.SetupBehavior();
             }
 

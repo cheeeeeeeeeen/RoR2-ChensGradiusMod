@@ -23,91 +23,91 @@ using Object = UnityEngine.Object;
 
 namespace Chen.GradiusMod
 {
-    public class GradiusOption : Item<GradiusOption>
+    public class GradiusOption : Item_V2<GradiusOption>
     {
         public override string displayName => "Gradius' Option";
         public override ItemTier itemTier => ItemTier.Tier3;
         public override ReadOnlyCollection<ItemTag> itemTags => new ReadOnlyCollection<ItemTag>(new[] { ItemTag.Utility });
 
-        [AutoUpdateEventInfo(AutoUpdateEventFlags.InvalidateDescToken)]
-        [AutoItemConfig("Damage multiplier of Options/Multiples. Also applies for Healing Drones. 1 = 100%. Server only.", AutoItemConfigFlags.None, 0f, float.MaxValue)]
+        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
+        [AutoConfig("Damage multiplier of Options/Multiples. Also applies for Healing Drones. 1 = 100%. Server only.", AutoConfigFlags.None, 0f, float.MaxValue)]
         public float damageMultiplier { get; private set; } = 1f;
 
-        [AutoItemConfig("Whether to support Auelionite in using Options. Set to true to enable. All attacks of Aurelionite will be copied by the Options/Multiples. " +
-                        "Server and Client.", AutoItemConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Whether to support Auelionite in using Options. Set to true to enable. All attacks of Aurelionite will be copied by the Options/Multiples. " +
+                    "Server and Client.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowAurelionite { get; private set; } = false;
 
-        [AutoItemConfig("Whether to support Beetle Guards in using Options. Set to true to enable. Only their ranged attacks are copied. Server and Client.",
-                        AutoItemConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Whether to support Beetle Guards in using Options. Set to true to enable. Only their ranged attacks are copied. Server and Client.",
+                    AutoConfigFlags.PreventNetMismatch)]
         public bool allowBeetleGuard { get; private set; } = false;
 
-        [AutoItemConfig("Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactrions with other mods. " +
-                        "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoItemConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactrions with other mods. " +
+                    "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowSquidPolyp { get; private set; } = true;
 
-        [AutoItemConfig("Determines the Option/Multiple movement type. 0 = Regular, 1 = Rotate. Server and Client.",
-                        AutoItemConfigFlags.PreventNetMismatch, 0, 1)]
+        [AutoConfig("Determines the Option/Multiple movement type. 0 = Regular, 1 = Rotate. Server and Client.",
+                    AutoConfigFlags.PreventNetMismatch, 0, 1)]
         public int beetleGuardOptionType { get; private set; } = 1;
 
-        [AutoItemConfig("Set to true for Options/Multiples of Flame Drones to generate a flamethrower sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Flame Drones to generate a flamethrower sound. Client only. WARNING: Turning this on may cause earrape.")]
         public bool flamethrowerSoundCopy { get; private set; } = false;
 
-        [AutoItemConfig("Set to true for Options/Multiples of Gatling Turrets to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Gatling Turrets to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
         public bool gatlingSoundCopy { get; private set; } = false;
 
-        [AutoItemConfig("Set to true for Options/Multiples of Gunner Drones to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Gunner Drones to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
         public bool gunnerSoundCopy { get; private set; } = false;
 
-        [AutoItemConfig("Set to true for Options/Multiples of TC-280 drones to generate gun shot sounds. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of TC-280 drones to generate gun shot sounds. Client only. WARNING: Turning this on may cause earrape.")]
         public bool tc280SoundCopy { get; private set; } = false;
 
-        [AutoItemConfig("Set to true for Options/Multiples of Aurelionite to generate a mega laser sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Aurelionite to generate a mega laser sound. Client only. WARNING: Turning this on may cause earrape.")]
         public bool aurelioniteMegaLaserSoundCopy { get; private set; } = false;
 
-        [AutoItemConfig("Set to true for Options/Multiples of Beetle Guards to generate sound effects upon charging. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Beetle Guards to generate sound effects upon charging. Client only. WARNING: Turning this on may cause earrape.")]
         public bool beetleGuardChargeSoundCopy { get; private set; } = false;
 
-        [AutoItemConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
-                        "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
-                        "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
+                    "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
+                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool flamethrowerOptionSyncEffect { get; private set; } = true;
 
-        [AutoItemConfig("Allows displaying and syncing some of Aurelionite's Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
-                        "Server and Client. The server and client must have the same settings for an optimized experience. " +
-                        "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Allows displaying and syncing some of Aurelionite's Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+                    "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool aurelioniteOptionSyncEffect { get; private set; } = true;
 
-        [AutoItemConfig("Allows displaying and syncing some of allied Beelte Guards' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
-                        "Server and Client. The server and client must have the same settings for an optimized experience. " +
-                        "Disable this if you are experiencing FPS drops or network lag.", AutoItemConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Allows displaying and syncing some of allied Beelte Guards' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+                    "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool beetleGuardOptionSyncEffect { get; private set; } = true;
 
-        [AutoItemConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
-                        "Turning this off could lessen resource usage.", AutoItemConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
+                    "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
 
-        [AutoItemConfig("Amount of delay in seconds for syncing Option Spawning to fire. Increase this if Options are not spawning for clients. Server only. " +
-                        "Setting to 0 (not recommended) will have no delay, and Options may not spawn in clients.",
-                        AutoItemConfigFlags.PreventNetMismatch, 0f, float.MaxValue)]
+        [AutoConfig("Amount of delay in seconds for syncing Option Spawning to fire. Increase this if Options are not spawning for clients. Server only. " +
+                    "Setting to 0 (not recommended) will have no delay, and Options may not spawn in clients.",
+                    AutoConfigFlags.PreventNetMismatch, 0f, float.MaxValue)]
         public float spawnSyncSeconds { get; private set; } = .1f;
 
-        [AutoItemConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones. Client only.",
-                        AutoItemConfigFlags.None, 0, 2)]
+        [AutoConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones. Client only.",
+                    AutoConfigFlags.None, 0, 2)]
         public int playOptionGetSoundEffect { get; private set; } = 2;
 
-        public override bool itemAIB { get; protected set; } = true;
+        public override bool itemIsAIBlacklisted { get; protected set; } = true;
 
-        protected override string NewLangName(string langid = null) => displayName;
+        protected override string GetNameString(string langid = null) => displayName;
 
-        protected override string NewLangPickup(string langid = null) => $"Deploy the Option, an ultimate weapon from the Gradius Federation, for each owned Drone.";
+        protected override string GetPickupString(string langid = null) => $"Deploy the Option, an ultimate weapon from the Gradius Federation, for each owned Drone.";
 
-        protected override string NewLangDesc(string langid = null)
+        protected override string GetDescString(string langid = null)
         {
             return $"Deploy <style=cIsDamage>1</style> <style=cStack>(+1 per stack)</style> Option for <style=cIsDamage>each drone you own</style>. " +
                    $"Options will copy all the attacks of the drone for <style=cIsDamage>{Pct(damageMultiplier, 0)}</style> of the damage dealt.";
         }
 
-        protected override string NewLangLore(string langid = null) =>
+        protected override string GetLoreString(string langid = null) =>
             "\"This is CASE, A.I. born from Project Victorious to aid in combatting the evil known as the Bacterion Army.\n\n" +
             "Our specialized fighter spacecraft was destroyed from an incoming attack in an attempt to save the flight lead of the Scorpio Squadron. " +
             "It is unfortunate that the pilot herself, Katswell callsigned Scorpio 2, died from the explosion... her body disintegrated along with the spacecraft she pilots.\n\n" +
@@ -150,34 +150,49 @@ namespace Chen.GradiusMod
 
         public GradiusOption()
         {
-            onAttrib += (token, prefix) =>
-            {
-                modelPathName = "@ChensGradiusMod:assets/option/model/optionmodel.prefab";
-                iconPathName = "@ChensGradiusMod:assets/option/icon/gradiusoption_icon.png";
-                PostProcessConfiguration();
-            };
-
-            onBehav += () =>
-            {
-                InitializeAssets();
-                RegisterNetworkMessages();
-                if (Compat_ItemStats.enabled)
-                {
-                    Compat_ItemStats.CreateItemStatDef(regItem.ItemDef,
-                    (
-                        (count, inv, master) => { return count; },
-                        (value, inv, master) => { return $"Options per Drone: {value}"; }
-                    ),
-                    (
-                        (count, inv, master) => { return damageMultiplier; },
-                        (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
-                    ));
-                }
-            };
+            modelResourcePath = "@ChensGradiusMod:assets/option/model/optionmodel.prefab";
+            iconResourcePath = "@ChensGradiusMod:assets/option/icon/gradiusoption_icon.png";
         }
 
-        protected override void LoadBehavior()
+        public override void SetupAttributes()
         {
+            base.SetupAttributes();
+            if (!allowAurelionite)
+            {
+                MinionsList.Remove("TitanGoldAlly");
+                aurelioniteMegaLaserSoundCopy = false;
+                aurelioniteOptionSyncEffect = false;
+            }
+            if (!allowBeetleGuard)
+            {
+                MinionsList.Remove("BeetleGuardAlly");
+                beetleGuardChargeSoundCopy = false;
+                beetleGuardOptionSyncEffect = false;
+            }
+            if (!allowSquidPolyp) MinionsList.Remove("SquidTurret");
+        }
+
+        public override void SetupBehavior()
+        {
+            InitializeAssets();
+            RegisterNetworkMessages();
+            if (Compat_ItemStats.enabled)
+            {
+                Compat_ItemStats.CreateItemStatDef(itemDef,
+                (
+                    (count, inv, master) => { return count; },
+                    (value, inv, master) => { return $"Options per Drone: {value}"; }
+                ),
+                (
+                    (count, inv, master) => { return damageMultiplier; },
+                    (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
+                ));
+            }
+        }
+
+        public override void Install()
+        {
+            base.Install();
             On.RoR2.CharacterBody.OnInventoryChanged += CharacterBody_OnInventoryChanged;
             On.RoR2.CharacterMaster.SpawnBody += CharacterMaster_SpawnBody;
             On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter += FireGatling_OnEnter;
@@ -208,8 +223,9 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
         }
 
-        protected override void UnloadBehavior()
+        public override void Uninstall()
         {
+            base.Uninstall();
             On.RoR2.CharacterBody.OnInventoryChanged -= CharacterBody_OnInventoryChanged;
             On.RoR2.CharacterMaster.SpawnBody -= CharacterMaster_SpawnBody;
             On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter -= FireGatling_OnEnter;
@@ -240,26 +256,9 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
         }
 
-        private void PostProcessConfiguration()
-        {
-            if (!allowAurelionite)
-            {
-                MinionsList.Remove("TitanGoldAlly");
-                aurelioniteMegaLaserSoundCopy = false;
-                aurelioniteOptionSyncEffect = false;
-            }
-            if (!allowBeetleGuard)
-            {
-                MinionsList.Remove("BeetleGuardAlly");
-                beetleGuardChargeSoundCopy = false;
-                beetleGuardOptionSyncEffect = false;
-            }
-            if (!allowSquidPolyp) MinionsList.Remove("SquidTurret");
-        }
-
         private void InitializeAssets()
         {
-            regDef.pickupModelPrefab.transform.localScale *= 2f;
+            itemDef.pickupModelPrefab.transform.localScale *= 2f;
 
             string path;
             if (includeModelInsideOrb) path = "@ChensGradiusMod:assets/option/orb/optionorbwithmodel.prefab";

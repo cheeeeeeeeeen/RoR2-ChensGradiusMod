@@ -1,10 +1,10 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "1.5.1",
+  "version_number": "1.6.0",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Aurelionite, Beetle Guards and Squid Polyps are now able to use Options/Multiples. Nasty bugs fixed on this update. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Allow the mod to comply to TILER2 3.0.1. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "tristanmcpherson-R2API-2.5.14",
-    "ThinkInvis-TILER2-2.2.3"
+    "ThinkInvis-TILER2-3.0.1"
   ]
 }
