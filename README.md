@@ -26,6 +26,14 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Discord: `Chen#1218`
 - RoR2 Modding Server: https://discord.com/invite/5MbXZvd
 
+## More Information
+
+**Kirbsuke#0352** made the 3D model for the Option/Multiple, and later used for the icon.
+- Contact: `kirbydamaster@gmail.com` or through Discord.
+
+**manaboi#4887** helped me edit the icon to make it look like one with vanilla items.
+- Contact: Through Discord.
+
 ## Changelog
 
 **1.5.1**
