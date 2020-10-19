@@ -2,9 +2,9 @@
   "name": "ChensGradiusMod",
   "version_number": "1.6.0",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Allow the mod to comply to TILER2 3.0.1. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Allow the mod to comply to TILER2 changes. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "tristanmcpherson-R2API-2.5.14",
-    "ThinkInvis-TILER2-3.0.1"
+    "ThinkInvis-TILER2-3.0.4"
   ]
 }

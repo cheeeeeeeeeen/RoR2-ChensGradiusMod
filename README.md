@@ -36,6 +36,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**1.6.0**
+- Update the mod to comply with the changes of TILER2.
+
 **1.5.1**
 - Fix a nasty bug where the Options do seem ignorant of the master's attacks, resulting to sometimes not copying the attacks.
 - The issue where Aurelionite Option effects linger is also now fixed. It is related to the nasty bug discovered.
