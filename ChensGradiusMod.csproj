@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ChensGradiusMod</AssemblyName>
     <RootNamespace>ChensGradiusMod</RootNamespace>
-    <Version>1.5.0</Version>
+    <Version>1.6.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -24,7 +24,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "1.6.0";
+            "1.6.1";
 
         public const string ModName = "ChensGradiusMod";
         public const string ModGuid = "com.Chen.ChensGradiusMod";
@@ -106,17 +106,13 @@ namespace Chen.GradiusMod
                 mainConfigFile = cfgFile
             });
 
-            Logger.LogDebug("Loading item configs and registering items and their behaviors...");
-            foreach (CatalogBoilerplate x in chensItemList)
-            {
-                x.SetupConfig();
-                x.SetupAttributes();
-                x.SetupBehavior();
-            }
+            T2Module.SetupAll_PluginAwake(chensItemList);
+        }
 
-            Logger.LogDebug("Tweaking vanilla stuff... No tweaks found.");
-
-            Logger.LogDebug("Setup done.");
+        private void Start()
+        {
+            T2Module.SetupAll_PluginStart(chensItemList);
+            CatalogBoilerplate.ConsoleDump(Logger, chensItemList);
         }
     }
 }

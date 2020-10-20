@@ -36,6 +36,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**1.6.1**
+- Update the mod for a missing setup that prevents it from working correctly.
+
 **1.6.0**
 - Update the mod to comply with the changes of TILER2.
 
