@@ -5,6 +5,12 @@
     <AssemblyName>ChensGradiusMod</AssemblyName>
     <RootNamespace>ChensGradiusMod</RootNamespace>
     <Version>1.6.1</Version>
+    <PackageProjectUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\Chen\Documents\Visual Studio 2019\Risk of Rain 2\RoR2-ChensGradiusMod\ChensGradiusMod.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
