@@ -18,6 +18,7 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - All vanilla minions (both mechanical and organic) are supported. Only Equipment Drone is the exception.
 - Options/Multiples are able to duplicate all attacks of Aurelionite.
 - Options/Multiples will only duplicate the ranged attack of Beetle Guards.
+- Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
 ## Contact
 
@@ -35,6 +36,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Contact: Through Discord.
 
 ## Changelog
+
+**1.6.2**
+- Just update the code so that other mod creators are able to support Options in their own content by adding public helpers. More information are in this repository's wiki.
 
 **1.6.1**
 - Update the mod for a missing setup that prevents it from working correctly.
