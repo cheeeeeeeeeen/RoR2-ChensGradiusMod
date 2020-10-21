@@ -73,11 +73,11 @@ namespace Chen.GradiusMod
             _logger = Logger;
 
 #if DEBUG
-            Logger.LogWarning("Running test build with debug enabled!");
+            Log.Warning("Running test build with debug enabled!");
             On.RoR2.Networking.GameNetworkManager.OnClientConnect += (self, user, t) => { };
 #endif
 
-            Logger.LogDebug("Loading assets...");
+            Log.Debug("Loading assets...");
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChensGradiusMod.chensgradiusmod_assets"))
             {
                 var bundle = AssetBundle.LoadFromStream(stream);
@@ -85,7 +85,7 @@ namespace Chen.GradiusMod
                 ResourcesAPI.AddProvider(provider);
             }
 
-            Logger.LogDebug("Loading sounds...");
+            Log.Debug("Loading sounds...");
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChensGradiusMod.chensgradiusmod_soundbank.bnk"))
             {
                 var bytes = new byte[stream.Length];
@@ -95,9 +95,9 @@ namespace Chen.GradiusMod
 
             cfgFile = new ConfigFile(Path.Combine(Paths.ConfigPath, ModGuid + ".cfg"), true);
 
-            Logger.LogDebug("Loading global configs... No global configs found.");
+            Log.Debug("Loading global configs... No global configs found.");
 
-            Logger.LogDebug("Instantiating item classes...");
+            Log.Debug("Instantiating item classes...");
             chensItemList = T2Module.InitAll<CatalogBoilerplate>(new T2Module.ModInfo
             {
                 displayName = "Chen's Gradius Mod",
@@ -114,5 +114,20 @@ namespace Chen.GradiusMod
             T2Module.SetupAll_PluginStart(chensItemList);
             CatalogBoilerplate.ConsoleDump(Logger, chensItemList);
         }
+    }
+
+    public static class Log
+    {
+        public static void Debug(object data) => logger.LogDebug(data);
+
+        public static void Error(object data) => logger.LogError(data);
+
+        public static void Info(object data) => logger.LogInfo(data);
+
+        public static void Message(object data) => logger.LogMessage(data);
+
+        public static void Warning(object data) => logger.LogWarning(data);
+
+        public static BepInEx.Logging.ManualLogSource logger => GradiusModPlugin._logger;
     }
 }

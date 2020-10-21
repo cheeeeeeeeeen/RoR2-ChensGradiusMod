@@ -95,6 +95,9 @@ namespace Chen.GradiusMod
                     AutoConfigFlags.None, 0, 2)]
         public int playOptionGetSoundEffect { get; private set; } = 2;
 
+        [AutoConfig("Applies a fix for Emergency Drones. Set to false if there are issues regarding compatibility.", AutoConfigFlags.PreventNetMismatch)]
+        public bool emergencyDroneFix { get; private set; } = true;
+
         public override bool itemIsAIBlacklisted { get; protected set; } = true;
 
         protected override string GetNameString(string langid = null) => displayName;
@@ -125,13 +128,13 @@ namespace Chen.GradiusMod
             "It sounds like this item came from a far away place. The A.I. took their chance, and now she's coming back live again. " +
             "Makes me imagine the world is small when it's really not. Well, that's it for my personal log.";
 
-        public static GameObject gradiusOptionPrefab;
-        public static GameObject flamethrowerEffectPrefab;
-        public static GameObject laserChargeEffectPrefab;
-        public static uint getOptionSoundId = 649757048;
-        public static uint getOptionLowSoundId = 553829614;
-        public static uint loseOptionSoundId = 2603869165;
-        public static uint loseOptionLowSoundId = 4084766013;
+        internal static GameObject gradiusOptionPrefab { get; private set; }
+        internal static GameObject flamethrowerEffectPrefab { get; private set; }
+        internal static GameObject laserChargeEffectPrefab { get; private set; }
+        internal static uint getOptionSoundId { get; } = 649757048;
+        internal static uint getOptionLowSoundId { get; } = 553829614;
+        internal static uint loseOptionSoundId { get; } = 2603869165;
+        internal static uint loseOptionLowSoundId { get; } = 4084766013;
 
         private static readonly List<string> MinionsList = new List<string>
         {
@@ -147,6 +150,22 @@ namespace Chen.GradiusMod
             "BeetleGuardAlly",
             "SquidTurret"
         };
+        private static readonly List<string> RotateUsers = new List<string>
+        {
+            "Turret1",
+            "TitanGoldAlly",
+            "BeetleGuardAlly",
+            "SquidTurret"
+        };
+        private static readonly Dictionary<string, float> RotateMultipliers = new Dictionary<string, float>
+        {
+            { "TitanGoldAlly", 12f },
+            { "BeetleGuardAlly", 4f }
+        };
+        private static readonly Dictionary<string, Vector3> RotateOffsets = new Dictionary<string, Vector3>
+        {
+            { "SquidTurret", Vector3.up }
+        };
 
         public GradiusOption()
         {
@@ -154,9 +173,9 @@ namespace Chen.GradiusMod
             iconResourcePath = "@ChensGradiusMod:assets/option/icon/gradiusoption_icon.png";
         }
 
-        public override void SetupAttributes()
+        public override void SetupConfig()
         {
-            base.SetupAttributes();
+            base.SetupConfig();
             if (!allowAurelionite)
             {
                 MinionsList.Remove("TitanGoldAlly");
@@ -169,6 +188,7 @@ namespace Chen.GradiusMod
                 beetleGuardChargeSoundCopy = false;
                 beetleGuardOptionSyncEffect = false;
             }
+            if (beetleGuardOptionType != 1) RotateUsers.Remove("BeetleGuardAlly");
             if (!allowSquidPolyp) MinionsList.Remove("SquidTurret");
         }
 
@@ -206,7 +226,7 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter += HealBeam_OnEnter;
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit += HealBeam_OnExit;
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter += StartHealBeam_OnEnter;
-            On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
+            if (emergencyDroneFix) On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter += ChargeMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit += ChargeMegaLaser_OnExit;
             On.EntityStates.TitanMonster.ChargeMegaLaser.Update += ChargeMegaLaser_Update;
@@ -239,7 +259,7 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter -= HealBeam_OnEnter;
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit -= HealBeam_OnExit;
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
-            On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent -= HealBeamController_HealBeamAlreadyExists_GO_HC;
+            if (emergencyDroneFix) On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent -= HealBeamController_HealBeamAlreadyExists_GO_HC;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
             On.EntityStates.TitanMonster.ChargeMegaLaser.Update -= ChargeMegaLaser_Update;
@@ -269,9 +289,9 @@ namespace Chen.GradiusMod
                 gradiusOptionPrefab.AddComponent<NetworkIdentity>();
                 gradiusOptionPrefab.AddComponent<OptionBehavior>();
                 gradiusOptionPrefab.AddComponent<Flicker>();
-                Helper._.LogDebug("Successfully initialized OptionOrb prefab.");
+                Log.Debug("Successfully initialized OptionOrb prefab.");
             }
-            else Helper._.LogError("Failed to create GradiusOption: Resource not found or is null.");
+            else Log.Error("Failed to create GradiusOption: Resource not found or is null.");
 
             flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
             laserChargeEffectPrefab = Resources.Load<GameObject>("Assets/PrefabInstance/ChargeGolemGold.prefab");
@@ -279,7 +299,7 @@ namespace Chen.GradiusMod
 
         private void RegisterNetworkMessages()
         {
-            Helper._.LogDebug("Registering custom network messages needed for GradiusOption...");
+            Log.Debug("Registering custom network messages needed for GradiusOption...");
             NetworkingAPI.RegisterMessageType<SpawnOptionsForClients>();
             NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
             NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
@@ -325,11 +345,11 @@ namespace Chen.GradiusMod
                 if (diff != 0)
                 {
                     masterTracker.optionItemCount = newCount;
-                    Helper._.LogMessage($"OnInventoryChanged: OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
+                    Log.Message($"OnInventoryChanged: OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
                     if (diff > 0)
                     {
                         if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionSoundId, self.gameObject);
-                        LoopAllMinionOwnerships(self.master, (minion) =>
+                        LoopAllMinions(self.master, (minion) =>
                         {
                             if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionLowSoundId, minion);
                             for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
@@ -338,7 +358,7 @@ namespace Chen.GradiusMod
                     else
                     {
                         if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionSoundId, self.gameObject);
-                        LoopAllMinionOwnerships(self.master, (minion) =>
+                        LoopAllMinions(self.master, (minion) =>
                         {
                             if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionLowSoundId, self.gameObject);
                             OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
@@ -354,7 +374,7 @@ namespace Chen.GradiusMod
             GameObject owner, HealthComponent targetHealthComponent
         )
         {
-            // Note that this is incompatible with other mods. This applies a fix on Emergency Drone.
+            // Note that this is incompatible with other mods. This applies a fix on Emergency Drone. Configs are applied on hook assignment so no need to check here.
             List<HealBeamController> instancesList = InstanceTracker.GetInstancesList<HealBeamController>();
             for (int i = 0; i < instancesList.Count; i++)
             {
@@ -375,7 +395,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!NetworkServer.active) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 float healRate = (HealBeam.healCoefficient * self.damageStat / self.duration) * damageMultiplier;
                 Transform transform = option.transform;
@@ -394,7 +414,7 @@ namespace Chen.GradiusMod
         private void HealBeam_OnExit(On.EntityStates.Drone.DroneWeapon.HealBeam.orig_OnExit orig, HealBeam self)
         {
             orig(self);
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (behavior.healBeamController) behavior.healBeamController.BreakServer();
             });
@@ -404,7 +424,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!NetworkServer.active) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (HealBeamController.GetHealBeamCountForOwner(self.gameObject) < self.maxSimultaneousBeams && self.targetHurtBox)
                 {
@@ -428,7 +448,7 @@ namespace Chen.GradiusMod
             orig(self);
             if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
-                FireForAllMinions(self, false, (option, behavior, target) =>
+                FireForAllOptions(self, false, (option, behavior, target) =>
                 {
                     if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.endAttackSoundString, option);
                     if (behavior.flamethrower)
@@ -453,7 +473,7 @@ namespace Chen.GradiusMod
             orig(self);
             if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
-                FireForAllMinions(self, true, (option, behavior, target) =>
+                FireForAllOptions(self, true, (option, behavior, target) =>
                 {
                     bool perMinionOldBegunFlamethrower = oldBegunFlamethrower;
                     Vector3 direction = (target.transform.position - option.transform.position).normalized;
@@ -498,7 +518,7 @@ namespace Chen.GradiusMod
             orig(self, muzzleString);
             if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
-                FireForAllMinions(self, true, (option, behavior, target) =>
+                FireForAllOptions(self, true, (option, behavior, target) =>
                 {
                     if (self.isAuthority)
                     {
@@ -531,7 +551,7 @@ namespace Chen.GradiusMod
         private void FireGatling_OnEnter(On.EntityStates.Drone.DroneWeapon.FireGatling.orig_OnEnter orig, FireGatling self)
         {
             orig(self);
-            FireForAllMinions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, true, (option, behavior, target) =>
             {
                 if (gatlingSoundCopy) Util.PlaySound(FireGatling.fireGatlingSoundString, option);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -566,7 +586,7 @@ namespace Chen.GradiusMod
         private void FireTurret_OnEnter(On.EntityStates.Drone.DroneWeapon.FireTurret.orig_OnEnter orig, FireTurret self)
         {
             orig(self);
-            FireForAllMinions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, true, (option, behavior, target) =>
             {
                 if (gunnerSoundCopy) Util.PlaySound(FireTurret.attackSoundString, option);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -601,7 +621,7 @@ namespace Chen.GradiusMod
         private void FireMegaTurret_FireBullet(On.EntityStates.Drone.DroneWeapon.FireMegaTurret.orig_FireBullet orig, FireMegaTurret self, string muzzleString)
         {
             orig(self, muzzleString);
-            FireForAllMinions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, true, (option, behavior, target) =>
             {
                 if (tc280SoundCopy) Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -637,7 +657,7 @@ namespace Chen.GradiusMod
         private void FireMissileBarrage_FireMissile(On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.orig_FireMissile orig, FireMissileBarrage self, string targetMuzzle)
         {
             orig(self, targetMuzzle);
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (FireMissileBarrage.effectPrefab)
                 {
@@ -668,7 +688,7 @@ namespace Chen.GradiusMod
         private void FireTwinRocket_FireProjectile(On.EntityStates.Drone.DroneWeapon.FireTwinRocket.orig_FireProjectile orig, FireTwinRocket self, string muzzleString)
         {
             orig(self, muzzleString);
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (FireTwinRocket.muzzleEffectPrefab)
                 {
@@ -697,7 +717,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 Transform transform = option.transform;
                 if (self.effectPrefab)
@@ -727,7 +747,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
                 if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
@@ -746,7 +766,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (behavior.laserFireEffect && behavior.laserLineEffect)
                 {
@@ -792,10 +812,9 @@ namespace Chen.GradiusMod
 
         private void FireMegaLaser_OnEnter(On.EntityStates.TitanMonster.FireMegaLaser.orig_OnEnter orig, FireMegaLaser self)
         {
-            Helper.Log("FireMegaLaser_OnEnter");
             orig(self);
             if (!aurelioniteOptionSyncEffect || !self.laserPrefab) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (aurelioniteMegaLaserSoundCopy)
                 {
@@ -824,7 +843,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
                 if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
@@ -851,7 +870,7 @@ namespace Chen.GradiusMod
                 if ((!self.inputBank || !self.inputBank.skill4.down) && self.stopwatch > FireMegaLaser.minimumDuration) return;
                 if (self.stopwatch > FireMegaLaser.maximumDuration) return;
             }
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 Vector3 position = option.transform.position;
                 Vector3 direction = self.GetAimRay().direction;
@@ -908,10 +927,10 @@ namespace Chen.GradiusMod
         private void FireGoldFist_PlacePredictedAttack(On.EntityStates.TitanMonster.FireGoldFist.orig_PlacePredictedAttack orig, FireGoldFist self)
         {
             orig(self);
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 int fistNumber = 0;
-                float multiplier = Helper.RotateMultiplier(behavior.owner.name);
+                float multiplier = behavior.ownerOt.GetRotateMultiplier();
                 Vector3 predictedTargetPosition = self.predictedTargetPosition + behavior.DecidePosition(behavior.ownerOt.currentOptionAngle) * multiplier;
                 Vector3 a = Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f) * Vector3.forward;
                 int halfCount = FireGoldFist.fistCount / 2;
@@ -932,7 +951,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 behavior.fistChargeEffect = Object.Instantiate(self.chargeEffectPrefab, option.transform);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -949,7 +968,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -974,7 +993,7 @@ namespace Chen.GradiusMod
             bool oldFireArrow = self.hasFiredArrow;
             orig(self);
             if (oldFireArrow || !NetworkServer.active) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 HurtBox hurtBox = self.enemyFinder.GetResults().FirstOrDefault();
                 SquidOrb squidOrb = new SquidOrb
@@ -999,7 +1018,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!beetleGuardOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (beetleGuardChargeSoundCopy) Util.PlaySound(FireSunder.initialAttackSoundString, option);
                 if (FireSunder.chargeEffectPrefab) behavior.sunderEffect = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
@@ -1016,7 +1035,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!beetleGuardOptionSyncEffect) return;
-            FireForAllMinions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, false, (option, behavior, target) =>
             {
                 if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -1032,7 +1051,7 @@ namespace Chen.GradiusMod
         {
             bool oldHasAttacked = self.hasAttacked;
             orig(self);
-            FireForAllMinions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, true, (option, behavior, target) =>
             {
                 if (self.modelAnimator && self.modelAnimator.GetFloat("FireSunder.activate") > 0.5f && !oldHasAttacked)
                 {
@@ -1057,7 +1076,137 @@ namespace Chen.GradiusMod
             });
         }
 
-        private void LoopAllMinionOwnerships(CharacterMaster ownerMaster, Action<GameObject> actionToRun)
+        private bool FilterMinions(CharacterMaster master) => master && MinionsList.Exists((item) => master.name.Contains(item));
+
+        private void AssignAurelioniteOwner(CharacterMaster goldMaster)
+        {
+            if (!goldMaster.name.Contains("TitanGold")) return;
+            CharacterMaster trueMaster = null;
+            foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
+            {
+                if (!trueMaster || pcmc.master.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP))
+                {
+                    trueMaster = pcmc.master;
+                }
+            }
+            if (!trueMaster) return;
+            goldMaster.minionOwnership.SetOwner(trueMaster);
+            OptionMasterTracker tracker = OptionMasterTracker.GetOrCreateComponent(trueMaster);
+            NetworkIdentity netTrueMaster = trueMaster.gameObject.GetComponent<NetworkIdentity>();
+            NetworkIdentity netGoldMaster = goldMaster.gameObject.GetComponent<NetworkIdentity>();
+            if (!netTrueMaster || !netGoldMaster)
+            {
+                Log.Warning("AssignAurelioniteOwner: Network Identity is missing!");
+                return;
+            }
+            tracker.aurelioniteOwner = Tuple.Create(netTrueMaster.netId, netGoldMaster.netId);
+        }
+
+        internal bool IsRotateUser(string masterName) => RotateUsers.Exists((name) => masterName.Contains(name));
+
+        internal float GetRotateMultiplier(string name)
+        {
+            float multiplier = 0f;
+            foreach (var pair in RotateMultipliers)
+            {
+                if (name.Contains(pair.Key))
+                {
+                    multiplier += pair.Value;
+                }
+            }
+            if (multiplier <= 0f) multiplier = 1f;
+            return multiplier;
+        }
+
+        internal Vector3 GetRotateOffset(string name)
+        {
+            Vector3 offset = Vector3.zero;
+            foreach (var pair in RotateOffsets)
+            {
+                if (name.Contains(pair.Key))
+                {
+                    offset += pair.Value;
+                }
+            }
+            return offset;
+        }
+
+        /// <summary>
+        /// Adds a support for a minion for them to gain Options.
+        /// </summary>
+        /// <param name="masterName">The CharacterMaster name of the minion.</param>
+        /// <returns>True if the minion is supported. False if it is already supported.</returns>
+        public bool SupportMinionType(string masterName)
+        {
+            if (MinionsList.Contains(masterName)) return false;
+            MinionsList.Add(masterName);
+            return true;
+        }
+
+        /// <summary>
+        /// Lets the minion use Rotate Options.
+        /// </summary>
+        /// <param name="masterName">The CharacterMaster name of the minion.</param>
+        /// <returns>True if the minion is successfully set to use Rotate Options. False if it is already using Rotate Options.</returns>
+        public bool SetToRotateOptions(string masterName)
+        {
+            if (RotateUsers.Contains(masterName)) return false;
+            RotateUsers.Add(masterName);
+            return true;
+        }
+
+        /// <summary>
+        /// Sets the rotation multiplier for a minion type. This multiplier affects the distance and speed of rotation.
+        /// </summary>
+        /// <param name="masterName">The CharacterMaster name of the minion.</param>
+        /// <param name="newValue">The multiplier value.</param>
+        /// <returns>True if the values are set. False if not.</returns>
+        public bool SetRotateOptionMultiplier(string masterName, float newValue)
+        {
+            if (IsRotateUser(masterName))
+            {
+                RotateMultipliers[masterName] = newValue;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Sets the offset center position for a minion type. Options will rotate around the offset.
+        /// </summary>
+        /// <param name="masterName">The CharacterMaster name of the minion.</param>
+        /// <param name="newValue">The offset value.</param>
+        /// <returns>True if the values are set. False if not.</returns>
+        public bool SetRotateOptionOffset(string masterName, Vector3 newValue)
+        {
+            if (IsRotateUser(masterName))
+            {
+                RotateOffsets[masterName] = newValue;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Lets the minion use Regular Options.
+        /// </summary>
+        /// <param name="masterName">The CharacterMaster name of the minion.</param>
+        /// <returns>True if the minion is successfully set to use Regular Options. False if it is already using Regular Options.</returns>
+        public bool SetToRegularOptions(string masterName)
+        {
+            if (!RotateUsers.Contains(masterName)) return false;
+            RotateUsers.Remove(masterName);
+            RotateMultipliers.Remove(masterName);
+            RotateOffsets.Remove(masterName);
+            return true;
+        }
+
+        /// <summary>
+        /// Loops through the all the minions of the owner.
+        /// </summary>
+        /// <param name="ownerMaster">The owner of the minions.</param>
+        /// <param name="actionToRun">An action to execute for each minion. The minion's CharacterBody GameObject is given as the input.</param>
+        public void LoopAllMinions(CharacterMaster ownerMaster, Action<GameObject> actionToRun)
         {
             MinionOwnership[] minionOwnerships = Object.FindObjectsOfType<MinionOwnership>();
             foreach (MinionOwnership minionOwnership in minionOwnerships)
@@ -1078,9 +1227,15 @@ namespace Chen.GradiusMod
             }
         }
 
-        private void FireForAllMinions(BaseState self, bool needTarget, Action<GameObject, OptionBehavior, GameObject> actionToRun)
+        /// <summary>
+        /// Loops through all the Options of the minion.
+        /// </summary>
+        /// <param name="entityState">The state of the of which the attack was made.</param>
+        /// <param name="needTarget">True will query the target to the input in actionToRun. False will not query and assign null on target for the input.</param>
+        /// <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>
+        public void FireForAllOptions(BaseState entityState, bool needTarget, Action<GameObject, OptionBehavior, GameObject> actionToRun)
         {
-            CharacterBody body = self.characterBody;
+            CharacterBody body = entityState.characterBody;
             if (!body) return;
             OptionTracker optionTracker = body.GetComponent<OptionTracker>();
             if (!optionTracker) return;
@@ -1109,7 +1264,7 @@ namespace Chen.GradiusMod
                         NetworkIdentity targetNetworkIdentity = target.GetComponent<NetworkIdentity>();
                         if (targetNetworkIdentity)
                         {
-                            OptionSync(self, (networkIdentity, nullTracker) =>
+                            OptionSync(entityState, (networkIdentity, nullTracker) =>
                             {
                                 optionTracker.targetIds.Add(Tuple.Create(
                                     GameObjectType.Body, networkIdentity.netId, (short)behavior.numbering, targetNetworkIdentity.netId
@@ -1122,40 +1277,20 @@ namespace Chen.GradiusMod
             }
         }
 
-        private void OptionSync(BaseState self, Action<NetworkIdentity, OptionTracker> actionToRun, bool queryTracker = true)
+        /// <summary>
+        /// Syncs the Option from the server to clients. Sync logic should be provided in actionToRun.
+        /// </summary>
+        /// <param name="entityState">The state of which the attack was made.</param>
+        /// <param name="actionToRun">The sync action to perform. Inputs are as follows: NetworkIdentity optionIdentity, OptionTracker tracker.</param>
+        /// <param name="queryTracker">If true, the Option tracker is automatically queried. If false, the Option tracker will not be queried.</param>
+        public void OptionSync(BaseState entityState, Action<NetworkIdentity, OptionTracker> actionToRun, bool queryTracker = true)
         {
             if (!NetworkServer.active) return;
-            NetworkIdentity networkIdentity = self.characterBody.gameObject.GetComponent<NetworkIdentity>();
+            NetworkIdentity networkIdentity = entityState.characterBody.gameObject.GetComponent<NetworkIdentity>();
             if (!networkIdentity) return;
             OptionTracker tracker = null;
-            if (queryTracker) tracker = self.characterBody.gameObject.GetComponent<OptionTracker>();
+            if (queryTracker) tracker = entityState.characterBody.gameObject.GetComponent<OptionTracker>();
             if (!queryTracker || tracker) actionToRun(networkIdentity, tracker);
-        }
-
-        private bool FilterMinions(CharacterMaster master) => master && MinionsList.Exists((item) => master.name.Contains(item));
-
-        private void AssignAurelioniteOwner(CharacterMaster goldMaster)
-        {
-            if (!goldMaster.name.Contains("TitanGold")) return;
-            CharacterMaster trueMaster = null;
-            foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
-            {
-                if (!trueMaster || pcmc.master.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP))
-                {
-                    trueMaster = pcmc.master;
-                }
-            }
-            if (!trueMaster) return;
-            goldMaster.minionOwnership.SetOwner(trueMaster);
-            OptionMasterTracker tracker = OptionMasterTracker.GetOrCreateComponent(trueMaster);
-            NetworkIdentity netTrueMaster = trueMaster.gameObject.GetComponent<NetworkIdentity>();
-            NetworkIdentity netGoldMaster = goldMaster.gameObject.GetComponent<NetworkIdentity>();
-            if (!netTrueMaster || !netGoldMaster)
-            {
-                Helper._.LogWarning("AssignAurelioniteOwner: Network Identity is missing!");
-                return;
-            }
-            tracker.aurelioniteOwner = Tuple.Create(netTrueMaster.netId, netGoldMaster.netId);
         }
     }
 }

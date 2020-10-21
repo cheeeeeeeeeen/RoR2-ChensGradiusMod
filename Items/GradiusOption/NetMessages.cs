@@ -48,7 +48,7 @@ namespace Chen.GradiusMod
             GameObject ownerObject = Util.FindNetworkObject(ownerId);
             if (!ownerObject)
             {
-                Helper._.LogWarning("SpawnOptionsForClients: ownerObject is null.");
+                Log.Warning("SpawnOptionsForClients: ownerObject is null.");
                 return;
             }
             switch (bodyOrMaster)
@@ -61,7 +61,7 @@ namespace Chen.GradiusMod
                     CharacterMaster ownerMaster = ownerObject.GetComponent<CharacterMaster>();
                     if (!ownerMaster)
                     {
-                        Helper._.LogWarning("SpawnOptionsForClients: ownerMaster is null.");
+                        Log.Warning("SpawnOptionsForClients: ownerMaster is null.");
                         return;
                     }
                     TrySpawnOption(ownerMaster.GetBody());
@@ -73,7 +73,7 @@ namespace Chen.GradiusMod
         {
             if (!ownerBody)
             {
-                Helper._.LogWarning("SpawnOptionsForClients: ownerBody is null.");
+                Log.Warning("SpawnOptionsForClients: ownerBody is null.");
                 return;
             }
             OptionMasterTracker.SpawnOption(ownerBody.gameObject, numbering);
@@ -131,20 +131,20 @@ namespace Chen.GradiusMod
             GameObject bodyObject = Util.FindNetworkObject(ownerBodyId);
             if (!bodyObject)
             {
-                Helper._.LogWarning($"SyncFlamethrowerEffectForClients: bodyObject is null.");
+                Log.Warning($"SyncFlamethrowerEffectForClients: bodyObject is null.");
                 return;
             }
             OptionTracker tracker = bodyObject.GetComponent<OptionTracker>();
             if (!tracker)
             {
-                Helper._.LogWarning($"SyncFlamethrowerEffectForClients: tracker is null.");
+                Log.Warning($"SyncFlamethrowerEffectForClients: tracker is null.");
                 return;
             }
             GameObject option = tracker.existingOptions[optionNumbering - 1];
             OptionBehavior behavior = option.GetComponent<OptionBehavior>();
             if (!behavior)
             {
-                Helper._.LogWarning($"SyncFlamethrowerEffectForClients: behavior is null.");
+                Log.Warning($"SyncFlamethrowerEffectForClients: behavior is null.");
                 return;
             }
             switch (messageType)
@@ -218,13 +218,13 @@ namespace Chen.GradiusMod
             GameObject ownerObject = Util.FindNetworkObject(ownerId);
             if (!ownerObject)
             {
-                Helper._.LogWarning("SyncOptionTargetForClients: ownerObject is null.");
+                Log.Warning("SyncOptionTargetForClients: ownerObject is null.");
                 return;
             }
             GameObject targetObject = Util.FindNetworkObject(targetId);
             if (!targetObject)
             {
-                Helper._.LogWarning("SyncOptionTargetForClients: targetObject is null.");
+                Log.Warning("SyncOptionTargetForClients: targetObject is null.");
                 return;
             }
             OptionTracker tracker = null;
@@ -238,13 +238,13 @@ namespace Chen.GradiusMod
                     CharacterMaster ownerMaster = ownerObject.GetComponent<CharacterMaster>();
                     if (!ownerMaster)
                     {
-                        Helper._.LogWarning("SpawnOptionsForClients: ownerMaster is null.");
+                        Log.Warning("SpawnOptionsForClients: ownerMaster is null.");
                         return;
                     }
                     GameObject bodyObject = ownerMaster.GetBodyObject();
                     if (!bodyObject)
                     {
-                        Helper._.LogWarning("SpawnOptionsForClients: bodyObject is null.");
+                        Log.Warning("SpawnOptionsForClients: bodyObject is null.");
                         return;
                     }
                     tracker = bodyObject.GetComponent<OptionTracker>();
@@ -296,20 +296,20 @@ namespace Chen.GradiusMod
             GameObject masterObject = Util.FindNetworkObject(masterNetId);
             if (!masterObject)
             {
-                Helper._.LogWarning("SyncAurelioniteOwner: masterObject is null.");
+                Log.Warning("SyncAurelioniteOwner: masterObject is null.");
                 return;
             }
             GameObject goldObject = Util.FindNetworkObject(aurelioniteNetId);
             if (!goldObject)
             {
-                Helper._.LogWarning("SyncAurelioniteOwner: goldObject is null.");
+                Log.Warning("SyncAurelioniteOwner: goldObject is null.");
                 return;
             }
             CharacterMaster masterMaster = masterObject.GetComponent<CharacterMaster>();
             CharacterMaster goldMaster = goldObject.GetComponent<CharacterMaster>();
             if (!masterMaster || !goldMaster)
             {
-                Helper._.LogWarning("SyncAurelioniteOwner: One of the master components is null.");
+                Log.Warning("SyncAurelioniteOwner: One of the master components is null.");
                 return;
             }
             goldMaster.minionOwnership.ownerMasterId = masterNetId;
@@ -366,20 +366,20 @@ namespace Chen.GradiusMod
             GameObject goldObject = Util.FindNetworkObject(ownerBodyId);
             if (!goldObject)
             {
-                Helper._.LogWarning("SyncAurelioniteEffectsForClients: goldObject is null.");
+                Log.Warning("SyncAurelioniteEffectsForClients: goldObject is null.");
                 return;
             }
             OptionTracker tracker = goldObject.GetComponent<OptionTracker>();
             if (!tracker)
             {
-                Helper._.LogWarning($"SyncAurelioniteEffectsForClients: tracker is null.");
+                Log.Warning($"SyncAurelioniteEffectsForClients: tracker is null.");
                 return;
             }
             GameObject option = tracker.existingOptions[optionNumbering - 1];
             OptionBehavior behavior = option.GetComponent<OptionBehavior>();
             if (!behavior)
             {
-                Helper._.LogWarning($"SyncAurelioniteEffectsForClients: behavior is null.");
+                Log.Warning($"SyncAurelioniteEffectsForClients: behavior is null.");
                 return;
             }
 
@@ -390,7 +390,7 @@ namespace Chen.GradiusMod
                 case MessageType.CreateLaserCharge:
                     if (!(EntityState.Instantiate(typeof(ChargeMegaLaser)) is ChargeMegaLaser cmlState))
                     {
-                        Helper._.LogWarning($"SyncAurelioniteEffectsForClients: cmlState is null.");
+                        Log.Warning($"SyncAurelioniteEffectsForClients: cmlState is null.");
                         return;
                     }
                     if (cmlState.effectPrefab)
@@ -427,7 +427,7 @@ namespace Chen.GradiusMod
                 case MessageType.CreateLaserFire:
                     if (!(EntityState.Instantiate(typeof(FireMegaLaser)) is FireMegaLaser fmlState))
                     {
-                        Helper._.LogWarning($"SyncAurelioniteEffectsForClients: fmlState is null.");
+                        Log.Warning($"SyncAurelioniteEffectsForClients: fmlState is null.");
                         return;
                     }
                     if (!fmlState.laserPrefab) return;
@@ -457,7 +457,7 @@ namespace Chen.GradiusMod
                 case MessageType.CreateFist:
                     if (!(EntityState.Instantiate(typeof(FireFist)) is FireFist ffState))
                     {
-                        Helper._.LogWarning($"SyncAurelioniteEffectsForClients: ffState is null.");
+                        Log.Warning($"SyncAurelioniteEffectsForClients: ffState is null.");
                         return;
                     }
                     if (ffState.chargeEffectPrefab) behavior.fistChargeEffect = Object.Instantiate(ffState.chargeEffectPrefab, transform);
@@ -519,20 +519,20 @@ namespace Chen.GradiusMod
             GameObject beetleObject = Util.FindNetworkObject(ownerBodyId);
             if (!beetleObject)
             {
-                Helper._.LogWarning("SyncBeetleGuardEffectsForClients: beetleObject is null.");
+                Log.Warning("SyncBeetleGuardEffectsForClients: beetleObject is null.");
                 return;
             }
             OptionTracker tracker = beetleObject.GetComponent<OptionTracker>();
             if (!tracker)
             {
-                Helper._.LogWarning($"SyncBeetleGuardEffectsForClients: tracker is null.");
+                Log.Warning($"SyncBeetleGuardEffectsForClients: tracker is null.");
                 return;
             }
             GameObject option = tracker.existingOptions[optionNumbering - 1];
             OptionBehavior behavior = option.GetComponent<OptionBehavior>();
             if (!behavior)
             {
-                Helper._.LogWarning($"SyncBeetleGuardEffectsForClients: behavior is null.");
+                Log.Warning($"SyncBeetleGuardEffectsForClients: behavior is null.");
                 return;
             }
             switch (messageType)
@@ -566,7 +566,7 @@ namespace Chen.GradiusMod
         {
         }
 
-        public SyncSimpleSound(NetworkInstanceId ownerBodyId, short optionNumbering, string soundString, float scale)
+        public SyncSimpleSound(NetworkInstanceId ownerBodyId, short optionNumbering, string soundString, float scale = 0)
         {
             this.ownerBodyId = ownerBodyId;
             this.optionNumbering = optionNumbering;
@@ -596,13 +596,13 @@ namespace Chen.GradiusMod
             GameObject bodyObject = Util.FindNetworkObject(ownerBodyId);
             if (!bodyObject)
             {
-                Helper._.LogWarning($"SyncSimpleSound: bodyObject is null.");
+                Log.Warning($"SyncSimpleSound: bodyObject is null.");
                 return;
             }
             OptionTracker tracker = bodyObject.GetComponent<OptionTracker>();
             if (!tracker)
             {
-                Helper._.LogWarning($"SyncSimpleSound: tracker is null.");
+                Log.Warning($"SyncSimpleSound: tracker is null.");
                 return;
             }
             GameObject option = tracker.existingOptions[optionNumbering - 1];
@@ -610,7 +610,7 @@ namespace Chen.GradiusMod
             if (soundString == FireTurret.attackSoundString && !GradiusOption.instance.gunnerSoundCopy) return;
             if (soundString == FireMegaTurret.attackSoundString && !GradiusOption.instance.tc280SoundCopy) return;
 
-            if (scale < 0) Util.PlaySound(soundString, option);
+            if (scale <= 0) Util.PlaySound(soundString, option);
             else Util.PlayScaledSound(soundString, option, scale);
         }
     }

@@ -49,11 +49,10 @@ namespace Chen.GradiusMod
             {
                 if (owner && ownerBody && ownerMaster && ownerOt)
                 {
-                    if (Helper.IsRotateUser(ownerMaster.name))
+                    if (ownerOt.IsRotateUser())
                     {
-                        float multiplier = Helper.RotateMultiplier(ownerMaster.name);
-                        Vector3 newPosition = DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis * multiplier;
-                        newPosition = ownerT.position + Helper.RotateOffset(ownerMaster.name) + newPosition;
+                        Vector3 newPosition = DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis * ownerOt.GetRotateMultiplier();
+                        newPosition = ownerT.position + ownerOt.GetRotateOffset() + newPosition;
                         t.position = Vector3.Lerp(t.position, newPosition, ownerOt.optionLookRate);
                     }
                     else t.position = ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1];
@@ -68,7 +67,7 @@ namespace Chen.GradiusMod
                 }
                 else
                 {
-                    GradiusModPlugin._logger.LogWarning($"OptionBehavior.Update: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
+                    Log.Warning($"OptionBehavior.Update: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
                     Destroy(gameObject);
                 }
             }
@@ -86,9 +85,6 @@ namespace Chen.GradiusMod
                 ownerBody = owner.GetComponent<CharacterBody>();
                 ownerMaster = ownerBody.master;
             }
-            //if (ownerMaster.name.Contains("TitanGoldAlly") && )
-            //{
-            //}
         }
 
         public Vector3 DecidePosition(float baseAngle)
@@ -129,6 +125,9 @@ namespace Chen.GradiusMod
         private Vector3 previousPosition = new Vector3();
         private bool init = true;
         private int previousOptionItemCount = 0;
+        private bool? isRotate = null;
+        private float rotateMultiplier = 0f;
+        private Vector3? rotateOffset = null;
         private Transform t;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -143,7 +142,7 @@ namespace Chen.GradiusMod
             if (PauseScreenController.paused) return;
             if (!init && masterOptionTracker && characterMaster)
             {
-                if (Helper.IsRotateUser(characterMaster.name) && masterOptionTracker.optionItemCount > 0)
+                if (IsRotateUser() && masterOptionTracker.optionItemCount > 0)
                 {
                     if (masterOptionTracker.optionItemCount % 2 == 0) currentOptionAngle += rotateOptionAngleSpeed;
                     else currentOptionAngle -= rotateOptionAngleSpeed;
@@ -174,25 +173,25 @@ namespace Chen.GradiusMod
                 characterBody = gameObject.GetComponent<CharacterBody>();
                 if (!characterBody)
                 {
-                    GradiusModPlugin._logger.LogWarning("OptionTracker Initialization: characterBody does not exist!");
+                    Log.Warning("OptionTracker Initialization: characterBody does not exist!");
                     return;
                 }
                 characterMaster = characterBody.master;
                 if (!characterMaster)
                 {
-                    GradiusModPlugin._logger.LogWarning("OptionTracker Initialization: characterMaster does not exist!");
+                    Log.Warning("OptionTracker Initialization: characterMaster does not exist!");
                     return;
                 }
                 masterCharacterMaster = characterMaster.minionOwnership.ownerMaster;
                 if (!masterCharacterMaster)
                 {
-                    GradiusModPlugin._logger.LogWarning("OptionTracker Initialization: masterCharacterMaster does not exist!");
+                    Log.Warning("OptionTracker Initialization: masterCharacterMaster does not exist!");
                     return;
                 }
                 masterOptionTracker = masterCharacterMaster.gameObject.GetComponent<OptionMasterTracker>();
                 if (!masterOptionTracker)
                 {
-                    GradiusModPlugin._logger.LogWarning("OptionTracker Initialization: masterOptionTracker is null.");
+                    Log.Warning("OptionTracker Initialization: masterOptionTracker is null.");
                     return;
                 }
             }
@@ -299,10 +298,28 @@ namespace Chen.GradiusMod
 
         private void ManageFlightPath(int difference)
         {
-            if (Helper.IsRotateUser(characterMaster.name)) return;
+            if (IsRotateUser()) return;
             int flightPathCap = masterOptionTracker.optionItemCount * distanceInterval;
             if (difference > 0) while (flightPath.Count < flightPathCap) flightPath.Add(t.position);
             else if (difference < 0) while (flightPath.Count >= flightPathCap) flightPath.RemoveAt(flightPath.Count - 1);
+        }
+
+        public bool IsRotateUser()
+        {
+            if (isRotate == null) isRotate = GradiusOption.instance.IsRotateUser(characterMaster.name);
+            return (bool)isRotate;
+        }
+
+        public float GetRotateMultiplier()
+        {
+            if (rotateMultiplier <= 0f) rotateMultiplier = GradiusOption.instance.GetRotateMultiplier(characterMaster.name);
+            return rotateMultiplier;
+        }
+
+        public Vector3 GetRotateOffset()
+        {
+            if (rotateOffset == null) rotateOffset = GradiusOption.instance.GetRotateOffset(characterMaster.name);
+            return (Vector3)rotateOffset;
         }
 
         public static OptionTracker GetOrCreateComponent(GameObject me)
@@ -473,33 +490,5 @@ namespace Chen.GradiusMod
 
             return (y * amplitude * ampMultiplier) + baseValue;
         }
-    }
-
-    public static class Helper
-    {
-        public static bool IsRotateUser(string name)
-        {
-            return name.Contains("Turret1") || name.Contains("TitanGoldAlly") || name.Contains("SquidTurret")
-                   || (GradiusOption.instance.beetleGuardOptionType == 1 && name.Contains("BeetleGuardAlly"));
-        }
-
-        public static float RotateMultiplier(string name)
-        {
-            float multiplier = 1f;
-            if (name.Contains("TitanGoldAlly")) multiplier *= 12f;
-            if (name.Contains("BeetleGuardAlly")) multiplier *= 4f;
-            return multiplier;
-        }
-
-        public static Vector3 RotateOffset(string name)
-        {
-            Vector3 offset = Vector3.zero;
-            if (name.Contains("SquidTurret")) offset.y += 1;
-            return offset;
-        }
-
-        public static void Log(object data) => _.LogMessage(data);
-
-        public static BepInEx.Logging.ManualLogSource _ => GradiusModPlugin._logger;
     }
 }
