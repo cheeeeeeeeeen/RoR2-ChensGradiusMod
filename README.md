@@ -20,12 +20,13 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Options/Multiples will only duplicate the ranged attack of Beetle Guards.
 - Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
-## Contact
+## Contact & Support
 
 - Issue Page: https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/issues
 - Email: `blancfaye7@gmail.com`
 - Discord: `Chen#1218`
 - RoR2 Modding Server: https://discord.com/invite/5MbXZvd
+- Give a tip through Ko-fi: https://ko-fi.com/cheeeeeeeeeen
 
 ## More Information
 
