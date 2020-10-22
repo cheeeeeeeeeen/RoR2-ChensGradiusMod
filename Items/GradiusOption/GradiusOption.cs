@@ -206,7 +206,70 @@ namespace Chen.GradiusMod
                     (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
                 ));
             }
-            RegisterHooks();
+            RegisterVanillaFixes();
+        }
+
+        public override void Install()
+        {
+            On.RoR2.CharacterBody.OnInventoryChanged += CharacterBody_OnInventoryChanged;
+            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
+            On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter += FireGatling_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireTurret.OnEnter += FireTurret_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireMegaTurret.FireBullet += FireMegaTurret_FireBullet;
+            On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.FireMissile += FireMissileBarrage_FireMissile;
+            On.EntityStates.Drone.DroneWeapon.FireTwinRocket.FireProjectile += FireTwinRocket_FireProjectile;
+            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet += Flamethrower_FireGauntlet;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnExit += Flamethrower_OnExit;
+            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate += Flamethrower_FixedUpdate;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter += HealBeam_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit += HealBeam_OnExit;
+            On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter += StartHealBeam_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter += ChargeMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit += ChargeMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.Update += ChargeMegaLaser_Update;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter += FireMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnExit += FireMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate += FireGoldMegaLaser_FixedUpdate;
+            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack += FireGoldFist_PlacePredictedAttack;
+            On.EntityStates.TitanMonster.FireFist.OnEnter += FireFist_OnEnter;
+            On.EntityStates.TitanMonster.FireFist.OnExit += FireFist_OnExit;
+            On.RoR2.TitanRockController.Start += TitanRockController_Start;
+            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow += FireSpine_FireOrbArrow;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter += FireSunder_OnEnter;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit += FireSunder_OnExit;
+            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
+        }
+
+        public override void Uninstall()
+        {
+            On.RoR2.CharacterBody.OnInventoryChanged -= CharacterBody_OnInventoryChanged;
+            CharacterBody.onBodyStartGlobal -= CharacterBody_onBodyStartGlobal;
+            On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter -= FireGatling_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireTurret.OnEnter -= FireTurret_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireMegaTurret.FireBullet -= FireMegaTurret_FireBullet;
+            On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.FireMissile -= FireMissileBarrage_FireMissile;
+            On.EntityStates.Drone.DroneWeapon.FireTwinRocket.FireProjectile -= FireTwinRocket_FireProjectile;
+            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet -= Flamethrower_FireGauntlet;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnExit -= Flamethrower_OnExit;
+            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate -= Flamethrower_FixedUpdate;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter -= HealBeam_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit -= HealBeam_OnExit;
+            On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
+            if (emergencyDroneFix) On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent -= HealBeamController_HealBeamAlreadyExists_GO_HC;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.Update -= ChargeMegaLaser_Update;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter -= FireMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnExit -= FireMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate -= FireGoldMegaLaser_FixedUpdate;
+            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack -= FireGoldFist_PlacePredictedAttack;
+            On.EntityStates.TitanMonster.FireFist.OnEnter -= FireFist_OnEnter;
+            On.EntityStates.TitanMonster.FireFist.OnExit -= FireFist_OnExit;
+            On.RoR2.TitanRockController.Start -= TitanRockController_Start;
+            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow -= FireSpine_FireOrbArrow;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter -= FireSunder_OnEnter;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit -= FireSunder_OnExit;
+            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
         }
 
         private void InitializeAssets()
@@ -240,37 +303,12 @@ namespace Chen.GradiusMod
             NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
         }
 
-        private void RegisterHooks()
+        private void RegisterVanillaFixes()
         {
-            Log.Debug("Registering hooks permanently needed for GradiusOption for this session...");
-            On.RoR2.CharacterBody.OnInventoryChanged += CharacterBody_OnInventoryChanged;
-            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
-            On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter += FireGatling_OnEnter;
-            On.EntityStates.Drone.DroneWeapon.FireTurret.OnEnter += FireTurret_OnEnter;
-            On.EntityStates.Drone.DroneWeapon.FireMegaTurret.FireBullet += FireMegaTurret_FireBullet;
-            On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.FireMissile += FireMissileBarrage_FireMissile;
-            On.EntityStates.Drone.DroneWeapon.FireTwinRocket.FireProjectile += FireTwinRocket_FireProjectile;
-            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet += Flamethrower_FireGauntlet;
-            On.EntityStates.Mage.Weapon.Flamethrower.OnExit += Flamethrower_OnExit;
-            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate += Flamethrower_FixedUpdate;
-            On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter += HealBeam_OnEnter;
-            On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit += HealBeam_OnExit;
-            On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter += StartHealBeam_OnEnter;
-            if (emergencyDroneFix) On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter += ChargeMegaLaser_OnEnter;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit += ChargeMegaLaser_OnExit;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.Update += ChargeMegaLaser_Update;
-            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter += FireMegaLaser_OnEnter;
-            On.EntityStates.TitanMonster.FireMegaLaser.OnExit += FireMegaLaser_OnExit;
-            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate += FireGoldMegaLaser_FixedUpdate;
-            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack += FireGoldFist_PlacePredictedAttack;
-            On.EntityStates.TitanMonster.FireFist.OnEnter += FireFist_OnEnter;
-            On.EntityStates.TitanMonster.FireFist.OnExit += FireFist_OnExit;
-            On.RoR2.TitanRockController.Start += TitanRockController_Start;
-            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow += FireSpine_FireOrbArrow;
-            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter += FireSunder_OnEnter;
-            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit += FireSunder_OnExit;
-            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
+            if (emergencyDroneFix)
+            {
+                On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
+            }
         }
 
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
