@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
