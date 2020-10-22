@@ -1,8 +1,8 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "1.6.2",
+  "version_number": "1.6.3",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Minor update by adding more helpers for other mod creators who want Options to support their content. More information in the repository wiki. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Minor Update. Handle TILER2 helpers differently to avoid random unloaded stuff on game start. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "tristanmcpherson-R2API-2.5.14",
     "ThinkInvis-TILER2-3.0.4"

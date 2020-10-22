@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
@@ -24,7 +24,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "1.6.2";
+            "1.6.3";
 
         public const string ModName = "ChensGradiusMod";
         public const string ModGuid = "com.Chen.ChensGradiusMod";
@@ -107,10 +107,6 @@ namespace Chen.GradiusMod
             });
 
             T2Module.SetupAll_PluginAwake(chensItemList);
-        }
-
-        private void Start()
-        {
             T2Module.SetupAll_PluginStart(chensItemList);
             CatalogBoilerplate.ConsoleDump(Logger, chensItemList);
         }

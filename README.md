@@ -37,6 +37,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**1.6.3**
+- Update the mod to handle TILER2 helpers differently to avoid unloaded things on game start.
+
 **1.6.2**
 - Just update the code so that other mod creators are able to support Options in their own content by adding public helpers. More information are in this repository's wiki.
 

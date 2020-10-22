@@ -6,86 +6,10 @@ using R2API.Networking.Interfaces;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
-using static Chen.GradiusMod.SpawnOptionsForClients;
 using MageWeapon = EntityStates.Mage.Weapon;
 
 namespace Chen.GradiusMod
 {
-    public class SpawnOptionsForClients : INetMessage
-    {
-        private GameObjectType bodyOrMaster;
-        private NetworkInstanceId ownerId;
-        private short numbering;
-
-        public SpawnOptionsForClients()
-        {
-        }
-
-        public SpawnOptionsForClients(GameObjectType bodyOrMaster, NetworkInstanceId ownerId, short numbering)
-        {
-            this.bodyOrMaster = bodyOrMaster;
-            this.ownerId = ownerId;
-            this.numbering = numbering;
-        }
-
-        public void Serialize(NetworkWriter writer)
-        {
-            writer.Write((byte)bodyOrMaster);
-            writer.Write(ownerId);
-            writer.Write(numbering);
-        }
-
-        public void Deserialize(NetworkReader reader)
-        {
-            bodyOrMaster = (GameObjectType)reader.ReadByte();
-            ownerId = reader.ReadNetworkId();
-            numbering = reader.ReadInt16();
-        }
-
-        public void OnReceived()
-        {
-            if (NetworkServer.active) return;
-            GameObject ownerObject = Util.FindNetworkObject(ownerId);
-            if (!ownerObject)
-            {
-                Log.Warning("SpawnOptionsForClients: ownerObject is null.");
-                return;
-            }
-            switch (bodyOrMaster)
-            {
-                case GameObjectType.Body:
-                    TrySpawnOption(ownerObject.GetComponent<CharacterBody>());
-                    break;
-
-                case GameObjectType.Master:
-                    CharacterMaster ownerMaster = ownerObject.GetComponent<CharacterMaster>();
-                    if (!ownerMaster)
-                    {
-                        Log.Warning("SpawnOptionsForClients: ownerMaster is null.");
-                        return;
-                    }
-                    TrySpawnOption(ownerMaster.GetBody());
-                    break;
-            }
-        }
-
-        private void TrySpawnOption(CharacterBody ownerBody)
-        {
-            if (!ownerBody)
-            {
-                Log.Warning("SpawnOptionsForClients: ownerBody is null.");
-                return;
-            }
-            OptionMasterTracker.SpawnOption(ownerBody.gameObject, numbering);
-        }
-
-        public enum GameObjectType : byte
-        {
-            Master,
-            Body
-        }
-    }
-
     public class SyncFlamethrowerEffectForClients : INetMessage
     {
         private MessageType messageType;
@@ -261,59 +185,11 @@ namespace Chen.GradiusMod
             if (!behavior) return;
             behavior.target = target;
         }
-    }
 
-    public class SyncAurelioniteOwner : INetMessage
-    {
-        private NetworkInstanceId masterNetId;
-        private NetworkInstanceId aurelioniteNetId;
-
-        public SyncAurelioniteOwner()
+        public enum GameObjectType : byte
         {
-        }
-
-        public SyncAurelioniteOwner(NetworkInstanceId masterNetId, NetworkInstanceId aurelioniteNetId)
-        {
-            this.masterNetId = masterNetId;
-            this.aurelioniteNetId = aurelioniteNetId;
-        }
-
-        public void Serialize(NetworkWriter writer)
-        {
-            writer.Write(masterNetId);
-            writer.Write(aurelioniteNetId);
-        }
-
-        public void Deserialize(NetworkReader reader)
-        {
-            masterNetId = reader.ReadNetworkId();
-            aurelioniteNetId = reader.ReadNetworkId();
-        }
-
-        public void OnReceived()
-        {
-            if (NetworkServer.active) return;
-            GameObject masterObject = Util.FindNetworkObject(masterNetId);
-            if (!masterObject)
-            {
-                Log.Warning("SyncAurelioniteOwner: masterObject is null.");
-                return;
-            }
-            GameObject goldObject = Util.FindNetworkObject(aurelioniteNetId);
-            if (!goldObject)
-            {
-                Log.Warning("SyncAurelioniteOwner: goldObject is null.");
-                return;
-            }
-            CharacterMaster masterMaster = masterObject.GetComponent<CharacterMaster>();
-            CharacterMaster goldMaster = goldObject.GetComponent<CharacterMaster>();
-            if (!masterMaster || !goldMaster)
-            {
-                Log.Warning("SyncAurelioniteOwner: One of the master components is null.");
-                return;
-            }
-            goldMaster.minionOwnership.ownerMasterId = masterNetId;
-            MinionOwnership.MinionGroup.SetMinionOwner(goldMaster.minionOwnership, masterNetId);
+            Master,
+            Body
         }
     }
 

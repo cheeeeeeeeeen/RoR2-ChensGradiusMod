@@ -16,7 +16,7 @@ using System.Linq;
 using TILER2;
 using UnityEngine;
 using UnityEngine.Networking;
-using static Chen.GradiusMod.SpawnOptionsForClients;
+using static Chen.GradiusMod.SyncOptionTargetForClients;
 using static TILER2.MiscUtil;
 using MageWeapon = EntityStates.Mage.Weapon;
 using Object = UnityEngine.Object;
@@ -86,11 +86,6 @@ namespace Chen.GradiusMod
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
 
-        [AutoConfig("Amount of delay in seconds for syncing Option Spawning to fire. Increase this if Options are not spawning for clients. Server only. " +
-                    "Setting to 0 (not recommended) will have no delay, and Options may not spawn in clients.",
-                    AutoConfigFlags.PreventNetMismatch, 0f, float.MaxValue)]
-        public float spawnSyncSeconds { get; private set; } = .1f;
-
         [AutoConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones. Client only.",
                     AutoConfigFlags.None, 0, 2)]
         public int playOptionGetSoundEffect { get; private set; } = 2;
@@ -150,6 +145,7 @@ namespace Chen.GradiusMod
             "BeetleGuardAlly",
             "SquidTurret"
         };
+
         private static readonly List<string> RotateUsers = new List<string>
         {
             "Turret1",
@@ -157,11 +153,13 @@ namespace Chen.GradiusMod
             "BeetleGuardAlly",
             "SquidTurret"
         };
+
         private static readonly Dictionary<string, float> RotateMultipliers = new Dictionary<string, float>
         {
             { "TitanGoldAlly", 12f },
             { "BeetleGuardAlly", 4f }
         };
+
         private static readonly Dictionary<string, Vector3> RotateOffsets = new Dictionary<string, Vector3>
         {
             { "SquidTurret", Vector3.up }
@@ -208,13 +206,45 @@ namespace Chen.GradiusMod
                     (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
                 ));
             }
+            RegisterHooks();
         }
 
-        public override void Install()
+        private void InitializeAssets()
         {
-            base.Install();
+            itemDef.pickupModelPrefab.transform.localScale *= 2f;
+
+            string path;
+            if (includeModelInsideOrb) path = "@ChensGradiusMod:assets/option/orb/optionorbwithmodel.prefab";
+            else path = "@ChensGradiusMod:assets/option/orb/optionorb.prefab";
+            gradiusOptionPrefab = Resources.Load<GameObject>(path);
+            if (gradiusOptionPrefab)
+            {
+                gradiusOptionPrefab.AddComponent<NetworkIdentity>();
+                gradiusOptionPrefab.AddComponent<OptionBehavior>();
+                gradiusOptionPrefab.AddComponent<Flicker>();
+                Log.Debug("Successfully initialized OptionOrb prefab.");
+            }
+            else Log.Error("Failed to create GradiusOption: Resource not found or is null.");
+
+            flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
+            laserChargeEffectPrefab = Resources.Load<GameObject>("Assets/PrefabInstance/ChargeGolemGold.prefab");
+        }
+
+        private void RegisterNetworkMessages()
+        {
+            Log.Debug("Registering custom network messages needed for GradiusOption...");
+            NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
+            NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
+            NetworkingAPI.RegisterMessageType<SyncAurelioniteEffectsForClients>();
+            NetworkingAPI.RegisterMessageType<SyncBeetleGuardEffectsForClients>();
+            NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
+        }
+
+        private void RegisterHooks()
+        {
+            Log.Debug("Registering hooks permanently needed for GradiusOption for this session...");
             On.RoR2.CharacterBody.OnInventoryChanged += CharacterBody_OnInventoryChanged;
-            On.RoR2.CharacterMaster.SpawnBody += CharacterMaster_SpawnBody;
+            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
             On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter += FireGatling_OnEnter;
             On.EntityStates.Drone.DroneWeapon.FireTurret.OnEnter += FireTurret_OnEnter;
             On.EntityStates.Drone.DroneWeapon.FireMegaTurret.FireBullet += FireMegaTurret_FireBullet;
@@ -243,93 +273,24 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
         }
 
-        public override void Uninstall()
+        private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
         {
-            base.Uninstall();
-            On.RoR2.CharacterBody.OnInventoryChanged -= CharacterBody_OnInventoryChanged;
-            On.RoR2.CharacterMaster.SpawnBody -= CharacterMaster_SpawnBody;
-            On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter -= FireGatling_OnEnter;
-            On.EntityStates.Drone.DroneWeapon.FireTurret.OnEnter -= FireTurret_OnEnter;
-            On.EntityStates.Drone.DroneWeapon.FireMegaTurret.FireBullet -= FireMegaTurret_FireBullet;
-            On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.FireMissile -= FireMissileBarrage_FireMissile;
-            On.EntityStates.Drone.DroneWeapon.FireTwinRocket.FireProjectile -= FireTwinRocket_FireProjectile;
-            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet -= Flamethrower_FireGauntlet;
-            On.EntityStates.Mage.Weapon.Flamethrower.OnExit -= Flamethrower_OnExit;
-            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate -= Flamethrower_FixedUpdate;
-            On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter -= HealBeam_OnEnter;
-            On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit -= HealBeam_OnExit;
-            On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
-            if (emergencyDroneFix) On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent -= HealBeamController_HealBeamAlreadyExists_GO_HC;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.Update -= ChargeMegaLaser_Update;
-            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter -= FireMegaLaser_OnEnter;
-            On.EntityStates.TitanMonster.FireMegaLaser.OnExit -= FireMegaLaser_OnExit;
-            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate -= FireGoldMegaLaser_FixedUpdate;
-            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack -= FireGoldFist_PlacePredictedAttack;
-            On.EntityStates.TitanMonster.FireFist.OnEnter -= FireFist_OnEnter;
-            On.EntityStates.TitanMonster.FireFist.OnExit -= FireFist_OnExit;
-            On.RoR2.TitanRockController.Start -= TitanRockController_Start;
-            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow -= FireSpine_FireOrbArrow;
-            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter -= FireSunder_OnEnter;
-            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit -= FireSunder_OnExit;
-            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
-        }
-
-        private void InitializeAssets()
-        {
-            itemDef.pickupModelPrefab.transform.localScale *= 2f;
-
-            string path;
-            if (includeModelInsideOrb) path = "@ChensGradiusMod:assets/option/orb/optionorbwithmodel.prefab";
-            else path = "@ChensGradiusMod:assets/option/orb/optionorb.prefab";
-            gradiusOptionPrefab = Resources.Load<GameObject>(path);
-            if (gradiusOptionPrefab)
+            // This hook runs on Client and on Server
+            CharacterMaster master = obj.master;
+            if (FilterMinions(master) && master.minionOwnership)
             {
-                gradiusOptionPrefab.AddComponent<NetworkIdentity>();
-                gradiusOptionPrefab.AddComponent<OptionBehavior>();
-                gradiusOptionPrefab.AddComponent<Flicker>();
-                Log.Debug("Successfully initialized OptionOrb prefab.");
-            }
-            else Log.Error("Failed to create GradiusOption: Resource not found or is null.");
-
-            flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
-            laserChargeEffectPrefab = Resources.Load<GameObject>("Assets/PrefabInstance/ChargeGolemGold.prefab");
-        }
-
-        private void RegisterNetworkMessages()
-        {
-            Log.Debug("Registering custom network messages needed for GradiusOption...");
-            NetworkingAPI.RegisterMessageType<SpawnOptionsForClients>();
-            NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
-            NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
-            NetworkingAPI.RegisterMessageType<SyncAurelioniteOwner>();
-            NetworkingAPI.RegisterMessageType<SyncAurelioniteEffectsForClients>();
-            NetworkingAPI.RegisterMessageType<SyncBeetleGuardEffectsForClients>();
-            NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
-        }
-
-        private CharacterBody CharacterMaster_SpawnBody(On.RoR2.CharacterMaster.orig_SpawnBody orig, CharacterMaster self, GameObject bodyPrefab, Vector3 position, Quaternion rotation)
-        {
-            // This hook is only ran in the server.
-            CharacterBody result = orig(self, bodyPrefab, position, rotation);
-            if (result && NetworkServer.active && FilterMinions(self) && self.minionOwnership)
-            {
-                AssignAurelioniteOwner(result.master);
-                CharacterMaster masterMaster = self.minionOwnership.ownerMaster;
+                AssignAurelioniteOwner(obj.master);
+                CharacterMaster masterMaster = master.minionOwnership.ownerMaster;
                 if (masterMaster)
                 {
                     OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(masterMaster);
                     int currentCount = masterTracker.optionItemCount;
-                    NetworkInstanceId characterBodyObjectNetId = result.gameObject.GetComponent<NetworkIdentity>().netId;
                     for (int t = 1; t <= currentCount; t++)
                     {
-                        OptionMasterTracker.SpawnOption(result.gameObject, t);
-                        masterTracker.netIds.Add(Tuple.Create(GameObjectType.Body, characterBodyObjectNetId, (short)t));
+                        OptionMasterTracker.SpawnOption(obj.gameObject, t);
                     }
                 }
             }
-            return result;
         }
 
         private void CharacterBody_OnInventoryChanged(On.RoR2.CharacterBody.orig_OnInventoryChanged orig, CharacterBody self)
@@ -1080,7 +1041,7 @@ namespace Chen.GradiusMod
 
         private void AssignAurelioniteOwner(CharacterMaster goldMaster)
         {
-            if (!goldMaster.name.Contains("TitanGold")) return;
+            if (!goldMaster.name.Contains("TitanGoldAlly")) return;
             CharacterMaster trueMaster = null;
             foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
             {
@@ -1090,16 +1051,18 @@ namespace Chen.GradiusMod
                 }
             }
             if (!trueMaster) return;
-            goldMaster.minionOwnership.SetOwner(trueMaster);
-            OptionMasterTracker tracker = OptionMasterTracker.GetOrCreateComponent(trueMaster);
-            NetworkIdentity netTrueMaster = trueMaster.gameObject.GetComponent<NetworkIdentity>();
-            NetworkIdentity netGoldMaster = goldMaster.gameObject.GetComponent<NetworkIdentity>();
-            if (!netTrueMaster || !netGoldMaster)
+            if (NetworkServer.active) goldMaster.minionOwnership.SetOwner(trueMaster);
+            else
             {
-                Log.Warning("AssignAurelioniteOwner: Network Identity is missing!");
-                return;
+                NetworkIdentity netTrueMaster = trueMaster.gameObject.GetComponent<NetworkIdentity>();
+                if (!netTrueMaster)
+                {
+                    Log.Warning("AssignAurelioniteOwner: Network Identity is missing!");
+                    return;
+                }
+                goldMaster.minionOwnership.ownerMasterId = netTrueMaster.netId;
+                MinionOwnership.MinionGroup.SetMinionOwner(goldMaster.minionOwnership, netTrueMaster.netId);
             }
-            tracker.aurelioniteOwner = Tuple.Create(netTrueMaster.netId, netGoldMaster.netId);
         }
 
         internal bool IsRotateUser(string masterName) => RotateUsers.Exists((name) => masterName.Contains(name));
