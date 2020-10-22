@@ -211,6 +211,7 @@ namespace Chen.GradiusMod
 
         public override void Install()
         {
+            base.Install();
             On.RoR2.CharacterBody.OnInventoryChanged += CharacterBody_OnInventoryChanged;
             CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
             On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter += FireGatling_OnEnter;
@@ -242,6 +243,7 @@ namespace Chen.GradiusMod
 
         public override void Uninstall()
         {
+            base.Uninstall();
             On.RoR2.CharacterBody.OnInventoryChanged -= CharacterBody_OnInventoryChanged;
             CharacterBody.onBodyStartGlobal -= CharacterBody_onBodyStartGlobal;
             On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter -= FireGatling_OnEnter;
