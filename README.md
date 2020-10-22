@@ -40,6 +40,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 **1.6.3**
 - Update the mod to handle TILER2 helpers differently to avoid unloaded things on game start.
+- Vastly improve the code by removing bandaid solutions.
+- Option syncing should be faster now as well as Aurelionite management.
+- Emergency Drone vanilla patch is now separated from the usual hooks.
 
 **1.6.2**
 - Just update the code so that other mod creators are able to support Options in their own content by adding public helpers. More information are in this repository's wiki.
