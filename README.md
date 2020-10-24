@@ -38,6 +38,12 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**1.6.4**
+- Fix a minor bug where some entities are getting trackers and allow them to self destruct if they cannot find the data they need.
+- Fix a minor bug where the there were improper calls of uninstalling hooks.
+- Optimize code where all needed effects are cached instead if being requeried especially in syncing in clients.
+- Potentially made Option firing require more process but ensures it executes the code to destroy the effects.
+
 **1.6.3**
 - Update the mod to handle TILER2 helpers differently to avoid unloaded things on game start.
 - Vastly improve the code by removing bandaid solutions.
