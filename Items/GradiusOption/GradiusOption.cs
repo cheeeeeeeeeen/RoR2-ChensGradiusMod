@@ -126,6 +126,9 @@ namespace Chen.GradiusMod
         internal static GameObject gradiusOptionPrefab { get; private set; }
         internal static GameObject flamethrowerEffectPrefab { get; private set; }
         internal static GameObject laserChargeEffectPrefab { get; private set; }
+        internal static GameObject laserChargeLaserPrefab { get; private set; }
+        internal static GameObject laserFireLaserPrefab { get; private set; }
+        internal static GameObject fistChargeEffectPrefab { get; private set; }
         internal static uint getOptionSoundId { get; } = 649757048;
         internal static uint getOptionLowSoundId { get; } = 553829614;
         internal static uint loseOptionSoundId { get; } = 2603869165;
@@ -292,6 +295,13 @@ namespace Chen.GradiusMod
 
             flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
             laserChargeEffectPrefab = Resources.Load<GameObject>("Assets/PrefabInstance/ChargeGolemGold.prefab");
+            ChargeMegaLaser cmlState = EntityState.Instantiate(typeof(ChargeMegaLaser)) as ChargeMegaLaser;
+            laserChargeEffectPrefab = cmlState.effectPrefab;
+            laserChargeLaserPrefab = cmlState.laserPrefab;
+            FireMegaLaser fmlState = EntityState.Instantiate(typeof(FireMegaLaser)) as FireMegaLaser;
+            laserFireLaserPrefab = fmlState.laserPrefab;
+            FireFist ffState = EntityState.Instantiate(typeof(FireFist)) as FireFist;
+            fistChargeEffectPrefab = ffState.chargeEffectPrefab;
         }
 
         private void RegisterNetworkMessages()

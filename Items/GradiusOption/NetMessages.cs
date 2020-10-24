@@ -264,21 +264,16 @@ namespace Chen.GradiusMod
             switch (messageType)
             {
                 case MessageType.CreateLaserCharge:
-                    if (!(EntityState.Instantiate(typeof(ChargeMegaLaser)) is ChargeMegaLaser cmlState))
+                    if (GradiusOption.laserChargeEffectPrefab)
                     {
-                        Log.Warning($"SyncAurelioniteEffectsForClients: cmlState is null.");
-                        return;
-                    }
-                    if (cmlState.effectPrefab)
-                    {
-                        behavior.laserChargeEffect = Object.Instantiate(cmlState.effectPrefab, position, transform.rotation);
+                        behavior.laserChargeEffect = Object.Instantiate(GradiusOption.laserChargeEffectPrefab, position, transform.rotation);
                         behavior.laserChargeEffect.transform.parent = transform;
                         ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
                         if (component) component.newDuration = duration;
                     }
-                    if (cmlState.laserPrefab)
+                    if (GradiusOption.laserChargeLaserPrefab)
                     {
-                        behavior.laserFireEffect = Object.Instantiate(cmlState.laserPrefab, position, transform.rotation);
+                        behavior.laserFireEffect = Object.Instantiate(GradiusOption.laserChargeLaserPrefab, position, transform.rotation);
                         behavior.laserFireEffect.transform.parent = transform;
                         behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
                     }
@@ -301,18 +296,13 @@ namespace Chen.GradiusMod
                     break;
 
                 case MessageType.CreateLaserFire:
-                    if (!(EntityState.Instantiate(typeof(FireMegaLaser)) is FireMegaLaser fmlState))
-                    {
-                        Log.Warning($"SyncAurelioniteEffectsForClients: fmlState is null.");
-                        return;
-                    }
-                    if (!fmlState.laserPrefab) return;
+                    if (!GradiusOption.laserFireLaserPrefab) return;
                     if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy)
                     {
                         Util.PlaySound(FireMegaLaser.playAttackSoundString, option);
                         Util.PlaySound(FireMegaLaser.playLoopSoundString, option);
                     }
-                    behavior.laserFire = Object.Instantiate(fmlState.laserPrefab, position, transform.rotation);
+                    behavior.laserFire = Object.Instantiate(GradiusOption.laserFireLaserPrefab, position, transform.rotation);
                     behavior.laserFire.transform.parent = transform;
                     behavior.laserChildLocator = behavior.laserFireEffect.GetComponent<ChildLocator>();
                     behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
@@ -331,12 +321,8 @@ namespace Chen.GradiusMod
                     break;
 
                 case MessageType.CreateFist:
-                    if (!(EntityState.Instantiate(typeof(FireFist)) is FireFist ffState))
-                    {
-                        Log.Warning($"SyncAurelioniteEffectsForClients: ffState is null.");
-                        return;
-                    }
-                    if (ffState.chargeEffectPrefab) behavior.fistChargeEffect = Object.Instantiate(ffState.chargeEffectPrefab, transform);
+                    if (!GradiusOption.fistChargeEffectPrefab) return;
+                    behavior.fistChargeEffect = Object.Instantiate(GradiusOption.fistChargeEffectPrefab, transform);
                     break;
 
                 case MessageType.DestroyFist:
