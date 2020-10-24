@@ -257,7 +257,6 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter -= HealBeam_OnEnter;
             On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit -= HealBeam_OnExit;
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
-            if (emergencyDroneFix) On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent -= HealBeamController_HealBeamAlreadyExists_GO_HC;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
             On.EntityStates.TitanMonster.ChargeMegaLaser.Update -= ChargeMegaLaser_Update;
@@ -319,16 +318,12 @@ namespace Chen.GradiusMod
             CharacterMaster master = obj.master;
             if (FilterMinions(master) && master.minionOwnership)
             {
-                AssignAurelioniteOwner(obj.master);
+                AssignAurelioniteOwner(master);
                 CharacterMaster masterMaster = master.minionOwnership.ownerMaster;
-                if (masterMaster)
+                if (masterMaster && GetCount(masterMaster) > 0)
                 {
                     OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(masterMaster);
-                    int currentCount = masterTracker.optionItemCount;
-                    for (int t = 1; t <= currentCount; t++)
-                    {
-                        OptionMasterTracker.SpawnOption(obj.gameObject, t);
-                    }
+                    for (int t = 1; t <= masterTracker.optionItemCount; t++) OptionMasterTracker.SpawnOption(obj.gameObject, t);
                 }
             }
         }

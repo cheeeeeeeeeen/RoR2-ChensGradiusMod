@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.SyncOptionTargetForClients;
+using Object = System.Object;
 
 namespace Chen.GradiusMod
 {
@@ -109,6 +110,8 @@ namespace Chen.GradiusMod
         public CharacterMaster characterMaster { get; private set; }
         public CharacterBody characterBody { get; private set; }
 
+        private readonly float invalidThreshold = 3f;
+
         public List<Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>> flameNetIds { get; private set; } =
             new List<Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>>();
 
@@ -127,6 +130,8 @@ namespace Chen.GradiusMod
         private bool? isRotate = null;
         private float rotateMultiplier = 0f;
         private Vector3? rotateOffset = null;
+        private float invalidCheckTimer = 0f;
+
         private Transform t;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
@@ -167,33 +172,40 @@ namespace Chen.GradiusMod
         private void FixedUpdate()
         {
             if (PauseScreenController.paused) return;
+            if (invalidCheckTimer >= invalidThreshold)
+            {
+                Log.Warning($"Invalid OptionTracker: Cannot find the values through the threshold time. Destroying the tracker from GameObject {gameObject.name}.");
+                Destroy(this);
+                return;
+            }
             if (!masterOptionTracker)
             {
                 characterBody = gameObject.GetComponent<CharacterBody>();
                 if (!characterBody)
                 {
-                    Log.Warning("OptionTracker Initialization: characterBody does not exist!");
+                    IncreaseInvalidity("OptionTracker Initialization: characterBody does not exist!");
                     return;
                 }
                 characterMaster = characterBody.master;
                 if (!characterMaster)
                 {
-                    Log.Warning("OptionTracker Initialization: characterMaster does not exist!");
+                    IncreaseInvalidity("OptionTracker Initialization: characterMaster does not exist!");
                     return;
                 }
                 masterCharacterMaster = characterMaster.minionOwnership.ownerMaster;
                 if (!masterCharacterMaster)
                 {
-                    Log.Warning("OptionTracker Initialization: masterCharacterMaster does not exist!");
+                    IncreaseInvalidity("OptionTracker Initialization: masterCharacterMaster does not exist!");
                     return;
                 }
                 masterOptionTracker = masterCharacterMaster.gameObject.GetComponent<OptionMasterTracker>();
                 if (!masterOptionTracker)
                 {
-                    Log.Warning("OptionTracker Initialization: masterOptionTracker is null.");
+                    IncreaseInvalidity("OptionTracker Initialization: masterOptionTracker is null.");
                     return;
                 }
             }
+            if (invalidCheckTimer > 0f) invalidCheckTimer = 0f;
             if (init && masterOptionTracker.optionItemCount > 0)
             {
                 init = false;
@@ -301,6 +313,12 @@ namespace Chen.GradiusMod
             int flightPathCap = masterOptionTracker.optionItemCount * distanceInterval;
             if (difference > 0) while (flightPath.Count < flightPathCap) flightPath.Add(t.position);
             else if (difference < 0) while (flightPath.Count >= flightPathCap) flightPath.RemoveAt(flightPath.Count - 1);
+        }
+
+        private void IncreaseInvalidity(Object obj)
+        {
+            Log.Warning(obj);
+            invalidCheckTimer += Time.fixedDeltaTime;
         }
 
         public bool IsRotateUser()
