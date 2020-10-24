@@ -16,8 +16,8 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Gradius is known for its feature of Options/Multiples where in these weapons are invulnerable to all damage, and are able to copy the full arsenal of the main ship.
 - For this mod, the Options/Multiples will only copy the main attacks of the drone.
 - All vanilla minions (both mechanical and organic) are supported. Only Equipment Drone is the exception.
-- Options/Multiples are able to duplicate all attacks of Aurelionite.
-- Options/Multiples will only duplicate the ranged attack of Beetle Guards.
+- Options/Multiples are able to duplicate all attacks of Aurelionite. The Rock Turret will attack faster instead of being copied.
+- Options/Multiples will only duplicate the ranged attack of Beetle Guards. Their melee attacks will have multiplied damage, however.
 - Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
 ## Contact & Support
@@ -39,6 +39,7 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 ## Changelog
 
 **1.6.4**
+- Allow Beetle Guards to have multiplied damage according to the number of Options they have.
 - Fix a minor bug where some entities are getting trackers and allow them to self destruct if they cannot find the data they need.
 - Fix a minor bug where the there were improper calls of uninstalling hooks.
 - Optimize code where all needed effects are cached instead if being requeried especially in syncing in clients.
