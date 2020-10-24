@@ -563,33 +563,35 @@ namespace Chen.GradiusMod
             orig(self);
             FireForAllOptions(self, (option, behavior, target) =>
             {
-                if (!target) return;
-                if (gatlingSoundCopy) Util.PlaySound(FireGatling.fireGatlingSoundString, option);
-                OptionSync(self, (networkIdentity, optionTracker) =>
+                if (target)
                 {
-                    new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireGatling.fireGatlingSoundString, -1).Send(NetworkDestination.Clients);
-                }, false);
-                if (FireGatling.effectPrefab)
-                {
-                    EffectManager.SimpleMuzzleFlash(FireGatling.effectPrefab, option, "Muzzle", false);
-                }
-                if (self.isAuthority)
-                {
-                    new BulletAttack
+                    if (gatlingSoundCopy) Util.PlaySound(FireGatling.fireGatlingSoundString, option);
+                    OptionSync(self, (networkIdentity, optionTracker) =>
                     {
-                        owner = self.gameObject,
-                        weapon = option,
-                        origin = option.transform.position,
-                        aimVector = (target.transform.position - option.transform.position).normalized,
-                        minSpread = FireGatling.minSpread,
-                        maxSpread = FireGatling.maxSpread,
-                        damage = FireGatling.damageCoefficient * self.damageStat * damageMultiplier,
-                        force = FireGatling.force * damageMultiplier,
-                        tracerEffectPrefab = FireGatling.tracerEffectPrefab,
-                        muzzleName = "Muzzle",
-                        hitEffectPrefab = FireGatling.hitEffectPrefab,
-                        isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
-                    }.Fire();
+                        new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireGatling.fireGatlingSoundString, -1).Send(NetworkDestination.Clients);
+                    }, false);
+                    if (FireGatling.effectPrefab)
+                    {
+                        EffectManager.SimpleMuzzleFlash(FireGatling.effectPrefab, option, "Muzzle", false);
+                    }
+                    if (self.isAuthority)
+                    {
+                        new BulletAttack
+                        {
+                            owner = self.gameObject,
+                            weapon = option,
+                            origin = option.transform.position,
+                            aimVector = (target.transform.position - option.transform.position).normalized,
+                            minSpread = FireGatling.minSpread,
+                            maxSpread = FireGatling.maxSpread,
+                            damage = FireGatling.damageCoefficient * self.damageStat * damageMultiplier,
+                            force = FireGatling.force * damageMultiplier,
+                            tracerEffectPrefab = FireGatling.tracerEffectPrefab,
+                            muzzleName = "Muzzle",
+                            hitEffectPrefab = FireGatling.hitEffectPrefab,
+                            isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
+                        }.Fire();
+                    }
                 }
             });
         }
@@ -599,33 +601,35 @@ namespace Chen.GradiusMod
             orig(self);
             FireForAllOptions(self, (option, behavior, target) =>
             {
-                if (!target) return;
-                if (gunnerSoundCopy) Util.PlaySound(FireTurret.attackSoundString, option);
-                OptionSync(self, (networkIdentity, optionTracker) =>
+                if (target)
                 {
-                    new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString, -1).Send(NetworkDestination.Clients);
-                }, false);
-                if (FireTurret.effectPrefab)
-                {
-                    EffectManager.SimpleMuzzleFlash(FireTurret.effectPrefab, option, "Muzzle", false);
-                }
-                if (self.isAuthority)
-                {
-                    new BulletAttack
+                    if (gunnerSoundCopy) Util.PlaySound(FireTurret.attackSoundString, option);
+                    OptionSync(self, (networkIdentity, optionTracker) =>
                     {
-                        owner = self.gameObject,
-                        weapon = option,
-                        origin = option.transform.position,
-                        aimVector = (target.transform.position - option.transform.position).normalized,
-                        minSpread = FireTurret.minSpread,
-                        maxSpread = FireTurret.maxSpread,
-                        damage = FireTurret.damageCoefficient * self.damageStat * damageMultiplier,
-                        force = FireTurret.force * damageMultiplier,
-                        tracerEffectPrefab = FireTurret.tracerEffectPrefab,
-                        muzzleName = "Muzzle",
-                        hitEffectPrefab = FireTurret.hitEffectPrefab,
-                        isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
-                    }.Fire();
+                        new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString, -1).Send(NetworkDestination.Clients);
+                    }, false);
+                    if (FireTurret.effectPrefab)
+                    {
+                        EffectManager.SimpleMuzzleFlash(FireTurret.effectPrefab, option, "Muzzle", false);
+                    }
+                    if (self.isAuthority)
+                    {
+                        new BulletAttack
+                        {
+                            owner = self.gameObject,
+                            weapon = option,
+                            origin = option.transform.position,
+                            aimVector = (target.transform.position - option.transform.position).normalized,
+                            minSpread = FireTurret.minSpread,
+                            maxSpread = FireTurret.maxSpread,
+                            damage = FireTurret.damageCoefficient * self.damageStat * damageMultiplier,
+                            force = FireTurret.force * damageMultiplier,
+                            tracerEffectPrefab = FireTurret.tracerEffectPrefab,
+                            muzzleName = "Muzzle",
+                            hitEffectPrefab = FireTurret.hitEffectPrefab,
+                            isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
+                        }.Fire();
+                    }
                 }
             });
         }
@@ -635,34 +639,36 @@ namespace Chen.GradiusMod
             orig(self, muzzleString);
             FireForAllOptions(self, (option, behavior, target) =>
             {
-                if (!target) return;
-                if (tc280SoundCopy) Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
-                OptionSync(self, (networkIdentity, optionTracker) =>
+                if (target)
                 {
-                    new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString,
-                                        FireMegaTurret.attackSoundPlaybackCoefficient).Send(NetworkDestination.Clients);
-                }, false);
-                if (FireMegaTurret.effectPrefab)
-                {
-                    EffectManager.SimpleMuzzleFlash(FireMegaTurret.effectPrefab, option, muzzleString, false);
-                }
-                if (self.isAuthority)
-                {
-                    new BulletAttack
+                    if (tc280SoundCopy) Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
+                    OptionSync(self, (networkIdentity, optionTracker) =>
                     {
-                        owner = self.gameObject,
-                        weapon = option,
-                        origin = option.transform.position,
-                        aimVector = (target.transform.position - option.transform.position).normalized,
-                        minSpread = FireMegaTurret.minSpread,
-                        maxSpread = FireMegaTurret.maxSpread,
-                        damage = FireMegaTurret.damageCoefficient * self.damageStat * damageMultiplier,
-                        force = FireMegaTurret.force * damageMultiplier,
-                        tracerEffectPrefab = FireMegaTurret.tracerEffectPrefab,
-                        muzzleName = muzzleString,
-                        hitEffectPrefab = FireMegaTurret.hitEffectPrefab,
-                        isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
-                    }.Fire();
+                        new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString,
+                                            FireMegaTurret.attackSoundPlaybackCoefficient).Send(NetworkDestination.Clients);
+                    }, false);
+                    if (FireMegaTurret.effectPrefab)
+                    {
+                        EffectManager.SimpleMuzzleFlash(FireMegaTurret.effectPrefab, option, muzzleString, false);
+                    }
+                    if (self.isAuthority)
+                    {
+                        new BulletAttack
+                        {
+                            owner = self.gameObject,
+                            weapon = option,
+                            origin = option.transform.position,
+                            aimVector = (target.transform.position - option.transform.position).normalized,
+                            minSpread = FireMegaTurret.minSpread,
+                            maxSpread = FireMegaTurret.maxSpread,
+                            damage = FireMegaTurret.damageCoefficient * self.damageStat * damageMultiplier,
+                            force = FireMegaTurret.force * damageMultiplier,
+                            tracerEffectPrefab = FireMegaTurret.tracerEffectPrefab,
+                            muzzleName = muzzleString,
+                            hitEffectPrefab = FireMegaTurret.hitEffectPrefab,
+                            isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
+                        }.Fire();
+                    }
                 }
             });
         }
