@@ -37,8 +37,8 @@ namespace Chen.GradiusMod
                     "Server and Client.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowAurelionite { get; private set; } = false;
 
-        [AutoConfig("Whether to support Beetle Guards in using Options. Set to true to enable. Only their ranged attacks are copied. Server and Client.",
-                    AutoConfigFlags.PreventNetMismatch)]
+        [AutoConfig("Whether to support Beetle Guards in using Options. Set to true to enable. Only their ranged attacks are copied. " +
+                    "Their melee damage is multiplied instead. Server and Client.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowBeetleGuard { get; private set; } = false;
 
         [AutoConfig("Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactrions with other mods. " +
@@ -242,6 +242,7 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter += FireSunder_OnEnter;
             On.EntityStates.BeetleGuardMonster.FireSunder.OnExit += FireSunder_OnExit;
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
+            On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter += GroundSlam_OnEnter;
         }
 
         public override void Uninstall()
@@ -274,6 +275,7 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter -= FireSunder_OnEnter;
             On.EntityStates.BeetleGuardMonster.FireSunder.OnExit -= FireSunder_OnExit;
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
+            On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter -= GroundSlam_OnEnter;
         }
 
         private void InitializeAssets()
@@ -1095,6 +1097,13 @@ namespace Chen.GradiusMod
                     }
                 }
             });
+        }
+
+        private void GroundSlam_OnEnter(On.EntityStates.BeetleGuardMonster.GroundSlam.orig_OnEnter orig, GroundSlam self)
+        {
+            orig(self);
+            OptionTracker tracker = self.characterBody.GetComponent<OptionTracker>();
+            if (tracker) self.attack.damage *= tracker.existingOptions.Count + 1;
         }
 
         private bool FilterMinions(CharacterMaster master) => master && MinionsList.Exists((item) => master.name.Contains(item));
