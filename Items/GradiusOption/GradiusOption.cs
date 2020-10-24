@@ -401,12 +401,13 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!NetworkServer.active) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 float healRate = (HealBeam.healCoefficient * self.damageStat / self.duration) * damageMultiplier;
                 Transform transform = option.transform;
                 if (transform && self.target)
                 {
+                    if (behavior.healBeamController) behavior.healBeamController.BreakServer();
                     GameObject gameObject = Object.Instantiate(HealBeam.healBeamPrefab, transform);
                     HealBeamController hbc = behavior.healBeamController = gameObject.GetComponent<HealBeamController>();
                     hbc.healRate = healRate;
@@ -420,7 +421,7 @@ namespace Chen.GradiusMod
         private void HealBeam_OnExit(On.EntityStates.Drone.DroneWeapon.HealBeam.orig_OnExit orig, HealBeam self)
         {
             orig(self);
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.healBeamController) behavior.healBeamController.BreakServer();
             });
@@ -430,7 +431,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!NetworkServer.active) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (HealBeamController.GetHealBeamCountForOwner(self.gameObject) < self.maxSimultaneousBeams && self.targetHurtBox)
                 {
@@ -454,7 +455,7 @@ namespace Chen.GradiusMod
             orig(self);
             if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
-                FireForAllOptions(self, false, (option, behavior, target) =>
+                FireForAllOptions(self, (option, behavior, target) =>
                 {
                     if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.endAttackSoundString, option);
                     if (behavior.flamethrower)
@@ -479,14 +480,14 @@ namespace Chen.GradiusMod
             orig(self);
             if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
-                FireForAllOptions(self, true, (option, behavior, target) =>
+                FireForAllOptions(self, (option, behavior, target) =>
                 {
                     bool perMinionOldBegunFlamethrower = oldBegunFlamethrower;
-                    Vector3 direction = (target.transform.position - option.transform.position).normalized;
                     if (self.stopwatch >= self.entryDuration && !perMinionOldBegunFlamethrower)
                     {
                         perMinionOldBegunFlamethrower = true;
                         if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.startAttackSoundString, option);
+                        if (behavior.flamethrower) EntityState.Destroy(behavior.flamethrower);
                         behavior.flamethrower = Object.Instantiate(self.flamethrowerEffectPrefab, option.transform);
                         behavior.flamethrower.GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
                         OptionSync(self, (networkIdentity, optionTracker) =>
@@ -497,8 +498,9 @@ namespace Chen.GradiusMod
                             ));
                         });
                     }
-                    if (perMinionOldBegunFlamethrower && behavior.flamethrower)
+                    if (perMinionOldBegunFlamethrower && behavior.flamethrower && target)
                     {
+                        Vector3 direction = (target.transform.position - option.transform.position).normalized;
                         behavior.flamethrower.transform.forward = direction;
                         OptionSync(self, (networkIdentity, optionTracker) =>
                         {
@@ -524,9 +526,9 @@ namespace Chen.GradiusMod
             orig(self, muzzleString);
             if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
             {
-                FireForAllOptions(self, true, (option, behavior, target) =>
+                FireForAllOptions(self, (option, behavior, target) =>
                 {
-                    if (self.isAuthority)
+                    if (target && self.isAuthority)
                     {
                         BulletAttack attack = new BulletAttack
                         {
@@ -557,8 +559,9 @@ namespace Chen.GradiusMod
         private void FireGatling_OnEnter(On.EntityStates.Drone.DroneWeapon.FireGatling.orig_OnEnter orig, FireGatling self)
         {
             orig(self);
-            FireForAllOptions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
+                if (!target) return;
                 if (gatlingSoundCopy) Util.PlaySound(FireGatling.fireGatlingSoundString, option);
                 OptionSync(self, (networkIdentity, optionTracker) =>
                 {
@@ -592,8 +595,9 @@ namespace Chen.GradiusMod
         private void FireTurret_OnEnter(On.EntityStates.Drone.DroneWeapon.FireTurret.orig_OnEnter orig, FireTurret self)
         {
             orig(self);
-            FireForAllOptions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
+                if (!target) return;
                 if (gunnerSoundCopy) Util.PlaySound(FireTurret.attackSoundString, option);
                 OptionSync(self, (networkIdentity, optionTracker) =>
                 {
@@ -627,8 +631,9 @@ namespace Chen.GradiusMod
         private void FireMegaTurret_FireBullet(On.EntityStates.Drone.DroneWeapon.FireMegaTurret.orig_FireBullet orig, FireMegaTurret self, string muzzleString)
         {
             orig(self, muzzleString);
-            FireForAllOptions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
+                if (!target) return;
                 if (tc280SoundCopy) Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
                 OptionSync(self, (networkIdentity, optionTracker) =>
                 {
@@ -663,7 +668,7 @@ namespace Chen.GradiusMod
         private void FireMissileBarrage_FireMissile(On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.orig_FireMissile orig, FireMissileBarrage self, string targetMuzzle)
         {
             orig(self, targetMuzzle);
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (FireMissileBarrage.effectPrefab)
                 {
@@ -694,7 +699,7 @@ namespace Chen.GradiusMod
         private void FireTwinRocket_FireProjectile(On.EntityStates.Drone.DroneWeapon.FireTwinRocket.orig_FireProjectile orig, FireTwinRocket self, string muzzleString)
         {
             orig(self, muzzleString);
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (FireTwinRocket.muzzleEffectPrefab)
                 {
@@ -723,11 +728,12 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 Transform transform = option.transform;
                 if (self.effectPrefab)
                 {
+                    if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
                     behavior.laserChargeEffect = Object.Instantiate(self.effectPrefab, transform.position, transform.rotation);
                     behavior.laserChargeEffect.transform.parent = transform;
                     ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
@@ -735,6 +741,8 @@ namespace Chen.GradiusMod
                 }
                 if (self.laserPrefab)
                 {
+                    if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
+                    if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserLineEffect);
                     behavior.laserFireEffect = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
                     behavior.laserFireEffect.transform.parent = transform;
                     behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
@@ -753,7 +761,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
                 if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
@@ -772,7 +780,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.laserFireEffect && behavior.laserLineEffect)
                 {
@@ -820,7 +828,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect || !self.laserPrefab) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (aurelioniteMegaLaserSoundCopy)
                 {
@@ -829,6 +837,9 @@ namespace Chen.GradiusMod
                 }
                 if (self.laserPrefab)
                 {
+                    if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
+                    if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
+                    if (behavior.laserFireEnd) EntityState.Destroy(behavior.laserFireEnd);
                     Transform transform = option.transform;
                     behavior.laserFire = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
                     behavior.laserFire.transform.parent = transform;
@@ -849,7 +860,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
                 if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
@@ -876,7 +887,7 @@ namespace Chen.GradiusMod
                 if ((!self.inputBank || !self.inputBank.skill4.down) && self.stopwatch > FireMegaLaser.minimumDuration) return;
                 if (self.stopwatch > FireMegaLaser.maximumDuration) return;
             }
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 Vector3 position = option.transform.position;
                 Vector3 direction = self.GetAimRay().direction;
@@ -933,7 +944,7 @@ namespace Chen.GradiusMod
         private void FireGoldFist_PlacePredictedAttack(On.EntityStates.TitanMonster.FireGoldFist.orig_PlacePredictedAttack orig, FireGoldFist self)
         {
             orig(self);
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 int fistNumber = 0;
                 float multiplier = behavior.ownerOt.GetRotateMultiplier();
@@ -957,8 +968,9 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
+                if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);
                 behavior.fistChargeEffect = Object.Instantiate(self.chargeEffectPrefab, option.transform);
                 OptionSync(self, (networkIdentity, optionTracker) =>
                 {
@@ -974,7 +986,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!aurelioniteOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -999,7 +1011,7 @@ namespace Chen.GradiusMod
             bool oldFireArrow = self.hasFiredArrow;
             orig(self);
             if (oldFireArrow || !NetworkServer.active) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 HurtBox hurtBox = self.enemyFinder.GetResults().FirstOrDefault();
                 SquidOrb squidOrb = new SquidOrb
@@ -1024,8 +1036,9 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!beetleGuardOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
+                if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
                 if (beetleGuardChargeSoundCopy) Util.PlaySound(FireSunder.initialAttackSoundString, option);
                 if (FireSunder.chargeEffectPrefab) behavior.sunderEffect = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -1041,7 +1054,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             if (!beetleGuardOptionSyncEffect) return;
-            FireForAllOptions(self, false, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
                 OptionSync(self, (networkIdentity, optionTracker) =>
@@ -1057,13 +1070,15 @@ namespace Chen.GradiusMod
         {
             bool oldHasAttacked = self.hasAttacked;
             orig(self);
-            FireForAllOptions(self, true, (option, behavior, target) =>
+            FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (self.modelAnimator && self.modelAnimator.GetFloat("FireSunder.activate") > 0.5f && !oldHasAttacked)
                 {
                     if (self.isAuthority && self.modelTransform && FireSunder.projectilePrefab)
                     {
-                        Ray aimRay = new Ray(option.transform.position, (target.transform.position - option.transform.position).normalized);
+                        Ray aimRay;
+                        if (target) aimRay = new Ray(option.transform.position, (target.transform.position - option.transform.position).normalized);
+                        else aimRay = new Ray(option.transform.position, self.GetAimRay().direction);
                         ProjectileManager.instance.FireProjectile(FireSunder.projectilePrefab, aimRay.origin, Util.QuaternionSafeLookRotation(aimRay.direction),
                                                                   self.gameObject, self.damageStat * FireSunder.damageCoefficient, FireSunder.forceMagnitude,
                                                                   Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
@@ -1239,9 +1254,8 @@ namespace Chen.GradiusMod
         /// Loops through all the Options of the minion.
         /// </summary>
         /// <param name="entityState">The state of the of which the attack was made.</param>
-        /// <param name="needTarget">True will query the target to the input in actionToRun. False will not query and assign null on target for the input.</param>
         /// <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>
-        public void FireForAllOptions(BaseState entityState, bool needTarget, Action<GameObject, OptionBehavior, GameObject> actionToRun)
+        public void FireForAllOptions(BaseState entityState, Action<GameObject, OptionBehavior, GameObject> actionToRun)
         {
             CharacterBody body = entityState.characterBody;
             if (!body) return;
@@ -1259,7 +1273,6 @@ namespace Chen.GradiusMod
                     target = mainTarget.gameObject;
                 }
             }
-            if (needTarget && !target) return;
 
             foreach (GameObject option in optionTracker.existingOptions)
             {
