@@ -41,8 +41,8 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 **1.6.4**
 - Allow Beetle Guards to have multiplied damage according to the number of Options they have.
 - Fix a minor bug where some entities are getting trackers and allow them to self destruct if they cannot find the data they need.
-- Fix a minor bug where the there were improper calls of uninstalling hooks.
-- Optimize code where all needed effects are cached instead if being requeried especially in syncing in clients.
+- Fix a minor bug where there were improper calls of uninstalling hooks.
+- Optimize code where all needed effects are cached instead if being re-queried especially in syncing for clients.
 - Potentially made Option firing require more process but ensures it executes the code to destroy the effects.
 
 **1.6.3**
