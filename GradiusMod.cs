@@ -108,7 +108,6 @@ namespace Chen.GradiusMod
 
             T2Module.SetupAll_PluginAwake(chensItemList);
             T2Module.SetupAll_PluginStart(chensItemList);
-            CatalogBoilerplate.ConsoleDump(Logger, chensItemList);
         }
     }
 
