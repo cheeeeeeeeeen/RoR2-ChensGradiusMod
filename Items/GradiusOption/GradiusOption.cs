@@ -90,6 +90,11 @@ namespace Chen.GradiusMod
                     AutoConfigFlags.None, 0, 2)]
         public int playOptionGetSoundEffect { get; private set; } = 2;
 
+        [AutoConfig("For Equipment Drones. Determines the number of uses the Equipment Drone will perform the equipment's effect. e.g. " +
+                    "A value of 0.3 and having an Option number of 4 will result to the Equipment Drone performing the effect 1 more time. " +
+                    "(4 * 0.3 = 1.2 -> Floored to 1). Having a value of 0 will disable the config.", AutoConfigFlags.None, 0f, 1f)]
+        public float equipmentDuplicationMultiplier { get; private set; } = .5f;
+
         public override bool itemIsAIBlacklisted { get; protected set; } = true;
 
         protected override string GetNameString(string langid = null) => displayName;
@@ -143,7 +148,8 @@ namespace Chen.GradiusMod
             "Turret1",
             "TitanGoldAlly",
             "BeetleGuardAlly",
-            "SquidTurret"
+            "SquidTurret",
+            "EquipmentDrone"
         };
 
         private static readonly List<string> RotateUsers = new List<string>
@@ -151,7 +157,8 @@ namespace Chen.GradiusMod
             "Turret1",
             "TitanGoldAlly",
             "BeetleGuardAlly",
-            "SquidTurret"
+            "SquidTurret",
+            "EquipmentDrone"
         };
 
         private static readonly Dictionary<string, float> RotateMultipliers = new Dictionary<string, float>
@@ -162,7 +169,8 @@ namespace Chen.GradiusMod
 
         private static readonly Dictionary<string, Vector3> RotateOffsets = new Dictionary<string, Vector3>
         {
-            { "SquidTurret", Vector3.up }
+            { "SquidTurret", Vector3.up },
+            { "EquipmentDrone", Vector3.down * 1.3f }
         };
 
         public GradiusOption()
@@ -188,6 +196,7 @@ namespace Chen.GradiusMod
             }
             if (beetleGuardOptionType != 1) RotateUsers.Remove("BeetleGuardAlly");
             if (!allowSquidPolyp) MinionsList.Remove("SquidTurret");
+            if (equipmentDuplicationMultiplier <= 0) MinionsList.Remove("EquipmentDrone");
         }
 
         public override void SetupBehavior()
@@ -239,6 +248,7 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.OnExit += FireSunder_OnExit;
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
             On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter += GroundSlam_OnEnter;
+            On.RoR2.EquipmentSlot.PerformEquipmentAction += EquipmentSlot_PerformEquipmentAction;
         }
 
         public override void Uninstall()
@@ -272,6 +282,7 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.FireSunder.OnExit -= FireSunder_OnExit;
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
             On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter -= GroundSlam_OnEnter;
+            On.RoR2.EquipmentSlot.PerformEquipmentAction -= EquipmentSlot_PerformEquipmentAction;
         }
 
         private void InitializeAssets()
@@ -1076,6 +1087,27 @@ namespace Chen.GradiusMod
             orig(self);
             OptionTracker tracker = self.characterBody.GetComponent<OptionTracker>();
             if (tracker) self.attack.damage *= tracker.existingOptions.Count + 1;
+        }
+
+        private bool EquipmentSlot_PerformEquipmentAction(On.RoR2.EquipmentSlot.orig_PerformEquipmentAction orig, EquipmentSlot self, EquipmentIndex equipmentIndex)
+        {
+            bool returnValue = orig(self, equipmentIndex);
+            if (!returnValue) return false;
+            CharacterBody body = self.characterBody;
+            if (body)
+            {
+                CharacterMaster master = self.characterBody.master;
+                if (master && master.name.Contains("EquipmentDrone"))
+                {
+                    OptionTracker tracker = OptionTracker.GetOrCreateComponent(body);
+                    int numberOfTimes = Mathf.FloorToInt(tracker.existingOptions.Count * equipmentDuplicationMultiplier);
+                    for (int i = 0; i < numberOfTimes; i++)
+                    {
+                        orig(self, equipmentIndex);
+                    }
+                }
+            }
+            return true;
         }
 
         private bool FilterMinions(CharacterMaster master) => master && MinionsList.Exists((item) => master.name.Contains(item));
