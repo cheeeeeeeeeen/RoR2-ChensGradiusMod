@@ -90,9 +90,6 @@ namespace Chen.GradiusMod
                     AutoConfigFlags.None, 0, 2)]
         public int playOptionGetSoundEffect { get; private set; } = 2;
 
-        [AutoConfig("Applies a fix for Emergency Drones. Set to false if there are issues regarding compatibility.", AutoConfigFlags.PreventNetMismatch)]
-        public bool emergencyDroneFix { get; private set; } = true;
-
         public override bool itemIsAIBlacklisted { get; protected set; } = true;
 
         protected override string GetNameString(string langid = null) => displayName;
@@ -209,7 +206,6 @@ namespace Chen.GradiusMod
                     (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
                 ));
             }
-            RegisterVanillaFixes();
         }
 
         public override void Install()
@@ -316,14 +312,6 @@ namespace Chen.GradiusMod
             NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
         }
 
-        private void RegisterVanillaFixes()
-        {
-            if (emergencyDroneFix)
-            {
-                On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
-            }
-        }
-
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
         {
             // This hook runs on Client and on Server
@@ -375,28 +363,6 @@ namespace Chen.GradiusMod
                     }
                 }
             }
-        }
-
-        private bool HealBeamController_HealBeamAlreadyExists_GO_HC(
-            On.RoR2.HealBeamController.orig_HealBeamAlreadyExists_GameObject_HealthComponent orig,
-            GameObject owner, HealthComponent targetHealthComponent
-        )
-        {
-            // Note that this is incompatible with other mods. This applies a fix on Emergency Drone. Configs are applied on hook assignment so no need to check here.
-            List<HealBeamController> instancesList = InstanceTracker.GetInstancesList<HealBeamController>();
-            for (int i = 0; i < instancesList.Count; i++)
-            {
-                HealBeamController hbc = instancesList[i];
-                if (!hbc || !hbc.target || !hbc.target.healthComponent || !targetHealthComponent || !hbc.ownership || !hbc.ownership.ownerObject)
-                {
-                    continue;
-                }
-                if (hbc.target.healthComponent == targetHealthComponent && hbc.ownership.ownerObject == owner)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void HealBeam_OnEnter(On.EntityStates.Drone.DroneWeapon.HealBeam.orig_OnEnter orig, HealBeam self)

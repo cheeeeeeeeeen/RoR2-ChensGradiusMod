@@ -2,9 +2,12 @@
 
 using BepInEx;
 using BepInEx.Configuration;
+using KomradeSpectre.Aetherium;
 using R2API;
 using R2API.Networking;
 using R2API.Utils;
+using RoR2;
+using System.Collections.Generic;
 using System.Reflection;
 using TILER2;
 using UnityEngine;
@@ -17,6 +20,7 @@ namespace Chen.GradiusMod
     [BepInDependency(R2API.R2API.PluginGUID, R2API.R2API.PluginVersion)]
     [BepInDependency(TILER2Plugin.ModGuid, TILER2Plugin.ModVer)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
+    [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
     [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(ResourcesAPI), nameof(SoundAPI))]
     public class GradiusModPlugin : BaseUnityPlugin
     {
@@ -29,6 +33,7 @@ namespace Chen.GradiusMod
         public const string ModName = "ChensGradiusMod";
         public const string ModGuid = "com.Chen.ChensGradiusMod";
 
+        public static readonly GlobalConfig generalCfg = new GlobalConfig();
         private static ConfigFile cfgFile;
 
         internal static FilingDictionary<CatalogBoilerplate> chensItemList = new FilingDictionary<CatalogBoilerplate>();
@@ -95,7 +100,8 @@ namespace Chen.GradiusMod
 
             cfgFile = new ConfigFile(Path.Combine(Paths.ConfigPath, ModGuid + ".cfg"), true);
 
-            Log.Debug("Loading global configs... No global configs found.");
+            Log.Debug("Loading global configs...");
+            generalCfg.BindAll(cfgFile, ModName, "General");
 
             Log.Debug("Instantiating item classes...");
             chensItemList = T2Module.InitAll<CatalogBoilerplate>(new T2Module.ModInfo
@@ -108,6 +114,52 @@ namespace Chen.GradiusMod
 
             T2Module.SetupAll_PluginAwake(chensItemList);
             T2Module.SetupAll_PluginStart(chensItemList);
+
+            Log.Debug("Applying vanilla fixes...");
+            RegisterVanillaFixes();
+
+            Log.Debug("Applying compatibility changes...");
+            AetheriumCompatibility.Setup(generalCfg);
+        }
+
+        private void RegisterVanillaFixes()
+        {
+            if (generalCfg.emergencyDroneFix)
+            {
+                Log.Debug("Vanilla Fix: Applying emergencyDroneFix.");
+                On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
+            }
+        }
+
+        private bool HealBeamController_HealBeamAlreadyExists_GO_HC(
+            On.RoR2.HealBeamController.orig_HealBeamAlreadyExists_GameObject_HealthComponent orig,
+            GameObject owner, HealthComponent targetHealthComponent
+        )
+        {
+            // Note that this is incompatible with other mods. This applies a fix on Emergency Drone. Configs are applied on hook assignment so no need to check here.
+            List<HealBeamController> instancesList = InstanceTracker.GetInstancesList<HealBeamController>();
+            for (int i = 0; i < instancesList.Count; i++)
+            {
+                HealBeamController hbc = instancesList[i];
+                if (!hbc || !hbc.target || !hbc.target.healthComponent || !targetHealthComponent || !hbc.ownership || !hbc.ownership.ownerObject)
+                {
+                    continue;
+                }
+                if (hbc.target.healthComponent == targetHealthComponent && hbc.ownership.ownerObject == owner)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public class GlobalConfig : AutoConfigContainer
+        {
+            [AutoConfig("Applies a fix for Emergency Drones. Set to false if there are issues regarding compatibility.", AutoConfigFlags.PreventNetMismatch)]
+            public bool emergencyDroneFix { get; private set; } = true;
+
+            [AutoConfig("Aetherium Compatibility: Allow Equipment Drones to be Inspired by Inspiring Drone.", AutoConfigFlags.PreventNetMismatch)]
+            public bool equipmentDroneInspire { get; private set; } = true;
         }
     }
 
