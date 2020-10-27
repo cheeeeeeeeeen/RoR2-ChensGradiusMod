@@ -15,9 +15,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - A new Red Item added to Risk of Rain 2. Upon receiving this item, all owned drones of the receiver will gain an Option/Multiple for each stack.
 - Gradius is known for its feature of Options/Multiples where in these weapons are invulnerable to all damage, and are able to copy the full arsenal of the main ship.
 - For this mod, the Options/Multiples will only copy the main attacks of the drone.
-- All vanilla minions (both mechanical and organic) are supported. Only Equipment Drone is the exception.
+- All vanilla minions (both mechanical and organic) are supported.
 - Options/Multiples are able to duplicate all attacks of Aurelionite. The Rock Turret will attack faster instead of being copied.
 - Options/Multiples will only duplicate the ranged attack of Beetle Guards. Their melee attacks will have multiplied damage, however.
+- Equipment Drones will use the attached equipment depending on the number of Options/Multiples it has. This is configurable.
 - Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
 ## Contact & Support
@@ -37,6 +38,11 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Contact: Through Discord.
 
 ## Changelog
+
+**1.7.0**
+- Add Option/Multiple support for Equipment Drones.
+- Add a compatibility config regarding Aetherium's Inspiring Drone to also inspire Equipment Drones.
+- Move vanilla fixes config to another category.
 
 **1.6.4**
 - Allow Beetle Guards to have multiplied damage according to the number of Options they have.
