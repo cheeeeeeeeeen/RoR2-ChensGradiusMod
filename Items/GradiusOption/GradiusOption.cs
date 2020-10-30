@@ -33,7 +33,7 @@ namespace Chen.GradiusMod
         [AutoConfig("Damage multiplier of Options/Multiples. Also applies for Healing Drones. 1 = 100%. Server only.", AutoConfigFlags.None, 0f, float.MaxValue)]
         public float damageMultiplier { get; private set; } = 1f;
 
-        [AutoConfig("Whether to support Auelionite in using Options. Set to true to enable. All attacks of Aurelionite will be copied by the Options/Multiples. " +
+        [AutoConfig("Whether to support Aurelionite in using Options. Set to true to enable. All attacks of Aurelionite will be copied by the Options/Multiples. " +
                     "Server and Client.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowAurelionite { get; private set; } = false;
 
@@ -41,7 +41,7 @@ namespace Chen.GradiusMod
                     "Their melee damage is multiplied instead. Server and Client.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowBeetleGuard { get; private set; } = false;
 
-        [AutoConfig("Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactrions with other mods. " +
+        [AutoConfig("Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactions with other mods. " +
                     "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowSquidPolyp { get; private set; } = true;
 
@@ -49,22 +49,22 @@ namespace Chen.GradiusMod
                     AutoConfigFlags.PreventNetMismatch, 0, 1)]
         public int beetleGuardOptionType { get; private set; } = 1;
 
-        [AutoConfig("Set to true for Options/Multiples of Flame Drones to generate a flamethrower sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Flame Drones to generate a flamethrower sound. Client only. WARNING: Turning this on may cause ear-rape.")]
         public bool flamethrowerSoundCopy { get; private set; } = false;
 
-        [AutoConfig("Set to true for Options/Multiples of Gatling Turrets to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Gatling Turrets to generate a firing sound. Client only. WARNING: Turning this on may cause ear-rape.")]
         public bool gatlingSoundCopy { get; private set; } = false;
 
-        [AutoConfig("Set to true for Options/Multiples of Gunner Drones to generate a firing sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Gunner Drones to generate a firing sound. Client only. WARNING: Turning this on may cause ear-rape.")]
         public bool gunnerSoundCopy { get; private set; } = false;
 
-        [AutoConfig("Set to true for Options/Multiples of TC-280 drones to generate gun shot sounds. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of TC-280 drones to generate gun shot sounds. Client only. WARNING: Turning this on may cause ear-rape.")]
         public bool tc280SoundCopy { get; private set; } = false;
 
-        [AutoConfig("Set to true for Options/Multiples of Aurelionite to generate a mega laser sound. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Aurelionite to generate a mega laser sound. Client only. WARNING: Turning this on may cause ear-rape.")]
         public bool aurelioniteMegaLaserSoundCopy { get; private set; } = false;
 
-        [AutoConfig("Set to true for Options/Multiples of Beetle Guards to generate sound effects upon charging. Client only. WARNING: Turning this on may cause earrape.")]
+        [AutoConfig("Set to true for Options/Multiples of Beetle Guards to generate sound effects upon charging. Client only. WARNING: Turning this on may cause ear-rape.")]
         public bool beetleGuardChargeSoundCopy { get; private set; } = false;
 
         [AutoConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
@@ -77,7 +77,7 @@ namespace Chen.GradiusMod
                     "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool aurelioniteOptionSyncEffect { get; private set; } = true;
 
-        [AutoConfig("Allows displaying and syncing some of allied Beelte Guards' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+        [AutoConfig("Allows displaying and syncing some of allied Beetle Guards' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
                     "Server and Client. The server and client must have the same settings for an optimized experience. " +
                     "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool beetleGuardOptionSyncEffect { get; private set; } = true;
@@ -108,9 +108,9 @@ namespace Chen.GradiusMod
         }
 
         protected override string GetLoreString(string langid = null) =>
-            "\"This is CASE, A.I. born from Project Victorious to aid in combatting the evil known as the Bacterion Army.\n\n" +
+            "\"This is CASE, A.I. born from Project Victorious to aid in combating the evil known as the Bacterion Army.\n\n" +
             "Our specialized fighter spacecraft was destroyed from an incoming attack in an attempt to save the flight lead of the Scorpio Squadron. " +
-            "It is unfortunate that the pilot herself, Katswell callsigned Scorpio 2, died from the explosion... her body disintegrated along with the spacecraft she pilots.\n\n" +
+            "It is unfortunate that the pilot herself, Katswell call-signed Scorpio 2, died from the explosion... her body disintegrated along with the spacecraft she pilots.\n\n" +
             "Amazing, it is, for I am still functional. I do not have much time before the power runs out. " +
             "There is little chance for anybody to be able to find me, but I will still take my chance. \n\n" +
             "I wield the ultimate technology of the Gradius Federation: the Options, we call them. Some call them Multiples from the neighboring planets of Gradius. " +
