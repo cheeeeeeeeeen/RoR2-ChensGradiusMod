@@ -19,7 +19,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        public static void Setup(GlobalConfig config)
+        public static void Setup()
         {
             if (!enabled) return;
             if (hasSetup)
@@ -27,7 +27,7 @@ namespace Chen.GradiusMod
                 Log.Warning("Aetherium.Setup: Already performed. Skipping.");
                 return;
             }
-            if (config.equipmentDroneInspire)
+            if (generalCfg.equipmentDroneInspire)
             {
                 Log.Debug("Aetherium.Setup: Applying equipmentDroneInspire.");
                 InspiringDrone.instance.AddCustomDrone("EquipmentDrone");
