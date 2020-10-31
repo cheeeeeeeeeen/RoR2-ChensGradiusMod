@@ -2,6 +2,7 @@
 
 using BepInEx;
 using BepInEx.Configuration;
+using IL.RoR2.Skills;
 using KomradeSpectre.Aetherium;
 using R2API;
 using R2API.Networking;
@@ -179,34 +180,5 @@ namespace Chen.GradiusMod
         public static void Warning(object data) => logger.LogWarning(data);
 
         public static BepInEx.Logging.ManualLogSource logger => GradiusModPlugin._logger;
-    }
-
-    public static class Helper
-    {
-        public static SpawnCard Clone(this SpawnCard origSc, string newName)
-        {
-            SpawnCard newSc = ScriptableObject.CreateInstance<InteractableSpawnCard>();
-            newSc.hideFlags = origSc.hideFlags;
-            newSc.name = newName;
-            newSc.directorCreditCost = origSc.directorCreditCost;
-            newSc.forbiddenFlags = origSc.forbiddenFlags;
-            newSc.hullSize = origSc.hullSize;
-            newSc.nodeGraphType = origSc.nodeGraphType;
-            newSc.occupyPosition = origSc.occupyPosition;
-            newSc.requiredFlags = origSc.requiredFlags;
-            newSc.sendOverNetwork = origSc.sendOverNetwork;
-            newSc.prefab = origSc.prefab;
-            return newSc;
-        }
-
-        public static InteractableSpawnCard Clone(this InteractableSpawnCard origIsc, string newName)
-        {
-            SpawnCard origSc = origIsc;
-            InteractableSpawnCard newIsc = origSc.Clone(newName) as InteractableSpawnCard;
-            newIsc.orientToFloor = origIsc.orientToFloor;
-            newIsc.skipSpawnWhenSacrificeArtifactEnabled = origIsc.skipSpawnWhenSacrificeArtifactEnabled;
-            newIsc.slightlyRandomizeOrientation = origIsc.slightlyRandomizeOrientation;
-            return newIsc;
-        }
     }
 }

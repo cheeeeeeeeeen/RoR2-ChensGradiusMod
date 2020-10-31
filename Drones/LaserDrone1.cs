@@ -1,5 +1,7 @@
 ﻿using R2API;
+using R2API.Utils;
 using RoR2;
+using RoR2.Skills;
 using System.Collections.Generic;
 using UnityEngine;
 using static R2API.DirectorAPI;
@@ -11,6 +13,8 @@ namespace Chen.GradiusMod
         public static InteractableSpawnCard iSpawnCard { get; private set; }
         public static GameObject brokenObject { get; private set; }
         public static DirectorCardHolder iDirectorCardHolder { get; private set; }
+        public static GameObject droneBody { get; private set; }
+        public static GameObject droneMaster { get; private set; }
 
         public override void SetupConfig()
         {
@@ -20,16 +24,17 @@ namespace Chen.GradiusMod
         public override void SetupComponents()
         {
             base.SetupComponents();
+            AddLanguageTokens();
             InteractableSpawnCard origIsc = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1");
             brokenObject = origIsc.prefab;
             brokenObject = brokenObject.InstantiateClone("LaserDrone1Broken");
             ModifyBrokenObject();
-            iSpawnCard = origIsc.Clone("iscBrokenLaserDrone1");
+            iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
             DirectorCard directorCard = new DirectorCard
             {
                 spawnCard = iSpawnCard,
-                selectionWeight = 1,
+                selectionWeight = 1000,
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
                 preventOverhead = false,
@@ -51,18 +56,25 @@ namespace Chen.GradiusMod
             InteractableActions += DirectorAPI_InteractableActions;
         }
 
+        private void AddLanguageTokens()
+        {
+            LanguageAPI.Add("LASER_DRONE1_NAME", "Beam Drone");
+            LanguageAPI.Add("LASER_DRONE1_CONTEXT", "Repair Beam Drone");
+            LanguageAPI.Add("LASER_DRONE1_INTERACTABLE_NAME", "Broken Beam Drone");
+        }
+
         private void ModifyBrokenObject()
         {
-            //Highlight highlight = brokenObject.GetComponent<Highlight>();
-            //highlight.targetRenderer = highlight.targetRenderer;
+            Highlight highlight = brokenObject.GetComponent<Highlight>();
+            SkinnedMeshRenderer renderer = highlight.targetRenderer as SkinnedMeshRenderer;
+            renderer.material.color = Color.yellow;
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
-            GameObject masterObject = summonMasterBehavior.masterPrefab;
-            masterObject = masterObject.InstantiateClone("LaserDrone1Master");
-            CharacterMaster master = masterObject.GetComponent<CharacterMaster>();
-            GameObject bodyObject = master.bodyPrefab;
-            bodyObject = bodyObject.InstantiateClone("LaserDrone1Body");
-            master.bodyPrefab = bodyObject;
-            summonMasterBehavior.masterPrefab = masterObject;
+            droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone("LaserDrone1Master");
+            CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
+            droneBody = master.bodyPrefab.InstantiateClone("LaserDrone1Body");
+            ModifyDroneBody();
+            master.bodyPrefab = droneBody;
+            summonMasterBehavior.masterPrefab = droneMaster;
             PurchaseInteraction purchaseInteraction = brokenObject.GetComponent<PurchaseInteraction>();
             purchaseInteraction.cost *= 3;
             purchaseInteraction.Networkcost = purchaseInteraction.cost;
@@ -70,12 +82,41 @@ namespace Chen.GradiusMod
             purchaseInteraction.displayNameToken = "LASER_DRONE1_INTERACTABLE_NAME";
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE1_NAME";
-            //ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
-            //GameObject modelObject = modelLocator.modelTransform.gameObject;
+        }
+
+        private void ModifyDroneBody()
+        {
+            CharacterBody body = droneBody.GetComponent<CharacterBody>();
+            body.baseNameToken = "LASER_DRONE1_NAME";
+            ModelLocator modelLocator = droneBody.GetComponent<ModelLocator>();
+            GameObject modelObject = modelLocator.modelTransform.gameObject;
+            CharacterModel model = modelObject.GetComponent<CharacterModel>();
+            Material material = Object.Instantiate(model.baseRendererInfos[0].defaultMaterial);
+            material.color = Color.yellow;
+            model.baseRendererInfos[0].defaultMaterial = material;
+            ModifySkill();
+        }
+
+        private void ModifySkill()
+        {
+            SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/titanbody/TitanBodyLaser");
+            SkillDef newSkillDef = Object.Instantiate(origSkillDef);
+            LoadoutAPI.AddSkillDef(newSkillDef);
+            SkillLocator locator = droneBody.GetComponent<SkillLocator>();
+            SkillFamily newSkillFamily = Object.Instantiate(locator.primary.skillFamily);
+            LoadoutAPI.AddSkillFamily(newSkillFamily);
+            locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
+            newSkillFamily.variants[0] = new SkillFamily.Variant
+            {
+                skillDef = newSkillDef,
+                unlockableName = "",
+                viewableNode = new ViewablesCatalog.Node("", false, null)
+            };
         }
 
         private void ModifyInteractableSpawnCard()
         {
+            iSpawnCard.name = "iscBrokenLaserDrone1";
             iSpawnCard.prefab = brokenObject;
         }
 
