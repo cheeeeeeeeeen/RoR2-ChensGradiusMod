@@ -263,27 +263,29 @@ namespace Chen.GradiusMod
             Vector3 position = transform.position;
             switch (messageType)
             {
-                case MessageType.CreateLaserCharge:
-                    if (GradiusOption.laserChargeEffectPrefab)
-                    {
-                        behavior.laserChargeEffect = Object.Instantiate(GradiusOption.laserChargeEffectPrefab, position, transform.rotation);
-                        behavior.laserChargeEffect.transform.parent = transform;
-                        ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
-                        if (component) component.newDuration = duration;
-                    }
-                    if (GradiusOption.laserChargeLaserPrefab)
-                    {
-                        behavior.laserFireEffect = Object.Instantiate(GradiusOption.laserChargeLaserPrefab, position, transform.rotation);
-                        behavior.laserFireEffect.transform.parent = transform;
-                        behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
-                    }
-                    break;
+                //case MessageType.CreateLaserCharge:
+                //    if (GradiusOption.laserChargeEffectPrefab)
+                //    {
+                //        behavior.laserChargeEffect = Object.Instantiate(GradiusOption.laserChargeEffectPrefab, position, transform.rotation);
+                //        behavior.laserChargeEffect.transform.parent = transform;
+                //        ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
+                //        if (component) component.newDuration = duration;
+                //    }
+                //    else Log.Warning("NULL");
+                //    if (GradiusOption.laserChargeLaserPrefab)
+                //    {
+                //        behavior.laserFireEffect = Object.Instantiate(GradiusOption.laserChargeLaserPrefab, position, transform.rotation);
+                //        behavior.laserFireEffect.transform.parent = transform;
+                //        behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
+                //    }
+                //    else Log.Warning("NULL");
+                //    break;
 
-                case MessageType.DestroyLaserCharge:
-                    if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
-                    if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
-                    if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserLineEffect);
-                    break;
+                //case MessageType.DestroyLaserCharge:
+                //    if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
+                //    if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
+                //    if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserLineEffect);
+                //    break;
 
                 case MessageType.UpdateLaserCharge:
                     if (behavior.laserFireEffect && behavior.laserLineEffect)
@@ -295,25 +297,25 @@ namespace Chen.GradiusMod
                     }
                     break;
 
-                case MessageType.CreateLaserFire:
-                    if (!GradiusOption.laserFireLaserPrefab) return;
-                    if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy)
-                    {
-                        Util.PlaySound(FireMegaLaser.playAttackSoundString, option);
-                        Util.PlaySound(FireMegaLaser.playLoopSoundString, option);
-                    }
-                    behavior.laserFire = Object.Instantiate(GradiusOption.laserFireLaserPrefab, position, transform.rotation);
-                    behavior.laserFire.transform.parent = transform;
-                    behavior.laserChildLocator = behavior.laserFireEffect.GetComponent<ChildLocator>();
-                    behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
-                    break;
+                //case MessageType.CreateLaserFire:
+                //    if (!GradiusOption.laserFireLaserPrefab) return;
+                //    if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy)
+                //    {
+                //        Util.PlaySound(FireMegaLaser.playAttackSoundString, option);
+                //        Util.PlaySound(FireMegaLaser.playLoopSoundString, option);
+                //    }
+                //    behavior.laserFire = Object.Instantiate(GradiusOption.laserFireLaserPrefab, position, transform.rotation);
+                //    behavior.laserFire.transform.parent = transform;
+                //    behavior.laserChildLocator = behavior.laserFireEffect.GetComponent<ChildLocator>();
+                //    behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
+                //    break;
 
-                case MessageType.DestroyLaserFire:
-                    if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
-                    if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
-                    if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
-                    if (behavior.laserFireEnd) EntityState.Destroy(behavior.laserFireEnd);
-                    break;
+                //case MessageType.DestroyLaserFire:
+                //    if (GradiusOption.instance.aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
+                //    if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
+                //    if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
+                //    if (behavior.laserFireEnd) EntityState.Destroy(behavior.laserFireEnd);
+                //    break;
 
                 case MessageType.FixedUpdateGoldLaserFire:
                     behavior.laserFire.transform.rotation = Util.QuaternionSafeLookRotation(point - position);

@@ -36,7 +36,7 @@ namespace Chen.GradiusMod
             DirectorCard directorCard = new DirectorCard
             {
                 spawnCard = iSpawnCard,
-                selectionWeight = 1000,
+                selectionWeight = 1,
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
                 preventOverhead = false,
@@ -90,6 +90,8 @@ namespace Chen.GradiusMod
         {
             CharacterBody body = droneBody.GetComponent<CharacterBody>();
             body.baseNameToken = "LASER_DRONE1_NAME";
+            body.baseMaxHealth *= 1.2f;
+            body.baseRegen *= 1.2f;
             ModelLocator modelLocator = droneBody.GetComponent<ModelLocator>();
             GameObject modelObject = modelLocator.modelTransform.gameObject;
             CharacterModel model = modelObject.GetComponent<CharacterModel>();
@@ -101,9 +103,13 @@ namespace Chen.GradiusMod
 
         private void ModifySkill()
         {
-            SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/titanbody/TitanBodyLaser");
+            SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun");
             SkillDef newSkillDef = Object.Instantiate(origSkillDef);
             newSkillDef.activationState = new SerializableEntityStateType(typeof(FireLaser));
+            newSkillDef.baseRechargeInterval = 4f;
+            newSkillDef.beginSkillCooldownOnSkillEnd = true;
+            newSkillDef.baseMaxStock = 1;
+            newSkillDef.fullRestockOnAssign = false;
             LoadoutAPI.AddSkillDef(newSkillDef);
             SkillLocator locator = droneBody.GetComponent<SkillLocator>();
             SkillFamily newSkillFamily = Object.Instantiate(locator.primary.skillFamily);

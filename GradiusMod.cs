@@ -1,8 +1,7 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
-using IL.RoR2.Skills;
 using KomradeSpectre.Aetherium;
 using R2API;
 using R2API.Networking;

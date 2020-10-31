@@ -311,6 +311,9 @@ namespace Chen.GradiusMod
             laserFireLaserPrefab = fmlState.laserPrefab;
             FireFist ffState = EntityState.Instantiate(typeof(FireFist)) as FireFist;
             fistChargeEffectPrefab = ffState.chargeEffectPrefab;
+
+            if (!laserChargeEffectPrefab) Log.Message("NULL");
+            if (!laserChargeLaserPrefab) Log.Message("NULL");
         }
 
         private void RegisterNetworkMessages()

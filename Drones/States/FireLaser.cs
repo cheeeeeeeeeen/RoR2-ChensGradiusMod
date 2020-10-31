@@ -1,5 +1,4 @@
-﻿using Chen.GradiusMod;
-using EntityStates;
+﻿using EntityStates;
 using EntityStates.TitanMonster;
 using RoR2;
 using System.Linq;

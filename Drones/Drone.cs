@@ -37,7 +37,7 @@ namespace Chen.GradiusMod
         {
             enabledConfig = config.Bind(
                 configCategory,
-                "enabled", true,
+                "Enabled", true,
                 "Set to false to disable this feature."
             );
         }
