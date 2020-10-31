@@ -34,8 +34,8 @@ namespace Chen.GradiusMod
         public const string ModGuid = "com.Chen.ChensGradiusMod";
 
         public static readonly GlobalConfig generalCfg = new GlobalConfig();
-        private static ConfigFile cfgFile;
 
+        internal static ConfigFile cfgFile;
         internal static FilingDictionary<CatalogBoilerplate> chensItemList = new FilingDictionary<CatalogBoilerplate>();
         internal static BepInEx.Logging.ManualLogSource _logger;
 
@@ -114,6 +114,9 @@ namespace Chen.GradiusMod
 
             T2Module.SetupAll_PluginAwake(chensItemList);
             T2Module.SetupAll_PluginStart(chensItemList);
+
+            Log.Debug("Instantiating drones...");
+
 
             Log.Debug("Applying vanilla fixes...");
             RegisterVanillaFixes();
