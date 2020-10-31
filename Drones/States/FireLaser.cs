@@ -1,4 +1,6 @@
-﻿using EntityStates;
+﻿using Chen.GradiusMod;
+using EntityStates;
+using EntityStates.TitanMonster;
 using RoR2;
 using System.Linq;
 using UnityEngine;
@@ -6,15 +8,10 @@ using UnityEngine.Networking;
 
 namespace Chens.GradiusMod
 {
-    internal class FireLaser : BaseSkillState
+    internal class FireLaser : BaseState
     {
-        [SerializeField]
-        public GameObject effectPrefab;
-        [SerializeField]
-        public GameObject hitEffectPrefab;
-        [SerializeField]
-        public GameObject laserPrefab;
-
+        public static GameObject hitEffectPrefab;
+        public static GameObject laserPrefab;
         public static string playAttackSoundString;
         public static string playLoopSoundString;
         public static string stopLoopSoundString;
@@ -22,13 +19,14 @@ namespace Chens.GradiusMod
         public static float force;
         public static float minSpread;
         public static float maxSpread;
-        public static int bulletCount;
         public static float fireFrequency;
         public static float maxDistance;
         public static float minimumDuration;
         public static float maximumDuration;
         public static float lockOnAngle;
         public static float procCoefficientPerTick;
+
+        private static bool initialized = false;
 
         protected Transform muzzleTransform;
 
@@ -43,172 +41,38 @@ namespace Chens.GradiusMod
         private BullseyeSearch enemyFinder;
         private bool foundAnyTarget;
 
-        public override void OnEnter()
-        {
-            base.OnEnter();
-            base.characterBody.SetAimTimer(FireLaser.maximumDuration);
-            Util.PlaySound(FireLaser.playAttackSoundString, base.gameObject);
-            Util.PlaySound(FireLaser.playLoopSoundString, base.gameObject);
-            base.PlayCrossfade("Gesture, Additive", "FireLaserLoop", 0.25f);
-            enemyFinder = new BullseyeSearch
-            {
-                maxDistanceFilter = FireLaser.maxDistance,
-                maxAngleFilter = FireLaser.lockOnAngle,
-                searchOrigin = this.aimRay.origin,
-                searchDirection = this.aimRay.direction,
-                filterByLoS = false,
-                sortMode = BullseyeSearch.SortMode.Angle,
-                teamMaskFilter = TeamMask.allButNeutral
-            };
-            if (base.teamComponent)
-            {
-                this.enemyFinder.teamMaskFilter.RemoveTeam(base.teamComponent.teamIndex);
-            }
-            this.aimRay = base.GetAimRay();
-            this.modelTransform = base.GetModelTransform();
-            if (this.modelTransform)
-            {
-                ChildLocator component = this.modelTransform.GetComponent<ChildLocator>();
-                if (component)
-                {
-                    this.muzzleTransform = component.FindChild("MuzzleLaser");
-                    if (this.muzzleTransform && this.laserPrefab)
-                    {
-                        this.laserEffect = UnityEngine.Object.Instantiate<GameObject>(this.laserPrefab, this.muzzleTransform.position, this.muzzleTransform.rotation);
-                        this.laserEffect.transform.parent = this.muzzleTransform;
-                        this.laserChildLocator = this.laserEffect.GetComponent<ChildLocator>();
-                        this.laserEffectEnd = this.laserChildLocator.FindChild("LaserEnd");
-                    }
-                }
-            }
-            this.UpdateLockOn();
-        }
-
-        // Token: 0x06003BE2 RID: 15330 RVA: 0x000F9B68 File Offset: 0x000F7D68
-        public override void OnExit()
-        {
-            if (this.laserEffect)
-            {
-                EntityState.Destroy(this.laserEffect);
-            }
-            base.characterBody.SetAimTimer(2f);
-            Util.PlaySound(FireLaser.stopLoopSoundString, base.gameObject);
-            base.PlayCrossfade("Gesture, Additive", "FireLaserEnd", 0.25f);
-            base.OnExit();
-        }
-
-        // Token: 0x06003BE3 RID: 15331 RVA: 0x000F9BCC File Offset: 0x000F7DCC
         private void UpdateLockOn()
         {
-            if (base.isAuthority)
+            if (isAuthority)
             {
-                this.enemyFinder.searchOrigin = this.aimRay.origin;
-                this.enemyFinder.searchDirection = this.aimRay.direction;
-                this.enemyFinder.RefreshCandidates();
-                HurtBox exists = this.enemyFinder.GetResults().FirstOrDefault<HurtBox>();
-                this.lockedOnHurtBox = exists;
-                this.foundAnyTarget = exists;
+                enemyFinder.searchOrigin = aimRay.origin;
+                enemyFinder.searchDirection = aimRay.direction;
+                enemyFinder.RefreshCandidates();
+                HurtBox exists = enemyFinder.GetResults().FirstOrDefault();
+                lockedOnHurtBox = exists;
+                foundAnyTarget = exists;
             }
         }
 
-        // Token: 0x06003BE4 RID: 15332 RVA: 0x000F9C3C File Offset: 0x000F7E3C
-        public override void FixedUpdate()
+        private void FireBullet(Ray aimRay, string targetMuzzle, float maxDistance)
         {
-            base.FixedUpdate();
-            this.fireStopwatch += Time.fixedDeltaTime;
-            this.stopwatch += Time.fixedDeltaTime;
-            this.aimRay = base.GetAimRay();
-            if (base.isAuthority && !this.lockedOnHurtBox && this.foundAnyTarget)
-            {
-                this.outer.SetNextState(new FireLaser
-                {
-                    stopwatch = this.stopwatch
-                });
-                return;
-            }
-            Vector3 vector = this.aimRay.origin;
-            if (this.muzzleTransform)
-            {
-                vector = this.muzzleTransform.position;
-            }
-            Vector3 vector2;
-            RaycastHit raycastHit;
-            if (this.lockedOnHurtBox)
-            {
-                vector2 = this.lockedOnHurtBox.transform.position;
-            }
-            else if (Util.CharacterRaycast(base.gameObject, this.aimRay, out raycastHit, FireLaser.maxDistance, LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.Ignore))
-            {
-                vector2 = raycastHit.point;
-            }
-            else
-            {
-                vector2 = this.aimRay.GetPoint(FireLaser.maxDistance);
-            }
-            Ray ray = new Ray(vector, vector2 - vector);
-            bool flag = false;
-            if (this.laserEffect && this.laserChildLocator)
-            {
-                RaycastHit raycastHit2;
-                if (Util.CharacterRaycast(base.gameObject, ray, out raycastHit2, (vector2 - vector).magnitude, LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
-                {
-                    vector2 = raycastHit2.point;
-                    RaycastHit raycastHit3;
-                    if (Util.CharacterRaycast(base.gameObject, new Ray(vector2 - ray.direction * 0.1f, -ray.direction), out raycastHit3, raycastHit2.distance, LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
-                    {
-                        vector2 = ray.GetPoint(0.1f);
-                        flag = true;
-                    }
-                }
-                this.laserEffect.transform.rotation = Util.QuaternionSafeLookRotation(vector2 - vector);
-                this.laserEffectEnd.transform.position = vector2;
-            }
-            if (this.fireStopwatch > 1f / FireLaser.fireFrequency)
-            {
-                string targetMuzzle = "MuzzleLaser";
-                if (!flag)
-                {
-                    this.FireBullet(this.modelTransform, ray, targetMuzzle, (vector2 - ray.origin).magnitude + 0.1f);
-                }
-                this.fireStopwatch -= 1f / FireLaser.fireFrequency;
-            }
-            if (base.isAuthority && (((!base.inputBank || !base.inputBank.skill4.down) && this.stopwatch > FireLaser.minimumDuration) || this.stopwatch > FireLaser.maximumDuration))
-            {
-                this.outer.SetNextStateToMain();
-                return;
-            }
-        }
-
-        // Token: 0x06003BE5 RID: 15333 RVA: 0x0000D2C7 File Offset: 0x0000B4C7
-        public override InterruptPriority GetMinimumInterruptPriority()
-        {
-            return InterruptPriority.Skill;
-        }
-
-        // Token: 0x06003BE6 RID: 15334 RVA: 0x000F9F40 File Offset: 0x000F8140
-        private void FireBullet(Transform modelTransform, Ray aimRay, string targetMuzzle, float maxDistance)
-        {
-            if (this.effectPrefab)
-            {
-                EffectManager.SimpleMuzzleFlash(this.effectPrefab, base.gameObject, targetMuzzle, false);
-            }
-            if (base.isAuthority)
+            if (isAuthority)
             {
                 new BulletAttack
                 {
-                    owner = base.gameObject,
-                    weapon = base.gameObject,
+                    owner = gameObject,
+                    weapon = gameObject,
                     origin = aimRay.origin,
                     aimVector = aimRay.direction,
-                    minSpread = FireLaser.minSpread,
-                    maxSpread = FireLaser.maxSpread,
+                    minSpread = minSpread,
+                    maxSpread = maxSpread,
                     bulletCount = 1U,
-                    damage = FireLaser.damageCoefficient * this.damageStat / FireLaser.fireFrequency,
-                    force = FireLaser.force,
+                    damage = damageCoefficient * damageStat,
+                    force = force,
                     muzzleName = targetMuzzle,
-                    hitEffectPrefab = this.hitEffectPrefab,
-                    isCrit = Util.CheckRoll(this.critStat, base.characterBody.master),
-                    procCoefficient = FireLaser.procCoefficientPerTick,
+                    hitEffectPrefab = hitEffectPrefab,
+                    isCrit = Util.CheckRoll(critStat, characterBody.master),
+                    procCoefficient = procCoefficientPerTick,
                     HitEffectNormal = false,
                     radius = 0f,
                     maxDistance = maxDistance
@@ -216,15 +80,134 @@ namespace Chens.GradiusMod
             }
         }
 
-        // Token: 0x06003BE7 RID: 15335 RVA: 0x000FA048 File Offset: 0x000F8248
+        private void Initialize()
+        {
+            if (initialized) return;
+            initialized = true;
+            FireMegaLaser fmlState = Instantiate(typeof(FireMegaLaser)) as FireMegaLaser;
+            hitEffectPrefab = fmlState.hitEffectPrefab;
+            laserPrefab = fmlState.laserPrefab;
+            playAttackSoundString = FireMegaLaser.playAttackSoundString;
+            playLoopSoundString = FireMegaLaser.playLoopSoundString;
+            stopLoopSoundString = FireMegaLaser.stopLoopSoundString;
+            damageCoefficient = 1f;
+            force = 0f;
+            minSpread = FireMegaLaser.minSpread;
+            maxSpread = FireMegaLaser.maxSpread;
+            fireFrequency = FireMegaLaser.fireFrequency;
+            maxDistance = FireMegaLaser.maxDistance;
+            minimumDuration = 4f;
+            maximumDuration = 4f;
+            lockOnAngle = FireMegaLaser.lockOnAngle;
+            procCoefficientPerTick = .5f;
+        }
+
+        public override void OnEnter()
+        {
+            Initialize();
+            base.OnEnter();
+            characterBody.SetAimTimer(maximumDuration);
+            Util.PlaySound(playAttackSoundString, gameObject);
+            Util.PlaySound(playLoopSoundString, gameObject);
+            enemyFinder = new BullseyeSearch
+            {
+                maxDistanceFilter = maxDistance,
+                maxAngleFilter = lockOnAngle,
+                searchOrigin = aimRay.origin,
+                searchDirection = aimRay.direction,
+                filterByLoS = false,
+                sortMode = BullseyeSearch.SortMode.Angle,
+                teamMaskFilter = TeamMask.allButNeutral
+            };
+            if (teamComponent) enemyFinder.teamMaskFilter.RemoveTeam(teamComponent.teamIndex);
+            aimRay = GetAimRay();
+            modelTransform = GetModelTransform();
+            if (modelTransform)
+            {
+                ChildLocator locator = modelTransform.GetComponent<ChildLocator>();
+                if (locator)
+                {
+                    muzzleTransform = locator.FindChild("Muzzle");
+                    if (muzzleTransform && laserPrefab)
+                    {
+                        laserEffect = Object.Instantiate(laserPrefab, muzzleTransform.position, muzzleTransform.rotation);
+                        laserEffect.transform.parent = muzzleTransform;
+                        laserChildLocator = laserEffect.GetComponent<ChildLocator>();
+                        laserEffectEnd = laserChildLocator.FindChild("LaserEnd");
+                    }
+                }
+            }
+            UpdateLockOn();
+        }
+
+        public override void OnExit()
+        {
+            if (laserEffect) Destroy(laserEffect);
+            characterBody.SetAimTimer(2f);
+            Util.PlaySound(stopLoopSoundString, gameObject);
+            base.OnExit();
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            fireStopwatch += Time.fixedDeltaTime;
+            stopwatch += Time.fixedDeltaTime;
+            aimRay = GetAimRay();
+            if (isAuthority && !lockedOnHurtBox && foundAnyTarget)
+            {
+                outer.SetNextState(new FireLaser { stopwatch = stopwatch });
+                return;
+            }
+            Vector3 origin = aimRay.origin;
+            if (muzzleTransform) origin = muzzleTransform.position;
+            Vector3 target;
+            if (lockedOnHurtBox) target = lockedOnHurtBox.transform.position;
+            else if (Util.CharacterRaycast(gameObject, aimRay, out RaycastHit raycastHit, maxDistance,
+                                           LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.Ignore))
+            {
+                target = raycastHit.point;
+            }
+            else target = aimRay.GetPoint(maxDistance);
+            Ray ray = new Ray(origin, target - origin);
+            bool flag = false;
+            if (laserEffect && laserChildLocator)
+            {
+                if (Util.CharacterRaycast(gameObject, ray, out RaycastHit raycastHit2, (target - origin).magnitude,
+                                          LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                {
+                    target = raycastHit2.point;
+                    if (Util.CharacterRaycast(gameObject, new Ray(target - ray.direction * 0.1f, -ray.direction), out _, raycastHit2.distance,
+                                              LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                    {
+                        target = ray.GetPoint(.1f);
+                        flag = true;
+                    }
+                }
+                laserEffect.transform.rotation = Util.QuaternionSafeLookRotation(target - origin);
+                laserEffectEnd.transform.position = target;
+            }
+            if (fireStopwatch > 1f / fireFrequency)
+            {
+                if (!flag) FireBullet(ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
+                fireStopwatch -= 1f / fireFrequency;
+            }
+            if (isAuthority && (((!inputBank || !inputBank.skill4.down) && stopwatch > minimumDuration) || stopwatch > maximumDuration))
+            {
+                outer.SetNextStateToMain();
+                return;
+            }
+        }
+
+        public override InterruptPriority GetMinimumInterruptPriority() => InterruptPriority.Skill;
+
         public override void OnSerialize(NetworkWriter writer)
         {
             base.OnSerialize(writer);
-            writer.Write(HurtBoxReference.FromHurtBox(this.lockedOnHurtBox));
-            writer.Write(this.stopwatch);
+            writer.Write(HurtBoxReference.FromHurtBox(lockedOnHurtBox));
+            writer.Write(stopwatch);
         }
 
-        // Token: 0x06003BE8 RID: 15336 RVA: 0x000FA070 File Offset: 0x000F8270
         public override void OnDeserialize(NetworkReader reader)
         {
             base.OnDeserialize(reader);

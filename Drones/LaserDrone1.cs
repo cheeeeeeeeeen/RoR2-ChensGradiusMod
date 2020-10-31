@@ -1,4 +1,6 @@
-﻿using R2API;
+﻿using Chens.GradiusMod;
+using EntityStates;
+using R2API;
 using R2API.Utils;
 using RoR2;
 using RoR2.Skills;
@@ -101,17 +103,19 @@ namespace Chen.GradiusMod
         {
             SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/titanbody/TitanBodyLaser");
             SkillDef newSkillDef = Object.Instantiate(origSkillDef);
+            newSkillDef.activationState = new SerializableEntityStateType(typeof(FireLaser));
             LoadoutAPI.AddSkillDef(newSkillDef);
             SkillLocator locator = droneBody.GetComponent<SkillLocator>();
             SkillFamily newSkillFamily = Object.Instantiate(locator.primary.skillFamily);
-            LoadoutAPI.AddSkillFamily(newSkillFamily);
-            locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
+            newSkillFamily.variants = new SkillFamily.Variant[1];
             newSkillFamily.variants[0] = new SkillFamily.Variant
             {
                 skillDef = newSkillDef,
                 unlockableName = "",
                 viewableNode = new ViewablesCatalog.Node("", false, null)
             };
+            locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
+            LoadoutAPI.AddSkillFamily(newSkillFamily);
         }
 
         private void ModifyInteractableSpawnCard()
