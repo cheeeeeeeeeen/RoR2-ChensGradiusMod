@@ -18,9 +18,7 @@ namespace Chen.GradiusMod
         public GameObject flamethrower;
         public HealBeamController healBeamController;
         public GameObject laserChargeEffect;
-        public GameObject laserFireEffect;
         public GameObject laserFire;
-        public LineRenderer laserLineEffect;
         public ChildLocator laserChildLocator;
         public Transform laserFireEnd;
         public GameObject fistChargeEffect;
@@ -112,17 +110,8 @@ namespace Chen.GradiusMod
 
         private readonly float invalidThreshold = 3f;
 
-        public List<Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>> flameNetIds { get; private set; } =
-            new List<Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>>();
-
         public List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>> targetIds { get; private set; } =
             new List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>>();
-
-        public List<Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>> aurelioniteNetIds { get; private set; } =
-            new List<Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>>();
-
-        public List<Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>> guardNetIds { get; private set; } =
-            new List<Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>>();
 
         private Vector3 previousPosition = new Vector3();
         private bool init = true;
@@ -159,12 +148,6 @@ namespace Chen.GradiusMod
                     if (flightPath.Count > masterOptionTracker.optionItemCount * distanceInterval) flightPath.RemoveAt(flightPath.Count - 1);
                 }
                 previousPosition = t.position;
-            }
-            if (NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady())
-            {
-                SyncFlamethrowerEffects();
-                SyncAurelioniteEffects();
-                SyncBeetleGuardEffects();
             }
         }
 
@@ -228,65 +211,6 @@ namespace Chen.GradiusMod
                 previousOptionItemCount = 0;
             }
             SyncTargets();
-        }
-
-        private void SyncFlamethrowerEffects()
-        {
-            if (flameNetIds.Count > 0)
-            {
-                Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>[] listCopy =
-                    new Tuple<SyncFlamethrowerEffectForClients.MessageType, NetworkInstanceId, short, float, Vector3>[flameNetIds.Count];
-                flameNetIds.CopyTo(listCopy);
-                flameNetIds.Clear();
-                for (int i = 0; i < listCopy.Length; i++)
-                {
-                    SyncFlamethrowerEffectForClients.MessageType messageType = listCopy[i].Item1;
-                    NetworkInstanceId netId = listCopy[i].Item2;
-                    short numbering = listCopy[i].Item3;
-                    float duration = listCopy[i].Item4;
-                    Vector3 direction = listCopy[i].Item5;
-                    new SyncFlamethrowerEffectForClients(messageType, netId, numbering, duration, direction).Send(NetworkDestination.Clients);
-                }
-            }
-        }
-
-        private void SyncAurelioniteEffects()
-        {
-            if (aurelioniteNetIds.Count > 0)
-            {
-                Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>[] listCopy =
-                    new Tuple<SyncAurelioniteEffectsForClients.MessageType, NetworkInstanceId, short, float, Vector3, float>[aurelioniteNetIds.Count];
-                aurelioniteNetIds.CopyTo(listCopy);
-                aurelioniteNetIds.Clear();
-                for (int i = 0; i < listCopy.Length; i++)
-                {
-                    SyncAurelioniteEffectsForClients.MessageType messageType = listCopy[i].Item1;
-                    NetworkInstanceId netId = listCopy[i].Item2;
-                    short numbering = listCopy[i].Item3;
-                    float duration = listCopy[i].Item4;
-                    Vector3 point = listCopy[i].Item5;
-                    float indicatorSize = listCopy[i].Item6;
-                    new SyncAurelioniteEffectsForClients(messageType, netId, numbering, duration, point, indicatorSize).Send(NetworkDestination.Clients);
-                }
-            }
-        }
-
-        private void SyncBeetleGuardEffects()
-        {
-            if (guardNetIds.Count > 0)
-            {
-                Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>[] listCopy =
-                    new Tuple<SyncBeetleGuardEffectsForClients.MessageType, NetworkInstanceId, short>[guardNetIds.Count];
-                guardNetIds.CopyTo(listCopy);
-                guardNetIds.Clear();
-                for (int i = 0; i < listCopy.Length; i++)
-                {
-                    SyncBeetleGuardEffectsForClients.MessageType messageType = listCopy[i].Item1;
-                    NetworkInstanceId netId = listCopy[i].Item2;
-                    short numbering = listCopy[i].Item3;
-                    new SyncBeetleGuardEffectsForClients(messageType, netId, numbering).Send(NetworkDestination.Clients);
-                }
-            }
         }
 
         private void SyncTargets()

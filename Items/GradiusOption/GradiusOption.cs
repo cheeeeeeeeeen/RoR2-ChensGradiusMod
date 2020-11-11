@@ -127,10 +127,6 @@ namespace Chen.GradiusMod
 
         internal static GameObject gradiusOptionPrefab { get; private set; }
         internal static GameObject flamethrowerEffectPrefab { get; private set; }
-        internal static GameObject laserChargeEffectPrefab { get; private set; }
-        internal static GameObject laserChargeLaserPrefab { get; private set; }
-        internal static GameObject laserFireLaserPrefab { get; private set; }
-        internal static GameObject fistChargeEffectPrefab { get; private set; }
         internal static uint getOptionSoundId { get; } = 649757048;
         internal static uint getOptionLowSoundId { get; } = 553829614;
         internal static uint loseOptionSoundId { get; } = 2603869165;
@@ -235,7 +231,6 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter += StartHealBeam_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter += ChargeMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit += ChargeMegaLaser_OnExit;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.Update += ChargeMegaLaser_Update;
             On.EntityStates.TitanMonster.FireMegaLaser.OnEnter += FireMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.FireMegaLaser.OnExit += FireMegaLaser_OnExit;
             On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate += FireGoldMegaLaser_FixedUpdate;
@@ -269,7 +264,6 @@ namespace Chen.GradiusMod
             On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
-            On.EntityStates.TitanMonster.ChargeMegaLaser.Update -= ChargeMegaLaser_Update;
             On.EntityStates.TitanMonster.FireMegaLaser.OnEnter -= FireMegaLaser_OnEnter;
             On.EntityStates.TitanMonster.FireMegaLaser.OnExit -= FireMegaLaser_OnExit;
             On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate -= FireGoldMegaLaser_FixedUpdate;
@@ -303,26 +297,12 @@ namespace Chen.GradiusMod
             else Log.Error("Failed to create GradiusOption: Resource not found or is null.");
 
             flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
-            laserChargeEffectPrefab = Resources.Load<GameObject>("Assets/PrefabInstance/ChargeGolemGold.prefab");
-            ChargeMegaLaser cmlState = EntityState.Instantiate(typeof(ChargeMegaLaser)) as ChargeMegaLaser;
-            laserChargeEffectPrefab = cmlState.effectPrefab;
-            laserChargeLaserPrefab = cmlState.laserPrefab;
-            FireMegaLaser fmlState = EntityState.Instantiate(typeof(FireMegaLaser)) as FireMegaLaser;
-            laserFireLaserPrefab = fmlState.laserPrefab;
-            FireFist ffState = EntityState.Instantiate(typeof(FireFist)) as FireFist;
-            fistChargeEffectPrefab = ffState.chargeEffectPrefab;
-
-            if (!laserChargeEffectPrefab) Log.Message("NULL");
-            if (!laserChargeLaserPrefab) Log.Message("NULL");
         }
 
         private void RegisterNetworkMessages()
         {
             Log.Debug("Registering custom network messages needed for GradiusOption...");
-            NetworkingAPI.RegisterMessageType<SyncFlamethrowerEffectForClients>();
             NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
-            NetworkingAPI.RegisterMessageType<SyncAurelioniteEffectsForClients>();
-            NetworkingAPI.RegisterMessageType<SyncBeetleGuardEffectsForClients>();
             NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
         }
 
@@ -443,13 +423,6 @@ namespace Chen.GradiusMod
                     if (behavior.flamethrower)
                     {
                         EntityState.Destroy(behavior.flamethrower);
-                        OptionSync(self, (networkIdentity, optionTracker) =>
-                        {
-                            optionTracker.flameNetIds.Add(Tuple.Create(
-                                SyncFlamethrowerEffectForClients.MessageType.Destroy, networkIdentity.netId, (short)behavior.numbering,
-                                0f, Vector3.zero
-                            ));
-                        });
                     }
                 });
             }
@@ -472,32 +445,11 @@ namespace Chen.GradiusMod
                         if (behavior.flamethrower) EntityState.Destroy(behavior.flamethrower);
                         behavior.flamethrower = Object.Instantiate(self.flamethrowerEffectPrefab, option.transform);
                         behavior.flamethrower.GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
-                        OptionSync(self, (networkIdentity, optionTracker) =>
-                        {
-                            optionTracker.flameNetIds.Add(Tuple.Create(
-                                SyncFlamethrowerEffectForClients.MessageType.Create, networkIdentity.netId, (short)behavior.numbering,
-                                self.flamethrowerDuration, Vector3.zero
-                            ));
-                        });
                     }
                     if (perMinionOldBegunFlamethrower && behavior.flamethrower && target)
                     {
                         Vector3 direction = (target.transform.position - option.transform.position).normalized;
                         behavior.flamethrower.transform.forward = direction;
-                        OptionSync(self, (networkIdentity, optionTracker) =>
-                        {
-                            if (!optionTracker.flameNetIds.Exists((t) =>
-                            {
-                                return t.Item1 == SyncFlamethrowerEffectForClients.MessageType.Redirect && t.Item2 == networkIdentity.netId
-                                       && t.Item3 == (short)behavior.numbering;
-                            }))
-                            {
-                                optionTracker.flameNetIds.Add(Tuple.Create(
-                                    SyncFlamethrowerEffectForClients.MessageType.Redirect, networkIdentity.netId, (short)behavior.numbering,
-                                    0f, direction
-                                ));
-                            }
-                        });
                     }
                 });
             }
@@ -727,21 +679,6 @@ namespace Chen.GradiusMod
                     ScaleParticleSystemDuration component = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
                     if (component) component.newDuration = self.duration;
                 }
-                if (self.laserPrefab)
-                {
-                    if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
-                    if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserLineEffect);
-                    behavior.laserFireEffect = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
-                    behavior.laserFireEffect.transform.parent = transform;
-                    behavior.laserLineEffect = behavior.laserFireEffect.GetComponent<LineRenderer>();
-                }
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                        SyncAurelioniteEffectsForClients.MessageType.CreateLaserCharge, networkIdentity.netId, (short)behavior.numbering,
-                        self.duration, Vector3.zero, 0f
-                    ));
-                });
             });
         }
 
@@ -752,63 +689,6 @@ namespace Chen.GradiusMod
             FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.laserChargeEffect) EntityState.Destroy(behavior.laserChargeEffect);
-                if (behavior.laserFireEffect) EntityState.Destroy(behavior.laserFireEffect);
-                if (behavior.laserLineEffect) EntityState.Destroy(behavior.laserLineEffect);
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                        SyncAurelioniteEffectsForClients.MessageType.DestroyLaserCharge, networkIdentity.netId, (short)behavior.numbering,
-                        0f, Vector3.zero, 0f
-                    ));
-                });
-            });
-        }
-
-        private void ChargeMegaLaser_Update(On.EntityStates.TitanMonster.ChargeMegaLaser.orig_Update orig, ChargeMegaLaser self)
-        {
-            orig(self);
-            if (!aurelioniteOptionSyncEffect) return;
-            FireForAllOptions(self, (option, behavior, target) =>
-            {
-                if (behavior.laserFireEffect && behavior.laserLineEffect)
-                {
-                    float range = 1000f;
-                    Vector3 position = option.transform.position;
-                    Vector3 direction = self.GetAimRay().direction;
-                    if (target) direction = target.transform.position - position;
-                    else if (self.lockedOnHurtBox) direction = self.lockedOnHurtBox.transform.position - position;
-
-                    Vector3 point = direction.normalized * range;
-                    if (Physics.Raycast(position, point, out RaycastHit raycastHit, range, LayerIndex.world.mask | LayerIndex.defaultLayer.mask))
-                    {
-                        point = raycastHit.point;
-                    }
-
-                    behavior.laserLineEffect.SetPosition(0, position);
-                    behavior.laserLineEffect.SetPosition(1, point);
-
-                    float indicatorSize;
-                    if (self.duration - self.age > .5f) indicatorSize = self.age / self.duration;
-                    else indicatorSize = (self.laserOn ? 1f : 0f);
-                    indicatorSize *= ChargeMegaLaser.laserMaxWidth;
-                    behavior.laserLineEffect.startWidth = indicatorSize;
-                    behavior.laserLineEffect.endWidth = indicatorSize;
-
-                    OptionSync(self, (networkIdentity, optionTracker) =>
-                    {
-                        if (!optionTracker.aurelioniteNetIds.Exists((t) =>
-                        {
-                            return t.Item1 == SyncAurelioniteEffectsForClients.MessageType.UpdateLaserCharge
-                                   && t.Item2 == networkIdentity.netId && t.Item3 == (short)behavior.numbering;
-                        }))
-                        {
-                            optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                                SyncAurelioniteEffectsForClients.MessageType.UpdateLaserCharge, networkIdentity.netId, (short)behavior.numbering,
-                                0f, point, indicatorSize
-                            ));
-                        }
-                    });
-                }
             });
         }
 
@@ -834,13 +714,6 @@ namespace Chen.GradiusMod
                     behavior.laserChildLocator = behavior.laserFire.GetComponent<ChildLocator>();
                     behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
                 }
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                        SyncAurelioniteEffectsForClients.MessageType.CreateLaserFire, networkIdentity.netId, (short)behavior.numbering,
-                        0f, Vector3.zero, 0f
-                    ));
-                });
             });
         }
 
@@ -854,13 +727,6 @@ namespace Chen.GradiusMod
                 if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
                 if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
                 if (behavior.laserFireEnd) EntityState.Destroy(behavior.laserFireEnd);
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                        SyncAurelioniteEffectsForClients.MessageType.DestroyLaserFire, networkIdentity.netId, (short)behavior.numbering,
-                        0f, Vector3.zero, 0f
-                    ));
-                });
             });
         }
 
@@ -918,14 +784,6 @@ namespace Chen.GradiusMod
                                                               self.gameObject, self.damageStat * FireMegaLaser.damageCoefficient, 0f,
                                                               Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
                 }
-
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                        SyncAurelioniteEffectsForClients.MessageType.FixedUpdateGoldLaserFire, networkIdentity.netId, (short)behavior.numbering,
-                        0f, point, 0f
-                    ));
-                });
             });
         }
 
@@ -960,13 +818,6 @@ namespace Chen.GradiusMod
             {
                 if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);
                 behavior.fistChargeEffect = Object.Instantiate(self.chargeEffectPrefab, option.transform);
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                        SyncAurelioniteEffectsForClients.MessageType.CreateFist, networkIdentity.netId, (short)behavior.numbering,
-                        0f, Vector3.zero, 0f
-                    ));
-                });
             });
         }
 
@@ -977,13 +828,6 @@ namespace Chen.GradiusMod
             FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.fistChargeEffect) EntityState.Destroy(behavior.fistChargeEffect);
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.aurelioniteNetIds.Add(Tuple.Create(
-                        SyncAurelioniteEffectsForClients.MessageType.DestroyFist, networkIdentity.netId, (short)behavior.numbering,
-                        0f, Vector3.zero, 0f
-                    ));
-                });
             });
         }
 
@@ -1029,12 +873,6 @@ namespace Chen.GradiusMod
                 if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
                 if (beetleGuardChargeSoundCopy) Util.PlaySound(FireSunder.initialAttackSoundString, option);
                 if (FireSunder.chargeEffectPrefab) behavior.sunderEffect = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.guardNetIds.Add(Tuple.Create(
-                        SyncBeetleGuardEffectsForClients.MessageType.Create, networkIdentity.netId, (short)behavior.numbering
-                    ));
-                });
             });
         }
 
@@ -1045,12 +883,6 @@ namespace Chen.GradiusMod
             FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
-                OptionSync(self, (networkIdentity, optionTracker) =>
-                {
-                    optionTracker.guardNetIds.Add(Tuple.Create(
-                        SyncBeetleGuardEffectsForClients.MessageType.Destroy, networkIdentity.netId, (short)behavior.numbering
-                    ));
-                });
             });
         }
 
@@ -1074,12 +906,6 @@ namespace Chen.GradiusMod
                     if (beetleGuardOptionSyncEffect)
                     {
                         if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
-                        OptionSync(self, (networkIdentity, optionTracker) =>
-                        {
-                            optionTracker.guardNetIds.Add(Tuple.Create(
-                                SyncBeetleGuardEffectsForClients.MessageType.Destroy, networkIdentity.netId, (short)behavior.numbering
-                            ));
-                        });
                     }
                 }
             });
@@ -1179,6 +1005,18 @@ namespace Chen.GradiusMod
         {
             if (MinionsList.Contains(masterName)) return false;
             MinionsList.Add(masterName);
+            return true;
+        }
+
+        /// <summary>
+        /// Removes support for a minion so that they do not acquire Options.
+        /// </summary>
+        /// <param name="masterName">The CharacterMaster name of the minion.</param>
+        /// <returns>True if the minion is not supported anymore. False if it is already unsupported.</returns>
+        public bool UnsupportMinionType(string masterName)
+        {
+            if (!MinionsList.Contains(masterName)) return false;
+            MinionsList.Remove(masterName);
             return true;
         }
 

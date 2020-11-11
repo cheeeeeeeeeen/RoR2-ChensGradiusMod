@@ -39,6 +39,11 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**2.0.0**
+- Huge improvement on the sync code. Reduced the amount of syncing by nearly up to 90%.
+- Remove the laser target for Aurelionite's Options as the Options are not really supposed to generate targeting sights.
+- Implement the Laser Drone.
+
 **1.7.0**
 - Add Option/Multiple support for Equipment Drones.
 - Add a compatibility config regarding Aetherium's Inspiring Drone to also inspire Equipment Drones.
