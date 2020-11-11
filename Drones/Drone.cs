@@ -33,6 +33,10 @@ namespace Chen.GradiusMod
 
         private bool? _enabled;
 
+        public virtual void PreSetup()
+        {
+        }
+
         public virtual void SetupConfig()
         {
             enabledConfig = config.Bind(
@@ -52,11 +56,17 @@ namespace Chen.GradiusMod
             if (!enabled) return;
         }
 
+        public virtual void PostSetup()
+        {
+        }
+
         public void SetupAll()
         {
+            PreSetup();
             SetupConfig();
             SetupComponents();
             SetupBehavior();
+            PostSetup();
         }
     }
 }
