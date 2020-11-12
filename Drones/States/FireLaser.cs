@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Chens.GradiusMod
+namespace Chen.GradiusMod
 {
     internal class FireLaser : BaseState
     {
@@ -53,20 +53,20 @@ namespace Chens.GradiusMod
             }
         }
 
-        private void FireBullet(Ray aimRay, string targetMuzzle, float maxDistance)
+        private void FireBullet(GameObject weapon, float damage, Ray aimRay, string targetMuzzle, float maxDistance)
         {
             if (isAuthority)
             {
                 new BulletAttack
                 {
                     owner = gameObject,
-                    weapon = gameObject,
+                    weapon = weapon,
                     origin = aimRay.origin,
                     aimVector = aimRay.direction,
                     minSpread = minSpread,
                     maxSpread = maxSpread,
                     bulletCount = 1U,
-                    damage = damageCoefficient * damageStat,
+                    damage = damage,
                     force = force,
                     muzzleName = targetMuzzle,
                     hitEffectPrefab = hitEffectPrefab,
@@ -98,7 +98,7 @@ namespace Chens.GradiusMod
             minimumDuration = 4f;
             maximumDuration = 4f;
             lockOnAngle = FireMegaLaser.lockOnAngle;
-            procCoefficientPerTick = .5f;
+            procCoefficientPerTick = .25f;
         }
 
         public override void OnEnter()
@@ -137,13 +137,30 @@ namespace Chens.GradiusMod
                 }
             }
             UpdateLockOn();
+            GradiusOption.instance.FireForAllOptions(this, (option, behavior, target) =>
+            {
+                if (behavior.laserFire) Destroy(behavior.laserFire);
+                if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
+                if (behavior.laserFireEnd) Destroy(behavior.laserFireEnd);
+                Transform transform = option.transform;
+                behavior.laserFire = Object.Instantiate(laserPrefab, transform.position, transform.rotation);
+                behavior.laserFire.transform.parent = transform;
+                behavior.laserChildLocator = behavior.laserFire.GetComponent<ChildLocator>();
+                behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
+            });
         }
 
         public override void OnExit()
         {
             if (laserEffect) Destroy(laserEffect);
-            characterBody.SetAimTimer(2f);
+            characterBody.SetAimTimer(maximumDuration);
             Util.PlaySound(stopLoopSoundString, gameObject);
+            GradiusOption.instance.FireForAllOptions(this, (option, behavior, target) =>
+            {
+                if (behavior.laserFire) Destroy(behavior.laserFire);
+                if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
+                if (behavior.laserFireEnd) Destroy(behavior.laserFireEnd);
+            });
             base.OnExit();
         }
 
@@ -153,6 +170,7 @@ namespace Chens.GradiusMod
             fireStopwatch += Time.fixedDeltaTime;
             stopwatch += Time.fixedDeltaTime;
             aimRay = GetAimRay();
+            float optionFireStopwatch = fireStopwatch;
             if (isAuthority && !lockedOnHurtBox && foundAnyTarget)
             {
                 outer.SetNextState(new FireLaser { stopwatch = stopwatch });
@@ -188,13 +206,53 @@ namespace Chens.GradiusMod
             }
             if (fireStopwatch > 1f / fireFrequency)
             {
-                if (!flag) FireBullet(ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
+                if (!flag) FireBullet(gameObject, damageCoefficient * damageStat, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
                 fireStopwatch -= 1f / fireFrequency;
             }
+            GradiusOption.instance.FireForAllOptions(this, (option, behavior, optionTarget) =>
+            {
+                Vector3 position = option.transform.position;
+                Vector3 direction = GetAimRay().direction;
+                if (optionTarget) direction = optionTarget.transform.position - position;
+                else if (lockedOnHurtBox) direction = lockedOnHurtBox.transform.position - position;
+
+                Vector3 point = direction.normalized * maxDistance;
+                if (Physics.Raycast(position, point, out RaycastHit raycastHit3, maxDistance,
+                                    LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.Ignore))
+                {
+                    point = raycastHit3.point;
+                }
+                Ray optionRay = new Ray(position, point - position);
+                bool optionFlag = false;
+                if (behavior.laserFire && behavior.laserChildLocator)
+                {
+                    if (Physics.Raycast(optionRay.origin, optionRay.direction, out RaycastHit raycastHit4, optionRay.direction.magnitude,
+                                        LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                    {
+                        point = raycastHit4.point;
+                        if (Physics.Raycast(point - optionRay.direction * .1f, -optionRay.direction, out _, raycastHit4.distance,
+                                            LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                        {
+                            point = optionRay.GetPoint(0.1f);
+                            optionFlag = true;
+                        }
+                    }
+                    behavior.laserFire.transform.rotation = Util.QuaternionSafeLookRotation(point - position);
+                    behavior.laserFireEnd.transform.position = point;
+                }
+
+                if (optionFireStopwatch > 1f / fireFrequency)
+                {
+                    if (!optionFlag)
+                    {
+                        FireBullet(option, damageCoefficient * damageStat * GradiusOption.instance.damageMultiplier,
+                                   optionRay, "Muzzle", (point - optionRay.origin).magnitude + .1f);
+                    }
+                }
+            });
             if (isAuthority && (((!inputBank || !inputBank.skill4.down) && stopwatch > minimumDuration) || stopwatch > maximumDuration))
             {
                 outer.SetNextStateToMain();
-                return;
             }
         }
 

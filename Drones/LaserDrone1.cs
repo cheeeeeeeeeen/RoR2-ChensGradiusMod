@@ -1,5 +1,4 @@
-﻿using Chens.GradiusMod;
-using EntityStates;
+﻿using EntityStates;
 using R2API;
 using R2API.Utils;
 using RoR2;
@@ -40,7 +39,7 @@ namespace Chen.GradiusMod
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
                 preventOverhead = false,
-                minimumStageCompletions = 0,
+                minimumStageCompletions = 2,
                 requiredUnlockable = "",
                 forbiddenUnlockable = ""
             };
@@ -55,6 +54,7 @@ namespace Chen.GradiusMod
         public override void SetupBehavior()
         {
             base.SetupBehavior();
+            GradiusOption.instance.SupportMinionType("LaserDrone1");
             InteractableActions += DirectorAPI_InteractableActions;
         }
 
