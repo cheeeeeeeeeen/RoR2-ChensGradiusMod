@@ -4,7 +4,6 @@ using EntityStates.Drone.DroneWeapon;
 using EntityStates.Squid.SquidWeapon;
 using EntityStates.TitanMonster;
 using R2API.Networking;
-using R2API.Networking.Interfaces;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Orbs;
@@ -48,24 +47,6 @@ namespace Chen.GradiusMod
         [AutoConfig("Determines the Option/Multiple movement type. 0 = Regular, 1 = Rotate. Server and Client.",
                     AutoConfigFlags.PreventNetMismatch, 0, 1)]
         public int beetleGuardOptionType { get; private set; } = 1;
-
-        [AutoConfig("Set to true for Options/Multiples of Flame Drones to generate a flamethrower sound. Client only. WARNING: Turning this on may cause ear-rape.")]
-        public bool flamethrowerSoundCopy { get; private set; } = false;
-
-        [AutoConfig("Set to true for Options/Multiples of Gatling Turrets to generate a firing sound. Client only. WARNING: Turning this on may cause ear-rape.")]
-        public bool gatlingSoundCopy { get; private set; } = false;
-
-        [AutoConfig("Set to true for Options/Multiples of Gunner Drones to generate a firing sound. Client only. WARNING: Turning this on may cause ear-rape.")]
-        public bool gunnerSoundCopy { get; private set; } = false;
-
-        [AutoConfig("Set to true for Options/Multiples of TC-280 drones to generate gun shot sounds. Client only. WARNING: Turning this on may cause ear-rape.")]
-        public bool tc280SoundCopy { get; private set; } = false;
-
-        [AutoConfig("Set to true for Options/Multiples of Aurelionite to generate a mega laser sound. Client only. WARNING: Turning this on may cause ear-rape.")]
-        public bool aurelioniteMegaLaserSoundCopy { get; private set; } = false;
-
-        [AutoConfig("Set to true for Options/Multiples of Beetle Guards to generate sound effects upon charging. Client only. WARNING: Turning this on may cause ear-rape.")]
-        public bool beetleGuardChargeSoundCopy { get; private set; } = false;
 
         [AutoConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
                     "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
@@ -125,12 +106,13 @@ namespace Chen.GradiusMod
             "It sounds like this item came from a far away place. The A.I. took their chance, and now she's coming back live again. " +
             "Makes me imagine the world is small when it's really not. Well, that's it for my personal log.";
 
+        internal const uint getOptionSoundId = 649757048;
+        internal const uint getOptionLowSoundId = 553829614;
+        internal const uint loseOptionSoundId = 2603869165;
+        internal const uint loseOptionLowSoundId = 4084766013;
+
         internal static GameObject gradiusOptionPrefab { get; private set; }
         internal static GameObject flamethrowerEffectPrefab { get; private set; }
-        internal static uint getOptionSoundId { get; } = 649757048;
-        internal static uint getOptionLowSoundId { get; } = 553829614;
-        internal static uint loseOptionSoundId { get; } = 2603869165;
-        internal static uint loseOptionLowSoundId { get; } = 4084766013;
 
         private static readonly List<string> MinionsList = new List<string>
         {
@@ -181,13 +163,11 @@ namespace Chen.GradiusMod
             if (!allowAurelionite)
             {
                 MinionsList.Remove("TitanGoldAlly");
-                aurelioniteMegaLaserSoundCopy = false;
                 aurelioniteOptionSyncEffect = false;
             }
             if (!allowBeetleGuard)
             {
                 MinionsList.Remove("BeetleGuardAlly");
-                beetleGuardChargeSoundCopy = false;
                 beetleGuardOptionSyncEffect = false;
             }
             if (beetleGuardOptionType != 1) RotateUsers.Remove("BeetleGuardAlly");
@@ -303,7 +283,6 @@ namespace Chen.GradiusMod
         {
             Log.Debug("Registering custom network messages needed for GradiusOption...");
             NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
-            NetworkingAPI.RegisterMessageType<SyncSimpleSound>();
         }
 
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
@@ -317,6 +296,7 @@ namespace Chen.GradiusMod
                 if (masterMaster && GetCount(masterMaster) > 0)
                 {
                     OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(masterMaster);
+                    Log.Message($"OnBodyStartGlobal: Minion: {master.name}, Master: {masterMaster.name}, Options: {masterTracker.optionItemCount}");
                     for (int t = 1; t <= masterTracker.optionItemCount; t++) OptionMasterTracker.SpawnOption(obj.gameObject, t);
                 }
             }
@@ -326,35 +306,36 @@ namespace Chen.GradiusMod
         {
             // This hook runs on Client and on Server
             orig(self);
-            if (self.master)
+            CharacterMaster master = self.master;
+            if (!master) return;
+            MinionOwnership minionOwnership = master.minionOwnership;
+            if (!minionOwnership || minionOwnership.ownerMaster || FilterMinions(master)) return;
+            OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(master);
+            int newCount = GetCount(self);
+            int oldCount = masterTracker.optionItemCount;
+            int diff = newCount - oldCount;
+            if (diff != 0)
             {
-                OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(self.master);
-                int newCount = GetCount(self);
-                int oldCount = masterTracker.optionItemCount;
-                int diff = newCount - oldCount;
-                if (diff != 0)
+                masterTracker.optionItemCount = newCount;
+                Log.Message($"OnInventoryChanged: Master: {master.name}, OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
+                if (diff > 0)
                 {
-                    masterTracker.optionItemCount = newCount;
-                    Log.Message($"OnInventoryChanged: OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
-                    if (diff > 0)
+                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionSoundId, self.gameObject);
+                    LoopAllMinions(master, (minion) =>
                     {
-                        if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionSoundId, self.gameObject);
-                        LoopAllMinions(self.master, (minion) =>
-                        {
-                            if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionLowSoundId, minion);
-                            for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
-                        });
-                    }
-                    else
+                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionLowSoundId, minion);
+                        for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
+                    });
+                }
+                else
+                {
+                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionSoundId, self.gameObject);
+                    LoopAllMinions(master, (minion) =>
                     {
-                        if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionSoundId, self.gameObject);
-                        LoopAllMinions(self.master, (minion) =>
-                        {
-                            if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionLowSoundId, self.gameObject);
-                            OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
-                            if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
-                        });
-                    }
+                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionLowSoundId, self.gameObject);
+                        OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
+                        if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
+                    });
                 }
             }
         }
@@ -419,7 +400,6 @@ namespace Chen.GradiusMod
             {
                 FireForAllOptions(self, (option, behavior, target) =>
                 {
-                    if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.endAttackSoundString, option);
                     if (behavior.flamethrower)
                     {
                         EntityState.Destroy(behavior.flamethrower);
@@ -430,7 +410,6 @@ namespace Chen.GradiusMod
 
         private void Flamethrower_FixedUpdate(On.EntityStates.Mage.Weapon.Flamethrower.orig_FixedUpdate orig, MageWeapon.Flamethrower self)
         {
-            // This hook only runs in the server.
             bool oldBegunFlamethrower = self.hasBegunFlamethrower;
             orig(self);
             if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
@@ -441,7 +420,6 @@ namespace Chen.GradiusMod
                     if (self.stopwatch >= self.entryDuration && !perMinionOldBegunFlamethrower)
                     {
                         perMinionOldBegunFlamethrower = true;
-                        if (flamethrowerSoundCopy) Util.PlaySound(MageWeapon.Flamethrower.startAttackSoundString, option);
                         if (behavior.flamethrower) EntityState.Destroy(behavior.flamethrower);
                         behavior.flamethrower = Object.Instantiate(self.flamethrowerEffectPrefab, option.transform);
                         behavior.flamethrower.GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
@@ -497,11 +475,6 @@ namespace Chen.GradiusMod
             {
                 if (target)
                 {
-                    if (gatlingSoundCopy) Util.PlaySound(FireGatling.fireGatlingSoundString, option);
-                    OptionSync(self, (networkIdentity, optionTracker) =>
-                    {
-                        new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireGatling.fireGatlingSoundString, -1).Send(NetworkDestination.Clients);
-                    }, false);
                     if (FireGatling.effectPrefab)
                     {
                         EffectManager.SimpleMuzzleFlash(FireGatling.effectPrefab, option, "Muzzle", false);
@@ -535,11 +508,6 @@ namespace Chen.GradiusMod
             {
                 if (target)
                 {
-                    if (gunnerSoundCopy) Util.PlaySound(FireTurret.attackSoundString, option);
-                    OptionSync(self, (networkIdentity, optionTracker) =>
-                    {
-                        new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString, -1).Send(NetworkDestination.Clients);
-                    }, false);
                     if (FireTurret.effectPrefab)
                     {
                         EffectManager.SimpleMuzzleFlash(FireTurret.effectPrefab, option, "Muzzle", false);
@@ -573,12 +541,6 @@ namespace Chen.GradiusMod
             {
                 if (target)
                 {
-                    if (tc280SoundCopy) Util.PlayScaledSound(FireMegaTurret.attackSoundString, option, FireMegaTurret.attackSoundPlaybackCoefficient);
-                    OptionSync(self, (networkIdentity, optionTracker) =>
-                    {
-                        new SyncSimpleSound(networkIdentity.netId, (short)behavior.numbering, FireTurret.attackSoundString,
-                                            FireMegaTurret.attackSoundPlaybackCoefficient).Send(NetworkDestination.Clients);
-                    }, false);
                     if (FireMegaTurret.effectPrefab)
                     {
                         EffectManager.SimpleMuzzleFlash(FireMegaTurret.effectPrefab, option, muzzleString, false);
@@ -698,11 +660,6 @@ namespace Chen.GradiusMod
             if (!aurelioniteOptionSyncEffect || !self.laserPrefab) return;
             FireForAllOptions(self, (option, behavior, target) =>
             {
-                if (aurelioniteMegaLaserSoundCopy)
-                {
-                    Util.PlaySound(FireMegaLaser.playAttackSoundString, option);
-                    Util.PlaySound(FireMegaLaser.playLoopSoundString, option);
-                }
                 if (self.laserPrefab)
                 {
                     if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
@@ -723,7 +680,6 @@ namespace Chen.GradiusMod
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self, (option, behavior, target) =>
             {
-                if (aurelioniteMegaLaserSoundCopy) Util.PlaySound(FireMegaLaser.stopLoopSoundString, option);
                 if (behavior.laserFire) EntityState.Destroy(behavior.laserFire);
                 if (behavior.laserChildLocator) EntityState.Destroy(behavior.laserChildLocator);
                 if (behavior.laserFireEnd) EntityState.Destroy(behavior.laserFireEnd);
@@ -775,7 +731,32 @@ namespace Chen.GradiusMod
 
                 if (oldFireStopwatch > 1f / FireMegaLaser.fireFrequency)
                 {
-                    if (!flag) self.FireBullet(option.transform, ray, "MuzzleLaser", (point - ray.origin).magnitude + .1f);
+                    if (!flag)
+                    {
+                        if (self.effectPrefab) EffectManager.SimpleMuzzleFlash(self.effectPrefab, option, "Muzzle", false);
+                        if (self.isAuthority)
+                        {
+                            new BulletAttack
+                            {
+                                owner = self.gameObject,
+                                weapon = option,
+                                origin = option.transform.position,
+                                aimVector = direction,
+                                minSpread = FireMegaLaser.minSpread,
+                                maxSpread = FireMegaLaser.maxSpread,
+                                bulletCount = 1U,
+                                damage = (FireMegaLaser.damageCoefficient * self.damageStat / FireMegaLaser.fireFrequency) * damageMultiplier,
+                                force = FireMegaLaser.force,
+                                muzzleName = "Muzzle",
+                                hitEffectPrefab = self.hitEffectPrefab,
+                                isCrit = Util.CheckRoll(self.critStat, self.characterBody.master),
+                                procCoefficient = FireMegaLaser.procCoefficientPerTick,
+                                HitEffectNormal = false,
+                                radius = 0f,
+                                maxDistance = (point - ray.origin).magnitude + .1f
+                            }.Fire();
+                        }
+                    }
                 }
                 if (self.isAuthority && oldProjectileStopwatch >= 1f / FireGoldMegaLaser.projectileFireFrequency)
                 {
@@ -789,6 +770,7 @@ namespace Chen.GradiusMod
 
         private void FireGoldFist_PlacePredictedAttack(On.EntityStates.TitanMonster.FireGoldFist.orig_PlacePredictedAttack orig, FireGoldFist self)
         {
+            // There is a known bug for predicted position markers in vanilla. Keep a close eye on that bug as this hook is affected.
             orig(self);
             FireForAllOptions(self, (option, behavior, target) =>
             {
@@ -805,7 +787,26 @@ namespace Chen.GradiusMod
                     {
                         fistPosition = raycastHit.point;
                     }
-                    self.PlaceSingleDelayBlast(fistPosition, FireGoldFist.delayBetweenFists * fistNumber++);
+                    float delay = FireGoldFist.delayBetweenFists * fistNumber++;
+                    EffectManager.SpawnEffect(self.predictedPositionEffectPrefab, new EffectData
+                    {
+                        origin = fistPosition,
+                        scale = FireFist.fistRadius,
+                        rotation = Quaternion.identity
+                    }, true);
+                    GameObject gameObject = Object.Instantiate(Resources.Load<GameObject>("Prefabs/NetworkedObjects/GenericDelayBlast"), fistPosition, Quaternion.identity);
+                    DelayBlast component = gameObject.GetComponent<DelayBlast>();
+                    component.position = fistPosition;
+                    component.baseDamage = self.damageStat * FireFist.fistDamageCoefficient * damageMultiplier;
+                    component.baseForce = FireFist.fistForce * damageMultiplier;
+                    component.bonusForce = FireFist.fistVerticalForce * Vector3.up;
+                    component.attacker = self.gameObject;
+                    component.radius = FireFist.fistRadius;
+                    component.crit = Util.CheckRoll(self.characterBody.crit, self.characterBody.master);
+                    component.maxTimer = FireFist.entryDuration - FireFist.trackingDuration + delay;
+                    component.falloffModel = BlastAttack.FalloffModel.None;
+                    component.explosionEffect = self.fistEffectPrefab;
+                    gameObject.GetComponent<TeamFilter>().teamIndex = TeamComponent.GetObjectTeam(component.attacker);
                 }
             });
         }
@@ -835,7 +836,8 @@ namespace Chen.GradiusMod
         {
             orig(self);
             OptionTracker tracker = self.ownerCharacterBody.GetComponent<OptionTracker>();
-            if (tracker) self.fireInterval /= tracker.existingOptions.Count + 1;
+            float divisor = (tracker.existingOptions.Count + 1) * damageMultiplier;
+            if (tracker) self.fireInterval /= divisor;
         }
 
         private void FireSpine_FireOrbArrow(On.EntityStates.Squid.SquidWeapon.FireSpine.orig_FireOrbArrow orig, FireSpine self)
@@ -848,7 +850,7 @@ namespace Chen.GradiusMod
                 HurtBox hurtBox = self.enemyFinder.GetResults().FirstOrDefault();
                 SquidOrb squidOrb = new SquidOrb
                 {
-                    damageValue = self.characterBody.damage * FireSpine.damageCoefficient,
+                    damageValue = self.characterBody.damage * FireSpine.damageCoefficient * damageMultiplier,
                     isCrit = Util.CheckRoll(self.characterBody.crit, self.characterBody.master),
                     teamIndex = TeamComponent.GetObjectTeam(self.gameObject),
                     attacker = self.gameObject,
@@ -871,7 +873,6 @@ namespace Chen.GradiusMod
             FireForAllOptions(self, (option, behavior, target) =>
             {
                 if (behavior.sunderEffect) EntityState.Destroy(behavior.sunderEffect);
-                if (beetleGuardChargeSoundCopy) Util.PlaySound(FireSunder.initialAttackSoundString, option);
                 if (FireSunder.chargeEffectPrefab) behavior.sunderEffect = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
             });
         }
@@ -900,8 +901,9 @@ namespace Chen.GradiusMod
                         if (target) aimRay = new Ray(option.transform.position, (target.transform.position - option.transform.position).normalized);
                         else aimRay = new Ray(option.transform.position, self.GetAimRay().direction);
                         ProjectileManager.instance.FireProjectile(FireSunder.projectilePrefab, aimRay.origin, Util.QuaternionSafeLookRotation(aimRay.direction),
-                                                                  self.gameObject, self.damageStat * FireSunder.damageCoefficient, FireSunder.forceMagnitude,
-                                                                  Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
+                                                                  self.gameObject, self.damageStat * FireSunder.damageCoefficient * damageMultiplier,
+                                                                  FireSunder.forceMagnitude * damageMultiplier, Util.CheckRoll(self.critStat, self.characterBody.master),
+                                                                  DamageColorIndex.Default, null, -1f);
                     }
                     if (beetleGuardOptionSyncEffect)
                     {
@@ -915,7 +917,12 @@ namespace Chen.GradiusMod
         {
             orig(self);
             OptionTracker tracker = self.characterBody.GetComponent<OptionTracker>();
-            if (tracker) self.attack.damage *= tracker.existingOptions.Count + 1;
+            if (tracker)
+            {
+                float multiplier = (tracker.existingOptions.Count + 1) * damageMultiplier;
+                self.attack.damage *= multiplier;
+                self.attack.pushAwayForce *= multiplier;
+            }
         }
 
         private bool EquipmentSlot_PerformEquipmentAction(On.RoR2.EquipmentSlot.orig_PerformEquipmentAction orig, EquipmentSlot self, EquipmentIndex equipmentIndex)
@@ -925,7 +932,7 @@ namespace Chen.GradiusMod
             CharacterBody body = self.characterBody;
             if (body)
             {
-                CharacterMaster master = self.characterBody.master;
+                CharacterMaster master = body.master;
                 if (master && master.name.Contains("EquipmentDrone"))
                 {
                     OptionTracker tracker = OptionTracker.GetOrCreateComponent(body);
@@ -1153,7 +1160,7 @@ namespace Chen.GradiusMod
         }
 
         /// <summary>
-        /// Syncs the Option from the server to clients. Sync logic should be provided in actionToRun.
+        /// Syncs the Option from the server to clients. Sync logic should be provided in actionToRun. Mostly used for syncing effects and sounds.
         /// </summary>
         /// <param name="entityState">The state of which the attack was made.</param>
         /// <param name="actionToRun">The sync action to perform. Inputs are as follows: NetworkIdentity optionIdentity, OptionTracker tracker.</param>

@@ -1,5 +1,4 @@
-﻿using EntityStates.Drone.DroneWeapon;
-using R2API.Networking.Interfaces;
+﻿using R2API.Networking.Interfaces;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -95,66 +94,6 @@ namespace Chen.GradiusMod
         {
             Master,
             Body
-        }
-    }
-
-    public class SyncSimpleSound : INetMessage
-    {
-        private NetworkInstanceId ownerBodyId;
-        private short optionNumbering;
-        private string soundString;
-        private float scale;
-
-        public SyncSimpleSound()
-        {
-        }
-
-        public SyncSimpleSound(NetworkInstanceId ownerBodyId, short optionNumbering, string soundString, float scale = 0)
-        {
-            this.ownerBodyId = ownerBodyId;
-            this.optionNumbering = optionNumbering;
-            this.soundString = soundString;
-            this.scale = scale;
-        }
-
-        public void Serialize(NetworkWriter writer)
-        {
-            writer.Write(ownerBodyId);
-            writer.Write(optionNumbering);
-            writer.Write(soundString);
-            writer.Write(scale);
-        }
-
-        public void Deserialize(NetworkReader reader)
-        {
-            ownerBodyId = reader.ReadNetworkId();
-            optionNumbering = reader.ReadInt16();
-            soundString = reader.ReadString();
-            scale = reader.ReadSingle();
-        }
-
-        public void OnReceived()
-        {
-            if (NetworkServer.active) return;
-            GameObject bodyObject = Util.FindNetworkObject(ownerBodyId);
-            if (!bodyObject)
-            {
-                Log.Warning($"SyncSimpleSound: bodyObject is null.");
-                return;
-            }
-            OptionTracker tracker = bodyObject.GetComponent<OptionTracker>();
-            if (!tracker)
-            {
-                Log.Warning($"SyncSimpleSound: tracker is null.");
-                return;
-            }
-            GameObject option = tracker.existingOptions[optionNumbering - 1];
-            if (soundString == FireGatling.fireGatlingSoundString && !GradiusOption.instance.gatlingSoundCopy) return;
-            if (soundString == FireTurret.attackSoundString && !GradiusOption.instance.gunnerSoundCopy) return;
-            if (soundString == FireMegaTurret.attackSoundString && !GradiusOption.instance.tc280SoundCopy) return;
-
-            if (scale <= 0) Util.PlaySound(soundString, option);
-            else Util.PlayScaledSound(soundString, option, scale);
         }
     }
 }

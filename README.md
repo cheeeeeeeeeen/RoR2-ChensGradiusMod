@@ -42,6 +42,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 **2.0.0**
 - Huge improvement on the sync code. Reduced the amount of syncing by nearly up to 90%.
 - Remove the laser target for Aurelionite's Options as the Options are not really supposed to generate targeting sights.
+- Remove sound syncing as it nullifies most sounds once there are a number of Options already. This means the game will only play the sound effects coming from the drone. There are still a few exceptions like missiles from Missile Drone since vanilla code handles that.
+- Fix damage calculation bugs regarding Aurelionite's, Beetle Guard's and Squid Polyp's Options. Damage multiplier config will now be respected. This also affects the rock turret of Aurelionite and the melee attack of Beetle Guard.
+- Fix Aurelionite's laser attack where the damage attacks (not the effect) are coming from the wrong direction.
+- Limit the code more when processing inventory changes with Options to characters that has minions for optimization.
 - Implement the Laser Drone.
 
 **1.7.0**
