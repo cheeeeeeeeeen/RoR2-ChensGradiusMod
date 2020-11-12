@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ChensGradiusMod</name>
+    </assembly>
+    <members>
+        <member name="M:Chen.GradiusMod.GradiusOption.SupportMinionType(System.String)">
+            <summary>
+            Adds a support for a minion for them to gain Options.
+            </summary>
+            <param name="masterName">The CharacterMaster name of the minion.</param>
+            <returns>True if the minion is supported. False if it is already supported.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.UnsupportMinionType(System.String)">
+            <summary>
+            Removes support for a minion so that they do not acquire Options.
+            </summary>
+            <param name="masterName">The CharacterMaster name of the minion.</param>
+            <returns>True if the minion is not supported anymore. False if it is already unsupported.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.SetToRotateOptions(System.String)">
+            <summary>
+            Lets the minion use Rotate Options.
+            </summary>
+            <param name="masterName">The CharacterMaster name of the minion.</param>
+            <returns>True if the minion is successfully set to use Rotate Options. False if it is already using Rotate Options.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.SetRotateOptionMultiplier(System.String,System.Single)">
+            <summary>
+            Sets the rotation multiplier for a minion type. This multiplier affects the distance and speed of rotation.
+            </summary>
+            <param name="masterName">The CharacterMaster name of the minion.</param>
+            <param name="newValue">The multiplier value.</param>
+            <returns>True if the values are set. False if not.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.SetRotateOptionOffset(System.String,UnityEngine.Vector3)">
+            <summary>
+            Sets the offset center position for a minion type. Options will rotate around the offset.
+            </summary>
+            <param name="masterName">The CharacterMaster name of the minion.</param>
+            <param name="newValue">The offset value.</param>
+            <returns>True if the values are set. False if not.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.SetToRegularOptions(System.String)">
+            <summary>
+            Lets the minion use Regular Options.
+            </summary>
+            <param name="masterName">The CharacterMaster name of the minion.</param>
+            <returns>True if the minion is successfully set to use Regular Options. False if it is already using Regular Options.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.LoopAllMinions(RoR2.CharacterMaster,System.Action{UnityEngine.GameObject})">
+            <summary>
+            Loops through the all the minions of the owner.
+            </summary>
+            <param name="ownerMaster">The owner of the minions.</param>
+            <param name="actionToRun">An action to execute for each minion. The minion's CharacterBody GameObject is given as the input.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.FireForAllOptions(EntityStates.BaseState,System.Action{UnityEngine.GameObject,Chen.GradiusMod.OptionBehavior,UnityEngine.GameObject})">
+            <summary>
+            Loops through all the Options of the minion.
+            </summary>
+            <param name="entityState">The state of the of which the attack was made.</param>
+            <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.OptionSync(EntityStates.BaseState,System.Action{UnityEngine.Networking.NetworkIdentity,Chen.GradiusMod.OptionTracker},System.Boolean)">
+            <summary>
+            Syncs the Option from the server to clients. Sync logic should be provided in actionToRun. Mostly used for syncing effects and sounds.
+            </summary>
+            <param name="entityState">The state of which the attack was made.</param>
+            <param name="actionToRun">The sync action to perform. Inputs are as follows: NetworkIdentity optionIdentity, OptionTracker tracker.</param>
+            <param name="queryTracker">If true, the Option tracker is automatically queried. If false, the Option tracker will not be queried.</param>
+        </member>
+    </members>
+</doc>
