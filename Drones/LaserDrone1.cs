@@ -92,6 +92,7 @@ namespace Chen.GradiusMod
             body.baseNameToken = "LASER_DRONE1_NAME";
             body.baseMaxHealth *= 1.2f;
             body.baseRegen *= 1.2f;
+            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone1/texLaserDrone1Icon.png");
             ModelLocator modelLocator = droneBody.GetComponent<ModelLocator>();
             GameObject modelObject = modelLocator.modelTransform.gameObject;
             CharacterModel model = modelObject.GetComponent<CharacterModel>();
