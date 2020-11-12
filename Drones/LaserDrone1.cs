@@ -1,4 +1,6 @@
-﻿using EntityStates;
+﻿#undef DEBUG
+
+using EntityStates;
 using R2API;
 using R2API.Utils;
 using RoR2;
@@ -35,11 +37,16 @@ namespace Chen.GradiusMod
             DirectorCard directorCard = new DirectorCard
             {
                 spawnCard = iSpawnCard,
+#if DEBUG
+                selectionWeight = 1000,
+                minimumStageCompletions = 0,
+#else
                 selectionWeight = 1,
+                minimumStageCompletions = 2,
+#endif
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
                 preventOverhead = false,
-                minimumStageCompletions = 2,
                 requiredUnlockable = "",
                 forbiddenUnlockable = ""
             };
@@ -106,6 +113,7 @@ namespace Chen.GradiusMod
 
         private void ModifySkill()
         {
+            LoadoutAPI.AddSkill(typeof(FireLaser));
             SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun");
             SkillDef newSkillDef = Object.Instantiate(origSkillDef);
             newSkillDef.activationState = new SerializableEntityStateType(typeof(FireLaser));

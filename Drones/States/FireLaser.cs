@@ -79,7 +79,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        private void Initialize()
+        private static void Initialize()
         {
             if (initialized) return;
             initialized = true;
