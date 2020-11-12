@@ -137,7 +137,7 @@ namespace Chen.GradiusMod
                 }
             }
             UpdateLockOn();
-            GradiusOption.instance.FireForAllOptions(this, (option, behavior, target) =>
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
             {
                 if (behavior.laserFire) Destroy(behavior.laserFire);
                 if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
@@ -155,7 +155,7 @@ namespace Chen.GradiusMod
             if (laserEffect) Destroy(laserEffect);
             characterBody.SetAimTimer(maximumDuration);
             Util.PlaySound(stopLoopSoundString, gameObject);
-            GradiusOption.instance.FireForAllOptions(this, (option, behavior, target) =>
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
             {
                 if (behavior.laserFire) Destroy(behavior.laserFire);
                 if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
@@ -209,7 +209,7 @@ namespace Chen.GradiusMod
                 if (!flag) FireBullet(gameObject, damageCoefficient * damageStat, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
                 fireStopwatch -= 1f / fireFrequency;
             }
-            GradiusOption.instance.FireForAllOptions(this, (option, behavior, optionTarget) =>
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, optionTarget) =>
             {
                 Vector3 position = option.transform.position;
                 Vector3 direction = GetAimRay().direction;

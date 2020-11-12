@@ -46,7 +46,8 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Fix damage calculation bugs regarding Aurelionite's, Beetle Guard's and Squid Polyp's Options. Damage multiplier config will now be respected. This also affects the rock turret of Aurelionite and the melee attack of Beetle Guard.
 - Fix Aurelionite's laser attack where the damage attacks (not the effect) are coming from the wrong direction.
 - Limit the code more when processing inventory changes with Options to characters that has minions for optimization.
-- Implement the Laser Drone.
+- Update public methods available for API to use more direct parameters instead of passing the state.
+- Implement the Beam Drone. It also contains a way on how to support custom minions with the Option features.
 
 **1.7.0**
 - Add Option/Multiple support for Equipment Drones.
