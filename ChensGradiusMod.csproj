@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="chensgradiusmod_soundbank.bnk" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="chensgradiusmod_assets" />
     <EmbeddedResource Include="chensgradiusmod_soundbank.bnk" />
   </ItemGroup>
