@@ -72,8 +72,10 @@ namespace Chen.GradiusMod
             renderer.material.color = Color.yellow;
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
             droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone("LaserDrone1Master");
+            MasterCatalog.getAdditionalEntries += (list) => list.Add(droneMaster);
             CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
             droneBody = master.bodyPrefab.InstantiateClone("LaserDrone1Body");
+            BodyCatalog.getAdditionalEntries += (list) => list.Add(droneBody);
             ModifyDroneBody();
             master.bodyPrefab = droneBody;
             summonMasterBehavior.masterPrefab = droneMaster;
