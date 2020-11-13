@@ -16,54 +16,85 @@ namespace Chen.GradiusMod
 
     public abstract class Drone
     {
-        public bool enabled
+        private ConfigEntry<bool> enabledConfig;
+        private ConfigEntry<bool> canBeInspiredConfig;
+        public bool enabled { get; private set; } = true;
+        public bool canBeInspired { get; private set; } = true;
+
+        public string name
         {
             get
             {
-                if (enabledConfig == null) return false;
-                if (_enabled == null) _enabled = enabledConfig.Value;
-                return (bool)_enabled;
+                if (_name == null) _name = GetType().Name;
+                return _name;
             }
         }
 
-        protected string configCategory => $"Drones.{GetType().Name}";
-        protected ConfigFile config => GradiusModPlugin.cfgFile;
+        public bool alreadySetup { get; private set; } = false;
 
-        private ConfigEntry<bool> enabledConfig { get; set; }
+        protected string configCategory
+        {
+            get
+            {
+                if (_configCategory == null) _configCategory = $"Drones.{name}";
+                return _configCategory;
+            }
+        }
 
-        private bool? _enabled;
+        private string _name;
+        private string _configCategory;
 
-        public virtual void PreSetup()
+        protected ConfigFile config;
+
+        protected virtual void PreSetup()
         {
         }
 
-        public virtual void SetupConfig()
+        protected virtual void SetupConfig()
         {
             enabledConfig = config.Bind(
                 configCategory,
-                "Enabled", true,
+                "Enabled", enabled,
                 "Set to false to disable this feature."
             );
+            enabled = enabledConfig.Value;
+
+            canBeInspiredConfig = config.Bind(
+                configCategory,
+                "CanBeInspired", canBeInspired,
+                "Aetherium Compatibility: Allow this drone to be Inspired by Inspiring Drone."
+            );
+            canBeInspired = canBeInspiredConfig.Value;
         }
 
-        public virtual void SetupComponents()
-        {
-            if (!enabled) return;
-        }
-
-        public virtual void SetupBehavior()
-        {
-            if (!enabled) return;
-        }
-
-        public virtual void PostSetup()
+        protected virtual void SetupComponents()
         {
         }
 
-        public void SetupAll()
+        protected virtual void SetupBehavior()
+        {
+        }
+
+        protected virtual void PostSetup()
+        {
+            alreadySetup = true;
+        }
+
+        internal void BindConfig(ConfigFile config)
+        {
+            this.config = config;
+        }
+
+        public bool SetupFirstPhase()
         {
             PreSetup();
             SetupConfig();
+            if (!enabled) alreadySetup = true;
+            return enabled;
+        }
+
+        public void SetupSecondPhase()
+        {
             SetupComponents();
             SetupBehavior();
             PostSetup();

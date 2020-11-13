@@ -37,6 +37,7 @@ namespace Chen.GradiusMod
 
         internal static ConfigFile cfgFile;
         internal static FilingDictionary<CatalogBoilerplate> chensItemList = new FilingDictionary<CatalogBoilerplate>();
+        internal static List<DroneInfo> gradiusDronesList = new List<DroneInfo>();
         internal static BepInEx.Logging.ManualLogSource _logger;
 
 #if DEBUG
@@ -111,12 +112,13 @@ namespace Chen.GradiusMod
                 shortIdentifier = "CGM",
                 mainConfigFile = cfgFile
             });
-
             T2Module.SetupAll_PluginAwake(chensItemList);
             T2Module.SetupAll_PluginStart(chensItemList);
 
             Log.Debug("Instantiating drones...");
-            new LaserDrone1().SetupAll();
+            gradiusDronesList = DroneCatalog.Initialize(ModGuid, cfgFile);
+            Log.Message(gradiusDronesList);
+            DroneCatalog.SetupAll(gradiusDronesList);
 
             Log.Debug("Applying vanilla fixes...");
             RegisterVanillaFixes();
