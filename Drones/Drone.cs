@@ -3,6 +3,10 @@ using System;
 
 namespace Chen.GradiusMod
 {
+    /// <summary>
+    /// Allows for making drone classes into singleton classes.
+    /// </summary>
+    /// <typeparam name="T">The drone class name</typeparam>
     public abstract class Drone<T> : Drone where T : Drone<T>
     {
         public static T instance { get; private set; }
@@ -14,8 +18,14 @@ namespace Chen.GradiusMod
         }
     }
 
+    /// <summary>
+    /// The drone class where mod creators should inherit from to ease up development.
+    /// </summary>
     public abstract class Drone
     {
+        /// <summary>
+        /// Determines if the drone should be enabled/disabled. Disabled drones will not be set up.
+        /// </summary>
         public bool enabled { get; private set; } = true;
         public bool canBeInspired { get; private set; } = true;
 
@@ -44,10 +54,16 @@ namespace Chen.GradiusMod
 
         protected ConfigFile config;
 
+        /// <summary>
+        /// The first step in the setup process. Place here the logic needed before any processing begins.
+        /// </summary>
         protected virtual void PreSetup()
         {
         }
 
+        /// <summary>
+        /// The second step in the setup process. Place here all the code related to adding configurations for the custom drone.
+        /// </summary>
         protected virtual void SetupConfig()
         {
             enabled = config.Bind(configCategory,
@@ -61,14 +77,24 @@ namespace Chen.GradiusMod
             ).Value;
         }
 
+        /// <summary>
+        /// The third step in the setup process. Place here all initialization of components, assets, textures, sounds, etc.
+        /// </summary>
         protected virtual void SetupComponents()
         {
         }
 
+        /// <summary>
+        /// The fourth step in the setup process. Place here the code related to the drone's behavior.
+        /// One may place here mod compatibility code. Hooks should also go here.
+        /// </summary>
         protected virtual void SetupBehavior()
         {
         }
 
+        /// <summary>
+        /// The fifth step in the setup process. Place here the code for cleanup, or for finalization.
+        /// </summary>
         protected virtual void PostSetup()
         {
             alreadySetup = true;
@@ -79,6 +105,10 @@ namespace Chen.GradiusMod
             this.config = config;
         }
 
+        /// <summary>
+        /// Shorthand for the first and second steps of the setup process along with generic logic. This method is exposed for usage outside of this class.
+        /// </summary>
+        /// <returns>Boolean value if the drone is enabled or not.</returns>
         public bool SetupFirstPhase()
         {
             PreSetup();
@@ -87,6 +117,9 @@ namespace Chen.GradiusMod
             return enabled;
         }
 
+        /// <summary>
+        /// Shorthand for the third, fourth and fifth steps of the setup process. This method is exposed for usage outside of this class.
+        /// </summary>
         public void SetupSecondPhase()
         {
             SetupComponents();

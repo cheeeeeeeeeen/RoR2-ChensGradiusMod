@@ -39,6 +39,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**2.1.0**
+- Add Custom Drone API helpers with documentation. This allows mod creators to ease up custom drone creation.
+- Add Beam Drone config options.
+
 **2.0.0**
 - Huge improvement on the sync code. Reduced the amount of syncing by nearly up to 90%.
 - Remove the laser target for Aurelionite's Options as the Options are not really supposed to generate targeting sights.
