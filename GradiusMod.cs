@@ -117,7 +117,6 @@ namespace Chen.GradiusMod
 
             Log.Debug("Instantiating drones...");
             gradiusDronesList = DroneCatalog.Initialize(ModGuid, cfgFile);
-            Log.Message(gradiusDronesList);
             DroneCatalog.SetupAll(gradiusDronesList);
 
             Log.Debug("Applying vanilla fixes...");

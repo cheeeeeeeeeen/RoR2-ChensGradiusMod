@@ -16,8 +16,6 @@ namespace Chen.GradiusMod
 
     public abstract class Drone
     {
-        private ConfigEntry<bool> enabledConfig;
-        private ConfigEntry<bool> canBeInspiredConfig;
         public bool enabled { get; private set; } = true;
         public bool canBeInspired { get; private set; } = true;
 
@@ -52,19 +50,15 @@ namespace Chen.GradiusMod
 
         protected virtual void SetupConfig()
         {
-            enabledConfig = config.Bind(
-                configCategory,
+            enabled = config.Bind(configCategory,
                 "Enabled", enabled,
                 "Set to false to disable this feature."
-            );
-            enabled = enabledConfig.Value;
+            ).Value;
 
-            canBeInspiredConfig = config.Bind(
-                configCategory,
+            canBeInspired = config.Bind(configCategory,
                 "CanBeInspired", canBeInspired,
                 "Aetherium Compatibility: Allow this drone to be Inspired by Inspiring Drone."
-            );
-            canBeInspired = canBeInspiredConfig.Value;
+            ).Value;
         }
 
         protected virtual void SetupComponents()

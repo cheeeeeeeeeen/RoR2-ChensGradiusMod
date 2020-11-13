@@ -13,18 +13,37 @@ namespace Chen.GradiusMod
 {
     public class LaserDrone1 : Drone<LaserDrone1>
     {
+        public float laserDuration { get; private set; } = 4f;
+        public float laserCooldown { get; private set; } = 4f;
+        public float damageCoefficient { get; private set; } = 1f;
+
         public static InteractableSpawnCard iSpawnCard { get; private set; }
         public static GameObject brokenObject { get; private set; }
         public static DirectorCardHolder iDirectorCardHolder { get; private set; }
         public static GameObject droneBody { get; private set; }
         public static GameObject droneMaster { get; private set; }
 
-        public override void SetupConfig()
+        protected override void SetupConfig()
         {
             base.SetupConfig();
+
+            laserDuration = config.Bind(configCategory,
+                "BeamDuration", laserDuration,
+                "The duration of the drone's beam in an attack."
+            ).Value;
+
+            laserCooldown = config.Bind(configCategory,
+                "BeamCooldown", laserCooldown,
+                "The cooldown of the beam attack."
+            ).Value;
+
+            damageCoefficient = config.Bind(configCategory,
+                "DamageCoefficient", damageCoefficient,
+                "Damage Coefficient of the beam attack per tick."
+            ).Value;
         }
 
-        public override void SetupComponents()
+        protected override void SetupComponents()
         {
             base.SetupComponents();
             AddLanguageTokens();
@@ -58,7 +77,7 @@ namespace Chen.GradiusMod
             };
         }
 
-        public override void SetupBehavior()
+        protected override void SetupBehavior()
         {
             base.SetupBehavior();
             GradiusOption.instance.SupportMinionType("LaserDrone1");
@@ -117,7 +136,7 @@ namespace Chen.GradiusMod
             SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun");
             SkillDef newSkillDef = Object.Instantiate(origSkillDef);
             newSkillDef.activationState = new SerializableEntityStateType(typeof(FireLaser));
-            newSkillDef.baseRechargeInterval = 4f;
+            newSkillDef.baseRechargeInterval = laserCooldown;
             newSkillDef.beginSkillCooldownOnSkillEnd = true;
             newSkillDef.baseMaxStock = 1;
             newSkillDef.fullRestockOnAssign = false;
