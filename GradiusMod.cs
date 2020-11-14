@@ -123,7 +123,7 @@ namespace Chen.GradiusMod
             RegisterVanillaFixes();
 
             Log.Debug("Applying compatibility changes...");
-            AetheriumCompatibility.Setup();
+            if (AetheriumCompatibility.enabled) AetheriumCompatibility.Setup();
         }
 
         private void RegisterVanillaFixes()

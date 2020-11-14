@@ -21,7 +21,6 @@ namespace Chen.GradiusMod
 
         public static void Setup()
         {
-            if (!enabled) return;
             if (hasSetup)
             {
                 Log.Warning("Aetherium.Setup: Already performed. Skipping.");
