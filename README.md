@@ -39,6 +39,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**2.1.1**
+- Integrate the official model for Beam Drone along with the icon.
+- Fix a mod compat bug where the mod will raise an exception when Aetherium is not found.
+
 **2.1.0**
 - Add Custom Drone API helpers with documentation. This allows mod creators to ease up custom drone creation.
 - Add Beam Drone config options.

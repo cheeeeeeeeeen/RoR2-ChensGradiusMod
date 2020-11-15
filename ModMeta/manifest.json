@@ -1,8 +1,8 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "2.1.0",
+  "version_number": "2.1.1",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Add config options for Beam Drone. Add API helpers on custom drones for other mod creators. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Integrate the official model for Beam Drone. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "bbepis-BepInExPack-5.3.1",
     "tristanmcpherson-R2API-2.5.14",
