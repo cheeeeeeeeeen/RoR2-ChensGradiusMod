@@ -27,18 +27,16 @@ namespace Chen.GradiusMod
 
         private static bool initialized = false;
 
-        protected Transform muzzleTransform;
-
         private HurtBox lockedOnHurtBox;
         private float fireStopwatch;
         private float stopwatch;
         private Ray aimRay;
-        private Transform modelTransform;
         private GameObject laserEffect;
         private ChildLocator laserChildLocator;
         private Transform laserEffectEnd;
         private BullseyeSearch enemyFinder;
         private bool foundAnyTarget;
+        private Transform muzzle;
 
         private void UpdateLockOn()
         {
@@ -97,7 +95,7 @@ namespace Chen.GradiusMod
             maxDistance = FireMegaLaser.maxDistance;
             minimumDuration = LaserDrone1.instance.laserDuration;
             maximumDuration = minimumDuration;
-            lockOnAngle = FireMegaLaser.lockOnAngle;
+            lockOnAngle = .3f;
             procCoefficientPerTick = .25f;
         }
 
@@ -120,22 +118,11 @@ namespace Chen.GradiusMod
             };
             if (teamComponent) enemyFinder.teamMaskFilter.RemoveTeam(teamComponent.teamIndex);
             aimRay = GetAimRay();
-            modelTransform = GetModelTransform();
-            if (modelTransform)
-            {
-                ChildLocator locator = modelTransform.GetComponent<ChildLocator>();
-                if (locator)
-                {
-                    muzzleTransform = locator.FindChild("Muzzle");
-                    if (muzzleTransform && laserPrefab)
-                    {
-                        laserEffect = Object.Instantiate(laserPrefab, muzzleTransform.position, muzzleTransform.rotation);
-                        laserEffect.transform.parent = muzzleTransform;
-                        laserChildLocator = laserEffect.GetComponent<ChildLocator>();
-                        laserEffectEnd = laserChildLocator.FindChild("LaserEnd");
-                    }
-                }
-            }
+            muzzle = characterBody.gameObject.transform.Find("ModelBase").Find("mdlBeamDrone").Find("AimOrigin");
+            laserEffect = Object.Instantiate(laserPrefab, muzzle.position, muzzle.rotation);
+            laserEffect.transform.parent = muzzle;
+            laserChildLocator = laserEffect.GetComponent<ChildLocator>();
+            laserEffectEnd = laserChildLocator.FindChild("LaserEnd");
             UpdateLockOn();
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
             {
@@ -177,7 +164,6 @@ namespace Chen.GradiusMod
                 return;
             }
             Vector3 origin = aimRay.origin;
-            if (muzzleTransform) origin = muzzleTransform.position;
             Vector3 target;
             if (lockedOnHurtBox) target = lockedOnHurtBox.transform.position;
             else if (Util.CharacterRaycast(gameObject, aimRay, out RaycastHit raycastHit, maxDistance,

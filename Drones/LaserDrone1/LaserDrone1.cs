@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using EntityStates;
 using R2API;
@@ -93,9 +93,6 @@ namespace Chen.GradiusMod
 
         private void ModifyBrokenObject()
         {
-            Highlight highlight = brokenObject.GetComponent<Highlight>();
-            SkinnedMeshRenderer renderer = highlight.targetRenderer as SkinnedMeshRenderer;
-            renderer.material.color = Color.yellow;
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
             droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone("LaserDrone1Master");
             MasterCatalog.getAdditionalEntries += (list) => list.Add(droneMaster);
@@ -112,6 +109,18 @@ namespace Chen.GradiusMod
             purchaseInteraction.displayNameToken = "LASER_DRONE1_INTERACTABLE_NAME";
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE1_NAME";
+            GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
+            customBrokenModel.transform.parent = brokenObject.transform;
+            Object.Destroy(brokenObject.transform.Find("mdlDrone1").gameObject);
+            ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
+            modelLocator.modelTransform = customBrokenModel.transform;
+            Highlight highlight = brokenObject.GetComponent<Highlight>();
+            highlight.targetRenderer = customBrokenModel.transform.Find("_mdlBeamDrone").gameObject.GetComponent<MeshRenderer>();
+            EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
+            entityLocator.entity = brokenObject;
+            GameObject coreObject = customBrokenModel.transform.Find("Core").gameObject;
+            EntityLocator coreEntityLocator = coreObject.AddComponent<EntityLocator>();
+            coreEntityLocator.entity = brokenObject;
         }
 
         private void ModifyDroneBody()
@@ -120,14 +129,63 @@ namespace Chen.GradiusMod
             body.baseNameToken = "LASER_DRONE1_NAME";
             body.baseMaxHealth *= 1.2f;
             body.baseRegen *= 1.2f;
-            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone1/texLaserDrone1Icon.png");
-            ModelLocator modelLocator = droneBody.GetComponent<ModelLocator>();
-            GameObject modelObject = modelLocator.modelTransform.gameObject;
-            CharacterModel model = modelObject.GetComponent<CharacterModel>();
-            Material material = Object.Instantiate(model.baseRendererInfos[0].defaultMaterial);
-            material.color = Color.yellow;
-            model.baseRendererInfos[0].defaultMaterial = material;
+            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Icon/texLaserDrone1Icon.png");
+            ModifyDroneModel(body);
             ModifySkill();
+        }
+
+        private void ModifyDroneModel(CharacterBody body)
+        {
+            GameObject customModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDrone.prefab");
+            Object.Destroy(droneBody.transform.Find("Model Base").gameObject);
+            GameObject modelBase = new GameObject("ModelBase");
+            modelBase.transform.parent = droneBody.transform;
+            modelBase.transform.localPosition = Vector3.zero;
+            modelBase.transform.localRotation = Quaternion.identity;
+            modelBase.transform.localScale = Vector3.one;
+            Transform modelTransform = customModel.transform;
+            modelTransform.parent = modelBase.transform;
+            modelTransform.localPosition = Vector3.zero;
+            modelTransform.localRotation = Quaternion.identity;
+            ModelLocator modelLocator = droneBody.GetComponent<ModelLocator>();
+            modelLocator.modelTransform = modelTransform;
+            modelLocator.modelBaseTransform = modelBase.transform;
+            CharacterModel characterModel = customModel.AddComponent<CharacterModel>();
+            characterModel.body = body;
+            MeshRenderer[] meshes = customModel.GetComponentsInChildren<MeshRenderer>();
+            CharacterModel.RendererInfo[] renderInfos = new CharacterModel.RendererInfo[meshes.Length];
+            for (int i = 0; i < meshes.Length; i++)
+            {
+                renderInfos[i] = new CharacterModel.RendererInfo
+                {
+                    defaultMaterial = meshes[i].material,
+                    renderer = meshes[i],
+                    defaultShadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On,
+                    ignoreOverlays = false
+                };
+            }
+            characterModel.baseRendererInfos = renderInfos;
+            characterModel.autoPopulateLightInfos = true;
+            characterModel.invisibilityCount = 0;
+            characterModel.temporaryOverlays = new List<TemporaryOverlay>();
+            CapsuleCollider capsuleCollider = droneBody.GetComponent<CapsuleCollider>();
+            capsuleCollider.center = new Vector3(0f, 0f, .7f);
+            capsuleCollider.radius = 1.47f;
+            capsuleCollider.height = 1.82f;
+            capsuleCollider.direction = 2;
+            HurtBoxGroup hurtBoxGroup = customModel.AddComponent<HurtBoxGroup>();
+            HurtBox hurtBox = customModel.GetComponentInChildren<CapsuleCollider>().gameObject.AddComponent<HurtBox>();
+            hurtBox.gameObject.layer = LayerIndex.entityPrecise.intVal;
+            hurtBox.healthComponent = droneBody.GetComponent<HealthComponent>();
+            hurtBox.isBullseye = true;
+            hurtBox.damageModifier = HurtBox.DamageModifier.Normal;
+            hurtBox.hurtBoxGroup = hurtBoxGroup;
+            hurtBox.indexInGroup = 0;
+            hurtBoxGroup.hurtBoxes = new HurtBox[] { hurtBox };
+            hurtBoxGroup.mainHurtBox = hurtBox;
+            hurtBoxGroup.bullseyeCount = 1;
+            customModel.AddComponent<ThrusterFlicker>();
+            customModel.AddComponent<BodyRotation>();
         }
 
         private void ModifySkill()
@@ -158,6 +216,8 @@ namespace Chen.GradiusMod
         {
             iSpawnCard.name = "iscBrokenLaserDrone1";
             iSpawnCard.prefab = brokenObject;
+            iSpawnCard.slightlyRandomizeOrientation = false;
+            iSpawnCard.orientToFloor = true;
         }
 
         private void DirectorAPI_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)

@@ -370,7 +370,6 @@ namespace Chen.GradiusMod
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Update()
         {
             if (PauseScreenController.paused) return;
