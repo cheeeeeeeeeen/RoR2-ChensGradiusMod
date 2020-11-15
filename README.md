@@ -37,6 +37,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 **manaboi#4887** helped me edit the icon to make it look like one with vanilla items.
 - Contact: Through Discord.
 
+**KomradeSpectre#8468** made the 3D model for the Beam Drone, which was also used for the icon.
+- Contact: Through Discord.
+
 ## Changelog
 
 **2.1.1**
