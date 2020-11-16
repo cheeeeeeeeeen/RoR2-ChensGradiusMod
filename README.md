@@ -42,6 +42,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**2.1.2**
+- Add compatibility with ChensClassicItem's Arms Race so that the Beam Drone can trigger artillery.
+- Fix a bug where the custom drones will not be inspired upon inheriting the Drone class.
+
 **2.1.1**
 - Integrate the official model for Beam Drone along with the icon.
 - Fix a mod compat bug where the mod will raise an exception when Aetherium is not found.
