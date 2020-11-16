@@ -90,6 +90,7 @@ namespace Chen.GradiusMod
         /// </summary>
         protected virtual void SetupBehavior()
         {
+            if (AetheriumCompatibility.enabled) AetheriumCompatibility.AddCustomDrone(name);
         }
 
         /// <summary>

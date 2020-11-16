@@ -29,9 +29,14 @@ namespace Chen.GradiusMod
             if (generalCfg.equipmentDroneInspire)
             {
                 Log.Debug("Aetherium.Setup: Applying equipmentDroneInspire.");
-                InspiringDrone.instance.AddCustomDrone("EquipmentDrone");
+                AddCustomDrone("EquipmentDrone");
             }
             hasSetup = true;
+        }
+
+        public static void AddCustomDrone(string masterName)
+        {
+            InspiringDrone.instance.AddCustomDrone(masterName);
         }
     }
 }
