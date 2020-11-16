@@ -2,6 +2,7 @@
 
 using BepInEx;
 using BepInEx.Configuration;
+using Chen.ClassicItems;
 using KomradeSpectre.Aetherium;
 using R2API;
 using R2API.Networking;
@@ -21,6 +22,7 @@ namespace Chen.GradiusMod
     [BepInDependency(TILER2Plugin.ModGuid, TILER2Plugin.ModVer)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(ClassicItemsPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
     [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(ResourcesAPI), nameof(SoundAPI), nameof(DirectorAPI))]
     public class GradiusModPlugin : BaseUnityPlugin
     {
@@ -124,6 +126,7 @@ namespace Chen.GradiusMod
 
             Log.Debug("Applying compatibility changes...");
             if (AetheriumCompatibility.enabled) AetheriumCompatibility.Setup();
+            if (ChensClassicItemsCompatibility.enabled) ChensClassicItemsCompatibility.Setup();
         }
 
         private void RegisterVanillaFixes()

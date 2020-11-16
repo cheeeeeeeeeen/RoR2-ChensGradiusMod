@@ -192,7 +192,15 @@ namespace Chen.GradiusMod
             }
             if (fireStopwatch > 1f / fireFrequency)
             {
-                if (!flag) FireBullet(gameObject, damageCoefficient * damageStat, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
+                if (!flag)
+                {
+                    float damage = damageCoefficient * damageStat;
+                    FireBullet(gameObject, damage, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
+                    if (ChensClassicItemsCompatibility.enabled)
+                    {
+                        ChensClassicItemsCompatibility.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
+                    }
+                }
                 fireStopwatch -= 1f / fireFrequency;
             }
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, optionTarget) =>
