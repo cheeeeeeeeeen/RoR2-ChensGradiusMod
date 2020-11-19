@@ -42,6 +42,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**2.1.3**
+- Adjust some of Beam Drone's stats for balance.
+- Beam Drone compatibility with Chen's Minion Retarget mod.
+
 **2.1.2**
 - Add compatibility with ChensClassicItem's Arms Race so that the Beam Drone can trigger artillery.
 - Fix a bug where the custom drones will not be inspired upon inheriting the Drone class.

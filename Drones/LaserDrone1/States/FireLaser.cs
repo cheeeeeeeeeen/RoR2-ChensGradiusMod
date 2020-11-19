@@ -88,11 +88,9 @@ namespace Chen.GradiusMod
             playLoopSoundString = FireMegaLaser.playLoopSoundString;
             stopLoopSoundString = FireMegaLaser.stopLoopSoundString;
             damageCoefficient = LaserDrone1.instance.damageCoefficient;
-            force = 0f;
-            minSpread = FireMegaLaser.minSpread;
-            maxSpread = FireMegaLaser.maxSpread;
-            fireFrequency = FireMegaLaser.fireFrequency;
-            maxDistance = FireMegaLaser.maxDistance;
+            maxSpread = minSpread = force = 0f;
+            fireFrequency = 8f;
+            maxDistance = 180f;
             minimumDuration = LaserDrone1.instance.laserDuration;
             maximumDuration = minimumDuration;
             lockOnAngle = .3f;

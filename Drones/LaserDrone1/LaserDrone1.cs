@@ -4,6 +4,7 @@ using EntityStates;
 using R2API;
 using R2API.Utils;
 using RoR2;
+using RoR2.CharacterAI;
 using RoR2.Skills;
 using System.Collections.Generic;
 using UnityEngine;
@@ -96,6 +97,7 @@ namespace Chen.GradiusMod
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
             droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone("LaserDrone1Master");
             MasterCatalog.getAdditionalEntries += (list) => list.Add(droneMaster);
+            ModifyDroneMaster();
             CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
             droneBody = master.bodyPrefab.InstantiateClone("LaserDrone1Body");
             BodyCatalog.getAdditionalEntries += (list) => list.Add(droneBody);
@@ -121,6 +123,13 @@ namespace Chen.GradiusMod
             GameObject coreObject = customBrokenModel.transform.Find("Core").gameObject;
             EntityLocator coreEntityLocator = coreObject.AddComponent<EntityLocator>();
             coreEntityLocator.entity = brokenObject;
+        }
+
+        private void ModifyDroneMaster()
+        {
+            AISkillDriver[] skillDrivers = droneMaster.GetComponents<AISkillDriver>();
+            skillDrivers[3].maxDistance = 45f;
+            skillDrivers[4].maxDistance = 135f;
         }
 
         private void ModifyDroneBody()
