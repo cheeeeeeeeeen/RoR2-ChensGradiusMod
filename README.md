@@ -42,6 +42,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**2.1.4**
+- Rollback dependency of R2API to `2.5.14`.
+
 **2.1.3**
 - Adjust some of Beam Drone's stats for balance.
 - Beam Drone compatibility with Chen's Minion Retarget mod.
