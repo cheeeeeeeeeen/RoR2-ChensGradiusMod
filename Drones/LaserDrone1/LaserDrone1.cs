@@ -112,7 +112,6 @@ namespace Chen.GradiusMod
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE1_NAME";
             GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
-            customBrokenModel = customBrokenModel.InstantiateClone("mdlBeamDroneBroken");
             customBrokenModel.transform.parent = brokenObject.transform;
             Object.Destroy(brokenObject.transform.Find("mdlDrone1").gameObject);
             ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
@@ -147,7 +146,6 @@ namespace Chen.GradiusMod
         private void ModifyDroneModel(CharacterBody body)
         {
             GameObject customModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDrone.prefab");
-            customModel = customModel.InstantiateClone("mdlBeamDrone");
             Object.Destroy(droneBody.transform.Find("Model Base").gameObject);
             GameObject modelBase = new GameObject("ModelBase");
             modelBase.transform.parent = droneBody.transform;

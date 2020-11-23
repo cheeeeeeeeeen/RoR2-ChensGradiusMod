@@ -111,8 +111,7 @@ namespace Chen.GradiusMod
             purchaseInteraction.displayNameToken = "LASER_DRONE2_INTERACTABLE_NAME";
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE2_NAME";
-            GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
-            customBrokenModel = customBrokenModel.InstantiateClone("mdlLaserDroneBroken");
+            GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Model/mdlLaserDroneBroken.prefab");
             customBrokenModel.transform.parent = brokenObject.transform;
             Object.Destroy(brokenObject.transform.Find("mdlDrone1").gameObject);
             ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
@@ -141,7 +140,7 @@ namespace Chen.GradiusMod
             body.baseRegen *= 1.2f;
             body.baseDamage *= 10f;
             body.baseCrit *= 3f;
-            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Icon/texLaserDrone1Icon.png");
+            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Icon/texLaserDrone2Icon.png");
             ModifyDroneModel(body);
             ModifySkill();
         }
@@ -149,7 +148,6 @@ namespace Chen.GradiusMod
         private void ModifyDroneModel(CharacterBody body)
         {
             GameObject customModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab");
-            customModel = customModel.InstantiateClone("mdlLaserDrone");
             Object.Destroy(droneBody.transform.Find("Model Base").gameObject);
             GameObject modelBase = new GameObject("ModelBase");
             modelBase.transform.parent = droneBody.transform;
