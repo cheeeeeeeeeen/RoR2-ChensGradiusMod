@@ -16,10 +16,26 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Gradius is known for its feature of Options/Multiples where in these weapons are invulnerable to all damage, and are able to copy the full arsenal of the main ship.
 - For this mod, the Options/Multiples will only copy the main attacks of the drone.
 - All vanilla minions (both mechanical and organic) are supported.
+- All drones from this mod are also supported.
 - Options/Multiples are able to duplicate all attacks of Aurelionite. The Rock Turret will attack faster instead of being copied.
 - Options/Multiples will only duplicate the ranged attack of Beetle Guards. Their melee attacks will have multiplied damage, however.
 - Equipment Drones will use the attached equipment depending on the number of Options/Multiples it has. This is configurable.
 - Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
+
+![Beam Drone](https://puu.sh/GQz08.png)
+**Beam Drone**
+- A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki) on how to add your own custom drone.
+- This drone shoots a continuous beam on its target.
+- The drone is accurate, however, it is weak at keeping its lock on consistently.
+- The drone will appear in Stage 3 and onwards.
+- Options also copy this drone's attacks.
+
+&nbsp;&nbsp;&nbsp;***NO ICON YET***&nbsp;&nbsp;&nbsp;
+**Laser Drone**
+- A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
+- The drone charges for a short amount of time, and then unleashes a strong laser attack, dealing huge amount of damage in an AoE.
+- The drone will appear in Stage 3 and onwards.
+- Options also copy this drone's attacks.
 
 ## Contact & Support
 
@@ -41,6 +57,10 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Contact: Through Discord.
 
 ## Changelog
+
+**2.2.0**
+- Implement Laser Drone!
+- Temporary model and icon for now. They are fully functional, though.
 
 **2.1.4**
 - Rollback dependency of R2API to `2.5.14`.
