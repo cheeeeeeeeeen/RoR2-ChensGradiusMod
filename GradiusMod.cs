@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using BepInEx;
 using BepInEx.Configuration;
@@ -71,6 +71,23 @@ namespace Chen.GradiusMod
                 else if (i7) spawnList = RoR2.Run.instance.availableLunarDropList;
                 else spawnList = RoR2.Run.instance.availableBossDropList;
                 RoR2.PickupDropletController.CreatePickupDroplet(spawnList[RoR2.Run.instance.spawnRng.RangeInt(0, spawnList.Count)], trans.position, new Vector3(0f, -5f, 0f));
+            }
+        }
+
+        public void FixedUpdate()
+        {
+            var i1 = Input.GetKeyDown(KeyCode.Alpha1);
+            var i2 = Input.GetKeyDown(KeyCode.Alpha2);
+            var i3 = Input.GetKeyDown(KeyCode.Alpha3);
+            var i4 = Input.GetKeyDown(KeyCode.Alpha4);
+            if (i1 || i2 || i3 || i4)
+            {
+                RoR2.CharacterMaster master = RoR2.PlayerCharacterMasterController.instances[0].master;
+                RoR2.CharacterBody body = master.GetBody();
+                if (i1) AkSoundEngine.PostEvent(FireLaser.chargeLaserEventId, body.gameObject);
+                else if (i2) AkSoundEngine.PostEvent(FireLaser.dissipateLaserEventId, body.gameObject);
+                else if (i3) AkSoundEngine.PostEvent(GradiusOption.getOptionEventId, body.gameObject);
+                else if (i4) AkSoundEngine.PostEvent(GradiusOption.loseOptionEventId, body.gameObject);
             }
         }
 

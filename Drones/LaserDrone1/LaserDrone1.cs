@@ -50,7 +50,7 @@ namespace Chen.GradiusMod
             AddLanguageTokens();
             InteractableSpawnCard origIsc = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1");
             brokenObject = origIsc.prefab;
-            brokenObject = brokenObject.InstantiateClone("LaserDrone1Broken");
+            brokenObject = brokenObject.InstantiateClone($"{name}Broken");
             ModifyBrokenObject();
             iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
@@ -81,7 +81,7 @@ namespace Chen.GradiusMod
         protected override void SetupBehavior()
         {
             base.SetupBehavior();
-            GradiusOption.instance.SupportMinionType("LaserDrone1");
+            GradiusOption.instance.SupportMinionType(name);
             InteractableActions += DirectorAPI_InteractableActions;
         }
 
@@ -95,11 +95,11 @@ namespace Chen.GradiusMod
         private void ModifyBrokenObject()
         {
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
-            droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone("LaserDrone1Master");
+            droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}Master");
             MasterCatalog.getAdditionalEntries += (list) => list.Add(droneMaster);
             ModifyDroneMaster();
             CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
-            droneBody = master.bodyPrefab.InstantiateClone("LaserDrone1Body");
+            droneBody = master.bodyPrefab.InstantiateClone($"{name}Body");
             BodyCatalog.getAdditionalEntries += (list) => list.Add(droneBody);
             ModifyDroneBody();
             master.bodyPrefab = droneBody;
@@ -112,6 +112,7 @@ namespace Chen.GradiusMod
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE1_NAME";
             GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
+            customBrokenModel = customBrokenModel.InstantiateClone("mdlBeamDroneBroken");
             customBrokenModel.transform.parent = brokenObject.transform;
             Object.Destroy(brokenObject.transform.Find("mdlDrone1").gameObject);
             ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
@@ -146,6 +147,7 @@ namespace Chen.GradiusMod
         private void ModifyDroneModel(CharacterBody body)
         {
             GameObject customModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDrone.prefab");
+            customModel = customModel.InstantiateClone("mdlBeamDrone");
             Object.Destroy(droneBody.transform.Find("Model Base").gameObject);
             GameObject modelBase = new GameObject("ModelBase");
             modelBase.transform.parent = droneBody.transform;
@@ -199,10 +201,10 @@ namespace Chen.GradiusMod
 
         private void ModifySkill()
         {
-            LoadoutAPI.AddSkill(typeof(FireLaser));
+            LoadoutAPI.AddSkill(typeof(FireBeam));
             SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun");
             SkillDef newSkillDef = Object.Instantiate(origSkillDef);
-            newSkillDef.activationState = new SerializableEntityStateType(typeof(FireLaser));
+            newSkillDef.activationState = new SerializableEntityStateType(typeof(FireBeam));
             newSkillDef.baseRechargeInterval = laserCooldown;
             newSkillDef.beginSkillCooldownOnSkillEnd = true;
             newSkillDef.baseMaxStock = 1;

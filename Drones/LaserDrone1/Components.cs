@@ -5,8 +5,9 @@ namespace Chen.GradiusMod
 {
     public class BodyRotation : MonoBehaviour
     {
+        public float rotationSpeed = 4f;
+
         private int rotationDirection;
-        private readonly float rotationSpeed = 4f;
 
         public void Awake()
         {

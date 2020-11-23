@@ -67,9 +67,9 @@ namespace Chen.GradiusMod
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
 
-        [AutoConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones. Client only.",
-                    AutoConfigFlags.None, 0, 2)]
-        public int playOptionGetSoundEffect { get; private set; } = 2;
+        [AutoConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones, " +
+                    "3 = Play sound for both. Client only.", AutoConfigFlags.None, 0, 3)]
+        public int playOptionGetSoundEffect { get; private set; } = 3;
 
         [AutoConfig("For Equipment Drones. Determines the number of uses the Equipment Drone will perform the equipment's effect. e.g. " +
                     "A value of 0.3 and having an Option number of 4 will result to the Equipment Drone performing the effect 1 more time. " +
@@ -106,10 +106,8 @@ namespace Chen.GradiusMod
             "It sounds like this item came from a far away place. The A.I. took their chance, and now she's coming back live again. " +
             "Makes me imagine the world is small when it's really not. Well, that's it for my personal log.";
 
-        internal const uint getOptionSoundId = 649757048;
-        internal const uint getOptionLowSoundId = 553829614;
-        internal const uint loseOptionSoundId = 2603869165;
-        internal const uint loseOptionLowSoundId = 4084766013;
+        internal const uint getOptionEventId = 649757048;
+        internal const uint loseOptionEventId = 2603869165;
 
         internal static GameObject gradiusOptionPrefab { get; private set; }
         internal static GameObject flamethrowerEffectPrefab { get; private set; }
@@ -320,19 +318,19 @@ namespace Chen.GradiusMod
                 Log.Message($"OnInventoryChanged: Master: {master.name}, OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
                 if (diff > 0)
                 {
-                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionSoundId, self.gameObject);
+                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionEventId, self.gameObject);
                     LoopAllMinions(master, (minion) =>
                     {
-                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionLowSoundId, minion);
+                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionEventId, minion);
                         for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
                     });
                 }
                 else
                 {
-                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionSoundId, self.gameObject);
+                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
                     LoopAllMinions(master, (minion) =>
                     {
-                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionLowSoundId, self.gameObject);
+                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
                         OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
                         if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
                     });
