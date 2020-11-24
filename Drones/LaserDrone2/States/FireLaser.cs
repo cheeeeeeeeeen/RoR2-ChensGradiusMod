@@ -6,7 +6,7 @@ using GolemChargeLaser = EntityStates.GolemMonster.ChargeLaser;
 
 namespace Chen.GradiusMod
 {
-    public class FireLaser : BaseState
+    internal class FireLaser : BaseState
     {
         public const uint chargeLaserEventId = 3954655918;
         public const uint dissipateLaserEventId = 2908790270;
@@ -69,11 +69,23 @@ namespace Chen.GradiusMod
                 particleChargeEffect.transform.parent = transform;
                 ScaleParticleSystemDuration particleSystem = particleChargeEffect.GetComponent<ScaleParticleSystemDuration>();
                 if (particleSystem) particleSystem.newDuration = duration;
+                GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+                {
+                    behavior.laserChargeEffect = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
+                    behavior.laserChargeEffect.transform.parent = option.transform;
+                    ScaleParticleSystemDuration optionParticleSystem = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
+                    if (optionParticleSystem) optionParticleSystem.newDuration = duration;
+                });
             }
         }
 
         public override void OnExit()
         {
+            if (particleChargeEffect) Destroy(particleChargeEffect);
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+            {
+                if (behavior.laserChargeEffect) Destroy(behavior.laserChargeEffect);
+            });
             base.OnExit();
         }
 
@@ -118,7 +130,44 @@ namespace Chen.GradiusMod
                 }
                 Util.PlaySound(attackSoundString, gameObject);
                 AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
-
+                GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+                {
+                    if (effectPrefab) EffectManager.SimpleMuzzleFlash(effectPrefab, option, "Muzzle", false);
+                    if (isAuthority)
+                    {
+                        Vector3 direction = (target.transform.position - option.transform.position).normalized;
+                        Ray aimRay = new Ray(option.transform.position, direction);
+                        Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
+                        if (Physics.Raycast(aimRay, out RaycastHit raycastHit, maxDistance,
+                                            LayerIndex.world.mask | LayerIndex.defaultLayer.mask | LayerIndex.entityPrecise.mask))
+                        {
+                            vector = raycastHit.point;
+                        }
+                        float computedForce = force * GradiusOption.instance.damageMultiplier;
+                        new BlastAttack
+                        {
+                            attacker = gameObject,
+                            inflictor = option,
+                            teamIndex = teamComponent.teamIndex,
+                            baseDamage = damageStat * damageCoefficient * GradiusOption.instance.damageMultiplier,
+                            baseForce = computedForce,
+                            position = vector,
+                            radius = blastRadius,
+                            falloffModel = BlastAttack.FalloffModel.Linear,
+                            bonusForce = computedForce * aimRay.direction
+                        }.Fire();
+                        if (tracerEffectPrefab)
+                        {
+                            EffectData effectData = new EffectData
+                            {
+                                origin = vector,
+                                start = aimRay.origin
+                            };
+                            EffectManager.SpawnEffect(tracerEffectPrefab, effectData, true);
+                            EffectManager.SpawnEffect(hitEffectPrefab, effectData, true);
+                        }
+                    }
+                });
                 outer.SetNextStateToMain();
             }
         }
