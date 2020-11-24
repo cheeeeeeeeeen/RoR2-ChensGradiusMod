@@ -51,7 +51,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        private void FireBullet(GameObject weapon, float damage, Ray aimRay, string targetMuzzle, float maxDistance)
+        private void FireBullet(GameObject weapon, float damage, float force, Ray aimRay, string targetMuzzle, float maxDistance)
         {
             if (isAuthority)
             {
@@ -193,7 +193,7 @@ namespace Chen.GradiusMod
                 if (!flag)
                 {
                     float damage = damageCoefficient * damageStat;
-                    FireBullet(gameObject, damage, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
+                    FireBullet(gameObject, damage, force, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
                     if (ChensClassicItemsCompatibility.enabled)
                     {
                         ChensClassicItemsCompatibility.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
@@ -237,8 +237,9 @@ namespace Chen.GradiusMod
                 {
                     if (!optionFlag)
                     {
-                        FireBullet(option, damageCoefficient * damageStat * GradiusOption.instance.damageMultiplier,
-                                   optionRay, "Muzzle", (point - optionRay.origin).magnitude + .1f);
+                        float damage = damageCoefficient * damageStat * GradiusOption.instance.damageMultiplier;
+                        FireBullet(option, damage, force * GradiusOption.instance.damageMultiplier, optionRay,
+                                   "Muzzle", (point - optionRay.origin).magnitude + .1f);
                     }
                 }
             });
