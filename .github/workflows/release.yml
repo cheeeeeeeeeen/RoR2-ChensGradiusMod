@@ -1,0 +1,24 @@
+name: "release"
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  release:
+    name: "Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Build & Test"
+        run: |
+          echo "Done."
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.AUTO_RELEASE }}"
+          prerelease: false
+          files: |
+            Build/Build.zip
+            Build/*.dll
