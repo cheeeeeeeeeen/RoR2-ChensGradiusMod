@@ -19,6 +19,7 @@ jobs:
         with:
           repo_token: "${{ secrets.AUTO_RELEASE }}"
           prerelease: false
+          automatic_release_tag: latest
           files: |
             Build/Build.zip
             Build/*.dll
