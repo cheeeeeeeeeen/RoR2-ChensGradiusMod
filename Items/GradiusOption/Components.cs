@@ -34,13 +34,11 @@ namespace Chen.GradiusMod
         private CharacterBody ownerBody;
         private bool init = true;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Awake()
         {
             t = gameObject.transform;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Update()
         {
             if (!PauseScreenController.paused && !init)
@@ -71,7 +69,6 @@ namespace Chen.GradiusMod
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void FixedUpdate()
         {
             if (!PauseScreenController.paused && init && owner)
@@ -123,13 +120,11 @@ namespace Chen.GradiusMod
 
         private Transform t;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Awake()
         {
             t = gameObject.transform;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Update()
         {
             if (PauseScreenController.paused) return;
@@ -151,7 +146,6 @@ namespace Chen.GradiusMod
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void FixedUpdate()
         {
             if (PauseScreenController.paused) return;
@@ -265,7 +259,8 @@ namespace Chen.GradiusMod
 
         public static OptionTracker GetOrCreateComponent(GameObject me)
         {
-            OptionTracker tracker = me.GetComponent<OptionTracker>() ?? me.AddComponent<OptionTracker>();
+            OptionTracker tracker = me.GetComponent<OptionTracker>();
+            if (!tracker) tracker = me.AddComponent<OptionTracker>();
             return tracker;
         }
 
@@ -286,7 +281,8 @@ namespace Chen.GradiusMod
 
         public static OptionMasterTracker GetOrCreateComponent(GameObject me)
         {
-            OptionMasterTracker tracker = me.GetComponent<OptionMasterTracker>() ?? me.AddComponent<OptionMasterTracker>();
+            OptionMasterTracker tracker = me.GetComponent<OptionMasterTracker>();
+            if (!tracker) tracker = me.AddComponent<OptionMasterTracker>();
             return tracker;
         }
 
@@ -330,7 +326,6 @@ namespace Chen.GradiusMod
         private Vector3 originalLocalScale;
         private GameObject meshObject;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Used by UnityEngine")]
         private void Awake()
         {
             for (int i = 0; i < transform.childCount; i++)
