@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using EntityStates;
 using R2API;
@@ -30,7 +30,7 @@ namespace Chen.GradiusMod
 
             laserCooldown = config.Bind(configCategory,
                 "LaserCooldown", laserCooldown,
-                "The cooldown of the beam attack."
+                "The cooldown of the focused laser attack."
             ).Value;
 
             chargeTime = config.Bind(configCategory,
@@ -40,7 +40,7 @@ namespace Chen.GradiusMod
 
             damageCoefficient = config.Bind(configCategory,
                 "DamageCoefficient", damageCoefficient,
-                "Damage Coefficient of the beam attack per tick."
+                "Damage Coefficient of the focused laser."
             ).Value;
         }
 
@@ -50,7 +50,7 @@ namespace Chen.GradiusMod
             AddLanguageTokens();
             InteractableSpawnCard origIsc = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1");
             brokenObject = origIsc.prefab;
-            brokenObject = brokenObject.InstantiateClone("LaserDrone2Broken");
+            brokenObject = brokenObject.InstantiateClone($"{name}Broken");
             ModifyBrokenObject();
             iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
@@ -117,7 +117,7 @@ namespace Chen.GradiusMod
             ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
             modelLocator.modelTransform = customBrokenModel.transform;
             Highlight highlight = brokenObject.GetComponent<Highlight>();
-            highlight.targetRenderer = customBrokenModel.transform.Find("_mdlBeamDrone").gameObject.GetComponent<MeshRenderer>();
+            highlight.targetRenderer = customBrokenModel.transform.Find("_mdlLaserDroneBroken").gameObject.GetComponent<MeshRenderer>();
             EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
             entityLocator.entity = brokenObject;
             GameObject coreObject = customBrokenModel.transform.Find("Core").gameObject;
@@ -140,6 +140,10 @@ namespace Chen.GradiusMod
             body.baseRegen *= 1.2f;
             body.baseDamage *= 10f;
             body.baseCrit *= 3f;
+            body.levelMaxHealth *= 1.2f;
+            body.levelRegen *= 1.2f;
+            body.levelDamage *= 10f;
+            body.levelCrit *= 3f;
             body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Icon/texLaserDrone2Icon.png");
             ModifyDroneModel(body);
             ModifySkill();
@@ -180,9 +184,9 @@ namespace Chen.GradiusMod
             characterModel.invisibilityCount = 0;
             characterModel.temporaryOverlays = new List<TemporaryOverlay>();
             CapsuleCollider capsuleCollider = droneBody.GetComponent<CapsuleCollider>();
-            capsuleCollider.center = new Vector3(0f, 0f, .7f);
-            capsuleCollider.radius = 1.47f;
-            capsuleCollider.height = 1.82f;
+            capsuleCollider.center = new Vector3(0f, 0f, -.27f);
+            capsuleCollider.radius = 1.05f;
+            capsuleCollider.height = 2.2f;
             capsuleCollider.direction = 2;
             HurtBoxGroup hurtBoxGroup = customModel.AddComponent<HurtBoxGroup>();
             HurtBox hurtBox = customModel.GetComponentInChildren<CapsuleCollider>().gameObject.AddComponent<HurtBox>();
@@ -196,6 +200,10 @@ namespace Chen.GradiusMod
             hurtBoxGroup.mainHurtBox = hurtBox;
             hurtBoxGroup.bullseyeCount = 1;
             customModel.transform.Find("AimOrigin").gameObject.AddComponent<ChargeEffect>();
+            customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
+            BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();
+            rotationComponent.rotationDirection = -1;
+            rotationComponent.rotationSpeed = 2f;
         }
 
         private void ModifySkill()

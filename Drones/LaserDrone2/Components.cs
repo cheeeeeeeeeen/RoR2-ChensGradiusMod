@@ -43,4 +43,29 @@ namespace Chen.GradiusMod
 
         private float KeepZeroOrPositive(float range) => Mathf.Max(range, 0f);
     }
+
+    public class CoreFlicker : MonoBehaviour
+    {
+        private readonly float baseValue = .6f;
+        private readonly float amplitude = .1f;
+        private readonly float frequency = .4f;
+
+        private float originalRange;
+        private Light light;
+
+        private void Awake()
+        {
+            light = gameObject.GetComponent<Light>();
+            originalRange = light.range;
+        }
+
+        private void Update()
+        {
+            if (PauseScreenController.paused) return;
+            float x = Time.time * frequency;
+            x -= Mathf.Floor(x);
+            float y = Mathf.Sin(x * 2 * Mathf.PI);
+            light.range = originalRange * (y * amplitude + baseValue);
+        }
+    }
 }

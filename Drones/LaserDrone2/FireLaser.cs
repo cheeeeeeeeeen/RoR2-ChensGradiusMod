@@ -30,6 +30,7 @@ namespace Chen.GradiusMod
         private float duration;
         private ChargeEffect chargeEffect;
         private GameObject particleChargeEffect;
+        private BodyRotation bodyRotation;
 
         private static void Initialize()
         {
@@ -77,6 +78,8 @@ namespace Chen.GradiusMod
                     if (optionParticleSystem) optionParticleSystem.newDuration = duration;
                 });
             }
+            bodyRotation = transform.GetComponentInChildren<BodyRotation>();
+            bodyRotation.accelerate = true;
         }
 
         public override void OnExit()
@@ -168,6 +171,7 @@ namespace Chen.GradiusMod
                         }
                     }
                 });
+                bodyRotation.accelerate = false;
                 outer.SetNextStateToMain();
             }
         }
