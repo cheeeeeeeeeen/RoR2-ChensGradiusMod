@@ -3,24 +3,6 @@ using UnityEngine;
 
 namespace Chen.GradiusMod
 {
-    public class BodyRotation : MonoBehaviour
-    {
-        public float rotationSpeed = 4f;
-
-        private int rotationDirection;
-
-        public void Awake()
-        {
-            rotationDirection = Random.Range(0, 2) * 2 - 1;
-        }
-
-        public void Update()
-        {
-            if (PauseScreenController.paused) return;
-            transform.Rotate(Vector3.forward, rotationSpeed * rotationDirection);
-        }
-    }
-
     public class ThrusterFlicker : MonoBehaviour
     {
         private GameObject thrusterHalo;

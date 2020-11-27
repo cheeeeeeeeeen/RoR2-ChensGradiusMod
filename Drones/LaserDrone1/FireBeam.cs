@@ -37,6 +37,7 @@ namespace Chen.GradiusMod
         private BullseyeSearch enemyFinder;
         private bool foundAnyTarget;
         private Transform muzzle;
+        private BodyRotation bodyRotation;
 
         private void UpdateLockOn()
         {
@@ -133,6 +134,8 @@ namespace Chen.GradiusMod
                 behavior.laserChildLocator = behavior.laserFire.GetComponent<ChildLocator>();
                 behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
             });
+            bodyRotation = transform.GetComponentInChildren<BodyRotation>();
+            bodyRotation.accelerate = true;
         }
 
         public override void OnExit()
@@ -146,6 +149,7 @@ namespace Chen.GradiusMod
                 if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
                 if (behavior.laserFireEnd) Destroy(behavior.laserFireEnd);
             });
+            bodyRotation.accelerate = false;
             base.OnExit();
         }
 

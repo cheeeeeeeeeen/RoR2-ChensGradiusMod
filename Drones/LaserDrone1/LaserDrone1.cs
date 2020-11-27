@@ -138,6 +138,8 @@ namespace Chen.GradiusMod
             body.baseNameToken = "LASER_DRONE1_NAME";
             body.baseMaxHealth *= 1.2f;
             body.baseRegen *= 1.2f;
+            body.levelMaxHealth *= 1.2f;
+            body.levelRegen *= 1.2f;
             body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Icon/texLaserDrone1Icon.png");
             ModifyDroneModel(body);
             ModifySkill();
@@ -194,7 +196,9 @@ namespace Chen.GradiusMod
             hurtBoxGroup.mainHurtBox = hurtBox;
             hurtBoxGroup.bullseyeCount = 1;
             customModel.AddComponent<ThrusterFlicker>();
-            customModel.AddComponent<BodyRotation>();
+            BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();
+            rotationComponent.maxRotation = rotationComponent.rotationSpeed = 4f;
+            rotationComponent.rotationDirection = 1;
         }
 
         private void ModifySkill()
