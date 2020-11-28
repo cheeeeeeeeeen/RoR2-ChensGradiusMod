@@ -53,5 +53,16 @@ namespace Chen.GradiusMod
             }
             ArmsRace.instance.TriggerArtillery(body, damage, crit, procChainMask);
         }
+
+        /// <summary>
+        /// Uses the API to allow Drone Repair Kit to support custom drones.
+        /// </summary>
+        /// <param name="masterName"></param>
+        /// <param name="support"></param>
+        public static void DroneRepairKitSupport(string masterName, bool support = true)
+        {
+            if (support) DroneRepairKit.instance.SupportCustomDrone(masterName);
+            else DroneRepairKit.instance.UnsupportCustomDrone(masterName);
+        }
     }
 }

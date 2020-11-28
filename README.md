@@ -20,11 +20,11 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Options/Multiples are able to duplicate all attacks of Aurelionite. The Rock Turret will attack faster instead of being copied.
 - Options/Multiples will only duplicate the ranged attack of Beetle Guards. Their melee attacks will have multiplied damage, however.
 - Equipment Drones will use the attached equipment depending on the number of Options/Multiples it has. This is configurable.
-- Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
+- Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki) or the [GitHub Pages](https://cheeeeeeeeeen.github.io/RoR2-ChensGradiusMod/).
 
 ![Beam Drone](https://puu.sh/GQz08.png)
 **Beam Drone**
-- A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki) on how to add your own custom drone.
+- A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki) or the [GitHub Pages](https://cheeeeeeeeeen.github.io/RoR2-ChensGradiusMod/) on how to add your own custom drone.
 - This drone shoots a continuous beam on its target.
 - The drone is accurate, however, it is weak at keeping its lock on consistently.
 - The drone will appear in Stage 3 and onwards.
@@ -32,7 +32,7 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ![Laser Drone](https://puu.sh/GS59f.png)
 **Laser Drone**
-- A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
+- A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki) or the [GitHub Pages](https://cheeeeeeeeeen.github.io/RoR2-ChensGradiusMod/).
 - The drone charges for a short amount of time, and then unleashes a strong laser attack, dealing huge amount of damage in an AoE.
 - The drone will appear in Stage 3 and onwards.
 - Options also copy this drone's attacks.

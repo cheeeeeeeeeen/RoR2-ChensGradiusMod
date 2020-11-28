@@ -40,6 +40,11 @@ namespace Chen.GradiusMod
         public bool canBeInspired { get; private set; } = true;
 
         /// <summary>
+        /// Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.
+        /// </summary>
+        public bool affectedByDroneRepairKit { get; private set; } = true;
+
+        /// <summary>
         /// Fetches the custom drone's class name.
         /// </summary>
         public string name
@@ -97,6 +102,11 @@ namespace Chen.GradiusMod
                 "CanBeInspired", canBeInspired,
                 "Aetherium Compatibility: Allow this drone to be Inspired by Inspiring Drone."
             ).Value;
+
+            affectedByDroneRepairKit = config.Bind(configCategory,
+                "AffectedByDroneRepairKit", affectedByDroneRepairKit,
+                "Chen's Classic Items Compatibility: Allow this drone to be healed by Drone Repair Kit."
+            ).Value;
         }
 
         /// <summary>
@@ -112,7 +122,14 @@ namespace Chen.GradiusMod
         /// </summary>
         protected virtual void SetupBehavior()
         {
-            if (AetheriumCompatibility.enabled) AetheriumCompatibility.AddCustomDrone(name);
+            if (canBeInspired && AetheriumCompatibility.enabled)
+            {
+                AetheriumCompatibility.AddCustomDrone(name);
+            }
+            if (affectedByDroneRepairKit && ChensClassicItemsCompatibility.enabled)
+            {
+                ChensClassicItemsCompatibility.DroneRepairKitSupport(name);
+            }
         }
 
         /// <summary>
