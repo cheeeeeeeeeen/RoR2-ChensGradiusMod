@@ -1,11 +1,12 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "2.1.4",
+  "version_number": "2.2.0",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Rollback dependency of R2API to older version. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Implement Laser Drone, integrate ChensHelpers, complete the documentation for interested developers. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "bbepis-BepInExPack-5.3.1",
     "tristanmcpherson-R2API-2.5.14",
-    "ThinkInvis-TILER2-3.0.4"
+    "ThinkInvis-TILER2-3.0.4",
+    "Chen-ChensHelpers-1.0.1"
   ]
 }

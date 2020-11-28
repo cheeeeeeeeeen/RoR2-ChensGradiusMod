@@ -3,6 +3,7 @@
 using BepInEx;
 using BepInEx.Configuration;
 using Chen.ClassicItems;
+using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
 using KomradeSpectre.Aetherium;
@@ -25,9 +26,11 @@ namespace Chen.GradiusMod
     [BepInPlugin(ModGuid, ModName, ModVer)]
     [BepInDependency(R2API.R2API.PluginGUID, R2API.R2API.PluginVersion)]
     [BepInDependency(TILER2Plugin.ModGuid, TILER2Plugin.ModVer)]
+    [BepInDependency(HelperPlugin.ModGuid, HelperPlugin.ModVer)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ClassicItemsPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
+
     [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI))]
     public class GradiusModPlugin : BaseUnityPlugin
     {
@@ -38,7 +41,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "2.1.4";
+            "2.2.0";
 
         /// <summary>
         /// The name of the mod.

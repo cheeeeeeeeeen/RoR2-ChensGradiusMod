@@ -30,7 +30,7 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - The drone will appear in Stage 3 and onwards.
 - Options also copy this drone's attacks.
 
-&nbsp;&nbsp;&nbsp;***NO ICON YET***&nbsp;&nbsp;&nbsp;
+![Laser Drone](https://puu.sh/GS59f.png)
 **Laser Drone**
 - A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 - The drone charges for a short amount of time, and then unleashes a strong laser attack, dealing huge amount of damage in an AoE.
@@ -59,8 +59,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 ## Changelog
 
 **2.2.0**
-- Implement Laser Drone!
-- Temporary model and icon for now. They are fully functional, though.
+- Implement Laser Drone! Fully functional with custom model and icons.
+- Integrate ChensHelpers.
+- Write full documentation of the mod.
 
 **2.1.4**
 - Rollback dependency of R2API to `2.5.14`.
