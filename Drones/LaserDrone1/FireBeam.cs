@@ -176,7 +176,7 @@ namespace Chen.GradiusMod
             else target = aimRay.GetPoint(maxDistance);
             Ray ray = new Ray(origin, target - origin);
             bool flag = false;
-            if (laserEffect && laserChildLocator)
+            if (laserEffect && laserChildLocator && laserEffectEnd)
             {
                 if (Util.CharacterRaycast(gameObject, ray, out RaycastHit raycastHit2, (target - origin).magnitude,
                                           LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
@@ -190,7 +190,7 @@ namespace Chen.GradiusMod
                     }
                 }
                 laserEffect.transform.rotation = Util.QuaternionSafeLookRotation(target - origin);
-                laserEffectEnd.transform.position = target;
+                laserEffectEnd.position = target;
             }
             if (fireStopwatch > 1f / fireFrequency)
             {
@@ -220,7 +220,7 @@ namespace Chen.GradiusMod
                 }
                 Ray optionRay = new Ray(position, point - position);
                 bool optionFlag = false;
-                if (behavior.laserFire && behavior.laserChildLocator)
+                if (behavior.laserFire && behavior.laserChildLocator && behavior.laserFireEnd)
                 {
                     if (Physics.Raycast(optionRay.origin, optionRay.direction, out RaycastHit raycastHit4, optionRay.direction.magnitude,
                                         LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
@@ -229,14 +229,13 @@ namespace Chen.GradiusMod
                         if (Physics.Raycast(point - optionRay.direction * .1f, -optionRay.direction, out _, raycastHit4.distance,
                                             LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
                         {
-                            point = optionRay.GetPoint(0.1f);
+                            point = optionRay.GetPoint(.1f);
                             optionFlag = true;
                         }
                     }
                     behavior.laserFire.transform.rotation = Util.QuaternionSafeLookRotation(point - position);
-                    behavior.laserFireEnd.transform.position = point;
+                    behavior.laserFireEnd.position = point;
                 }
-
                 if (optionFireStopwatch > 1f / fireFrequency)
                 {
                     if (!optionFlag)

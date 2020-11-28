@@ -31,6 +31,38 @@ namespace Chen.GradiusMod
         private ChargeEffect chargeEffect;
         private GameObject particleChargeEffect;
         private BodyRotation bodyRotation;
+        private GameObject muzzle;
+
+        private void GenerateLaser(Ray aimRay, Vector3 vector, float damage, float computedForce)
+        {
+            if (Physics.Raycast(aimRay, out RaycastHit raycastHit, maxDistance,
+                                LayerIndex.world.mask | LayerIndex.defaultLayer.mask | LayerIndex.entityPrecise.mask))
+            {
+                vector = raycastHit.point;
+            }
+            new BlastAttack
+            {
+                attacker = gameObject,
+                inflictor = gameObject,
+                teamIndex = teamComponent.teamIndex,
+                baseDamage = damage,
+                baseForce = computedForce,
+                position = vector,
+                radius = blastRadius,
+                falloffModel = BlastAttack.FalloffModel.Linear,
+                bonusForce = computedForce * aimRay.direction
+            }.Fire();
+            if (tracerEffectPrefab && hitEffectPrefab)
+            {
+                EffectData effectData = new EffectData
+                {
+                    origin = vector,
+                    start = aimRay.origin
+                };
+                EffectManager.SpawnEffect(tracerEffectPrefab, effectData, true);
+                EffectManager.SpawnEffect(hitEffectPrefab, effectData, true);
+            }
+        }
 
         private static void Initialize()
         {
@@ -61,7 +93,7 @@ namespace Chen.GradiusMod
                 characterBody.SetAimTimer(baseDuration);
                 AkSoundEngine.PostEvent(chargeLaserEventId, gameObject);
             }
-            GameObject muzzle = transform.Find("ModelBase").Find("mdlLaserDrone").Find("AimOrigin").gameObject;
+            muzzle = transform.Find("ModelBase").Find("mdlLaserDrone").Find("AimOrigin").gameObject;
             chargeEffect = muzzle.GetComponent<ChargeEffect>();
             chargeEffect.startCharging = true;
             if (particleEffectPrefab)
@@ -101,35 +133,9 @@ namespace Chen.GradiusMod
                 if (effectPrefab) EffectManager.SimpleMuzzleFlash(effectPrefab, gameObject, "Muzzle", false);
                 if (isAuthority)
                 {
-                    Ray aimRay = GetAimRay();
+                    Ray aimRay = new Ray(muzzle.transform.position, GetAimRay().direction);
                     Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
-                    if (Physics.Raycast(aimRay, out RaycastHit raycastHit, maxDistance,
-                                        LayerIndex.world.mask | LayerIndex.defaultLayer.mask | LayerIndex.entityPrecise.mask))
-                    {
-                        vector = raycastHit.point;
-                    }
-                    new BlastAttack
-                    {
-                        attacker = gameObject,
-                        inflictor = gameObject,
-                        teamIndex = teamComponent.teamIndex,
-                        baseDamage = damageStat * damageCoefficient,
-                        baseForce = force,
-                        position = vector,
-                        radius = blastRadius,
-                        falloffModel = BlastAttack.FalloffModel.Linear,
-                        bonusForce = force * aimRay.direction
-                    }.Fire();
-                    if (tracerEffectPrefab)
-                    {
-                        EffectData effectData = new EffectData
-                        {
-                            origin = vector,
-                            start = aimRay.origin
-                        };
-                        EffectManager.SpawnEffect(tracerEffectPrefab, effectData, true);
-                        EffectManager.SpawnEffect(hitEffectPrefab, effectData, true);
-                    }
+                    GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
                 }
                 Util.PlaySound(attackSoundString, gameObject);
                 AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
@@ -141,34 +147,8 @@ namespace Chen.GradiusMod
                         Vector3 direction = (target.transform.position - option.transform.position).normalized;
                         Ray aimRay = new Ray(option.transform.position, direction);
                         Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
-                        if (Physics.Raycast(aimRay, out RaycastHit raycastHit, maxDistance,
-                                            LayerIndex.world.mask | LayerIndex.defaultLayer.mask | LayerIndex.entityPrecise.mask))
-                        {
-                            vector = raycastHit.point;
-                        }
-                        float computedForce = force * GradiusOption.instance.damageMultiplier;
-                        new BlastAttack
-                        {
-                            attacker = gameObject,
-                            inflictor = option,
-                            teamIndex = teamComponent.teamIndex,
-                            baseDamage = damageStat * damageCoefficient * GradiusOption.instance.damageMultiplier,
-                            baseForce = computedForce,
-                            position = vector,
-                            radius = blastRadius,
-                            falloffModel = BlastAttack.FalloffModel.Linear,
-                            bonusForce = computedForce * aimRay.direction
-                        }.Fire();
-                        if (tracerEffectPrefab)
-                        {
-                            EffectData effectData = new EffectData
-                            {
-                                origin = vector,
-                                start = aimRay.origin
-                            };
-                            EffectManager.SpawnEffect(tracerEffectPrefab, effectData, true);
-                            EffectManager.SpawnEffect(hitEffectPrefab, effectData, true);
-                        }
+                        GenerateLaser(aimRay, vector, damageStat * damageCoefficient * GradiusOption.instance.damageMultiplier,
+                                      force * GradiusOption.instance.damageMultiplier);
                     }
                 });
                 bodyRotation.accelerate = false;
