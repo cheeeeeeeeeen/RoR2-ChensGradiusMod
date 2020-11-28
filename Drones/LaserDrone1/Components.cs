@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Chen.GradiusMod
 {
-    public class ThrusterFlicker : MonoBehaviour
+    internal class ThrusterFlicker : MonoBehaviour
     {
         private GameObject thrusterHalo;
         private GameObject thrusterOrb;

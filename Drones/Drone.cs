@@ -9,8 +9,14 @@ namespace Chen.GradiusMod
     /// <typeparam name="T">The drone class name</typeparam>
     public abstract class Drone<T> : Drone where T : Drone<T>
     {
+        /// <summary>
+        /// The instance of the singleton class.
+        /// </summary>
         public static T instance { get; private set; }
 
+        /// <summary>
+        /// Constructor that should be able to render this class as a singleton.
+        /// </summary>
         public Drone()
         {
             if (instance != null) throw new InvalidOperationException($"Singleton class \"{typeof(T).Name}\" instantiated twice.");
@@ -27,8 +33,15 @@ namespace Chen.GradiusMod
         /// Determines if the drone should be enabled/disabled. Disabled drones will not be set up.
         /// </summary>
         public bool enabled { get; private set; } = true;
+
+        /// <summary>
+        /// Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.
+        /// </summary>
         public bool canBeInspired { get; private set; } = true;
 
+        /// <summary>
+        /// Fetches the custom drone's class name.
+        /// </summary>
         public string name
         {
             get
@@ -38,8 +51,14 @@ namespace Chen.GradiusMod
             }
         }
 
+        /// <summary>
+        /// Used to determine if the custom drone was already set up.
+        /// </summary>
         public bool alreadySetup { get; private set; } = false;
 
+        /// <summary>
+        /// The category that will be used in the config file that contains the custom drone's config options.
+        /// </summary>
         protected string configCategory
         {
             get
@@ -52,6 +71,9 @@ namespace Chen.GradiusMod
         private string _name;
         private string _configCategory;
 
+        /// <summary>
+        /// The config file assigned to this custom drone. Use this to bind config options.
+        /// </summary>
         protected ConfigFile config;
 
         /// <summary>

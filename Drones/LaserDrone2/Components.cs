@@ -1,9 +1,10 @@
 ﻿using RoR2.UI;
 using UnityEngine;
+using static Chen.Helpers.MathHelpers.Wave;
 
 namespace Chen.GradiusMod
 {
-    public class ChargeEffect : MonoBehaviour
+    internal class ChargeEffect : MonoBehaviour
     {
         public bool startCharging = false;
 
@@ -44,7 +45,7 @@ namespace Chen.GradiusMod
         private float KeepZeroOrPositive(float range) => Mathf.Max(range, 0f);
     }
 
-    public class CoreFlicker : MonoBehaviour
+    internal class CoreFlicker : MonoBehaviour
     {
         private readonly float baseValue = .6f;
         private readonly float amplitude = .1f;
@@ -62,10 +63,7 @@ namespace Chen.GradiusMod
         private void Update()
         {
             if (PauseScreenController.paused) return;
-            float x = Time.time * frequency;
-            x -= Mathf.Floor(x);
-            float y = Mathf.Sin(x * 2 * Mathf.PI);
-            light.range = originalRange * (y * amplitude + baseValue);
+            light.range = originalRange * Sine(0f, frequency, amplitude, baseValue);
         }
     }
 }

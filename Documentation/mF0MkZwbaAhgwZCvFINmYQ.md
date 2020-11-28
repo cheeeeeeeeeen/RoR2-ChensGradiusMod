@@ -10,3 +10,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 `T`  
 The drone class name  
   
+### Constructors
+- [Drone()](./vHBTJc+9m75lDBFMq716xg.md 'Chen.GradiusMod.Drone&lt;T&gt;.Drone()')
+### Properties
+- [instance](./+TIqqnPNoP4mg2DrZNS3BQ.md 'Chen.GradiusMod.Drone&lt;T&gt;.instance')

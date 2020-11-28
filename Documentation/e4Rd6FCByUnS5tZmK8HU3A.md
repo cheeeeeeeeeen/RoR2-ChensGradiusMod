@@ -1,5 +1,6 @@
 ### [Chen.GradiusMod](./neHTXX+yFsk1RpXqjkv9zg.md 'Chen.GradiusMod')
 ## DroneCatalog Class
+A static class that caters initializing and registering custom drones.  
 ```csharp
 public static class DroneCatalog
 ```

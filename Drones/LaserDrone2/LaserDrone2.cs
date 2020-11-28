@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using EntityStates;
 using R2API;
@@ -12,7 +12,7 @@ using static R2API.DirectorAPI;
 
 namespace Chen.GradiusMod
 {
-    public class LaserDrone2 : Drone<LaserDrone2>
+    internal class LaserDrone2 : Drone<LaserDrone2>
     {
         public float laserCooldown { get; private set; } = 6f;
         public float chargeTime { get; private set; } = 4f;

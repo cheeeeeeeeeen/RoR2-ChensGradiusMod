@@ -1,4 +1,7 @@
-﻿using EntityStates;
+﻿using Chen.Helpers.CollectionHelpers;
+using Chen.Helpers.GeneralHelpers;
+using Chen.Helpers.UnityHelpers;
+using EntityStates;
 using EntityStates.BeetleGuardMonster;
 using EntityStates.Drone.DroneWeapon;
 using EntityStates.Squid.SquidWeapon;
@@ -15,6 +18,7 @@ using System.Linq;
 using TILER2;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.GradiusMod.GradiusModPlugin;
 using static Chen.GradiusMod.SyncOptionTargetForClients;
 using static TILER2.MiscUtil;
 using MageWeapon = EntityStates.Mage.Weapon;
@@ -22,8 +26,12 @@ using Object = UnityEngine.Object;
 
 namespace Chen.GradiusMod
 {
+    /// <summary>
+    /// An item class powered by TILER2 which provides the main API related to the Options/Multiples.
+    /// </summary>
     public class GradiusOption : Item_V2<GradiusOption>
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public override string displayName => "Gradius' Option";
         public override ItemTier itemTier => ItemTier.Tier3;
         public override ReadOnlyCollection<ItemTag> itemTags => new ReadOnlyCollection<ItemTag>(new[] { ItemTag.Utility });
@@ -256,6 +264,8 @@ namespace Chen.GradiusMod
             On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter -= GroundSlam_OnEnter;
             On.RoR2.EquipmentSlot.PerformEquipmentAction -= EquipmentSlot_PerformEquipmentAction;
         }
+
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         private void InitializeAssets()
         {
@@ -933,7 +943,7 @@ namespace Chen.GradiusMod
                 CharacterMaster master = body.master;
                 if (master && master.name.Contains("EquipmentDrone"))
                 {
-                    OptionTracker tracker = OptionTracker.GetOrCreateComponent(body);
+                    OptionTracker tracker = body.gameObject.GetOrAddComponent<OptionTracker>();
                     int numberOfTimes = Mathf.FloorToInt(tracker.existingOptions.Count * equipmentDuplicationMultiplier);
                     for (int i = 0; i < numberOfTimes; i++)
                     {
@@ -958,18 +968,7 @@ namespace Chen.GradiusMod
                 }
             }
             if (!trueMaster) return;
-            if (NetworkServer.active) goldMaster.minionOwnership.SetOwner(trueMaster);
-            else
-            {
-                NetworkIdentity netTrueMaster = trueMaster.gameObject.GetComponent<NetworkIdentity>();
-                if (!netTrueMaster)
-                {
-                    Log.Warning("AssignAurelioniteOwner: Network Identity is missing!");
-                    return;
-                }
-                goldMaster.minionOwnership.ownerMasterId = netTrueMaster.netId;
-                MinionOwnership.MinionGroup.SetMinionOwner(goldMaster.minionOwnership, netTrueMaster.netId);
-            }
+            goldMaster.AssignOwner(trueMaster);
         }
 
         internal bool IsRotateUser(string masterName) => RotateUsers.Exists((name) => masterName.Contains(name));
@@ -1008,9 +1007,7 @@ namespace Chen.GradiusMod
         /// <returns>True if the minion is supported. False if it is already supported.</returns>
         public bool SupportMinionType(string masterName)
         {
-            if (MinionsList.Contains(masterName)) return false;
-            MinionsList.Add(masterName);
-            return true;
+            return MinionsList.ConditionalAdd(masterName, item => item == masterName);
         }
 
         /// <summary>
@@ -1020,9 +1017,7 @@ namespace Chen.GradiusMod
         /// <returns>True if the minion is not supported anymore. False if it is already unsupported.</returns>
         public bool UnsupportMinionType(string masterName)
         {
-            if (!MinionsList.Contains(masterName)) return false;
-            MinionsList.Remove(masterName);
-            return true;
+            return MinionsList.ConditionalRemove(masterName);
         }
 
         /// <summary>
@@ -1032,9 +1027,7 @@ namespace Chen.GradiusMod
         /// <returns>True if the minion is successfully set to use Rotate Options. False if it is already using Rotate Options.</returns>
         public bool SetToRotateOptions(string masterName)
         {
-            if (RotateUsers.Contains(masterName)) return false;
-            RotateUsers.Add(masterName);
-            return true;
+            return RotateUsers.ConditionalAdd(masterName, item => item == masterName);
         }
 
         /// <summary>
@@ -1076,11 +1069,13 @@ namespace Chen.GradiusMod
         /// <returns>True if the minion is successfully set to use Regular Options. False if it is already using Regular Options.</returns>
         public bool SetToRegularOptions(string masterName)
         {
-            if (!RotateUsers.Contains(masterName)) return false;
-            RotateUsers.Remove(masterName);
-            RotateMultipliers.Remove(masterName);
-            RotateOffsets.Remove(masterName);
-            return true;
+            bool result = RotateUsers.ConditionalRemove(masterName);
+            if (result)
+            {
+                RotateMultipliers.Remove(masterName);
+                RotateOffsets.Remove(masterName);
+            }
+            return result;
         }
 
         /// <summary>
@@ -1090,23 +1085,18 @@ namespace Chen.GradiusMod
         /// <param name="actionToRun">An action to execute for each minion. The minion's CharacterBody GameObject is given as the input.</param>
         public void LoopAllMinions(CharacterMaster ownerMaster, Action<GameObject> actionToRun)
         {
-            MinionOwnership[] minionOwnerships = Object.FindObjectsOfType<MinionOwnership>();
-            foreach (MinionOwnership minionOwnership in minionOwnerships)
+            ownerMaster.LoopMinions((minionMaster) =>
             {
-                if (minionOwnership && minionOwnership.ownerMaster && minionOwnership.ownerMaster == ownerMaster)
+                if (FilterMinions(minionMaster))
                 {
-                    CharacterMaster minionMaster = minionOwnership.GetComponent<CharacterMaster>();
-                    if (FilterMinions(minionMaster))
+                    CharacterBody minionBody = minionMaster.GetBody();
+                    if (minionBody)
                     {
-                        CharacterBody minionBody = minionMaster.GetBody();
-                        if (minionBody)
-                        {
-                            GameObject minion = minionBody.gameObject;
-                            actionToRun(minion);
-                        }
+                        GameObject minion = minionBody.gameObject;
+                        actionToRun(minion);
                     }
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -1157,7 +1147,7 @@ namespace Chen.GradiusMod
         }
 
         /// <summary>
-        /// Syncs the Option from the server to clients. Sync logic should be provided in actionToRun. Mostly used for syncing effects and sounds.
+        /// Method that provides the Network Identity and Option Tracker for easier syncing. Sync logic should be provided in actionToRun.
         /// </summary>
         /// <param name="optionOwner">The owner of the option.</param>
         /// <param name="actionToRun">The sync action to perform. Inputs are as follows: NetworkIdentity optionIdentity, OptionTracker tracker.</param>

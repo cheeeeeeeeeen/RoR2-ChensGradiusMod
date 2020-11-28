@@ -268,7 +268,8 @@ namespace Chen.GradiusMod
             HurtBoxReference hurtBoxReference = reader.ReadHurtBoxReference();
             stopwatch = reader.ReadSingle();
             GameObject gameObject = hurtBoxReference.ResolveGameObject();
-            lockedOnHurtBox = gameObject?.GetComponent<HurtBox>();
+            if (gameObject) lockedOnHurtBox = gameObject.GetComponent<HurtBox>();
+            else lockedOnHurtBox = null;
         }
     }
 }

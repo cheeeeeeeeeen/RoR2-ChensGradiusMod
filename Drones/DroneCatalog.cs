@@ -3,9 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod
 {
+    /// <summary>
+    /// A static class that caters initializing and registering custom drones.
+    /// </summary>
     public static class DroneCatalog
     {
         internal static List<DroneInfo> allInstances = new List<DroneInfo>();
@@ -60,11 +64,24 @@ namespace Chen.GradiusMod
     /// <summary>
     /// A structure that stores data of custom drones as well as where they originated from.
     /// </summary>
-    public class DroneInfo
+    public struct DroneInfo
     {
+        /// <summary>
+        /// Mod identifier for differentiation, preferably the GUID.
+        /// </summary>
         public string mod;
+
+        /// <summary>
+        /// The instance of a Drone.
+        /// </summary>
         public Drone instance;
 
+        /// <summary>
+        /// Basic constructor that stores the data of a custom drone.
+        /// </summary>
+        /// <param name="mod"></param>
+        /// <param name="instance"></param>
+        /// <param name="config"></param>
         public DroneInfo(string mod, Drone instance, ConfigFile config)
         {
             this.mod = mod;

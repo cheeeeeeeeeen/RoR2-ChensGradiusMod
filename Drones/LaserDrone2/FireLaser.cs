@@ -1,8 +1,8 @@
 ﻿using EntityStates;
 using RoR2;
 using UnityEngine;
-using GolemLaser = EntityStates.GolemMonster.FireLaser;
 using GolemChargeLaser = EntityStates.GolemMonster.ChargeLaser;
+using GolemLaser = EntityStates.GolemMonster.FireLaser;
 
 namespace Chen.GradiusMod
 {

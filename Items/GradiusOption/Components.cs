@@ -1,4 +1,5 @@
-﻿using R2API.Networking;
+﻿using Chen.Helpers.UnityHelpers;
+using R2API.Networking;
 using R2API.Networking.Interfaces;
 using RoR2;
 using RoR2.UI;
@@ -6,26 +7,38 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.GradiusMod.GradiusModPlugin;
 using static Chen.GradiusMod.SyncOptionTargetForClients;
+using static Chen.Helpers.MathHelpers.Wave;
 using Object = System.Object;
 
 namespace Chen.GradiusMod
 {
+    /// <summary>
+    /// A component attached to the Options/Multiples for their behavioral functions.
+    /// </summary>
     public class OptionBehavior : MonoBehaviour
     {
+        /// <summary>
+        /// The Character Body Game Object of this Option's owner.
+        /// </summary>
         public GameObject owner;
+
+        /// <summary>
+        /// The number that represents the identification of the Option scoped under the owner.
+        /// </summary>
         public int numbering = 0;
-        public GameObject flamethrower;
-        public HealBeamController healBeamController;
-        public GameObject laserChargeEffect;
-        public GameObject laserFire;
-        public ChildLocator laserChildLocator;
-        public Transform laserFireEnd;
-        public GameObject fistChargeEffect;
-        public GameObject rockChargeEffect;
-        public GameObject sunderEffect;
-        public GameObject target;
-        public OptionTracker ownerOt;
+
+        internal GameObject flamethrower;
+        internal HealBeamController healBeamController;
+        internal GameObject laserChargeEffect;
+        internal GameObject laserFire;
+        internal ChildLocator laserChildLocator;
+        internal Transform laserFireEnd;
+        internal GameObject fistChargeEffect;
+        internal GameObject sunderEffect;
+        internal GameObject target;
+        internal OptionTracker ownerOt;
 
         private Transform t;
         private Transform ownerT;
@@ -82,6 +95,11 @@ namespace Chen.GradiusMod
             }
         }
 
+        /// <summary>
+        /// Computes for the actual position of the Option based on the owner's rotational variables and its numbering.
+        /// </summary>
+        /// <param name="baseAngle">The angle to compute from</param>
+        /// <returns>Normalized position</returns>
         public Vector3 DecidePosition(float baseAngle)
         {
             Vector3 relativePosition = Quaternion.AngleAxis(baseAngle, ownerT.up) * -ownerT.forward;
@@ -91,23 +109,42 @@ namespace Chen.GradiusMod
         }
     }
 
+    /// <summary>
+    /// A component attached to a Character Body that may own Options/Multiples.
+    /// The mod handles attaching the component when necessary.
+    /// </summary>
     public class OptionTracker : MonoBehaviour
     {
-        public List<Vector3> flightPath { get; private set; } = new List<Vector3>();
-        public List<GameObject> existingOptions { get; private set; } = new List<GameObject>();
-        public int distanceInterval { get; private set; } = 20;
-        public float distanceAxis { get; private set; } = 1.2f;
-        public float rotateOptionAngleSpeed { get; private set; } = 2f;
+        /// <summary>
+        /// Property that stores the current positional angle from the owner.
+        /// Useful for determining patterns relative to the Option's angle.
+        /// </summary>
         public float currentOptionAngle { get; private set; } = 0f;
-        public float optionLookRate { get; private set; } = .15f;
+
+        /// <summary>
+        /// The Character Master of this Game Object's owner through Minion Ownership component.
+        /// </summary>
         public CharacterMaster masterCharacterMaster { get; private set; }
-        public OptionMasterTracker masterOptionTracker { get; private set; }
+
+        /// <summary>
+        /// Character Master of this Game Object.
+        /// </summary>
         public CharacterMaster characterMaster { get; private set; }
+
+        /// <summary>
+        /// Character Body of this Game Object.
+        /// </summary>
         public CharacterBody characterBody { get; private set; }
 
-        private readonly float invalidThreshold = 3f;
+        internal List<Vector3> flightPath { get; private set; } = new List<Vector3>();
+        internal List<GameObject> existingOptions { get; private set; } = new List<GameObject>();
+        internal int distanceInterval { get; private set; } = 20;
+        internal float distanceAxis { get; private set; } = 1.2f;
+        internal float rotateOptionAngleSpeed { get; private set; } = 2f;
+        internal float optionLookRate { get; private set; } = .15f;
+        internal OptionMasterTracker masterOptionTracker { get; private set; }
 
-        public List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>> targetIds { get; private set; } =
+        internal List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>> targetIds { get; private set; } =
             new List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>>();
 
         private Vector3 previousPosition = new Vector3();
@@ -119,6 +156,8 @@ namespace Chen.GradiusMod
         private float invalidCheckTimer = 0f;
 
         private Transform t;
+
+        private const float invalidThreshold = 3f;
 
         private void Awake()
         {
@@ -239,38 +278,34 @@ namespace Chen.GradiusMod
             invalidCheckTimer += Time.fixedDeltaTime;
         }
 
-        public bool IsRotateUser()
+        internal bool IsRotateUser()
         {
             if (isRotate == null) isRotate = GradiusOption.instance.IsRotateUser(characterMaster.name);
             return (bool)isRotate;
         }
 
+        /// <summary>
+        /// Fetches the rotational distance and speed multiplier for this object's Options.
+        /// </summary>
+        /// <returns>Rotational speed and distance multiplier</returns>
         public float GetRotateMultiplier()
         {
             if (rotateMultiplier <= 0f) rotateMultiplier = GradiusOption.instance.GetRotateMultiplier(characterMaster.name);
             return rotateMultiplier;
         }
 
+        /// <summary>
+        /// Fetches the rotational central offset for this object's Options.
+        /// </summary>
+        /// <returns>Offset</returns>
         public Vector3 GetRotateOffset()
         {
             if (rotateOffset == null) rotateOffset = GradiusOption.instance.GetRotateOffset(characterMaster.name);
             return (Vector3)rotateOffset;
         }
-
-        public static OptionTracker GetOrCreateComponent(GameObject me)
-        {
-            OptionTracker tracker = me.GetComponent<OptionTracker>();
-            if (!tracker) tracker = me.AddComponent<OptionTracker>();
-            return tracker;
-        }
-
-        public static OptionTracker GetOrCreateComponent(CharacterBody me)
-        {
-            return GetOrCreateComponent(me.gameObject);
-        }
     }
 
-    public class OptionMasterTracker : MonoBehaviour
+    internal class OptionMasterTracker : MonoBehaviour
     {
         public int optionItemCount = 0;
 
@@ -288,7 +323,7 @@ namespace Chen.GradiusMod
 
         public static void SpawnOption(GameObject owner, int itemCount)
         {
-            OptionTracker ownerOptionTracker = OptionTracker.GetOrCreateComponent(owner);
+            OptionTracker ownerOptionTracker = owner.GetOrAddComponent<OptionTracker>();
             GameObject option = Instantiate(GradiusOption.gradiusOptionPrefab, owner.transform.position, owner.transform.rotation);
             OptionBehavior behavior = option.GetComponent<OptionBehavior>();
             behavior.owner = owner;
@@ -305,7 +340,7 @@ namespace Chen.GradiusMod
         }
     }
 
-    public class Flicker : MonoBehaviour
+    internal class Flicker : MonoBehaviour
     {
         // Child Objects in Order:
         // 0. sphere1:     Light
@@ -370,18 +405,12 @@ namespace Chen.GradiusMod
             if (PauseScreenController.paused) return;
             for (int i = 0; i < lightObjects.Length; i++)
             {
-                lightObjects[i].range = originalRange[i] * Wave(ampMultiplier[i]);
+                lightObjects[i].range = originalRange[i] * Sine(phase, frequency, amplitude * ampMultiplier[i], baseValue);
             }
-            if (meshObject && originalLocalScale != null) meshObject.transform.localScale = originalLocalScale * Wave(ampMultiplier[3]);
-        }
-
-        private float Wave(float ampMultiplier)
-        {
-            float x = (Time.time + phase) * frequency;
-            x -= Mathf.Floor(x);
-            float y = Mathf.Sin(x * 2 * Mathf.PI);
-
-            return (y * amplitude * ampMultiplier) + baseValue;
+            if (meshObject && originalLocalScale != null)
+            {
+                meshObject.transform.localScale = originalLocalScale * Sine(phase, frequency, amplitude * ampMultiplier[3], baseValue);
+            }
         }
     }
 }

@@ -2,10 +2,11 @@
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod
 {
-    public class SyncOptionTargetForClients : INetMessage
+    internal class SyncOptionTargetForClients : INetMessage
     {
         private GameObjectType bodyOrMaster;
         private NetworkInstanceId ownerId;

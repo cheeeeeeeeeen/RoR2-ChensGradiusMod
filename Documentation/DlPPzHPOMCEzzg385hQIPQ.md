@@ -8,8 +8,14 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 Derived  
 &#8627; [Drone&lt;T&gt;](./mF0MkZwbaAhgwZCvFINmYQ.md 'Chen.GradiusMod.Drone&lt;T&gt;')  
+### Fields
+- [config](./VvNt8citBMrv4YTbl8qiQw.md 'Chen.GradiusMod.Drone.config')
 ### Properties
+- [alreadySetup](./uckHeBN94lfdAXLJyXyMPA.md 'Chen.GradiusMod.Drone.alreadySetup')
+- [canBeInspired](./BXugg1DaRlxoZ98js5frXw.md 'Chen.GradiusMod.Drone.canBeInspired')
+- [configCategory](./NjLEgswLVHERtkpstiXe5Q.md 'Chen.GradiusMod.Drone.configCategory')
 - [enabled](./WwlykxgDJSDb2QInoAbOIg.md 'Chen.GradiusMod.Drone.enabled')
+- [name](./dvA0FrjEC9hLT+rwdMAR4A.md 'Chen.GradiusMod.Drone.name')
 ### Methods
 - [PostSetup()](./EI8nnjpWSmmYADn5c5AgfA.md 'Chen.GradiusMod.Drone.PostSetup()')
 - [PreSetup()](./XaTpz6JPgXnxFx1+5PeheA.md 'Chen.GradiusMod.Drone.PreSetup()')

@@ -12,7 +12,7 @@ using static R2API.DirectorAPI;
 
 namespace Chen.GradiusMod
 {
-    public class LaserDrone1 : Drone<LaserDrone1>
+    internal class LaserDrone1 : Drone<LaserDrone1>
     {
         public float laserDuration { get; private set; } = 4f;
         public float laserCooldown { get; private set; } = 4f;
@@ -197,7 +197,7 @@ namespace Chen.GradiusMod
             hurtBoxGroup.bullseyeCount = 1;
             customModel.AddComponent<ThrusterFlicker>();
             BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();
-            rotationComponent.maxRotation = rotationComponent.rotationSpeed = 4f;
+            rotationComponent.maxRotationSpeed = rotationComponent.rotationSpeed = 4f;
             rotationComponent.rotationDirection = 1;
         }
 

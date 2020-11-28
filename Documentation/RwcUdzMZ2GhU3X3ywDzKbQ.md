@@ -1,5 +1,6 @@
 ### [Chen.GradiusMod](./neHTXX+yFsk1RpXqjkv9zg.md 'Chen.GradiusMod')
 ## GradiusOption Class
+An item class powered by TILER2 which provides the main API related to the Options/Multiples.  
 ```csharp
 public class GradiusOption : Item_V2<GradiusOption>
 ```
