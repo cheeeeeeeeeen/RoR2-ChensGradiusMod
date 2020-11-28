@@ -309,18 +309,6 @@ namespace Chen.GradiusMod
     {
         public int optionItemCount = 0;
 
-        public static OptionMasterTracker GetOrCreateComponent(CharacterMaster me)
-        {
-            return GetOrCreateComponent(me.gameObject);
-        }
-
-        public static OptionMasterTracker GetOrCreateComponent(GameObject me)
-        {
-            OptionMasterTracker tracker = me.GetComponent<OptionMasterTracker>();
-            if (!tracker) tracker = me.AddComponent<OptionMasterTracker>();
-            return tracker;
-        }
-
         public static void SpawnOption(GameObject owner, int itemCount)
         {
             OptionTracker ownerOptionTracker = owner.GetOrAddComponent<OptionTracker>();

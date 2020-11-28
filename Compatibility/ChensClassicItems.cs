@@ -46,6 +46,11 @@ namespace Chen.GradiusMod
         /// <param name="procChainMask">Proc Chain Mask</param>
         public static void TriggerArtillery(CharacterBody body, float damage, bool crit, ProcChainMask procChainMask = default)
         {
+            if (!body)
+            {
+                Log.Warning("ChensClassicItems.TriggerArtillery: body is null.");
+                return;
+            }
             ArmsRace.instance.TriggerArtillery(body, damage, crit, procChainMask);
         }
     }

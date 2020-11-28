@@ -303,7 +303,7 @@ namespace Chen.GradiusMod
                 CharacterMaster masterMaster = master.minionOwnership.ownerMaster;
                 if (masterMaster && GetCount(masterMaster) > 0)
                 {
-                    OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(masterMaster);
+                    OptionMasterTracker masterTracker = masterMaster.gameObject.GetOrAddComponent<OptionMasterTracker>();
                     Log.Message($"OnBodyStartGlobal: Minion: {master.name}, Master: {masterMaster.name}, Options: {masterTracker.optionItemCount}");
                     for (int t = 1; t <= masterTracker.optionItemCount; t++) OptionMasterTracker.SpawnOption(obj.gameObject, t);
                 }
@@ -318,7 +318,7 @@ namespace Chen.GradiusMod
             if (!master) return;
             MinionOwnership minionOwnership = master.minionOwnership;
             if (!minionOwnership || minionOwnership.ownerMaster || FilterMinions(master)) return;
-            OptionMasterTracker masterTracker = OptionMasterTracker.GetOrCreateComponent(master);
+            OptionMasterTracker masterTracker = master.gameObject.GetOrAddComponent<OptionMasterTracker>();
             int newCount = GetCount(self);
             int oldCount = masterTracker.optionItemCount;
             int diff = newCount - oldCount;
