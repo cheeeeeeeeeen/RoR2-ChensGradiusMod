@@ -30,7 +30,7 @@ namespace Chen.GradiusMod
                 Drone droneInstance = (Drone)Activator.CreateInstance(type);
                 DroneInfo newDroneInfo = new DroneInfo(modGuid, droneInstance, configFile);
                 droneInfos.Add(newDroneInfo);
-                if (!allInstances.Exists(droneInfo => newDroneInfo.mod == droneInfo.mod && newDroneInfo.instance.name == droneInfo.instance.name))
+                if (!allInstances.Exists(droneInfo => droneInfo.Equals(newDroneInfo)))
                 {
                     allInstances.Add(newDroneInfo);
                 }
@@ -64,7 +64,7 @@ namespace Chen.GradiusMod
     /// <summary>
     /// A structure that stores data of custom drones as well as where they originated from.
     /// </summary>
-    public struct DroneInfo
+    public struct DroneInfo : IEquatable<DroneInfo>
     {
         /// <summary>
         /// Mod identifier for differentiation, preferably the GUID.
@@ -79,14 +79,22 @@ namespace Chen.GradiusMod
         /// <summary>
         /// Basic constructor that stores the data of a custom drone.
         /// </summary>
-        /// <param name="mod"></param>
-        /// <param name="instance"></param>
-        /// <param name="config"></param>
+        /// <param name="mod">Mod identifier</param>
+        /// <param name="instance">Instance of the drone</param>
+        /// <param name="config">Config file to bind onto</param>
         public DroneInfo(string mod, Drone instance, ConfigFile config)
         {
             this.mod = mod;
             this.instance = instance;
             this.instance.BindConfig(config);
         }
+
+        /// <summary>
+        /// Compares this instance and the other to see if they are "equal" as defined.
+        /// For equality, always use this method instead of equality operators.
+        /// </summary>
+        /// <param name="other">The other instance being compared with</param>
+        /// <returns>True if equal, false if not.</returns>
+        public bool Equals(DroneInfo other) => mod == other.mod && instance.name == other.instance.name;
     }
 }
