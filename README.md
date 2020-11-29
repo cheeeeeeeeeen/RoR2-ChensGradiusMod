@@ -8,6 +8,8 @@ This mod aims to implement features from the Gradius series as well as from othe
 
 Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager to install this mod.
 
+If one does not want to use a mod manager, then get the DLL from **[Thunderstore](https://thunderstore.io/package/Chen/ChensGradiusMod/)**.
+
 ## Features
 
 ![Gradius' Option](https://puu.sh/GBI6M.png)
@@ -57,6 +59,11 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 - Contact: Through Discord.
 
 ## Changelog
+
+**2.2.2**
+- Code cleanup and refactor that reduces the possibility of potential bugs using the power of ChensHelper.
+- Eliminated most of possible exceptions that may occur.
+- If there are no more bugs or needed API, this could be the final version.
 
 **2.2.1**
 - Fixed a bug in Laser Drone where the charging sound effect is duplicated per client.

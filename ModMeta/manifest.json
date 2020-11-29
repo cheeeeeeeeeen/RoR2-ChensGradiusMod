@@ -1,12 +1,12 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "2.2.1",
+  "version_number": "2.2.2",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Fix a bug where the Laser Drone duplicates the charging sound effect per client. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "Stability update. Final release of the mod unless if there are bugs or breaking changes from dependencies. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
   "dependencies": [
     "bbepis-BepInExPack-5.3.1",
     "tristanmcpherson-R2API-2.5.14",
     "ThinkInvis-TILER2-3.0.4",
-    "Chen-ChensHelpers-1.0.1"
+    "Chen-ChensHelpers-1.0.2"
   ]
 }
