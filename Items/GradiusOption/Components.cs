@@ -11,6 +11,7 @@ using static Chen.GradiusMod.GradiusModPlugin;
 using static Chen.GradiusMod.SyncOptionTargetForClients;
 using static Chen.Helpers.MathHelpers.Wave;
 using Object = System.Object;
+using Chen.Helpers.MathHelpers;
 
 namespace Chen.GradiusMod
 {
@@ -103,7 +104,7 @@ namespace Chen.GradiusMod
         public Vector3 DecidePosition(float baseAngle)
         {
             Vector3 relativePosition = Quaternion.AngleAxis(baseAngle, ownerT.up) * -ownerT.forward;
-            float angleDifference = 360f / ownerOt.existingOptions.Count;
+            float angleDifference = 360f.SafeDivide(ownerOt.existingOptions.Count);
             relativePosition = Quaternion.AngleAxis(angleDifference * numbering, ownerT.up) * relativePosition;
             return relativePosition.normalized;
         }
