@@ -12,7 +12,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
-    <DocumentationFile>C:\Users\Chen\Documents\Visual Studio 2019\Risk of Rain 2\RoR2-ChensGradiusMod\_docs\ChensGradiusMod_API.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\Chen\Documents\Visual Studio 2019\Risk of Rain 2\RoR2-ChensGradiusMod\_docs\ChensGradiusMod.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

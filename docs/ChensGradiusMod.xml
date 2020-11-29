@@ -179,9 +179,17 @@
             <summary>
             Basic constructor that stores the data of a custom drone.
             </summary>
-            <param name="mod"></param>
-            <param name="instance"></param>
-            <param name="config"></param>
+            <param name="mod">Mod identifier</param>
+            <param name="instance">Instance of the drone</param>
+            <param name="config">Config file to bind onto</param>
+        </member>
+        <member name="M:Chen.GradiusMod.DroneInfo.Equals(Chen.GradiusMod.DroneInfo)">
+            <summary>
+            Compares this instance and the other to see if they are "equal" as defined.
+            For equality, always use this method instead of equality operators.
+            </summary>
+            <param name="other">The other instance being compared with</param>
+            <returns>True if equal, false if not.</returns>
         </member>
         <member name="T:Chen.GradiusMod.BodyRotation">
             <summary>
