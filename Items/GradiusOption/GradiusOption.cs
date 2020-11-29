@@ -844,8 +844,7 @@ namespace Chen.GradiusMod
         {
             orig(self);
             OptionTracker tracker = self.ownerCharacterBody.GetComponent<OptionTracker>();
-            float divisor = (tracker.existingOptions.Count + 1) * damageMultiplier;
-            if (tracker) self.fireInterval /= divisor;
+            if (tracker) self.fireInterval /= (tracker.existingOptions.Count + 1) * damageMultiplier;
         }
 
         private void FireSpine_FireOrbArrow(On.EntityStates.Squid.SquidWeapon.FireSpine.orig_FireOrbArrow orig, FireSpine self)
