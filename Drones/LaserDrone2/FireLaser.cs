@@ -91,7 +91,7 @@ namespace Chen.GradiusMod
             if (characterBody)
             {
                 characterBody.SetAimTimer(baseDuration);
-                AkSoundEngine.PostEvent(chargeLaserEventId, gameObject);
+                if (isAuthority) AkSoundEngine.PostEvent(chargeLaserEventId, gameObject);
             }
             muzzle = transform.Find("ModelBase").Find("mdlLaserDrone").Find("AimOrigin").gameObject;
             chargeEffect = muzzle.GetComponent<ChargeEffect>();

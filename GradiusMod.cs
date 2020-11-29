@@ -61,7 +61,7 @@ namespace Chen.GradiusMod
 
 #if DEBUG
 
-        public void Update()
+        private void Update()
         {
             DropletGenerator.Update();
             var i9 = Input.GetKeyDown(KeyCode.F9);
@@ -78,7 +78,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        public void FixedUpdate()
+        private void FixedUpdate()
         {
             var i1 = Input.GetKeyDown(KeyCode.Alpha1);
             var i2 = Input.GetKeyDown(KeyCode.Alpha2);
