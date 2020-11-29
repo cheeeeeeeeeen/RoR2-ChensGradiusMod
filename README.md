@@ -58,6 +58,9 @@ Use **[r2modman](https://thunderstore.io/package/ebkr/r2modman/)** mod manager t
 
 ## Changelog
 
+**2.2.1**
+- Fixed a bug in Laser Drone where the charging sound effect is duplicated per client.
+
 **2.2.0**
 - Implement Laser Drone! Fully functional with custom model and icons.
 - Integrate ChensHelpers.
