@@ -116,6 +116,7 @@ namespace Chen.GradiusMod
 
         public override void OnExit()
         {
+            AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
             {
@@ -138,7 +139,6 @@ namespace Chen.GradiusMod
                     GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
                 }
                 Util.PlaySound(attackSoundString, gameObject);
-                AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
                 GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
                 {
                     if (effectPrefab) EffectManager.SimpleMuzzleFlash(effectPrefab, option, "Muzzle", false);

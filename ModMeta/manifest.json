@@ -1,8 +1,8 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "2.2.2",
+  "version_number": "2.2.3",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
-  "description": "Stability update. Final release of the mod unless if there are bugs or breaking changes from dependencies. This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.",
+  "description": "This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games. Fully documented for other interested mod creators.",
   "dependencies": [
     "bbepis-BepInExPack-5.3.1",
     "tristanmcpherson-R2API-2.5.14",

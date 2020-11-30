@@ -62,6 +62,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**2.2.3**
+- Bug fix related to Laser Drone's sound again. Hopefully it does not bug out again. Moved the stopping sound in OnExit to fix it.
+
 **2.2.2**
 - Code cleanup and refactor that reduces the possibility of potential bugs using the power of ChensHelper.
 - Eliminated most of possible exceptions that may occur.
@@ -74,8 +77,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Implement Laser Drone! Fully functional with custom model and icons.
 - Integrate ChensHelpers.
 - Write full documentation of the mod.
-
-**2.1.4**
-- Rollback dependency of R2API to `2.5.14`.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
