@@ -298,7 +298,7 @@
         </member>
         <member name="T:Chen.Helpers.GeneralHelpers.SoundPlayer.EventPosterKey">
             <summary>
-            Represents the data structure for a keybind that is reponsible for posting WWise sound events.
+            Represents the data structure for a keybind that is responsible for posting WWise sound events.
             </summary>
         </member>
         <member name="F:Chen.Helpers.GeneralHelpers.SoundPlayer.EventPosterKey.key">
