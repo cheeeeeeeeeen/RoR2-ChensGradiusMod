@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using System;
+using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod
 {
@@ -14,10 +15,7 @@ namespace Chen.GradiusMod
         /// </summary>
         public static T instance { get; private set; }
 
-        /// <summary>
-        /// Constructor that should be able to render this class as a singleton.
-        /// </summary>
-        public Drone()
+        internal Drone()
         {
             if (instance != null) throw new InvalidOperationException($"Singleton class \"{typeof(T).Name}\" instantiated twice.");
             instance = this as T;
@@ -73,6 +71,8 @@ namespace Chen.GradiusMod
             }
         }
 
+        internal DroneInfo info;
+
         private string _name;
         private string _configCategory;
 
@@ -84,7 +84,7 @@ namespace Chen.GradiusMod
         /// <summary>
         /// The first step in the setup process. Place here the logic needed before any processing begins.
         /// </summary>
-        protected virtual void PreSetup()
+        public virtual void PreSetup()
         {
         }
 
@@ -134,10 +134,11 @@ namespace Chen.GradiusMod
 
         /// <summary>
         /// The fifth step in the setup process. Place here the code for cleanup, or for finalization.
+        /// This will still be performed whether the drone is enabled or disabled.
+        /// This will still also be performed if the drone was already set up or not.
         /// </summary>
-        protected virtual void PostSetup()
+        public void PostSetup()
         {
-            alreadySetup = true;
         }
 
         internal void BindConfig(ConfigFile config)
@@ -146,25 +147,60 @@ namespace Chen.GradiusMod
         }
 
         /// <summary>
-        /// Shorthand for the first and second steps of the setup process along with generic logic. This method is exposed for usage outside of this class.
+        /// First phase of the setup process along with required logic. This phase invokes SetupConfig.
+        /// This method is exposed for usage outside of this class.
         /// </summary>
-        /// <returns>Boolean value if the drone is enabled or not.</returns>
+        /// <returns>True means the setup was performed. False means the setup was skipped or the drone is disabled.</returns>
         public bool SetupFirstPhase()
         {
-            PreSetup();
+            if (alreadySetup)
+            {
+                Log.Warning($"1st Phase: {info.mod}-{name} was already set up. Skipping.");
+                return false;
+            }
             SetupConfig();
-            if (!enabled) alreadySetup = true;
+            if (!enabled)
+            {
+                Log.Warning($"1st Phase: {info.mod}-{name} is disabled. Skipping.");
+                alreadySetup = true;
+            }
             return enabled;
         }
 
         /// <summary>
-        /// Shorthand for the third, fourth and fifth steps of the setup process. This method is exposed for usage outside of this class.
+        /// Second phase of the setup process along with required logic. This method invokes SetupComponents.
+        /// This method is exposed for usage outside of this class.
         /// </summary>
-        public void SetupSecondPhase()
+        /// <returns>True means the setup was performed. False means the setup was skipped or the drone is disabled.</returns>
+        public bool SetupSecondPhase()
         {
+            if (!enabled) Log.Warning($"2nd Phase: {info.mod}-{name} is disabled.");
+            if (alreadySetup) Log.Warning($"2nd Phase: {info.mod}-{name} was already set up.");
+            if (!enabled || alreadySetup)
+            {
+                Log.Warning($"2nd Phase: {info.mod}-{name} setup skipped.");
+                return false;
+            }
             SetupComponents();
+            return true;
+        }
+
+        /// <summary>
+        /// Third phase of the setup process along with required logic. This method invokes SetupBehavior.
+        /// This method is exposed for usage outside of this class.
+        /// </summary>
+        /// <returns>True means the setup was performed. False means the setup was skipped or the drone is disabled.</returns>
+        public bool SetupThirdPhase()
+        {
+            if (!enabled) Log.Warning($"3rd Phase: {info.mod}-{name} is disabled.");
+            if (alreadySetup) Log.Warning($"3rd Phase: {info.mod}-{name} was already set up.");
+            if (!enabled || alreadySetup)
+            {
+                Log.Warning($"3rd Phase: {info.mod}-{name} setup skipped.");
+                return false;
+            }
             SetupBehavior();
-            PostSetup();
+            return alreadySetup = true;
         }
     }
 }
