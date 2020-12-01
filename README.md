@@ -62,6 +62,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**2.2.4**
+- Integrate SoundPlayer from ChensHelpers for testing sounds. Only available for developers.
+- Improve DroneCatalog's implementation so that every Drone instance will have concurrent phases of setup.
+
 **2.2.3**
 - Bug fix related to Laser Drone's sound again. Hopefully it does not bug out again. Moved the stopping sound in OnExit to fix it.
 

@@ -511,14 +511,6 @@
             </summary>
             <param name="data">Anything</param>
         </member>
-        <member name="M:Chen.Helpers.LogHelpers.Log.Array``1(``0[],System.String)">
-            <summary>
-            Log an array of values using Message format.
-            </summary>
-            <typeparam name="T">Type of the array</typeparam>
-            <param name="data">Array of T</param>
-            <param name="prefix">Prefix to be inserted before the data</param>
-        </member>
         <member name="T:Chen.Helpers.MathHelpers.Arithmetic">
             <summary>
             Extensions related to computations involving numbers.
