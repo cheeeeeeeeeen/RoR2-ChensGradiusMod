@@ -1,11 +1,11 @@
 
 ### [Chen.GradiusMod](./Chen-GradiusMod 'Chen.GradiusMod').[Drone](./Chen-GradiusMod-Drone 'Chen.GradiusMod.Drone')
 
-## Drone.SetupSecondPhase() Method
-Second phase of the setup process along with required logic. This method invokes SetupComponents.  
+## Drone.SetupThirdPhase() Method
+Third phase of the setup process along with required logic. This method invokes SetupBehavior.  
 This method is exposed for usage outside of this class.  
 ```csharp
-public bool SetupSecondPhase();
+public bool SetupThirdPhase();
 ```
 
 #### Returns

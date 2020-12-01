@@ -30,3 +30,4 @@ Derived
 - [SetupConfig()](./Chen-GradiusMod-Drone-SetupConfig() 'Chen.GradiusMod.Drone.SetupConfig()')
 - [SetupFirstPhase()](./Chen-GradiusMod-Drone-SetupFirstPhase() 'Chen.GradiusMod.Drone.SetupFirstPhase()')
 - [SetupSecondPhase()](./Chen-GradiusMod-Drone-SetupSecondPhase() 'Chen.GradiusMod.Drone.SetupSecondPhase()')
+- [SetupThirdPhase()](./Chen-GradiusMod-Drone-SetupThirdPhase() 'Chen.GradiusMod.Drone.SetupThirdPhase()')
