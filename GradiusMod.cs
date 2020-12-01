@@ -30,7 +30,6 @@ namespace Chen.GradiusMod
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ClassicItemsPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
-
     [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI))]
     public class GradiusModPlugin : BaseUnityPlugin
     {
@@ -61,6 +60,8 @@ namespace Chen.GradiusMod
 
 #if DEBUG
 
+        internal static SoundPlayer soundPlayer = new SoundPlayer();
+
         private void Update()
         {
             DropletGenerator.Update();
@@ -76,23 +77,7 @@ namespace Chen.GradiusMod
                     return;
                 }
             }
-        }
-
-        private void FixedUpdate()
-        {
-            var i1 = Input.GetKeyDown(KeyCode.Alpha1);
-            var i2 = Input.GetKeyDown(KeyCode.Alpha2);
-            var i3 = Input.GetKeyDown(KeyCode.Alpha3);
-            var i4 = Input.GetKeyDown(KeyCode.Alpha4);
-            if (i1 || i2 || i3 || i4)
-            {
-                RoR2.CharacterMaster master = RoR2.PlayerCharacterMasterController.instances[0].master;
-                RoR2.CharacterBody body = master.GetBody();
-                if (i1) AkSoundEngine.PostEvent(FireLaser.chargeLaserEventId, body.gameObject);
-                else if (i2) AkSoundEngine.PostEvent(FireLaser.dissipateLaserEventId, body.gameObject);
-                else if (i3) AkSoundEngine.PostEvent(GradiusOption.getOptionEventId, body.gameObject);
-                else if (i4) AkSoundEngine.PostEvent(GradiusOption.loseOptionEventId, body.gameObject);
-            }
+            soundPlayer.Update();
         }
 
 #endif
@@ -103,6 +88,10 @@ namespace Chen.GradiusMod
 
 #if DEBUG
             MultiplayerTest.Enable(Log);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha1, FireLaser.chargeLaserEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha2, FireLaser.dissipateLaserEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha3, GradiusOption.getOptionEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha4, GradiusOption.loseOptionEventId);
 #endif
 
             Log.Debug("Loading assets...");
