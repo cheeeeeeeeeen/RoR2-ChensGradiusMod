@@ -1,5 +1,6 @@
 ﻿#undef DEBUG
 
+using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using R2API;
 using R2API.Utils;
@@ -143,6 +144,8 @@ namespace Chen.GradiusMod
             body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Icon/texLaserDrone1Icon.png");
             ModifyDroneModel(body);
             ModifySkill();
+            CharacterDeathBehavior death = body.GetOrAddComponent<CharacterDeathBehavior>();
+            death.deathState = new SerializableEntityStateType(typeof(LaserDrone1DeathState));
         }
 
         private void ModifyDroneModel(CharacterBody body)
