@@ -13,16 +13,14 @@ namespace Chen.GradiusMod
     /// </summary>
     public class DroneDeathState : VanillaDeathState
     {
-        private InteractableSpawnCard iSpawnCard = null;
-
         /// <summary>
-        /// A property that should be implemented by the child class. 
+        /// A method that should be implemented by the child class. This will be the Spawn Card that will be used to spawn when the drone is destroyed.
         /// </summary>
-        /// <returns>The spawn card of the interractable if implemented.</returns>
+        /// <returns>The spawn card of the interactable if implemented.</returns>
         /// <exception cref="InvalidOperationException">Thrown when the Property is not implemented.</exception>
-        protected virtual InteractableSpawnCard interactable
+        protected virtual InteractableSpawnCard GetInteractableSpawnCard()
         {
-            get { throw new InvalidOperationException($"{GetType().Name}.interactable Property is not implemented/overridden."); }
+            throw new InvalidOperationException($"{GetType().Name}.interactable Property is not implemented/overridden.");
         }
 
         /// <summary>
@@ -32,31 +30,41 @@ namespace Chen.GradiusMod
         /// <param name="contactPoint">The point where the interactable spawns</param>
         public override void OnImpactServer(Vector3 contactPoint)
         {
-            if (iSpawnCard != null)
-			{
-				DirectorPlacementRule placementRule = new DirectorPlacementRule
-				{
-					placementMode = DirectorPlacementRule.PlacementMode.Direct,
-					position = contactPoint
-				};
-				GameObject gameObject = DirectorCore.instance.TrySpawnObject(new DirectorSpawnRequest(interactable, placementRule, new Xoroshiro128Plus(0UL)));
-				if (gameObject)
-				{
-					PurchaseInteraction purchaseInteraction = gameObject.GetComponent<PurchaseInteraction>();
-					if (purchaseInteraction && purchaseInteraction.costType == CostTypeIndex.Money)
-					{
-						purchaseInteraction.Networkcost = Run.instance.GetDifficultyScaledCost(purchaseInteraction.cost);
-					}
-				}
-			}
+            var spawnCard = GetInteractableSpawnCard();
+            if (spawnCard != null)
+            {
+                DirectorPlacementRule placementRule = new DirectorPlacementRule
+                {
+                    placementMode = DirectorPlacementRule.PlacementMode.Direct,
+                    position = contactPoint
+                };
+                GameObject gameObject = DirectorCore.instance.TrySpawnObject(new DirectorSpawnRequest(spawnCard, placementRule, new Xoroshiro128Plus(0UL)));
+                if (gameObject)
+                {
+                    PurchaseInteraction purchaseInteraction = gameObject.GetComponent<PurchaseInteraction>();
+                    if (purchaseInteraction && purchaseInteraction.costType == CostTypeIndex.Money)
+                    {
+                        purchaseInteraction.Networkcost = Run.instance.GetDifficultyScaledCost(purchaseInteraction.cost);
+                    }
+                }
+            }
         }
 
         /// <summary>
-        /// Overrideable OnEnter method from the original state. Always call base.OnEnter.
+        /// Overrideable OnEnter method from the original state. Always call base.OnEnter. Initialize values at runtime here.
         /// </summary>
         public override void OnEnter()
         {
-            iSpawnCard = interactable;
+            VanillaDeathState originalState = Instantiate(typeof(VanillaDeathState)) as VanillaDeathState;
+            deathDuration = originalState.deathDuration;
+            initialExplosionEffect = originalState.initialExplosionEffect;
+            deathExplosionEffect = originalState.deathExplosionEffect;
+            initialSoundString = originalState.initialSoundString;
+            deathSoundString = originalState.deathSoundString;
+            deathEffectRadius = originalState.deathEffectRadius;
+            forceAmount = originalState.forceAmount;
+            deathDuration = originalState.deathDuration;
+            destroyOnImpact = true;
             base.OnEnter();
         }
 
