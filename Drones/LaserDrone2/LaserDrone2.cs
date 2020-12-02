@@ -1,5 +1,6 @@
 ﻿#undef DEBUG
 
+using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using R2API;
@@ -10,6 +11,7 @@ using RoR2.Skills;
 using System.Collections.Generic;
 using UnityEngine;
 using static R2API.DirectorAPI;
+using Stage = R2API.DirectorAPI.Stage;
 
 namespace Chen.GradiusMod
 {
@@ -22,6 +24,7 @@ namespace Chen.GradiusMod
         public static InteractableSpawnCard iSpawnCard { get; private set; }
         public static GameObject brokenObject { get; private set; }
         public static DirectorCardHolder iDirectorCardHolder { get; private set; }
+        public static DirectorCardHolder iHeavyDirectorCardHolder { get; private set; }
         public static GameObject droneBody { get; private set; }
         public static GameObject droneMaster { get; private set; }
 
@@ -55,28 +58,7 @@ namespace Chen.GradiusMod
             ModifyBrokenObject();
             iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
-            DirectorCard directorCard = new DirectorCard
-            {
-                spawnCard = iSpawnCard,
-#if DEBUG
-                selectionWeight = 1000,
-                minimumStageCompletions = 0,
-#else
-                selectionWeight = 1,
-                minimumStageCompletions = 2,
-#endif
-                spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
-                allowAmbushSpawn = true,
-                preventOverhead = false,
-                requiredUnlockable = "",
-                forbiddenUnlockable = ""
-            };
-            iDirectorCardHolder = new DirectorCardHolder
-            {
-                Card = directorCard,
-                MonsterCategory = MonsterCategory.None,
-                InteractableCategory = InteractableCategory.Drones,
-            };
+            InitializeDirectorCards();
         }
 
         protected override void SetupBehavior()
@@ -243,10 +225,51 @@ namespace Chen.GradiusMod
 
         private void DirectorAPI_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
         {
-            if (!arg1.Contains(iDirectorCardHolder))
+            if (!arg2.CheckStage(Stage.SkyMeadow)) arg1.ConditionalAdd(iDirectorCardHolder, card => iDirectorCardHolder == card);
+            else arg1.ConditionalAdd(iHeavyDirectorCardHolder, card => iHeavyDirectorCardHolder == card);
+        }
+
+        private void InitializeDirectorCards()
+        {
+            DirectorCard directorCard = new DirectorCard
             {
-                arg1.Add(iDirectorCardHolder);
-            }
+                spawnCard = iSpawnCard,
+#if DEBUG
+                selectionWeight = 1000,
+                minimumStageCompletions = 0,
+#else
+                selectionWeight = 1,
+                minimumStageCompletions = 2,
+#endif
+                spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
+                allowAmbushSpawn = true,
+                preventOverhead = false,
+                requiredUnlockable = "",
+                forbiddenUnlockable = ""
+            };
+            DirectorCard heavyDirectorCard = new DirectorCard
+            {
+                spawnCard = iSpawnCard,
+                selectionWeight = 20,
+                minimumStageCompletions = 4,
+                spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
+                allowAmbushSpawn = true,
+                preventOverhead = false,
+                requiredUnlockable = "",
+                forbiddenUnlockable = ""
+            };
+            iDirectorCardHolder = new DirectorCardHolder
+            {
+                Card = directorCard,
+                MonsterCategory = MonsterCategory.None,
+                InteractableCategory = InteractableCategory.Drones,
+            };
+            iHeavyDirectorCardHolder = new DirectorCardHolder
+            {
+                Card = heavyDirectorCard,
+                MonsterCategory = MonsterCategory.None,
+                InteractableCategory = InteractableCategory.Drones,
+            };
         }
     }
 }

@@ -62,6 +62,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**2.2.5**
+- CONTINUE HERE
+
 **2.2.4**
 - Integrate SoundPlayer from ChensHelpers for testing sounds. Only available for developers.
 - Improve DroneCatalog's implementation so that every Drone instance will have concurrent phases of setup.
