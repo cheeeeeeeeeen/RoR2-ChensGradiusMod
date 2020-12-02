@@ -4,15 +4,9 @@ namespace Chen.GradiusMod
 {
     internal class LaserDrone2DeathState : DroneDeathState
     {
-        private InteractableSpawnCard _interactable = null;
-
-        protected override InteractableSpawnCard interactable
+        protected override InteractableSpawnCard GetInteractableSpawnCard()
         {
-            get
-            {
-                if (_interactable == null) _interactable = LaserDrone2.iSpawnCard;
-                return interactable;
-            }
+            return LaserDrone2.iSpawnCard;
         }
     }
 }
