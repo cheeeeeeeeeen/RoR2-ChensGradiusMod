@@ -57,7 +57,7 @@ namespace Chen.GradiusMod
                 EffectData effectData = new EffectData
                 {
                     origin = vector,
-                    start = aimRay.origin
+                    start = aimRay.origin + (aimRay.direction.normalized * 2f)
                 };
                 EffectManager.SpawnEffect(tracerEffectPrefab, effectData, true);
                 EffectManager.SpawnEffect(hitEffectPrefab, effectData, true);
