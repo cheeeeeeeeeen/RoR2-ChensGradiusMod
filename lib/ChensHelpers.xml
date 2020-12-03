@@ -708,5 +708,29 @@
             <param name="addAction">Post-Processor code for adding</param>
             <returns>The component specified as T</returns>
         </member>
+        <member name="T:Chen.Helpers.UnityHelpers.RoR2Extensions">
+            <summary>
+            Extensions related to Components defined by Risk of Rain 2.
+            </summary>
+        </member>
+        <member name="M:Chen.Helpers.UnityHelpers.RoR2Extensions.BuildRendererInfos(RoR2.CharacterModel,UnityEngine.GameObject)">
+            <summary>
+            Builds the renderer information data structure from scratch based on the given GameObject's MeshRenderer components.
+            This overload uses a ShadowCastingMode of Off and IgnoreOverlays of value false.
+            </summary>
+            <param name="model">Model to apply the new RendererInfos</param>
+            <param name="basisObject">The object basis of where the MeshRenderers will be used to build off with</param>
+            <returns>A new set of RendererInfos</returns>
+        </member>
+        <member name="M:Chen.Helpers.UnityHelpers.RoR2Extensions.BuildRendererInfos(RoR2.CharacterModel,UnityEngine.GameObject,UnityEngine.Rendering.ShadowCastingMode,System.Boolean)">
+            <summary>
+            Builds the renderer information data structure from scratch based on the given GameObject's MeshRenderer components.
+            </summary>
+            <param name="model">Model to apply the new RendererInfos</param>
+            <param name="basisObject">The object basis of where the MeshRenderers will be used to build off with</param>
+            <param name="mode">Mode of shadow casting for each mesh</param>
+            <param name="ignoreOverlays">Determines whether to display effects over the mesh, such as elite prefixes</param>
+            <returns>A new set of RendererInfos</returns>
+        </member>
     </members>
 </doc>
