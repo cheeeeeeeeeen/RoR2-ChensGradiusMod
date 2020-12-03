@@ -152,19 +152,7 @@ namespace Chen.GradiusMod
             modelLocator.modelBaseTransform = modelBase.transform;
             CharacterModel characterModel = customModel.AddComponent<CharacterModel>();
             characterModel.body = body;
-            MeshRenderer[] meshes = customModel.GetComponentsInChildren<MeshRenderer>();
-            CharacterModel.RendererInfo[] renderInfos = new CharacterModel.RendererInfo[meshes.Length];
-            for (int i = 0; i < meshes.Length; i++)
-            {
-                renderInfos[i] = new CharacterModel.RendererInfo
-                {
-                    defaultMaterial = meshes[i].material,
-                    renderer = meshes[i],
-                    defaultShadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On,
-                    ignoreOverlays = false
-                };
-            }
-            characterModel.baseRendererInfos = renderInfos;
+            characterModel.BuildRendererInfos(customModel);
             characterModel.autoPopulateLightInfos = true;
             characterModel.invisibilityCount = 0;
             characterModel.temporaryOverlays = new List<TemporaryOverlay>();
