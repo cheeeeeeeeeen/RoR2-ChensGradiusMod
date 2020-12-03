@@ -63,7 +63,8 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 ## Changelog
 
 **2.2.5**
-- CONTINUE HERE
+- Implement a custom Death State where mod creators can also inherit to easily define the death behavior of the custom drone.
+- The main use for the custom Death State is to be able to spawn the drone's respective interactable upon death.
 
 **2.2.4**
 - Integrate SoundPlayer from ChensHelpers for testing sounds. Only available for developers.
