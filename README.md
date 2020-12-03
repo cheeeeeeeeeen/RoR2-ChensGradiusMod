@@ -32,6 +32,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - This drone shoots a continuous beam on its target.
 - The drone is accurate, however, it is weak at keeping its lock on consistently.
 - The drone will appear in Stage 3 and onwards.
+- The drone will spawn more in Sky Meadow.
 - Options also copy this drone's attacks.
 
 ![Laser Drone](https://puu.sh/GS59f.png)
@@ -39,6 +40,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 - The drone charges for a short amount of time, and then unleashes a strong laser attack, dealing huge amount of damage in an AoE.
 - The drone will appear in Stage 3 and onwards.
+- The drone will spawn more in Sky Meadow.
 - Options also copy this drone's attacks.
 
 ## Contact & Support
@@ -65,6 +67,8 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **2.2.5**
 - Implement a custom Death State where mod creators can also inherit to easily define the death behavior of the custom drone.
 - The main use for the custom Death State is to be able to spawn the drone's respective interactable upon death.
+- Integrate the render infos builder from ChensHelpers.
+- Add more configs about the spawn settings of the custom drones.
 
 **2.2.4**
 - Integrate SoundPlayer from ChensHelpers for testing sounds. Only available for developers.

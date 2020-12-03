@@ -20,6 +20,10 @@ namespace Chen.GradiusMod
         public float laserDuration { get; private set; } = 4f;
         public float laserCooldown { get; private set; } = 4f;
         public float damageCoefficient { get; private set; } = 1f;
+        public int minimumStageSpawn { get; private set; } = 3;
+        public int skyMeadowMinimumStageSpawn { get; private set; } = 5;
+        public int spawnWeight { get; private set; } = 1;
+        public int skyMeadowSpawnWeight { get; private set; } = 10;
 
         public static InteractableSpawnCard iSpawnCard { get; private set; }
         public static GameObject brokenObject { get; private set; }
@@ -27,6 +31,10 @@ namespace Chen.GradiusMod
         public static DirectorCardHolder iHeavyDirectorCardHolder { get; private set; }
         public static GameObject droneBody { get; private set; }
         public static GameObject droneMaster { get; private set; }
+
+        private int minimumStageCompletions { get => minimumStageSpawn - 1; }
+
+        private int skyMeadowMinimumStageCompletions { get => skyMeadowMinimumStageSpawn - 1; }
 
         protected override void SetupConfig()
         {
@@ -45,6 +53,26 @@ namespace Chen.GradiusMod
             damageCoefficient = config.Bind(configCategory,
                 "DamageCoefficient", damageCoefficient,
                 "Damage Coefficient of the beam attack per tick."
+            ).Value;
+
+            minimumStageSpawn = config.Bind(configCategory,
+                "MinimumStageSpawn", minimumStageSpawn,
+                "Minimum stage number for the drone to start spawning."
+            ).Value;
+
+            spawnWeight = config.Bind(configCategory,
+                "SpawnWeight", spawnWeight,
+                "The weight for which the Director is biased towards spawning this drone."
+            ).Value;
+
+            skyMeadowMinimumStageSpawn = config.Bind(configCategory,
+                "SkyMeadowMinimumStageSpawn", skyMeadowMinimumStageSpawn,
+                "Minimum stage number for the drone to start spawning in Sky Meadow."
+            ).Value;
+
+            skyMeadowSpawnWeight = config.Bind(configCategory,
+                "SkyMeadowSpawnWeight", skyMeadowSpawnWeight,
+                "The weight for which the Director is biased towards spawning this drone in Sky Meadow."
             ).Value;
         }
 
@@ -221,8 +249,8 @@ namespace Chen.GradiusMod
                 selectionWeight = 1000,
                 minimumStageCompletions = 0,
 #else
-                selectionWeight = 1,
-                minimumStageCompletions = 2,
+                selectionWeight = spawnWeight,
+                minimumStageCompletions = minimumStageCompletions,
 #endif
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
@@ -233,8 +261,8 @@ namespace Chen.GradiusMod
             DirectorCard heavyDirectorCard = new DirectorCard
             {
                 spawnCard = iSpawnCard,
-                selectionWeight = 20,
-                minimumStageCompletions = 4,
+                selectionWeight = skyMeadowSpawnWeight,
+                minimumStageCompletions = skyMeadowMinimumStageCompletions,
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
                 preventOverhead = false,
