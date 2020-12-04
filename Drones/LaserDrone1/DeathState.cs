@@ -8,11 +8,5 @@ namespace Chen.GradiusMod
         {
             return LaserDrone1.iSpawnCard;
         }
-
-        public override void OnEnter()
-        {
-            base.OnEnter();
-            deathDuration = 1f;
-        }
     }
 }

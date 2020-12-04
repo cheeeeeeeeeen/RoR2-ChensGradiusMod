@@ -6,6 +6,7 @@ using Chen.ClassicItems;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
+using EntityStates;
 using KomradeSpectre.Aetherium;
 using R2API;
 using R2API.Networking;
@@ -121,20 +122,32 @@ namespace Chen.GradiusMod
             DroneCatalog.EfficientSetupAll(gradiusDronesList);
 
             Log.Debug("Applying vanilla fixes...");
-            RegisterVanillaFixes();
+            RegisterVanillaChanges();
 
             Log.Debug("Applying compatibility changes...");
             if (AetheriumCompatibility.enabled) AetheriumCompatibility.Setup();
             if (ChensClassicItemsCompatibility.enabled) ChensClassicItemsCompatibility.Setup();
         }
 
-        private void RegisterVanillaFixes()
+        private void RegisterVanillaChanges()
         {
             if (generalCfg.emergencyDroneFix)
             {
                 Log.Debug("Vanilla Fix: Applying emergencyDroneFix.");
                 On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
             }
+            if (generalCfg.turretsAreRepurchaseable)
+            {
+                Log.Debug("Vanilla Change: Applying turretsAreRepurchaseable.");
+                CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
+            }
+        }
+
+        private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
+        {
+            if (!obj.name.Contains("Turret1")) return;
+            CharacterDeathBehavior deathBehavior = obj.GetComponent<CharacterDeathBehavior>();
+            deathBehavior.deathState = new SerializableEntityStateType(typeof(Turret1DeathState));
         }
 
         private bool HealBeamController_HealBeamAlreadyExists_GO_HC(
@@ -163,6 +176,9 @@ namespace Chen.GradiusMod
         {
             [AutoConfig("Applies a fix for Emergency Drones. Set to false if there are issues regarding compatibility.", AutoConfigFlags.PreventNetMismatch)]
             public bool emergencyDroneFix { get; private set; } = true;
+
+            [AutoConfig("Allows all Gunner Turrets to be repurchased when they are destroyed or decommissioned.", AutoConfigFlags.PreventNetMismatch)]
+            public bool turretsAreRepurchaseable { get; private set; } = true;
 
             [AutoConfig("Aetherium Compatibility: Allow Equipment Drones to be Inspired by Inspiring Drone.", AutoConfigFlags.PreventNetMismatch)]
             public bool equipmentDroneInspire { get; private set; } = true;
