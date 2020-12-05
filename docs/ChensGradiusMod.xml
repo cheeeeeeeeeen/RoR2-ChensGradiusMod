@@ -246,6 +246,51 @@
             The maximum rotation speed that the model can achieve.
             </summary>
         </member>
+        <member name="T:Chen.GradiusMod.DroneDeathState">
+            <summary>
+            An Entity State that should inherit from the original EntityStates.Drone.DeathState.
+            The original code does not support custom spawn cards to be detected when dying so that the interactable can spawn again.
+            This state will cater to custom drones so they are also able to spawn interactables upon death.
+            Do not use this class directly. Always inherit from this class and implement the interactable property.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.DroneDeathState.GetInteractableSpawnCard">
+            <summary>
+            A method that should be implemented by the child class. This will be the Spawn Card that will be used to spawn when the drone is destroyed.
+            </summary>
+            <returns>The spawn card of the interactable if implemented.</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when the Property is not implemented.</exception>
+        </member>
+        <member name="M:Chen.GradiusMod.DroneDeathState.OnInteractableSpawn">
+            <summary>
+            A method that can be overridden to add or change the logic when the interactable is spawned.
+            Default logic is to compute for the scaled cost of the drone.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.DroneDeathState.OnImpactServer(UnityEngine.Vector3)">
+            <summary>
+            Overridden method from the original state so that it would instead spawn the specified interactable's spawn card.
+            There is no need to override this unless special behavior is needed.
+            </summary>
+            <param name="contactPoint">The point where the interactable spawns</param>
+        </member>
+        <member name="M:Chen.GradiusMod.DroneDeathState.OnEnter">
+            <summary>
+            Overrideable OnEnter method from the original state. Always call base.OnEnter. Initialize values at runtime here.
+            To perform the death behavior specified in OnImpactServer, destroyOnImpact must be set to true.
+            This method already does that so long as base.OnEnter is invoked.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.DroneDeathState.OnExit">
+            <summary>
+            Overrideable OnEnter method from the original state. Always call base.OnExit.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.DroneDeathState.FixedUpdate">
+            <summary>
+            Overrideable OnEnter method from the original state. Always call base.FixedUpdate.
+            </summary>
+        </member>
         <member name="T:Chen.GradiusMod.GradiusModPlugin">
             <summary>
             The mother plugin that allows the mod to be loaded to RoR2.

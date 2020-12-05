@@ -8,6 +8,7 @@
 - [Drone](./Chen-GradiusMod-Drone 'Chen.GradiusMod.Drone')
 - [Drone&lt;T&gt;](./Chen-GradiusMod-Drone-T- 'Chen.GradiusMod.Drone&lt;T&gt;')
 - [DroneCatalog](./Chen-GradiusMod-DroneCatalog 'Chen.GradiusMod.DroneCatalog')
+- [DroneDeathState](./Chen-GradiusMod-DroneDeathState 'Chen.GradiusMod.DroneDeathState')
 - [GradiusModPlugin](./Chen-GradiusMod-GradiusModPlugin 'Chen.GradiusMod.GradiusModPlugin')
 - [GradiusOption](./Chen-GradiusMod-GradiusOption 'Chen.GradiusMod.GradiusOption')
 - [OptionBehavior](./Chen-GradiusMod-OptionBehavior 'Chen.GradiusMod.OptionBehavior')
