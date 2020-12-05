@@ -82,12 +82,4 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Eliminated most of possible exceptions that may occur.
 - If there are no more bugs or needed API, this could be the final version.
 
-**2.2.1**
-- Fixed a bug in Laser Drone where the charging sound effect is duplicated per client.
-
-**2.2.0**
-- Implement Laser Drone! Fully functional with custom model and icons.
-- Integrate ChensHelpers.
-- Write full documentation of the mod.
-
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
