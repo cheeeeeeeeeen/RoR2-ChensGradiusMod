@@ -24,6 +24,19 @@ namespace Chen.GradiusMod
         }
 
         /// <summary>
+        /// A method that can be overridden to add or change the logic when the interactable is spawned.
+        /// Default logic is to compute for the scaled cost of the drone.
+        /// </summary>
+        protected virtual void OnInteractableSpawn()
+        {
+            PurchaseInteraction purchaseInteraction = gameObject.GetComponent<PurchaseInteraction>();
+            if (purchaseInteraction && purchaseInteraction.costType == CostTypeIndex.Money)
+            {
+                purchaseInteraction.Networkcost = Run.instance.GetDifficultyScaledCost(purchaseInteraction.cost);
+            }
+        }
+
+        /// <summary>
         /// Overridden method from the original state so that it would instead spawn the specified interactable's spawn card.
         /// There is no need to override this unless special behavior is needed.
         /// </summary>
@@ -39,14 +52,7 @@ namespace Chen.GradiusMod
                     position = contactPoint
                 };
                 GameObject gameObject = DirectorCore.instance.TrySpawnObject(new DirectorSpawnRequest(spawnCard, placementRule, new Xoroshiro128Plus(0UL)));
-                if (gameObject)
-                {
-                    PurchaseInteraction purchaseInteraction = gameObject.GetComponent<PurchaseInteraction>();
-                    if (purchaseInteraction && purchaseInteraction.costType == CostTypeIndex.Money)
-                    {
-                        purchaseInteraction.Networkcost = Run.instance.GetDifficultyScaledCost(purchaseInteraction.cost);
-                    }
-                }
+                if (gameObject) OnInteractableSpawn();
             }
         }
 
@@ -58,14 +64,13 @@ namespace Chen.GradiusMod
         public override void OnEnter()
         {
             VanillaDeathState originalState = Instantiate(typeof(VanillaDeathState)) as VanillaDeathState;
-            deathDuration = originalState.deathDuration;
             initialExplosionEffect = originalState.initialExplosionEffect;
             deathExplosionEffect = originalState.deathExplosionEffect;
             initialSoundString = originalState.initialSoundString;
             deathSoundString = originalState.deathSoundString;
             deathEffectRadius = originalState.deathEffectRadius;
             forceAmount = originalState.forceAmount;
-            deathDuration = originalState.deathDuration;
+            hardCutoffDuration = maxFallDuration = bodyPreservationDuration = deathDuration = 12f;
             destroyOnImpact = true;
             base.OnEnter();
         }
