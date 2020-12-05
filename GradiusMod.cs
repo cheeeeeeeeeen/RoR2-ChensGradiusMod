@@ -12,6 +12,7 @@ using R2API;
 using R2API.Networking;
 using R2API.Utils;
 using RoR2;
+using System;
 using System.Collections.Generic;
 using TILER2;
 using UnityEngine;
@@ -139,15 +140,18 @@ namespace Chen.GradiusMod
             if (generalCfg.turretsAreRepurchaseable)
             {
                 Log.Debug("Vanilla Change: Applying turretsAreRepurchaseable.");
-                CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
+                AssignDeathBehavior("prefabs/characterbodies/Turret1Body", typeof(Turret1DeathState));
             }
-        }
-
-        private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
-        {
-            if (!obj.name.Contains("Turret1")) return;
-            CharacterDeathBehavior deathBehavior = obj.GetComponent<CharacterDeathBehavior>();
-            deathBehavior.deathState = new SerializableEntityStateType(typeof(Turret1DeathState));
+            if (generalCfg.megaDronesAreRepurchaseable)
+            {
+                Log.Debug("Vanilla Change: Applying megaDronesAreRepurchaseable.");
+                AssignDeathBehavior("prefabs/characterbodies/MegaDroneBody", typeof(MegaDroneDeathState));
+            }
+            if (generalCfg.dropEquipFromDroneChance > 0f)
+            {
+                Log.Debug("Vanilla Change: Applying dropEquipFromDroneChance.");
+                AssignDeathBehavior("prefabs/characterbodies/EquipmentDroneBody", typeof(EquipmentDroneDeathState));
+            }
         }
 
         private bool HealBeamController_HealBeamAlreadyExists_GO_HC(
@@ -172,6 +176,13 @@ namespace Chen.GradiusMod
             return false;
         }
 
+        private void AssignDeathBehavior(string prefabPath, Type newStateType)
+        {
+            GameObject droneBody = Resources.Load<GameObject>(prefabPath);
+            CharacterDeathBehavior deathBehavior = droneBody.GetComponent<CharacterDeathBehavior>();
+            deathBehavior.deathState = new SerializableEntityStateType(newStateType);
+        }
+
         internal class GlobalConfig : AutoConfigContainer
         {
             [AutoConfig("Applies a fix for Emergency Drones. Set to false if there are issues regarding compatibility.", AutoConfigFlags.PreventNetMismatch)]
@@ -179,6 +190,13 @@ namespace Chen.GradiusMod
 
             [AutoConfig("Allows all Gunner Turrets to be repurchased when they are destroyed or decommissioned.", AutoConfigFlags.PreventNetMismatch)]
             public bool turretsAreRepurchaseable { get; private set; } = true;
+
+            [AutoConfig("Allows all TC-280 Prototypes to be repurchased when they are destroyed or decommissioned.", AutoConfigFlags.PreventNetMismatch)]
+            public bool megaDronesAreRepurchaseable { get; private set; } = true;
+
+            [AutoConfig("Allows Equipment Drones to have a chance to drop their Equipment when destroyed. 43 = 43% chance. Affected by the drone's luck. " +
+                        "0 will disable this.", AutoConfigFlags.PreventNetMismatch, 0f, 100f)]
+            public float dropEquipFromDroneChance { get; private set; } = 0f;
 
             [AutoConfig("Aetherium Compatibility: Allow Equipment Drones to be Inspired by Inspiring Drone.", AutoConfigFlags.PreventNetMismatch)]
             public bool equipmentDroneInspire { get; private set; } = true;
