@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod
 {

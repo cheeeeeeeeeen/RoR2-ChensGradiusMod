@@ -280,7 +280,7 @@
             </summary>
             <param name="path">The path to the asset</param>
             <param name="type">The type of the asset to find</param>
-            <returns>object of type <paramref name="type"/></returns>
+            <returns>object of type <paramref name="type" /></returns>
         </member>
         <member name="M:R2API.AssetBundleResourcesProvider.LoadAsync(System.String,System.Type)">
             <summary>
@@ -288,7 +288,7 @@
             </summary>
             <param name="path">the path to the asset</param>
             <param name="type">the type of the asset to find</param>
-            <returns>object of type <paramref name="type"/></returns>
+            <returns>object of type <paramref name="type" /></returns>
         </member>
         <member name="M:R2API.AssetBundleResourcesProvider.LoadAll(System.Type)">
             <summary>
@@ -515,7 +515,7 @@
         </member>
         <member name="E:R2API.DifficultyAPI.difficultyCatalogReady">
             <summary>
-            <see cref="E:R2API.DifficultyAPI.DifficultyCatalogReady"/>
+            <see cref="E:R2API.DifficultyAPI.DifficultyCatalogReady" />
             </summary>
         </member>
         <member name="E:R2API.DifficultyAPI.DifficultyCatalogReady">
@@ -953,14 +953,14 @@
         </member>
         <member name="T:R2API.DotAPI.CustomDotBehaviour">
             <summary>
-            Allows for custom behaviours when applying the dot. EG, percentburn. <see cref="M:RoR2.DotController.AddDot(UnityEngine.GameObject,System.Single,RoR2.DotController.DotIndex,System.Single)"/>
+            Allows for custom behaviours when applying the dot. EG, percentburn. <see cref="M:RoR2.DotController.AddDot(UnityEngine.GameObject,System.Single,RoR2.DotController.DotIndex,System.Single)" />
             </summary>
             <param name="self"></param>
             <param name="dotStack"></param>
         </member>
         <member name="T:R2API.DotAPI.CustomDotVisual">
             <summary>
-            Allows custom visuals for your buff. think bleeding etc. <see cref="M:RoR2.DotController.FixedUpdate"/>
+            Allows custom visuals for your buff. think bleeding etc. <see cref="M:RoR2.DotController.FixedUpdate" />
             </summary>
             <param name="self"></param>
         </member>
@@ -979,7 +979,7 @@
         <member name="M:R2API.DotAPI.RegisterDotDef(System.Single,System.Single,RoR2.DamageColorIndex,RoR2.BuffIndex,R2API.DotAPI.CustomDotBehaviour,R2API.DotAPI.CustomDotVisual)">
             <summary>
             Unrolled version of RegisterDotDef(DotController.DotDef, CustomDotBehaviour, CustomDotVisual)
-            <see cref="M:R2API.DotAPI.RegisterDotDef(RoR2.DotController.DotDef,R2API.DotAPI.CustomDotBehaviour,R2API.DotAPI.CustomDotVisual)"/>
+            <see cref="M:R2API.DotAPI.RegisterDotDef(RoR2.DotController.DotDef,R2API.DotAPI.CustomDotBehaviour,R2API.DotAPI.CustomDotVisual)" />
             </summary>
             <param name="interval"></param>
             <param name="damageCoefficient"></param>
@@ -1054,8 +1054,8 @@
         <member name="T:R2API.CustomElite">
             <summary>
             Class that defines a custom Elite type for use in the game
-            All Elites consistent of an Elite definition, a <see cref="T:R2API.CustomEquipment"/>
-            and a <see cref="T:R2API.CustomBuff"/>. The equipment is automatically provided to
+            All Elites consistent of an Elite definition, a <see cref="T:R2API.CustomEquipment" />
+            and a <see cref="T:R2API.CustomBuff" />. The equipment is automatically provided to
             the Elite when it spawns and is configured to passively apply the buff.
             </summary>
         </member>
@@ -1762,7 +1762,6 @@
         </member>
         <member name="T:R2API.Utils.APISubmoduleHandler">
             <summary>
-            
             </summary>
         </member>
         <member name="M:R2API.Utils.APISubmoduleHandler.IsLoaded(System.String)">
@@ -1889,7 +1888,7 @@
         </member>
         <member name="M:R2API.Utils.Reflection.GetFieldCached``1(System.String)">
             <summary>
-            Gets the <see cref="T:System.Reflection.FieldInfo"/> of the type by name and caches it
+            Gets the <see cref="T:System.Reflection.FieldInfo" /> of the type by name and caches it
             </summary>
             <typeparam name="T">The type to search</typeparam>
             <param name="name">The name of the field to find</param>
@@ -1924,7 +1923,7 @@
         <member name="M:R2API.Utils.Reflection.SetFieldValue``1(System.Object,System.String,``0)">
             <summary>
             Sets the value of the specified field on the specified object; if the object is a struct use
-            <see cref="M:R2API.Utils.Reflection.SetStructFieldValue``2(``0@,System.String,``1)"/> instead
+            <see cref="M:R2API.Utils.Reflection.SetStructFieldValue``2(``0@,System.String,``1)" /> instead
             </summary>
             <typeparam name="TValue">The type of the value to set</typeparam>
             <param name="instance">The name of the field to set the value of</param>
@@ -1955,15 +1954,15 @@
         </member>
         <member name="M:R2API.Utils.Reflection.GetFieldFull(System.Type,System.String)">
             <summary>
-            Gets the <see cref="T:System.Reflection.FieldInfo"/> on the specified <see cref="T:System.Type"/> and searches base types if not found.
+            Gets the <see cref="T:System.Reflection.FieldInfo" /> on the specified <see cref="T:System.Type" /> and searches base types if not found.
             </summary>
-            <param name="T">The <see cref="T:System.Type"/> to search and get base types from</param>
+            <param name="T">The <see cref="T:System.Type" /> to search and get base types from</param>
             <param name="name">The name of the property to search for.</param>
             <returns></returns>
         </member>
         <member name="M:R2API.Utils.Reflection.GetPropertyCached``1(System.String)">
             <summary>
-            Gets the <see cref="T:System.Reflection.PropertyInfo"/> of the type by name
+            Gets the <see cref="T:System.Reflection.PropertyInfo" /> of the type by name
             </summary>
             <typeparam name="T">The type on which to find the property</typeparam>
             <param name="name">The name of the property to get</param>
@@ -1971,9 +1970,9 @@
         </member>
         <member name="M:R2API.Utils.Reflection.GetPropertyCached(System.Type,System.String)">
             <summary>
-            Gets the <see cref="T:System.Reflection.PropertyInfo"/> of the type by name
+            Gets the <see cref="T:System.Reflection.PropertyInfo" /> of the type by name
             </summary>
-            <param name="T">The type to get the <see cref="T:System.Reflection.PropertyInfo"/> from</param>
+            <param name="T">The type to get the <see cref="T:System.Reflection.PropertyInfo" /> from</param>
             <param name="name">The name of the property to get</param>
             <returns></returns>
         </member>
@@ -1999,7 +1998,7 @@
         <member name="M:R2API.Utils.Reflection.SetPropertyValue``1(System.Object,System.String,``0)">
             <summary>
             Sets the value of the property on the specified class; if you're setting the property on a
-            struct use <see cref="M:R2API.Utils.Reflection.SetStructPropertyValue``2(``0@,System.String,``1)"/> instead
+            struct use <see cref="M:R2API.Utils.Reflection.SetStructPropertyValue``2(``0@,System.String,``1)" /> instead
             </summary>
             <typeparam name="TValue">The type of the value to set</typeparam>
             <param name="instance">The name of the field to set the value of</param>
@@ -2052,7 +2051,7 @@
             </summary>
             <param name="T">The type to search</param>
             <param name="name">The name of the method to find</param>
-            <returns>The found <see cref="T:System.Reflection.MethodInfo"/></returns>
+            <returns>The found <see cref="T:System.Reflection.MethodInfo" /></returns>
         </member>
         <member name="M:R2API.Utils.Reflection.GetMethodWithConstructedGenericParameter(System.Type,System.String,System.Type)">
             <summary>
@@ -2061,7 +2060,7 @@
             <param name="T">The type to search</param>
             <param name="name">The name of the method to find</param>
             <param name="genericTypeDefinition">The generic type definition parameter</param>
-            <returns>The found <see cref="T:System.Reflection.MethodInfo"/></returns>
+            <returns>The found <see cref="T:System.Reflection.MethodInfo" /></returns>
         </member>
         <member name="M:R2API.Utils.Reflection.GetMethodCached``1(System.String,System.Type[])">
             <summary>

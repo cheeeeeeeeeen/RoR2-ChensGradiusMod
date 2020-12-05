@@ -1,4 +1,5 @@
-﻿using Chen.Helpers.UnityHelpers;
+﻿using Chen.Helpers.MathHelpers;
+using Chen.Helpers.UnityHelpers;
 using R2API.Networking;
 using R2API.Networking.Interfaces;
 using RoR2;
@@ -11,7 +12,6 @@ using static Chen.GradiusMod.GradiusModPlugin;
 using static Chen.GradiusMod.SyncOptionTargetForClients;
 using static Chen.Helpers.MathHelpers.Wave;
 using Object = System.Object;
-using Chen.Helpers.MathHelpers;
 
 namespace Chen.GradiusMod
 {
