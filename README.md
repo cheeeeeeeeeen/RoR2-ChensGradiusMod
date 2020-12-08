@@ -77,6 +77,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Fix a bug where the Laser Drone would bug out if it has Options and the Options cannot target the enemy.
 - Integrate Queue Processors from ChensHelpers.
 - Fix a bug where the drones made repurchase-able by the mod would not have their costs scaled.
+- Refactored the FireForAllOptions API. Check the documentation for the change.
 
 **2.2.5**
 - Implement a custom Death State where mod creators can also inherit to easily define the death behavior of the custom drone.

@@ -123,7 +123,7 @@ namespace Chen.GradiusMod
             laserChildLocator = laserEffect.GetComponent<ChildLocator>();
             laserEffectEnd = laserChildLocator.FindChild("LaserEnd");
             UpdateLockOn();
-            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
                 if (behavior.laserFire) Destroy(behavior.laserFire);
                 if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
@@ -143,7 +143,7 @@ namespace Chen.GradiusMod
             if (laserEffect) Destroy(laserEffect);
             characterBody.SetAimTimer(maximumDuration);
             Util.PlaySound(stopLoopSoundString, gameObject);
-            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
                 if (behavior.laserFire) Destroy(behavior.laserFire);
                 if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
@@ -205,14 +205,12 @@ namespace Chen.GradiusMod
                 }
                 fireStopwatch -= 1f / fireFrequency;
             }
-            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, optionTarget) =>
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, optionTarget, direction) =>
             {
                 Vector3 position = option.transform.position;
-                Vector3 direction = GetAimRay().direction;
-                if (optionTarget) direction = optionTarget.transform.position - position;
-                else if (lockedOnHurtBox) direction = lockedOnHurtBox.transform.position - position;
+                if (!optionTarget && lockedOnHurtBox) direction = (lockedOnHurtBox.transform.position - position).normalized;
 
-                Vector3 point = direction.normalized * maxDistance;
+                Vector3 point = direction * maxDistance;
                 if (Physics.Raycast(position, point, out RaycastHit raycastHit3, maxDistance,
                                     LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.Ignore))
                 {

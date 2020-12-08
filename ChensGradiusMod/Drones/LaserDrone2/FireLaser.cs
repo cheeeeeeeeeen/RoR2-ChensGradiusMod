@@ -102,7 +102,7 @@ namespace Chen.GradiusMod
                 particleChargeEffect.transform.parent = transform;
                 ScaleParticleSystemDuration particleSystem = particleChargeEffect.GetComponent<ScaleParticleSystemDuration>();
                 if (particleSystem) particleSystem.newDuration = duration;
-                GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+                GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
                 {
                     behavior.laserChargeEffect = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
                     behavior.laserChargeEffect.transform.parent = option.transform;
@@ -118,7 +118,7 @@ namespace Chen.GradiusMod
         {
             AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
             if (particleChargeEffect) Destroy(particleChargeEffect);
-            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+            GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
                 if (behavior.laserChargeEffect) Destroy(behavior.laserChargeEffect);
             });
@@ -139,14 +139,11 @@ namespace Chen.GradiusMod
                     GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
                 }
                 Util.PlaySound(attackSoundString, gameObject);
-                GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, target) =>
+                GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, direction) =>
                 {
                     if (effectPrefab) EffectManager.SimpleMuzzleFlash(effectPrefab, option, "Muzzle", false);
                     if (isAuthority)
                     {
-                        Vector3 direction;
-                        if (target) direction = (target.transform.position - option.transform.position).normalized;
-                        else direction = GetAimRay().direction;
                         Ray aimRay = new Ray(option.transform.position, direction);
                         Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
                         GenerateLaser(aimRay, vector, damageStat * damageCoefficient * GradiusOption.instance.damageMultiplier,
