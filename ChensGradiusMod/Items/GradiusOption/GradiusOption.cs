@@ -1100,7 +1100,7 @@ namespace Chen.GradiusMod
         }
 
         /// <summary>
-        /// Loops through all the Options of the minion.
+        /// Loops through all the Options of the minion. Always do a null check on the target parameter of actionToRun.
         /// </summary>
         /// <param name="optionOwner">The owner of the option.</param>
         /// <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>

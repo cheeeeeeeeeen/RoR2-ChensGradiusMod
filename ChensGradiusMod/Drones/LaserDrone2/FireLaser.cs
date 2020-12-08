@@ -144,7 +144,9 @@ namespace Chen.GradiusMod
                     if (effectPrefab) EffectManager.SimpleMuzzleFlash(effectPrefab, option, "Muzzle", false);
                     if (isAuthority)
                     {
-                        Vector3 direction = (target.transform.position - option.transform.position).normalized;
+                        Vector3 direction;
+                        if (target) direction = (target.transform.position - option.transform.position).normalized;
+                        else direction = GetAimRay().direction;
                         Ray aimRay = new Ray(option.transform.position, direction);
                         Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
                         GenerateLaser(aimRay, vector, damageStat * damageCoefficient * GradiusOption.instance.damageMultiplier,
