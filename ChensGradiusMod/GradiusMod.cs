@@ -204,5 +204,14 @@ namespace Chen.GradiusMod
             [AutoConfig("Aetherium Compatibility: Allow Equipment Drones to be Inspired by Inspiring Drone.", AutoConfigFlags.PreventNetMismatch)]
             public bool equipmentDroneInspire { get; private set; } = true;
         }
+
+        internal static bool DebugCheck()
+        {
+#if DEBUG
+            return true;
+#else
+            return false;
+#endif
+        }
     }
 }

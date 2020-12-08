@@ -288,7 +288,7 @@ namespace Chen.GradiusMod
             };
         }
 
-        public static bool DebugCheck()
+        internal static bool DebugCheck()
         {
 #if DEBUG
             return true;
