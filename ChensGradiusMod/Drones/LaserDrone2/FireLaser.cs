@@ -104,9 +104,9 @@ namespace Chen.GradiusMod
                 if (particleSystem) particleSystem.newDuration = duration;
                 GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
                 {
-                    behavior.fx["laserChargeEffect"] = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
-                    ((GameObject)behavior.fx["laserChargeEffect"]).transform.parent = option.transform;
-                    var optionParticleSystem = ((GameObject)behavior.fx["laserChargeEffect"]).GetComponent<ScaleParticleSystemDuration>();
+                    behavior.D["laserChargeEffect"] = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
+                    ((GameObject)behavior.D["laserChargeEffect"]).transform.parent = option.transform;
+                    var optionParticleSystem = ((GameObject)behavior.D["laserChargeEffect"]).GetComponent<ScaleParticleSystemDuration>();
                     if (optionParticleSystem) optionParticleSystem.newDuration = duration;
                 });
             }
@@ -120,7 +120,7 @@ namespace Chen.GradiusMod
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.fx["laserChargeEffect"]) Destroy(behavior.fx["laserChargeEffect"]);
+                if (behavior.D["laserChargeEffect"]) Destroy(behavior.D["laserChargeEffect"]);
             });
             base.OnExit();
         }

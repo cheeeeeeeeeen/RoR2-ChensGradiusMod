@@ -32,18 +32,18 @@ namespace Chen.GradiusMod
         public int numbering = 0;
 
         /// <summary>
-        /// Useful for storing effect prefabs or components or scriptable objects.
-        /// This can be used to save effects in between transitioning states of the owner.
+        /// Useful for storing prefabs, components, scriptable objects or anything that needs to be saved from one state to another of the owner.
+        /// Utilizing this means that one does not need to create and attach a component for storing these objects.
         /// </summary>
-        public Dictionary<string, UnityObject> effects = new Dictionary<string, UnityObject>();
+        public Dictionary<string, UnityObject> data = new Dictionary<string, UnityObject>();
 
         /// <summary>
-        /// Shorthand for the effects dictionary.
+        /// Shorthand for the data dictionary.
         /// </summary>
-        public Dictionary<string, UnityObject> fx
+        public Dictionary<string, UnityObject> D
         {
-            get => effects;
-            private set => effects = value;
+            get => data;
+            private set => data = value;
         }
 
         internal GameObject target;
