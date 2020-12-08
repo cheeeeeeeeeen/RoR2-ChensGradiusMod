@@ -16,9 +16,9 @@ namespace Chen.GradiusMod
             return spawnCard;
         }
 
-        protected override void OnInteractableSpawn()
+        protected override void OnInteractableSpawn(GameObject spawnedObject)
         {
-            base.OnInteractableSpawn();
+            base.OnInteractableSpawn(spawnedObject);
             if (NetworkServer.active && Util.CheckRoll(generalCfg.dropEquipFromDroneChance, characterBody.master))
             {
                 PickupIndex equipIndex = PickupCatalog.FindPickupIndex(characterBody.inventory.currentEquipmentIndex);

@@ -27,9 +27,9 @@ namespace Chen.GradiusMod
         /// A method that can be overridden to add or change the logic when the interactable is spawned.
         /// Default logic is to compute for the scaled cost of the drone.
         /// </summary>
-        protected virtual void OnInteractableSpawn()
+        protected virtual void OnInteractableSpawn(GameObject spawnedObject)
         {
-            PurchaseInteraction purchaseInteraction = gameObject.GetComponent<PurchaseInteraction>();
+            PurchaseInteraction purchaseInteraction = spawnedObject.GetComponent<PurchaseInteraction>();
             if (purchaseInteraction && purchaseInteraction.costType == CostTypeIndex.Money)
             {
                 purchaseInteraction.Networkcost = Run.instance.GetDifficultyScaledCost(purchaseInteraction.cost);
@@ -52,7 +52,7 @@ namespace Chen.GradiusMod
                     position = contactPoint
                 };
                 GameObject gameObject = DirectorCore.instance.TrySpawnObject(new DirectorSpawnRequest(spawnCard, placementRule, new Xoroshiro128Plus(0UL)));
-                if (gameObject) OnInteractableSpawn();
+                if (gameObject) OnInteractableSpawn(gameObject);
             }
         }
 
