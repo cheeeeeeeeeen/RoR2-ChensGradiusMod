@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-2.2.5-orange)
+![Version](https://img.shields.io/badge/Version-2.2.6-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -73,6 +73,11 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**2.2.6**
+- Fix a bug where the Laser Drone would bug out if it has Options and the Options cannot target the enemy.
+- Integrate Queue Processors from ChensHelpers.
+- Fix a bug where the drones made repurchase-able by the mod would not have their costs scaled.
+
 **2.2.5**
 - Implement a custom Death State where mod creators can also inherit to easily define the death behavior of the custom drone.
 - The main use for the custom Death State is to be able to spawn the drone's respective interactable upon death.
@@ -85,10 +90,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **2.2.3**
 - Bug fix related to Laser Drone's sound again. Hopefully it does not bug out again. Moved the stopping sound in OnExit to fix it.
-
-**2.2.2**
-- Code cleanup and refactor that reduces the possibility of potential bugs using the power of ChensHelper.
-- Eliminated most of possible exceptions that may occur.
-- If there are no more bugs or needed API, this could be the final version.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
