@@ -287,5 +287,14 @@ namespace Chen.GradiusMod
                 InteractableCategory = InteractableCategory.Drones,
             };
         }
+
+        public static bool DebugCheck()
+        {
+#if DEBUG
+            return true;
+#else
+            return false;
+#endif
+        }
     }
 }

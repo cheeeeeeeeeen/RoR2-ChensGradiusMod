@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Chen.GradiusMod.Tests.GradiusMod
+namespace Chen.GradiusMod.Tests
 {
     [TestClass]
-    public class Constants
+    public class GradiusMod
     {
         [TestMethod]
         public void ModVer_Length_ReturnsCorrectFormat()

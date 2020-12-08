@@ -54,7 +54,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GradiusMod\Constants.cs" />
+    <Compile Include="Drones\LaserDrone1.cs" />
+    <Compile Include="Drones\LaserDrone2.cs" />
+    <Compile Include="GradiusMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

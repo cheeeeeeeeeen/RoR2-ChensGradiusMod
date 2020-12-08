@@ -14,11 +14,14 @@ using R2API.Utils;
 using RoR2;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TILER2;
 using UnityEngine;
 using static Chen.Helpers.GeneralHelpers.AssetsManager;
 using static TILER2.MiscUtil;
 using Path = System.IO.Path;
+
+[assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
 
 namespace Chen.GradiusMod
 {
