@@ -261,7 +261,7 @@
             <returns>The spawn card of the interactable if implemented.</returns>
             <exception cref="T:System.InvalidOperationException">Thrown when the Property is not implemented.</exception>
         </member>
-        <member name="M:Chen.GradiusMod.DroneDeathState.OnInteractableSpawn">
+        <member name="M:Chen.GradiusMod.DroneDeathState.OnInteractableSpawn(UnityEngine.GameObject)">
             <summary>
             A method that can be overridden to add or change the logic when the interactable is spawned.
             Default logic is to compute for the scaled cost of the drone.
@@ -324,6 +324,17 @@
         <member name="F:Chen.GradiusMod.OptionBehavior.numbering">
             <summary>
             The number that represents the identification of the Option scoped under the owner.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.OptionBehavior.data">
+            <summary>
+            Useful for storing prefabs, components, scriptable objects or anything that needs to be saved from one state to another of the owner.
+            Utilizing this means that one does not need to create and attach a component for storing these objects.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.OptionBehavior.D">
+            <summary>
+            Shorthand for the data dictionary.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.OptionBehavior.DecidePosition(System.Single)">
@@ -428,12 +439,17 @@
             <param name="ownerMaster">The owner of the minions.</param>
             <param name="actionToRun">An action to execute for each minion. The minion's CharacterBody GameObject is given as the input.</param>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.OptionBehavior,UnityEngine.GameObject})">
+        <member name="M:Chen.GradiusMod.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.OptionBehavior,UnityEngine.GameObject,UnityEngine.Vector3})">
             <summary>
-            Loops through all the Options of the minion.
+            Loops through all the Options of the minion. The action has 4 useful parameters to use.
+            The first parameter refers to the Option/Multiple itself. It is a GameObject.
+            The second parameter refers to the OptionBehavior component in the Option/Multiple.
+            The third parameter refers to the target of the Option/Multiple owner. It is also a GameObject.
+            The last parameter refers to the direction from the option to the target. It is a normalized Vector3.
             </summary>
             <param name="optionOwner">The owner of the option.</param>
-            <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>
+            <param name="actionToRun">An action to execute for each Option. The inputs are as follows:
+            GameObject option, OptionBehavior behavior, GameObject target, Vector3 direction.</param>
         </member>
         <member name="M:Chen.GradiusMod.GradiusOption.OptionSync(RoR2.CharacterBody,System.Action{UnityEngine.Networking.NetworkIdentity,Chen.GradiusMod.OptionTracker},System.Boolean)">
             <summary>
@@ -442,6 +458,13 @@
             <param name="optionOwner">The owner of the option.</param>
             <param name="actionToRun">The sync action to perform. Inputs are as follows: NetworkIdentity optionIdentity, OptionTracker tracker.</param>
             <param name="queryTracker">If true, the Option tracker is automatically queried. If false, the Option tracker will not be queried.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.OptionBehavior,UnityEngine.GameObject})">
+            <summary>
+            Loops through all the Options of the minion. Always do a null check on the target parameter of actionToRun.
+            </summary>
+            <param name="optionOwner">The owner of the option.</param>
+            <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>
         </member>
     </members>
 </doc>
