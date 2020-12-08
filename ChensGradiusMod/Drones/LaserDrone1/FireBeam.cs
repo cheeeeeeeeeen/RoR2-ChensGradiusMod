@@ -125,14 +125,14 @@ namespace Chen.GradiusMod
             UpdateLockOn();
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.laserFire) Destroy(behavior.laserFire);
-                if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
-                if (behavior.laserFireEnd) Destroy(behavior.laserFireEnd);
+                if (behavior.fx["laserFire"]) Destroy(behavior.fx["laserFire"]);
+                if (behavior.fx["laserChildLocator"]) Destroy(behavior.fx["laserChildLocator"]);
+                if (behavior.fx["laserFireEnd"]) Destroy(behavior.fx["laserFireEnd"]);
                 Transform transform = option.transform;
-                behavior.laserFire = Object.Instantiate(laserPrefab, transform.position, transform.rotation);
-                behavior.laserFire.transform.parent = transform;
-                behavior.laserChildLocator = behavior.laserFire.GetComponent<ChildLocator>();
-                behavior.laserFireEnd = behavior.laserChildLocator.FindChild("LaserEnd");
+                behavior.fx["laserFire"] = Object.Instantiate(laserPrefab, transform.position, transform.rotation);
+                ((GameObject)behavior.fx["laserFire"]).transform.parent = transform;
+                behavior.fx["laserChildLocator"] = ((GameObject)behavior.fx["laserFire"]).GetComponent<ChildLocator>();
+                behavior.fx["laserFireEnd"] = ((ChildLocator)behavior.fx["laserChildLocator"]).FindChild("LaserEnd");
             });
             bodyRotation = transform.GetComponentInChildren<BodyRotation>();
             bodyRotation.accelerate = true;
@@ -145,9 +145,9 @@ namespace Chen.GradiusMod
             Util.PlaySound(stopLoopSoundString, gameObject);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.laserFire) Destroy(behavior.laserFire);
-                if (behavior.laserChildLocator) Destroy(behavior.laserChildLocator);
-                if (behavior.laserFireEnd) Destroy(behavior.laserFireEnd);
+                if (behavior.fx["laserFire"]) Destroy(behavior.fx["laserFire"]);
+                if (behavior.fx["laserChildLocator"]) Destroy(behavior.fx["laserChildLocator"]);
+                if (behavior.fx["laserFireEnd"]) Destroy(behavior.fx["laserFireEnd"]);
             });
             bodyRotation.accelerate = false;
             base.OnExit();
@@ -218,7 +218,7 @@ namespace Chen.GradiusMod
                 }
                 Ray optionRay = new Ray(position, point - position);
                 bool optionFlag = false;
-                if (behavior.laserFire && behavior.laserChildLocator && behavior.laserFireEnd)
+                if (behavior.fx["laserFire"] && behavior.fx["laserChildLocator"] && behavior.fx["laserFireEnd"])
                 {
                     if (Physics.Raycast(optionRay.origin, optionRay.direction, out RaycastHit raycastHit4, optionRay.direction.magnitude,
                                         LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
@@ -231,8 +231,8 @@ namespace Chen.GradiusMod
                             optionFlag = true;
                         }
                     }
-                    behavior.laserFire.transform.rotation = Util.QuaternionSafeLookRotation(point - position);
-                    behavior.laserFireEnd.position = point;
+                    ((GameObject)behavior.fx["laserFire"]).transform.rotation = Util.QuaternionSafeLookRotation(point - position);
+                    ((Transform)behavior.fx["laserFireEnd"]).position = point;
                 }
                 if (optionFireStopwatch > 1f / fireFrequency)
                 {

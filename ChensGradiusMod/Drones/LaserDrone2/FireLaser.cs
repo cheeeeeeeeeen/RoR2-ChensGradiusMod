@@ -100,13 +100,13 @@ namespace Chen.GradiusMod
             {
                 particleChargeEffect = Object.Instantiate(particleEffectPrefab, muzzle.transform.position, muzzle.transform.rotation);
                 particleChargeEffect.transform.parent = transform;
-                ScaleParticleSystemDuration particleSystem = particleChargeEffect.GetComponent<ScaleParticleSystemDuration>();
+                var particleSystem = particleChargeEffect.GetComponent<ScaleParticleSystemDuration>();
                 if (particleSystem) particleSystem.newDuration = duration;
                 GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
                 {
-                    behavior.laserChargeEffect = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
-                    behavior.laserChargeEffect.transform.parent = option.transform;
-                    ScaleParticleSystemDuration optionParticleSystem = behavior.laserChargeEffect.GetComponent<ScaleParticleSystemDuration>();
+                    behavior.fx["laserChargeEffect"] = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
+                    ((GameObject)behavior.fx["laserChargeEffect"]).transform.parent = option.transform;
+                    var optionParticleSystem = ((GameObject)behavior.fx["laserChargeEffect"]).GetComponent<ScaleParticleSystemDuration>();
                     if (optionParticleSystem) optionParticleSystem.newDuration = duration;
                 });
             }
@@ -120,7 +120,7 @@ namespace Chen.GradiusMod
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.laserChargeEffect) Destroy(behavior.laserChargeEffect);
+                if (behavior.fx["laserChargeEffect"]) Destroy(behavior.fx["laserChargeEffect"]);
             });
             base.OnExit();
         }

@@ -11,7 +11,8 @@ using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static Chen.GradiusMod.SyncOptionTargetForClients;
 using static Chen.Helpers.MathHelpers.Wave;
-using Object = System.Object;
+using SystemObject = System.Object;
+using UnityObject = UnityEngine.Object;
 
 namespace Chen.GradiusMod
 {
@@ -30,14 +31,21 @@ namespace Chen.GradiusMod
         /// </summary>
         public int numbering = 0;
 
-        internal GameObject flamethrower;
-        internal HealBeamController healBeamController;
-        internal GameObject laserChargeEffect;
-        internal GameObject laserFire;
-        internal ChildLocator laserChildLocator;
-        internal Transform laserFireEnd;
-        internal GameObject fistChargeEffect;
-        internal GameObject sunderEffect;
+        /// <summary>
+        /// Useful for storing effect prefabs or components or scriptable objects.
+        /// This can be used to save effects in between transitioning states of the owner.
+        /// </summary>
+        public Dictionary<string, UnityObject> effects = new Dictionary<string, UnityObject>();
+
+        /// <summary>
+        /// Shorthand for the effects dictionary.
+        /// </summary>
+        public Dictionary<string, UnityObject> fx
+        {
+            get => effects;
+            private set => effects = value;
+        }
+
         internal GameObject target;
         internal OptionTracker ownerOt;
 
@@ -273,7 +281,7 @@ namespace Chen.GradiusMod
             else if (difference < 0) while (flightPath.Count >= flightPathCap) flightPath.RemoveAt(flightPath.Count - 1);
         }
 
-        private void IncreaseInvalidity(Object obj)
+        private void IncreaseInvalidity(SystemObject obj)
         {
             Log.Warning(obj);
             invalidCheckTimer += Time.fixedDeltaTime;
