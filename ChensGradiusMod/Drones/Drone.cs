@@ -1,8 +1,9 @@
 ﻿using BepInEx.Configuration;
+using Chen.GradiusMod.Compatibility;
 using System;
 using static Chen.GradiusMod.GradiusModPlugin;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones
 {
     /// <summary>
     /// Allows for making drone classes into singleton classes.

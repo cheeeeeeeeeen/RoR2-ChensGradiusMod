@@ -13,7 +13,7 @@ using UnityEngine;
 using static R2API.DirectorAPI;
 using Stage = R2API.DirectorAPI.Stage;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones.LaserDrone1
 {
     internal class LaserDrone1 : Drone<LaserDrone1>
     {

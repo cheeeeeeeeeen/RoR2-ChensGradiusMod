@@ -1,6 +1,6 @@
 using RoR2;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones.LaserDrone2
 {
     internal class LaserDrone2DeathState : DroneDeathState
     {

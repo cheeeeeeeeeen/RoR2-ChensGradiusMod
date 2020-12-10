@@ -2,7 +2,7 @@
 using KomradeSpectre.Aetherium;
 using static Chen.GradiusMod.GradiusModPlugin;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Compatibility
 {
     /// <summary>
     /// A static class that contains compatibility features from Aetherium mod.

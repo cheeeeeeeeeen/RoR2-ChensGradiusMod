@@ -1,11 +1,12 @@
-﻿using EntityStates;
+﻿using Chen.GradiusMod.Compatibility;
+using EntityStates;
 using EntityStates.TitanMonster;
 using RoR2;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones.LaserDrone1
 {
     internal class FireBeam : BaseState
     {

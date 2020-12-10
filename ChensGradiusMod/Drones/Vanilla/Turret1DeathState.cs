@@ -1,7 +1,7 @@
 using RoR2;
 using UnityEngine;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones.Vanilla
 {
     internal class Turret1DeathState : DroneDeathState
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using VanillaMegaDroneState = EntityStates.Drone.MegaDroneDeathState;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones.Vanilla
 {
     internal class MegaDroneDeathState : DroneDeathState
     {

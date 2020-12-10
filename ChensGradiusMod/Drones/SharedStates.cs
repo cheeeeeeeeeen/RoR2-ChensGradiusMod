@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using VanillaDeathState = EntityStates.Drone.DeathState;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones
 {
     /// <summary>
     /// An Entity State that should inherit from the original EntityStates.Drone.DeathState.

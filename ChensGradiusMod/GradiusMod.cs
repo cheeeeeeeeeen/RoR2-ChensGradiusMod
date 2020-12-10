@@ -6,6 +6,7 @@ using Chen.ClassicItems;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
+using Chen.GradiusMod.Compatibility;
 using EntityStates;
 using KomradeSpectre.Aetherium;
 using R2API;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones
 {
     /// <summary>
     /// A static class that caters initializing and registering custom drones.

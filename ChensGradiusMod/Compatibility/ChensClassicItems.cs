@@ -2,7 +2,7 @@
 using RoR2;
 using static Chen.GradiusMod.GradiusModPlugin;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Compatibility
 {
     /// <summary>
     /// A static class that contains compatibility features from Chen's Classic Items.

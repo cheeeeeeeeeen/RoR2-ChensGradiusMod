@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static RoR2.GenericPickupController;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones.Vanilla
 {
     internal class EquipmentDroneDeathState : DroneDeathState
     {

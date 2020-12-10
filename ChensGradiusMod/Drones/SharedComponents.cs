@@ -1,7 +1,7 @@
 ﻿using RoR2.UI;
 using UnityEngine;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones
 {
     /// <summary>
     /// A component that allows the model to be rotated along the Z-axis.

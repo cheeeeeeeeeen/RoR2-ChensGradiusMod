@@ -2,7 +2,7 @@
 using UnityEngine;
 using static Chen.Helpers.MathHelpers.Wave;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Drones.LaserDrone2
 {
     internal class ChargeEffect : MonoBehaviour
     {
