@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-2.2.6-orange)
+![Version](https://img.shields.io/badge/Version-2.2.7-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -73,6 +73,11 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**2.2.7**
+- Major changes in the project structure to follow the best practices.
+- This will make the code more readable for other contributors.
+- This will have a big impact for those who use this mod's API, but most likely on the namespaces. Check the documentation for correction references.
+
 **2.2.6**
 - Fix a bug where the Laser Drone would bug out if it has Options and the Options cannot target the enemy.
 - Integrate Queue Processors from ChensHelpers.
@@ -88,8 +93,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **2.2.4**
 - Integrate SoundPlayer from ChensHelpers for testing sounds. Only available for developers.
 - Improve DroneCatalog's implementation so that every Drone instance will have concurrent phases of setup.
-
-**2.2.3**
-- Bug fix related to Laser Drone's sound again. Hopefully it does not bug out again. Moved the stopping sound in OnExit to fix it.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*

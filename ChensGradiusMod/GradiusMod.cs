@@ -50,7 +50,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "2.2.6";
+            "2.2.7";
 
         /// <summary>
         /// The name of the mod.
