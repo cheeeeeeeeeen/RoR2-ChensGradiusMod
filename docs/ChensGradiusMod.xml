@@ -4,35 +4,35 @@
         <name>ChensGradiusMod</name>
     </assembly>
     <members>
-        <member name="T:Chen.GradiusMod.AetheriumCompatibility">
+        <member name="T:Chen.GradiusMod.Compatibility.Aetherium">
             <summary>
             A static class that contains compatibility features from Aetherium mod.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.AetheriumCompatibility.enabled">
+        <member name="P:Chen.GradiusMod.Compatibility.Aetherium.enabled">
             <summary>
             The check to use if Aetherium mod is enabled.
             Always do an if check before invoking methods in this class or else unexpected errors will happen in-game.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.AetheriumCompatibility.AddCustomDrone(System.String)">
+        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.AddCustomDrone(System.String)">
             <summary>
             Allows the Inspiring Drone to inspire the custom drone.
             </summary>
             <param name="masterName">The Character Master name of the drone to add</param>
         </member>
-        <member name="T:Chen.GradiusMod.ChensClassicItemsCompatibility">
+        <member name="T:Chen.GradiusMod.Compatibility.ChensClassicItems">
             <summary>
             A static class that contains compatibility features from Chen's Classic Items.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.ChensClassicItemsCompatibility.enabled">
+        <member name="P:Chen.GradiusMod.Compatibility.ChensClassicItems.enabled">
             <summary>
             The check to use if Chen's Classic Items mod is enabled.
             Always do an if check before invoking methods in this class or else unexpected errors will happen in-game.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.ChensClassicItemsCompatibility.TriggerArtillery(RoR2.CharacterBody,System.Single,System.Boolean,RoR2.ProcChainMask)">
+        <member name="M:Chen.GradiusMod.Compatibility.ChensClassicItems.TriggerArtillery(RoR2.CharacterBody,System.Single,System.Boolean,RoR2.ProcChainMask)">
             <summary>
             Uses the API to allow Arms Race item to be triggered when invoked.
             </summary>
@@ -41,119 +41,151 @@
             <param name="crit">Determines if the artillery will be a critical</param>
             <param name="procChainMask">Proc Chain Mask</param>
         </member>
-        <member name="M:Chen.GradiusMod.ChensClassicItemsCompatibility.DroneRepairKitSupport(System.String,System.Boolean)">
+        <member name="M:Chen.GradiusMod.Compatibility.ChensClassicItems.DroneRepairKitSupport(System.String,System.Boolean)">
             <summary>
             Uses the API to allow Drone Repair Kit to support custom drones.
             </summary>
             <param name="masterName"></param>
             <param name="support"></param>
         </member>
-        <member name="T:Chen.GradiusMod.Drone`1">
+        <member name="T:Chen.GradiusMod.Drones.BodyRotation">
+            <summary>
+            A component that allows the model to be rotated along the Z-axis.
+            May be useful to certain custom drones and some behavioral effects.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Drones.BodyRotation.rotationSpeed">
+            <summary>
+            The constant base speed of which the object will rotate around the Z-axis.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Drones.BodyRotation.rotationDirection">
+            <summary>
+            The direction of the rotation. This should only be 1, 0 or -1.
+            Anything less or greater will cause faster rotation. 0 will not let it rotate.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Drones.BodyRotation.accelerate">
+            <summary>
+            A flag to toggle if the model should accelerate in rotating.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Drones.BodyRotation.acceleration">
+            <summary>
+            The rate at which the rotation speed will accelerate.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Drones.BodyRotation.maxRotationSpeed">
+            <summary>
+            The maximum rotation speed that the model can achieve.
+            </summary>
+        </member>
+        <member name="T:Chen.GradiusMod.Drones.Drone`1">
             <summary>
             Allows for making drone classes into singleton classes.
             </summary>
             <typeparam name="T">The drone class name</typeparam>
         </member>
-        <member name="P:Chen.GradiusMod.Drone`1.instance">
+        <member name="P:Chen.GradiusMod.Drones.Drone`1.instance">
             <summary>
             The instance of the singleton class.
             </summary>
         </member>
-        <member name="T:Chen.GradiusMod.Drone">
+        <member name="T:Chen.GradiusMod.Drones.Drone">
             <summary>
             The drone class where mod creators should inherit from to ease up development.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Drone.enabled">
+        <member name="P:Chen.GradiusMod.Drones.Drone.enabled">
             <summary>
             Determines if the drone should be enabled/disabled. Disabled drones will not be set up.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Drone.canBeInspired">
+        <member name="P:Chen.GradiusMod.Drones.Drone.canBeInspired">
             <summary>
             Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Drone.affectedByDroneRepairKit">
+        <member name="P:Chen.GradiusMod.Drones.Drone.affectedByDroneRepairKit">
             <summary>
             Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Drone.name">
+        <member name="P:Chen.GradiusMod.Drones.Drone.name">
             <summary>
             Fetches the custom drone's class name.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Drone.alreadySetup">
+        <member name="P:Chen.GradiusMod.Drones.Drone.alreadySetup">
             <summary>
             Used to determine if the custom drone was already set up.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Drone.configCategory">
+        <member name="P:Chen.GradiusMod.Drones.Drone.configCategory">
             <summary>
             The category that will be used in the config file that contains the custom drone's config options.
             </summary>
         </member>
-        <member name="F:Chen.GradiusMod.Drone.config">
+        <member name="F:Chen.GradiusMod.Drones.Drone.config">
             <summary>
             The config file assigned to this custom drone. Use this to bind config options.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.PreSetup">
+        <member name="M:Chen.GradiusMod.Drones.Drone.PreSetup">
             <summary>
             The first step in the setup process. Place here the logic needed before any processing begins.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.SetupConfig">
+        <member name="M:Chen.GradiusMod.Drones.Drone.SetupConfig">
             <summary>
             The second step in the setup process. Place here all the code related to adding configurations for the custom drone.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.SetupComponents">
+        <member name="M:Chen.GradiusMod.Drones.Drone.SetupComponents">
             <summary>
             The third step in the setup process. Place here all initialization of components, assets, textures, sounds, etc.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.SetupBehavior">
+        <member name="M:Chen.GradiusMod.Drones.Drone.SetupBehavior">
             <summary>
             The fourth step in the setup process. Place here the code related to the drone's behavior.
             One may place here mod compatibility code. Hooks should also go here.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.PostSetup">
+        <member name="M:Chen.GradiusMod.Drones.Drone.PostSetup">
             <summary>
             The fifth step in the setup process. Place here the code for cleanup, or for finalization.
             This will still be performed whether the drone is enabled or disabled.
             This will still also be performed if the drone was already set up or not.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.SetupFirstPhase">
+        <member name="M:Chen.GradiusMod.Drones.Drone.SetupFirstPhase">
             <summary>
             First phase of the setup process along with required logic. This phase invokes SetupConfig.
             This method is exposed for usage outside of this class.
             </summary>
             <returns>True means the setup was performed. False means the setup was skipped or the drone is disabled.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.SetupSecondPhase">
+        <member name="M:Chen.GradiusMod.Drones.Drone.SetupSecondPhase">
             <summary>
             Second phase of the setup process along with required logic. This method invokes SetupComponents.
             This method is exposed for usage outside of this class.
             </summary>
             <returns>True means the setup was performed. False means the setup was skipped or the drone is disabled.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.Drone.SetupThirdPhase">
+        <member name="M:Chen.GradiusMod.Drones.Drone.SetupThirdPhase">
             <summary>
             Third phase of the setup process along with required logic. This method invokes SetupBehavior.
             This method is exposed for usage outside of this class.
             </summary>
             <returns>True means the setup was performed. False means the setup was skipped or the drone is disabled.</returns>
         </member>
-        <member name="T:Chen.GradiusMod.DroneCatalog">
+        <member name="T:Chen.GradiusMod.Drones.DroneCatalog">
             <summary>
             A static class that caters initializing and registering custom drones.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.DroneCatalog.Initialize(System.String,BepInEx.Configuration.ConfigFile)">
+        <member name="M:Chen.GradiusMod.Drones.DroneCatalog.Initialize(System.String,BepInEx.Configuration.ConfigFile)">
             <summary>
             Generates a list of data containing the custom drones of the mod that called this method.
             </summary>
@@ -161,7 +193,7 @@
             <param name="configFile">The file where the mod's custom drones will bind their configs</param>
             <returns>A list of DroneInfos from the mod that called this method.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.DroneCatalog.SetupAll(System.Collections.Generic.List{Chen.GradiusMod.DroneInfo})">
+        <member name="M:Chen.GradiusMod.Drones.DroneCatalog.SetupAll(System.Collections.Generic.List{Chen.GradiusMod.Drones.DroneInfo})">
             <summary>
             Sets all the custom drones contained in the list up. Mod creators may instantiate the drones their own if they have a sophisticated logic.
             This flavor shows the normal way of setting up the drone instances.
@@ -169,36 +201,36 @@
             </summary>
             <param name="droneInfos">List of DroneInfos generated by Initialize</param>
         </member>
-        <member name="M:Chen.GradiusMod.DroneCatalog.EfficientSetupAll(System.Collections.Generic.List{Chen.GradiusMod.DroneInfo})">
+        <member name="M:Chen.GradiusMod.Drones.DroneCatalog.EfficientSetupAll(System.Collections.Generic.List{Chen.GradiusMod.Drones.DroneInfo})">
             <summary>
             Sets all the custom drones contained in the list up. Mod creators may instantiate the drones their own if they have a sophisticated logic.
             This flavor comes with efficient an setup by taking advantage of the boolean return values of each phase.
             </summary>
             <param name="droneInfos">List of DroneInfos generated by Initialize</param>
         </member>
-        <member name="M:Chen.GradiusMod.DroneCatalog.ScopedSetupAll(System.Collections.Generic.List{Chen.GradiusMod.DroneInfo})">
+        <member name="M:Chen.GradiusMod.Drones.DroneCatalog.ScopedSetupAll(System.Collections.Generic.List{Chen.GradiusMod.Drones.DroneInfo})">
             <summary>
             Sets all the custom drones contained in the list up. Mod creators may instantiate the drones their own if they have a sophisticated logic.
             This flavor does a scoped setup, effective if the custom drones are coded in such a way they have no dependent/shared components/behaviors from one another.
             </summary>
             <param name="droneInfos">List of DroneInfos generated by Initialize</param>
         </member>
-        <member name="T:Chen.GradiusMod.DroneInfo">
+        <member name="T:Chen.GradiusMod.Drones.DroneInfo">
             <summary>
             A structure that stores data of custom drones as well as where they originated from.
             </summary>
         </member>
-        <member name="F:Chen.GradiusMod.DroneInfo.mod">
+        <member name="F:Chen.GradiusMod.Drones.DroneInfo.mod">
             <summary>
             Mod identifier for differentiation, preferably the GUID.
             </summary>
         </member>
-        <member name="F:Chen.GradiusMod.DroneInfo.instance">
+        <member name="F:Chen.GradiusMod.Drones.DroneInfo.instance">
             <summary>
             The instance of a Drone.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.DroneInfo.#ctor(System.String,Chen.GradiusMod.Drone,BepInEx.Configuration.ConfigFile)">
+        <member name="M:Chen.GradiusMod.Drones.DroneInfo.#ctor(System.String,Chen.GradiusMod.Drones.Drone,BepInEx.Configuration.ConfigFile)">
             <summary>
             Basic constructor that stores the data of a custom drone.
             </summary>
@@ -206,7 +238,7 @@
             <param name="instance">Instance of the drone</param>
             <param name="config">Config file to bind onto</param>
         </member>
-        <member name="M:Chen.GradiusMod.DroneInfo.Equals(Chen.GradiusMod.DroneInfo)">
+        <member name="M:Chen.GradiusMod.Drones.DroneInfo.Equals(Chen.GradiusMod.Drones.DroneInfo)">
             <summary>
             Compares this instance and the other to see if they are "equal" as defined.
             For equality, always use this method instead of equality operators.
@@ -214,39 +246,7 @@
             <param name="other">The other instance being compared with</param>
             <returns>True if equal, false if not.</returns>
         </member>
-        <member name="T:Chen.GradiusMod.BodyRotation">
-            <summary>
-            A component that allows the model to be rotated along the Z-axis.
-            May be useful to certain custom drones and some behavioral effects.
-            </summary>
-        </member>
-        <member name="F:Chen.GradiusMod.BodyRotation.rotationSpeed">
-            <summary>
-            The constant base speed of which the object will rotate around the Z-axis.
-            </summary>
-        </member>
-        <member name="F:Chen.GradiusMod.BodyRotation.rotationDirection">
-            <summary>
-            The direction of the rotation. This should only be 1, 0 or -1.
-            Anything less or greater will cause faster rotation. 0 will not let it rotate.
-            </summary>
-        </member>
-        <member name="F:Chen.GradiusMod.BodyRotation.accelerate">
-            <summary>
-            A flag to toggle if the model should accelerate in rotating.
-            </summary>
-        </member>
-        <member name="F:Chen.GradiusMod.BodyRotation.acceleration">
-            <summary>
-            The rate at which the rotation speed will accelerate.
-            </summary>
-        </member>
-        <member name="F:Chen.GradiusMod.BodyRotation.maxRotationSpeed">
-            <summary>
-            The maximum rotation speed that the model can achieve.
-            </summary>
-        </member>
-        <member name="T:Chen.GradiusMod.DroneDeathState">
+        <member name="T:Chen.GradiusMod.Drones.DroneDeathState">
             <summary>
             An Entity State that should inherit from the original EntityStates.Drone.DeathState.
             The original code does not support custom spawn cards to be detected when dying so that the interactable can spawn again.
@@ -254,39 +254,39 @@
             Do not use this class directly. Always inherit from this class and implement the interactable property.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.DroneDeathState.GetInteractableSpawnCard">
+        <member name="M:Chen.GradiusMod.Drones.DroneDeathState.GetInteractableSpawnCard">
             <summary>
             A method that should be implemented by the child class. This will be the Spawn Card that will be used to spawn when the drone is destroyed.
             </summary>
             <returns>The spawn card of the interactable if implemented.</returns>
             <exception cref="T:System.InvalidOperationException">Thrown when the Property is not implemented.</exception>
         </member>
-        <member name="M:Chen.GradiusMod.DroneDeathState.OnInteractableSpawn(UnityEngine.GameObject)">
+        <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnInteractableSpawn(UnityEngine.GameObject)">
             <summary>
             A method that can be overridden to add or change the logic when the interactable is spawned.
             Default logic is to compute for the scaled cost of the drone.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.DroneDeathState.OnImpactServer(UnityEngine.Vector3)">
+        <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnImpactServer(UnityEngine.Vector3)">
             <summary>
             Overridden method from the original state so that it would instead spawn the specified interactable's spawn card.
             There is no need to override this unless special behavior is needed.
             </summary>
             <param name="contactPoint">The point where the interactable spawns</param>
         </member>
-        <member name="M:Chen.GradiusMod.DroneDeathState.OnEnter">
+        <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnEnter">
             <summary>
             Overrideable OnEnter method from the original state. Always call base.OnEnter. Initialize values at runtime here.
             To perform the death behavior specified in OnImpactServer, destroyOnImpact must be set to true.
             This method already does that so long as base.OnEnter is invoked.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.DroneDeathState.OnExit">
+        <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnExit">
             <summary>
             Overrideable OnEnter method from the original state. Always call base.OnExit.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.DroneDeathState.FixedUpdate">
+        <member name="M:Chen.GradiusMod.Drones.DroneDeathState.FixedUpdate">
             <summary>
             Overrideable OnEnter method from the original state. Always call base.FixedUpdate.
             </summary>
@@ -311,105 +311,105 @@
             The GUID of the mod.
             </summary>
         </member>
-        <member name="T:Chen.GradiusMod.OptionBehavior">
+        <member name="T:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior">
             <summary>
             A component attached to the Options/Multiples for their behavioral functions.
             </summary>
         </member>
-        <member name="F:Chen.GradiusMod.OptionBehavior.owner">
+        <member name="F:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.owner">
             <summary>
             The Character Body Game Object of this Option's owner.
             </summary>
         </member>
-        <member name="F:Chen.GradiusMod.OptionBehavior.numbering">
+        <member name="F:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.numbering">
             <summary>
             The number that represents the identification of the Option scoped under the owner.
             </summary>
         </member>
-        <member name="F:Chen.GradiusMod.OptionBehavior.data">
+        <member name="F:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.data">
             <summary>
             Useful for storing prefabs, components, scriptable objects or anything that needs to be saved from one state to another of the owner.
             Utilizing this means that one does not need to create and attach a component for storing these objects.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.OptionBehavior.D">
+        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.D">
             <summary>
             Shorthand for the data dictionary.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.OptionBehavior.DecidePosition(System.Single)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.DecidePosition(System.Single)">
             <summary>
             Computes for the actual position of the Option based on the owner's rotational variables and its numbering.
             </summary>
             <param name="baseAngle">The angle to compute from</param>
             <returns>Normalized position</returns>
         </member>
-        <member name="T:Chen.GradiusMod.OptionTracker">
+        <member name="T:Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker">
             <summary>
             A component attached to a Character Body that may own Options/Multiples.
             The mod handles attaching the component when necessary.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.OptionTracker.currentOptionAngle">
+        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker.currentOptionAngle">
             <summary>
             Property that stores the current positional angle from the owner.
             Useful for determining patterns relative to the Option's angle.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.OptionTracker.masterCharacterMaster">
+        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker.masterCharacterMaster">
             <summary>
             The Character Master of this Game Object's owner through Minion Ownership component.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.OptionTracker.characterMaster">
+        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker.characterMaster">
             <summary>
             Character Master of this Game Object.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.OptionTracker.characterBody">
+        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker.characterBody">
             <summary>
             Character Body of this Game Object.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.OptionTracker.GetRotateMultiplier">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker.GetRotateMultiplier">
             <summary>
             Fetches the rotational distance and speed multiplier for this object's Options.
             </summary>
             <returns>Rotational speed and distance multiplier</returns>
         </member>
-        <member name="M:Chen.GradiusMod.OptionTracker.GetRotateOffset">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker.GetRotateOffset">
             <summary>
             Fetches the rotational central offset for this object's Options.
             </summary>
             <returns>Offset</returns>
         </member>
-        <member name="T:Chen.GradiusMod.GradiusOption">
+        <member name="T:Chen.GradiusMod.Items.GradiusOption.GradiusOption">
             <summary>
             An item class powered by TILER2 which provides the main API related to the Options/Multiples.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.SupportMinionType(System.String)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SupportMinionType(System.String)">
             <summary>
             Adds a support for a minion for them to gain Options.
             </summary>
             <param name="masterName">The CharacterMaster name of the minion.</param>
             <returns>True if the minion is supported. False if it is already supported.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.UnsupportMinionType(System.String)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.UnsupportMinionType(System.String)">
             <summary>
             Removes support for a minion so that they do not acquire Options.
             </summary>
             <param name="masterName">The CharacterMaster name of the minion.</param>
             <returns>True if the minion is not supported anymore. False if it is already unsupported.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.SetToRotateOptions(System.String)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SetToRotateOptions(System.String)">
             <summary>
             Lets the minion use Rotate Options.
             </summary>
             <param name="masterName">The CharacterMaster name of the minion.</param>
             <returns>True if the minion is successfully set to use Rotate Options. False if it is already using Rotate Options.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.SetRotateOptionMultiplier(System.String,System.Single)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SetRotateOptionMultiplier(System.String,System.Single)">
             <summary>
             Sets the rotation multiplier for a minion type. This multiplier affects the distance and speed of rotation.
             </summary>
@@ -417,7 +417,7 @@
             <param name="newValue">The multiplier value.</param>
             <returns>True if the values are set. False if not.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.SetRotateOptionOffset(System.String,UnityEngine.Vector3)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SetRotateOptionOffset(System.String,UnityEngine.Vector3)">
             <summary>
             Sets the offset center position for a minion type. Options will rotate around the offset.
             </summary>
@@ -425,21 +425,21 @@
             <param name="newValue">The offset value.</param>
             <returns>True if the values are set. False if not.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.SetToRegularOptions(System.String)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SetToRegularOptions(System.String)">
             <summary>
             Lets the minion use Regular Options.
             </summary>
             <param name="masterName">The CharacterMaster name of the minion.</param>
             <returns>True if the minion is successfully set to use Regular Options. False if it is already using Regular Options.</returns>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.LoopAllMinions(RoR2.CharacterMaster,System.Action{UnityEngine.GameObject})">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.LoopAllMinions(RoR2.CharacterMaster,System.Action{UnityEngine.GameObject})">
             <summary>
             Loops through the all the minions of the owner.
             </summary>
             <param name="ownerMaster">The owner of the minions.</param>
             <param name="actionToRun">An action to execute for each minion. The minion's CharacterBody GameObject is given as the input.</param>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.OptionBehavior,UnityEngine.GameObject,UnityEngine.Vector3})">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior,UnityEngine.GameObject,UnityEngine.Vector3})">
             <summary>
             Loops through all the Options of the minion. The action has 4 useful parameters to use.
             The first parameter refers to the Option/Multiple itself. It is a GameObject.
@@ -451,7 +451,7 @@
             <param name="actionToRun">An action to execute for each Option. The inputs are as follows:
             GameObject option, OptionBehavior behavior, GameObject target, Vector3 direction.</param>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.OptionSync(RoR2.CharacterBody,System.Action{UnityEngine.Networking.NetworkIdentity,Chen.GradiusMod.OptionTracker},System.Boolean)">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.OptionSync(RoR2.CharacterBody,System.Action{UnityEngine.Networking.NetworkIdentity,Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker},System.Boolean)">
             <summary>
             Method that provides the Network Identity and Option Tracker for easier syncing. Sync logic should be provided in actionToRun.
             </summary>
@@ -459,7 +459,7 @@
             <param name="actionToRun">The sync action to perform. Inputs are as follows: NetworkIdentity optionIdentity, OptionTracker tracker.</param>
             <param name="queryTracker">If true, the Option tracker is automatically queried. If false, the Option tracker will not be queried.</param>
         </member>
-        <member name="M:Chen.GradiusMod.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.OptionBehavior,UnityEngine.GameObject})">
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior,UnityEngine.GameObject})">
             <summary>
             Loops through all the Options of the minion. Always do a null check on the target parameter of actionToRun.
             </summary>
