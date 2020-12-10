@@ -5,9 +5,9 @@ using RoR2.CharacterAI;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;
-using static Chen.GradiusMod.SyncOptionTargetForClients;
+using static Chen.GradiusMod.Items.GradiusOption.SyncOptionTargetForClients;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Items.GradiusOption
 {
     partial class GradiusOption
     {

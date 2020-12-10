@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ClassBeingTested = Chen.GradiusMod.LaserDrone2;
+using ClassBeingTested = Chen.GradiusMod.Drones.LaserDrone2.LaserDrone2;
 
 namespace Chen.GradiusMod.Tests.Drones
 {

@@ -1,4 +1,5 @@
 ﻿using Chen.GradiusMod.Compatibility;
+using Chen.GradiusMod.Items.GradiusOption;
 using EntityStates;
 using EntityStates.TitanMonster;
 using RoR2;

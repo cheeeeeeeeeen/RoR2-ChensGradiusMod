@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Items.GradiusOption
 {
     internal class SyncOptionTargetForClients : INetMessage
     {

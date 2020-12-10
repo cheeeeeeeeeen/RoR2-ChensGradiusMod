@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
-using static Chen.GradiusMod.SyncOptionTargetForClients;
+using static Chen.GradiusMod.Items.GradiusOption.SyncOptionTargetForClients;
 using static Chen.Helpers.MathHelpers.Wave;
 using SystemObject = System.Object;
 using UnityObject = UnityEngine.Object;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Items.GradiusOption
 {
     /// <summary>
     /// A component attached to the Options/Multiples for their behavioral functions.

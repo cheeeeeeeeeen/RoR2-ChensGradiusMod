@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static TILER2.MiscUtil;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Items.GradiusOption
 {
     /// <summary>
     /// An item class powered by TILER2 which provides the main API related to the Options/Multiples.

@@ -1,4 +1,5 @@
-﻿using EntityStates;
+﻿using Chen.GradiusMod.Items.GradiusOption;
+using EntityStates;
 using RoR2;
 using UnityEngine;
 using GolemChargeLaser = EntityStates.GolemMonster.ChargeLaser;

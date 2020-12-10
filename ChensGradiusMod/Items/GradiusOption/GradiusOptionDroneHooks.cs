@@ -14,7 +14,7 @@ using UnityEngine.Networking;
 using MageWeapon = EntityStates.Mage.Weapon;
 using Object = UnityEngine.Object;
 
-namespace Chen.GradiusMod
+namespace Chen.GradiusMod.Items.GradiusOption
 {
     partial class GradiusOption
     {

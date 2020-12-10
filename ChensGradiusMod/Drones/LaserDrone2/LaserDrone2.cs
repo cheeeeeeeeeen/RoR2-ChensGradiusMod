@@ -1,5 +1,6 @@
 ﻿#undef DEBUG
 
+using Chen.GradiusMod.Items.GradiusOption;
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;

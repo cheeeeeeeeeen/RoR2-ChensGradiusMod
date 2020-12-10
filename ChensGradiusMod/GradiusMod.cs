@@ -21,6 +21,8 @@ using UnityEngine;
 using static Chen.Helpers.GeneralHelpers.AssetsManager;
 using static TILER2.MiscUtil;
 using Path = System.IO.Path;
+using Chen.GradiusMod.Drones;
+using Chen.GradiusMod.Drones.Vanilla;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
 
