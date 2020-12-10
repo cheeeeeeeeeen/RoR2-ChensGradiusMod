@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ChensGradiusMod</AssemblyName>
-    <RootNamespace>ChensGradiusMod</RootNamespace>
+    <RootNamespace>Chen.GradiusMod</RootNamespace>
     <Version>2.2.6</Version>
     <PackageProjectUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</RepositoryUrl>
