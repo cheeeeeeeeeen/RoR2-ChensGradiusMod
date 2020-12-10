@@ -1,8 +1,8 @@
 using RoR2;
 
-namespace Chen.GradiusMod.Drones.LaserDrone2
+namespace Chen.GradiusMod.Drones.LaserDrone
 {
-    internal class LaserDrone2DeathState : DroneDeathState
+    internal class DeathState : DroneDeathState
     {
         protected override InteractableSpawnCard GetInteractableSpawnCard()
         {

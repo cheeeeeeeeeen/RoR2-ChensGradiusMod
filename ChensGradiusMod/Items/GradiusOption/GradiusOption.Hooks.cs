@@ -1,4 +1,5 @@
-﻿using Chen.Helpers.MathHelpers;
+﻿using Chen.GradiusMod.Items.GradiusOption.Components;
+using Chen.Helpers.MathHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using EntityStates.BeetleGuardMonster;
@@ -11,13 +12,69 @@ using RoR2.Projectile;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.GradiusMod.GradiusModPlugin;
 using MageWeapon = EntityStates.Mage.Weapon;
 using Object = UnityEngine.Object;
 
 namespace Chen.GradiusMod.Items.GradiusOption
 {
-    partial class GradiusOption
+    public partial class GradiusOption
     {
+        private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
+        {
+            // This hook runs on Client and on Server
+            CharacterMaster master = obj.master;
+            if (FilterMinions(master) && master.minionOwnership)
+            {
+                AssignAurelioniteOwner(master);
+                CharacterMaster masterMaster = master.minionOwnership.ownerMaster;
+                if (masterMaster && GetCount(masterMaster) > 0)
+                {
+                    OptionMasterTracker masterTracker = masterMaster.GetOrAddComponent<OptionMasterTracker>();
+                    Log.Message($"OnBodyStartGlobal: Minion: {master.name}, Master: {masterMaster.name}, Options: {masterTracker.optionItemCount}");
+                    for (int t = 1; t <= masterTracker.optionItemCount; t++) OptionMasterTracker.SpawnOption(obj.gameObject, t);
+                }
+            }
+        }
+
+        private void CharacterBody_OnInventoryChanged(On.RoR2.CharacterBody.orig_OnInventoryChanged orig, CharacterBody self)
+        {
+            // This hook runs on Client and on Server
+            orig(self);
+            CharacterMaster master = self.master;
+            if (!master) return;
+            MinionOwnership minionOwnership = master.minionOwnership;
+            if (!minionOwnership || minionOwnership.ownerMaster || FilterMinions(master)) return;
+            OptionMasterTracker masterTracker = master.GetOrAddComponent<OptionMasterTracker>();
+            int newCount = GetCount(self);
+            int oldCount = masterTracker.optionItemCount;
+            int diff = newCount - oldCount;
+            if (diff != 0)
+            {
+                masterTracker.optionItemCount = newCount;
+                Log.Message($"OnInventoryChanged: Master: {master.name}, OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
+                if (diff > 0)
+                {
+                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionEventId, self.gameObject);
+                    LoopAllMinions(master, (minion) =>
+                    {
+                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionEventId, minion);
+                        for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
+                    });
+                }
+                else
+                {
+                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
+                    LoopAllMinions(master, (minion) =>
+                    {
+                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
+                        OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
+                        if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
+                    });
+                }
+            }
+        }
+
         private void HealBeam_OnEnter(On.EntityStates.Drone.DroneWeapon.HealBeam.orig_OnEnter orig, HealBeam self)
         {
             orig(self);

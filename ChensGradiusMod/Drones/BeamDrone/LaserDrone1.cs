@@ -14,12 +14,12 @@ using UnityEngine;
 using static R2API.DirectorAPI;
 using Stage = R2API.DirectorAPI.Stage;
 
-namespace Chen.GradiusMod.Drones.LaserDrone2
+namespace Chen.GradiusMod.Drones.BeamDrone
 {
-    internal class LaserDrone2 : Drone<LaserDrone2>
+    internal class LaserDrone1 : Drone<LaserDrone1>
     {
-        public float laserCooldown { get; private set; } = 6f;
-        public float chargeTime { get; private set; } = 4f;
+        public float laserDuration { get; private set; } = 4f;
+        public float laserCooldown { get; private set; } = 4f;
         public float damageCoefficient { get; private set; } = 1f;
         public int minimumStageSpawn { get; private set; } = 3;
         public int skyMeadowMinimumStageSpawn { get; private set; } = 5;
@@ -41,19 +41,19 @@ namespace Chen.GradiusMod.Drones.LaserDrone2
         {
             base.SetupConfig();
 
-            laserCooldown = config.Bind(configCategory,
-                "LaserCooldown", laserCooldown,
-                "The cooldown of the focused laser attack."
+            laserDuration = config.Bind(configCategory,
+                "BeamDuration", laserDuration,
+                "The duration of the drone's beam in an attack."
             ).Value;
 
-            chargeTime = config.Bind(configCategory,
-                "ChargeTime", chargeTime,
-                "The charge time of Laser Drone to release a strong focused laser."
+            laserCooldown = config.Bind(configCategory,
+                "BeamCooldown", laserCooldown,
+                "The cooldown of the beam attack."
             ).Value;
 
             damageCoefficient = config.Bind(configCategory,
                 "DamageCoefficient", damageCoefficient,
-                "Damage Coefficient of the focused laser."
+                "Damage Coefficient of the beam attack per tick."
             ).Value;
 
             minimumStageSpawn = config.Bind(configCategory,
@@ -99,9 +99,9 @@ namespace Chen.GradiusMod.Drones.LaserDrone2
 
         private void AddLanguageTokens()
         {
-            LanguageAPI.Add("LASER_DRONE2_NAME", "Laser Drone");
-            LanguageAPI.Add("LASER_DRONE2_CONTEXT", "Repair Laser Drone");
-            LanguageAPI.Add("LASER_DRONE2_INTERACTABLE_NAME", "Broken Laser Drone");
+            LanguageAPI.Add("LASER_DRONE1_NAME", "Beam Drone");
+            LanguageAPI.Add("LASER_DRONE1_CONTEXT", "Repair Beam Drone");
+            LanguageAPI.Add("LASER_DRONE1_INTERACTABLE_NAME", "Broken Beam Drone");
         }
 
         private void ModifyBrokenObject()
@@ -119,17 +119,17 @@ namespace Chen.GradiusMod.Drones.LaserDrone2
             PurchaseInteraction purchaseInteraction = brokenObject.GetComponent<PurchaseInteraction>();
             purchaseInteraction.cost *= 3;
             purchaseInteraction.Networkcost = purchaseInteraction.cost;
-            purchaseInteraction.contextToken = "LASER_DRONE2_CONTEXT";
-            purchaseInteraction.displayNameToken = "LASER_DRONE2_INTERACTABLE_NAME";
+            purchaseInteraction.contextToken = "LASER_DRONE1_CONTEXT";
+            purchaseInteraction.displayNameToken = "LASER_DRONE1_INTERACTABLE_NAME";
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
-            nameProvider.displayToken = "LASER_DRONE2_NAME";
-            GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Model/mdlLaserDroneBroken.prefab");
+            nameProvider.displayToken = "LASER_DRONE1_NAME";
+            GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
             customBrokenModel.transform.parent = brokenObject.transform;
             Object.Destroy(brokenObject.transform.Find("mdlDrone1").gameObject);
             ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
             modelLocator.modelTransform = customBrokenModel.transform;
             Highlight highlight = brokenObject.GetComponent<Highlight>();
-            highlight.targetRenderer = customBrokenModel.transform.Find("_mdlLaserDroneBroken").gameObject.GetComponent<MeshRenderer>();
+            highlight.targetRenderer = customBrokenModel.transform.Find("_mdlBeamDrone").gameObject.GetComponent<MeshRenderer>();
             EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
             entityLocator.entity = brokenObject;
             GameObject coreObject = customBrokenModel.transform.Find("Core").gameObject;
@@ -140,32 +140,28 @@ namespace Chen.GradiusMod.Drones.LaserDrone2
         private void ModifyDroneMaster()
         {
             AISkillDriver[] skillDrivers = droneMaster.GetComponents<AISkillDriver>();
-            skillDrivers[3].maxDistance = 30f;
-            skillDrivers[4].maxDistance = 90f;
+            skillDrivers[3].maxDistance = 45f;
+            skillDrivers[4].maxDistance = 135f;
         }
 
         private void ModifyDroneBody()
         {
             CharacterBody body = droneBody.GetComponent<CharacterBody>();
-            body.baseNameToken = "LASER_DRONE2_NAME";
+            body.baseNameToken = "LASER_DRONE1_NAME";
             body.baseMaxHealth *= 1.2f;
             body.baseRegen *= 1.2f;
-            body.baseDamage *= 10f;
-            body.baseCrit *= 3f;
             body.levelMaxHealth *= 1.2f;
             body.levelRegen *= 1.2f;
-            body.levelDamage *= 10f;
-            body.levelCrit *= 3f;
-            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Icon/texLaserDrone2Icon.png");
+            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Icon/texLaserDrone1Icon.png");
             ModifyDroneModel(body);
             ModifySkill();
             CharacterDeathBehavior death = body.GetOrAddComponent<CharacterDeathBehavior>();
-            death.deathState = new SerializableEntityStateType(typeof(LaserDrone2DeathState));
+            death.deathState = new SerializableEntityStateType(typeof(DeathState));
         }
 
         private void ModifyDroneModel(CharacterBody body)
         {
-            GameObject customModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab");
+            GameObject customModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone1/Model/mdlBeamDrone.prefab");
             Object.Destroy(droneBody.transform.Find("Model Base").gameObject);
             GameObject modelBase = new GameObject("ModelBase");
             modelBase.transform.parent = droneBody.transform;
@@ -186,9 +182,9 @@ namespace Chen.GradiusMod.Drones.LaserDrone2
             characterModel.invisibilityCount = 0;
             characterModel.temporaryOverlays = new List<TemporaryOverlay>();
             CapsuleCollider capsuleCollider = droneBody.GetComponent<CapsuleCollider>();
-            capsuleCollider.center = new Vector3(0f, 0f, -.27f);
-            capsuleCollider.radius = 1.05f;
-            capsuleCollider.height = 2.2f;
+            capsuleCollider.center = new Vector3(0f, 0f, .7f);
+            capsuleCollider.radius = 1.47f;
+            capsuleCollider.height = 1.82f;
             capsuleCollider.direction = 2;
             HurtBoxGroup hurtBoxGroup = customModel.AddComponent<HurtBoxGroup>();
             HurtBox hurtBox = customModel.GetComponentInChildren<CapsuleCollider>().gameObject.AddComponent<HurtBox>();
@@ -201,19 +197,18 @@ namespace Chen.GradiusMod.Drones.LaserDrone2
             hurtBoxGroup.hurtBoxes = new HurtBox[] { hurtBox };
             hurtBoxGroup.mainHurtBox = hurtBox;
             hurtBoxGroup.bullseyeCount = 1;
-            customModel.transform.Find("AimOrigin").gameObject.AddComponent<ChargeEffect>();
-            customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
+            customModel.AddComponent<ThrusterFlicker>();
             BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();
-            rotationComponent.rotationDirection = -1;
-            rotationComponent.rotationSpeed = 2f;
+            rotationComponent.maxRotationSpeed = rotationComponent.rotationSpeed = 4f;
+            rotationComponent.rotationDirection = 1;
         }
 
         private void ModifySkill()
         {
-            LoadoutAPI.AddSkill(typeof(FireLaser));
+            LoadoutAPI.AddSkill(typeof(FireBeam));
             SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun");
             SkillDef newSkillDef = Object.Instantiate(origSkillDef);
-            newSkillDef.activationState = new SerializableEntityStateType(typeof(FireLaser));
+            newSkillDef.activationState = new SerializableEntityStateType(typeof(FireBeam));
             newSkillDef.baseRechargeInterval = laserCooldown;
             newSkillDef.beginSkillCooldownOnSkillEnd = true;
             newSkillDef.baseMaxStock = 1;
@@ -234,7 +229,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone2
 
         private void ModifyInteractableSpawnCard()
         {
-            iSpawnCard.name = $"iscBroken{name}";
+            iSpawnCard.name = "iscBrokenLaserDrone1";
             iSpawnCard.prefab = brokenObject;
             iSpawnCard.slightlyRandomizeOrientation = false;
             iSpawnCard.orientToFloor = true;

@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Chen.GradiusMod.Drones.LaserDrone1
+namespace Chen.GradiusMod.Drones.BeamDrone
 {
     internal class FireBeam : BaseState
     {
@@ -200,9 +200,9 @@ namespace Chen.GradiusMod.Drones.LaserDrone1
                 {
                     float damage = damageCoefficient * damageStat;
                     FireBullet(gameObject, damage, force, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
-                    if (ChensClassicItemsCompatibility.enabled)
+                    if (ChensClassicItems.enabled)
                     {
-                        ChensClassicItemsCompatibility.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
+                        ChensClassicItems.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
                     }
                 }
                 fireStopwatch -= 1f / fireFrequency;

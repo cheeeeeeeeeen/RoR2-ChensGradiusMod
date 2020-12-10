@@ -5,7 +5,7 @@ using UnityEngine;
 using GolemChargeLaser = EntityStates.GolemMonster.ChargeLaser;
 using GolemLaser = EntityStates.GolemMonster.FireLaser;
 
-namespace Chen.GradiusMod.Drones.LaserDrone2
+namespace Chen.GradiusMod.Drones.LaserDrone
 {
     internal class FireLaser : BaseState
     {

@@ -1,5 +1,5 @@
-﻿using Chen.Helpers.GeneralHelpers;
-using Chen.Helpers.UnityHelpers;
+﻿using Chen.GradiusMod.Items.GradiusOption.Components;
+using Chen.Helpers.GeneralHelpers;
 using R2API.Networking;
 using RoR2;
 using System.Collections.Generic;
@@ -276,62 +276,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private void RegisterNetworkMessages()
         {
             Log.Debug("Registering custom network messages needed for GradiusOption...");
-            NetworkingAPI.RegisterMessageType<SyncOptionTargetForClients>();
-        }
-
-        private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
-        {
-            // This hook runs on Client and on Server
-            CharacterMaster master = obj.master;
-            if (FilterMinions(master) && master.minionOwnership)
-            {
-                AssignAurelioniteOwner(master);
-                CharacterMaster masterMaster = master.minionOwnership.ownerMaster;
-                if (masterMaster && GetCount(masterMaster) > 0)
-                {
-                    OptionMasterTracker masterTracker = masterMaster.GetOrAddComponent<OptionMasterTracker>();
-                    Log.Message($"OnBodyStartGlobal: Minion: {master.name}, Master: {masterMaster.name}, Options: {masterTracker.optionItemCount}");
-                    for (int t = 1; t <= masterTracker.optionItemCount; t++) OptionMasterTracker.SpawnOption(obj.gameObject, t);
-                }
-            }
-        }
-
-        private void CharacterBody_OnInventoryChanged(On.RoR2.CharacterBody.orig_OnInventoryChanged orig, CharacterBody self)
-        {
-            // This hook runs on Client and on Server
-            orig(self);
-            CharacterMaster master = self.master;
-            if (!master) return;
-            MinionOwnership minionOwnership = master.minionOwnership;
-            if (!minionOwnership || minionOwnership.ownerMaster || FilterMinions(master)) return;
-            OptionMasterTracker masterTracker = master.GetOrAddComponent<OptionMasterTracker>();
-            int newCount = GetCount(self);
-            int oldCount = masterTracker.optionItemCount;
-            int diff = newCount - oldCount;
-            if (diff != 0)
-            {
-                masterTracker.optionItemCount = newCount;
-                Log.Message($"OnInventoryChanged: Master: {master.name}, OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
-                if (diff > 0)
-                {
-                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionEventId, self.gameObject);
-                    LoopAllMinions(master, (minion) =>
-                    {
-                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionEventId, minion);
-                        for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
-                    });
-                }
-                else
-                {
-                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
-                    LoopAllMinions(master, (minion) =>
-                    {
-                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
-                        OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
-                        if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
-                    });
-                }
-            }
+            NetworkingAPI.RegisterMessageType<SyncOptionTarget>();
         }
 
         private bool FilterMinions(CharacterMaster master) => master && MinionsList.Exists((item) => master.name.Contains(item));

@@ -1,9 +1,9 @@
 using RoR2;
 using UnityEngine;
 
-namespace Chen.GradiusMod.Drones.Vanilla
+namespace Chen.GradiusMod.Drones.GunnerTurret
 {
-    internal class Turret1DeathState : DroneDeathState
+    internal class DeathState : DroneDeathState
     {
         private InteractableSpawnCard spawnCard;
 

@@ -1,4 +1,5 @@
-﻿using R2API.Networking.Interfaces;
+﻿using Chen.GradiusMod.Items.GradiusOption.Components;
+using R2API.Networking.Interfaces;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -6,18 +7,18 @@ using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Items.GradiusOption
 {
-    internal class SyncOptionTargetForClients : INetMessage
+    internal class SyncOptionTarget : INetMessage
     {
         private GameObjectType bodyOrMaster;
         private NetworkInstanceId ownerId;
         private short numbering;
         private NetworkInstanceId targetId;
 
-        public SyncOptionTargetForClients()
+        public SyncOptionTarget()
         {
         }
 
-        public SyncOptionTargetForClients(GameObjectType bodyOrMaster, NetworkInstanceId ownerId, short numbering, NetworkInstanceId targetId)
+        public SyncOptionTarget(GameObjectType bodyOrMaster, NetworkInstanceId ownerId, short numbering, NetworkInstanceId targetId)
         {
             this.bodyOrMaster = bodyOrMaster;
             this.ownerId = ownerId;

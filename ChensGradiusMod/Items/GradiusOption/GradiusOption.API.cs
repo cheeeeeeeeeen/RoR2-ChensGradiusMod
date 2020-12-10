@@ -1,15 +1,16 @@
-﻿using Chen.Helpers.CollectionHelpers;
+﻿using Chen.GradiusMod.Items.GradiusOption.Components;
+using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;
 using RoR2;
 using RoR2.CharacterAI;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;
-using static Chen.GradiusMod.Items.GradiusOption.SyncOptionTargetForClients;
+using static Chen.GradiusMod.Items.GradiusOption.SyncOptionTarget;
 
 namespace Chen.GradiusMod.Items.GradiusOption
 {
-    partial class GradiusOption
+    public partial class GradiusOption
     {
         /// <summary>
         /// Adds a support for a minion for them to gain Options.

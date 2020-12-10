@@ -1,7 +1,7 @@
 ﻿using RoR2.UI;
 using UnityEngine;
 
-namespace Chen.GradiusMod.Drones.LaserDrone1
+namespace Chen.GradiusMod.Drones.BeamDrone
 {
     internal class ThrusterFlicker : MonoBehaviour
     {

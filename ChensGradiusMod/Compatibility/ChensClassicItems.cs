@@ -7,7 +7,7 @@ namespace Chen.GradiusMod.Compatibility
     /// <summary>
     /// A static class that contains compatibility features from Chen's Classic Items.
     /// </summary>
-    public static class ChensClassicItemsCompatibility
+    public static class ChensClassicItems
     {
         internal static bool hasSetup = false;
 

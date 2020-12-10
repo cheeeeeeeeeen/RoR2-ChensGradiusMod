@@ -1,6 +1,4 @@
-﻿using Chen.Helpers.MathHelpers;
-using Chen.Helpers.UnityHelpers;
-using R2API.Networking;
+﻿using R2API.Networking;
 using R2API.Networking.Interfaces;
 using RoR2;
 using RoR2.UI;
@@ -9,115 +7,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
-using static Chen.GradiusMod.Items.GradiusOption.SyncOptionTargetForClients;
-using static Chen.Helpers.MathHelpers.Wave;
+using static Chen.GradiusMod.Items.GradiusOption.SyncOptionTarget;
 using SystemObject = System.Object;
-using UnityObject = UnityEngine.Object;
 
-namespace Chen.GradiusMod.Items.GradiusOption
+namespace Chen.GradiusMod.Items.GradiusOption.Components
 {
-    /// <summary>
-    /// A component attached to the Options/Multiples for their behavioral functions.
-    /// </summary>
-    public class OptionBehavior : MonoBehaviour
-    {
-        /// <summary>
-        /// The Character Body Game Object of this Option's owner.
-        /// </summary>
-        public GameObject owner;
-
-        /// <summary>
-        /// The number that represents the identification of the Option scoped under the owner.
-        /// </summary>
-        public int numbering = 0;
-
-        /// <summary>
-        /// Useful for storing prefabs, components, scriptable objects or anything that needs to be saved from one state to another of the owner.
-        /// Utilizing this means that one does not need to create and attach a component for storing these objects.
-        /// </summary>
-        public Dictionary<string, UnityObject> data = new Dictionary<string, UnityObject>();
-
-        /// <summary>
-        /// Shorthand for the data dictionary.
-        /// </summary>
-        public Dictionary<string, UnityObject> D
-        {
-            get => data;
-            private set => data = value;
-        }
-
-        internal GameObject target;
-        internal OptionTracker ownerOt;
-
-        private Transform t;
-        private Transform ownerT;
-        private InputBankTest ownerIbt;
-        private CharacterMaster ownerMaster;
-        private CharacterBody ownerBody;
-        private bool init = true;
-
-        private void Awake()
-        {
-            t = gameObject.transform;
-        }
-
-        private void Update()
-        {
-            if (!PauseScreenController.paused && !init)
-            {
-                if (owner && ownerBody && ownerMaster && ownerOt)
-                {
-                    if (ownerOt.IsRotateUser())
-                    {
-                        Vector3 newPosition = DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis * ownerOt.GetRotateMultiplier();
-                        newPosition = ownerT.position + ownerOt.GetRotateOffset() + newPosition;
-                        t.position = Vector3.Lerp(t.position, newPosition, ownerOt.optionLookRate);
-                    }
-                    else t.position = ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1];
-                    if (GradiusOption.instance.includeModelInsideOrb)
-                    {
-                        Vector3 direction;
-                        if (target) direction = (target.transform.position - t.position).normalized;
-                        else if (ownerIbt) direction = ownerIbt.aimDirection;
-                        else direction = (ownerT.position - t.position).normalized;
-                        t.rotation = Quaternion.Lerp(t.rotation, Util.QuaternionSafeLookRotation(direction), ownerOt.optionLookRate);
-                    }
-                }
-                else
-                {
-                    Log.Warning($"OptionBehavior.Update: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
-                    Destroy(gameObject);
-                }
-            }
-        }
-
-        private void FixedUpdate()
-        {
-            if (!PauseScreenController.paused && init && owner)
-            {
-                init = false;
-                ownerT = owner.transform;
-                ownerIbt = owner.GetComponent<InputBankTest>();
-                ownerOt = owner.GetComponent<OptionTracker>();
-                ownerBody = owner.GetComponent<CharacterBody>();
-                ownerMaster = ownerBody.master;
-            }
-        }
-
-        /// <summary>
-        /// Computes for the actual position of the Option based on the owner's rotational variables and its numbering.
-        /// </summary>
-        /// <param name="baseAngle">The angle to compute from</param>
-        /// <returns>Normalized position</returns>
-        public Vector3 DecidePosition(float baseAngle)
-        {
-            Vector3 relativePosition = Quaternion.AngleAxis(baseAngle, ownerT.up) * -ownerT.forward;
-            float angleDifference = 360f.SafeDivide(ownerOt.existingOptions.Count);
-            relativePosition = Quaternion.AngleAxis(angleDifference * numbering, ownerT.up) * relativePosition;
-            return relativePosition.normalized;
-        }
-    }
-
     /// <summary>
     /// A component attached to a Character Body that may own Options/Multiples.
     /// The mod handles attaching the component when necessary.
@@ -268,7 +162,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     NetworkInstanceId netId = listCopy[i].Item2;
                     short numbering = listCopy[i].Item3;
                     NetworkInstanceId targetId = listCopy[i].Item4;
-                    new SyncOptionTargetForClients(gameObjectType, netId, numbering, targetId).Send(NetworkDestination.Clients);
+                    new SyncOptionTarget(gameObjectType, netId, numbering, targetId).Send(NetworkDestination.Clients);
                 }
             }
         }
@@ -311,103 +205,6 @@ namespace Chen.GradiusMod.Items.GradiusOption
         {
             if (rotateOffset == null) rotateOffset = GradiusOption.instance.GetRotateOffset(characterMaster.name);
             return (Vector3)rotateOffset;
-        }
-    }
-
-    internal class OptionMasterTracker : MonoBehaviour
-    {
-        public int optionItemCount = 0;
-
-        public static void SpawnOption(GameObject owner, int itemCount)
-        {
-            OptionTracker ownerOptionTracker = owner.GetOrAddComponent<OptionTracker>();
-            GameObject option = Instantiate(GradiusOption.gradiusOptionPrefab, owner.transform.position, owner.transform.rotation);
-            OptionBehavior behavior = option.GetComponent<OptionBehavior>();
-            behavior.owner = owner;
-            behavior.numbering = itemCount;
-            ownerOptionTracker.existingOptions.Add(option);
-        }
-
-        public static void DestroyOption(OptionTracker optionTracker, int optionNumber)
-        {
-            int index = optionNumber - 1;
-            GameObject option = optionTracker.existingOptions[index];
-            optionTracker.existingOptions.RemoveAt(index);
-            Destroy(option);
-        }
-    }
-
-    internal class Flicker : MonoBehaviour
-    {
-        // Child Objects in Order:
-        // 0. sphere1:     Light
-        // 1. sphere2:     Light
-        // 2. sphere3:     Light
-        // 3. sphere4:     MeshRenderer, MeshFilter (only in OptionOrb)
-        // 4. sphere5:     MeshRenderer, MeshFilter (only in OptionOrbWithModel)
-        // 5. OptionModel: The option model (only in OptionOrbWithModel)
-
-        private readonly float baseValue = 1f;
-        private readonly float amplitude = .25f;
-        private readonly float phase = 0f;
-        private readonly float frequency = 1f;
-
-        private readonly Light[] lightObjects = new Light[3];
-        private readonly float[] originalRange = new float[3];
-        private readonly float[] ampMultiplier = new float[4] { 1.2f, 1f, .8f, .4f };
-        private Vector3 originalLocalScale;
-        private GameObject meshObject;
-
-        private void Awake()
-        {
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                GameObject child = transform.GetChild(i).gameObject;
-                Light childLight = child.GetComponent<Light>();
-                switch (child.name)
-                {
-                    case "sphere1":
-                        originalRange[0] = childLight.range;
-                        lightObjects[0] = childLight;
-                        break;
-
-                    case "sphere2":
-                        originalRange[1] = childLight.range;
-                        lightObjects[1] = childLight;
-                        break;
-
-                    case "sphere3":
-                        originalRange[2] = childLight.range;
-                        lightObjects[2] = childLight;
-                        break;
-
-                    case "sphere4":
-                        originalLocalScale = child.transform.localScale;
-                        meshObject = child;
-                        break;
-
-                    case "sphere5":
-                        child.transform.localScale *= 1.5f;
-                        break;
-
-                    case "option":
-                        child.transform.localScale = new Vector3(2f, 2f, 2f);
-                        break;
-                }
-            }
-        }
-
-        private void Update()
-        {
-            if (PauseScreenController.paused) return;
-            for (int i = 0; i < lightObjects.Length; i++)
-            {
-                lightObjects[i].range = originalRange[i] * Sine(phase, frequency, amplitude * ampMultiplier[i], baseValue);
-            }
-            if (meshObject && originalLocalScale != null)
-            {
-                meshObject.transform.localScale = originalLocalScale * Sine(phase, frequency, amplitude * ampMultiplier[3], baseValue);
-            }
         }
     }
 }

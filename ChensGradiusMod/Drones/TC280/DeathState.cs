@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using VanillaMegaDroneState = EntityStates.Drone.MegaDroneDeathState;
 
-namespace Chen.GradiusMod.Drones.Vanilla
+namespace Chen.GradiusMod.Drones.TC280
 {
-    internal class MegaDroneDeathState : DroneDeathState
+    internal class DeathState : DroneDeathState
     {
         private InteractableSpawnCard spawnCard;
         private ChildLocator childLocator;

@@ -3,10 +3,11 @@
 using BepInEx;
 using BepInEx.Configuration;
 using Chen.ClassicItems;
+using Chen.GradiusMod.Compatibility;
+using Chen.GradiusMod.Drones;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
-using Chen.GradiusMod.Compatibility;
 using EntityStates;
 using KomradeSpectre.Aetherium;
 using R2API;
@@ -20,9 +21,10 @@ using TILER2;
 using UnityEngine;
 using static Chen.Helpers.GeneralHelpers.AssetsManager;
 using static TILER2.MiscUtil;
+using EquipmentDroneDeathState = Chen.GradiusMod.Drones.EquipmentDrone.DeathState;
+using MegaDroneDeathState = Chen.GradiusMod.Drones.TC280.DeathState;
 using Path = System.IO.Path;
-using Chen.GradiusMod.Drones;
-using Chen.GradiusMod.Drones.Vanilla;
+using Turret1DeathState = Chen.GradiusMod.Drones.GunnerTurret.DeathState;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
 
@@ -132,8 +134,8 @@ namespace Chen.GradiusMod
             RegisterVanillaChanges();
 
             Log.Debug("Applying compatibility changes...");
-            if (AetheriumCompatibility.enabled) AetheriumCompatibility.Setup();
-            if (ChensClassicItemsCompatibility.enabled) ChensClassicItemsCompatibility.Setup();
+            if (Compatibility.Aetherium.enabled) Compatibility.Aetherium.Setup();
+            if (ChensClassicItems.enabled) ChensClassicItems.Setup();
         }
 
         private void RegisterVanillaChanges()

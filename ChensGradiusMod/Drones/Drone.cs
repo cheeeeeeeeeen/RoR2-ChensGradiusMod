@@ -123,13 +123,13 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         protected virtual void SetupBehavior()
         {
-            if (canBeInspired && AetheriumCompatibility.enabled)
+            if (canBeInspired && Compatibility.Aetherium.enabled)
             {
-                AetheriumCompatibility.AddCustomDrone(name);
+                Compatibility.Aetherium.AddCustomDrone(name);
             }
-            if (affectedByDroneRepairKit && ChensClassicItemsCompatibility.enabled)
+            if (affectedByDroneRepairKit && ChensClassicItems.enabled)
             {
-                ChensClassicItemsCompatibility.DroneRepairKitSupport(name);
+                ChensClassicItems.DroneRepairKitSupport(name);
             }
         }
 

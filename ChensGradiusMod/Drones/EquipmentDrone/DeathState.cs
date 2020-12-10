@@ -4,9 +4,9 @@ using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static RoR2.GenericPickupController;
 
-namespace Chen.GradiusMod.Drones.Vanilla
+namespace Chen.GradiusMod.Drones.EquipmentDrone
 {
-    internal class EquipmentDroneDeathState : DroneDeathState
+    internal class DeathState : DroneDeathState
     {
         private InteractableSpawnCard spawnCard;
 

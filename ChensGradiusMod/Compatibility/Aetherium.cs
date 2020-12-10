@@ -7,7 +7,7 @@ namespace Chen.GradiusMod.Compatibility
     /// <summary>
     /// A static class that contains compatibility features from Aetherium mod.
     /// </summary>
-    public static class AetheriumCompatibility
+    public static class Aetherium
     {
         internal static bool hasSetup = false;
 
