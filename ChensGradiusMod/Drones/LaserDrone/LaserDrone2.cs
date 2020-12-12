@@ -24,7 +24,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         public int minimumStageSpawn { get; private set; } = 3;
         public int skyMeadowMinimumStageSpawn { get; private set; } = 5;
         public int spawnWeight { get; private set; } = 1;
-        public int skyMeadowSpawnWeight { get; private set; } = 10;
+        public int skyMeadowSpawnWeight { get; private set; } = 4;
 
         public static InteractableSpawnCard iSpawnCard { get; private set; }
         public static GameObject brokenObject { get; private set; }
