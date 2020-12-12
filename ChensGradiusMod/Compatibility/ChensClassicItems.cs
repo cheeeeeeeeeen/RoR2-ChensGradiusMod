@@ -1,4 +1,6 @@
 ﻿using Chen.ClassicItems;
+using Chen.ClassicItems.Items.Equipment;
+using Chen.ClassicItems.Items.Uncommon;
 using RoR2;
 using static Chen.GradiusMod.GradiusModPlugin;
 
