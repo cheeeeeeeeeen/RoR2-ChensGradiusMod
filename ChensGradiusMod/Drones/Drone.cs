@@ -1,5 +1,4 @@
 ﻿using BepInEx.Configuration;
-using Chen.GradiusMod.Compatibility;
 using System;
 using static Chen.GradiusMod.GradiusModPlugin;
 
@@ -127,9 +126,9 @@ namespace Chen.GradiusMod.Drones
             {
                 Compatibility.Aetherium.AddCustomDrone(name);
             }
-            if (affectedByDroneRepairKit && ChensClassicItems.enabled)
+            if (affectedByDroneRepairKit && Compatibility.ChensClassicItems.enabled)
             {
-                ChensClassicItems.DroneRepairKitSupport(name);
+                Compatibility.ChensClassicItems.DroneRepairKitSupport(name);
             }
         }
 

@@ -13,10 +13,17 @@ namespace Chen.GradiusMod.Drones.GunnerTurret
             return spawnCard;
         }
 
+        protected override void OnInteractableSpawn(GameObject spawnedObject)
+        {
+            base.OnInteractableSpawn(spawnedObject);
+            spawnedObject.transform.rotation = transform.rotation;
+        }
+
         public override void OnEnter()
         {
             base.OnEnter();
             destroyOnImpact = false;
+            hardCutoffDuration = maxFallDuration = bodyPreservationDuration = deathDuration = 1f;
         }
 
         public override void OnExit()
