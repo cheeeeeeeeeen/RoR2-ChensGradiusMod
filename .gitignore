@@ -1,6 +1,5 @@
 Build/
 _docs/
-.vscode/
 .DS_Store
 
 ## Ignore Visual Studio temporary files, build results, and
