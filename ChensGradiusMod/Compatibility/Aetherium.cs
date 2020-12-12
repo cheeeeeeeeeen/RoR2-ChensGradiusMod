@@ -1,5 +1,5 @@
-﻿using Aetherium.Items;
-using KomradeSpectre.Aetherium;
+﻿using Aetherium;
+using Aetherium.Items;
 using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Compatibility

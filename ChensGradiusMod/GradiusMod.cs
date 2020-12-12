@@ -1,5 +1,6 @@
 ﻿#undef DEBUG
 
+using Aetherium;
 using BepInEx;
 using BepInEx.Configuration;
 using Chen.ClassicItems;
@@ -9,7 +10,6 @@ using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
 using EntityStates;
-using KomradeSpectre.Aetherium;
 using R2API;
 using R2API.Networking;
 using R2API.Utils;
