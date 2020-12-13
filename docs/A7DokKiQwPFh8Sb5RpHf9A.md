@@ -14,4 +14,4 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 - [enabled](./PufCu22+fvF8GsYAZXDL+A 'Chen.GradiusMod.Compatibility.Aetherium.enabled')
 
 ### Methods
-- [AddCustrone(string)](./IisWtKTPtDdEqiY+WOGa2w 'Chen.GradiusMod.Compatibility.Aetherium.AddCustrone(string)')
+- [AddCustomDrone(string)](./IisWtKTPtDdEqiY+WOGa2w 'Chen.GradiusMod.Compatibility.Aetherium.AddCustomDrone(string)')

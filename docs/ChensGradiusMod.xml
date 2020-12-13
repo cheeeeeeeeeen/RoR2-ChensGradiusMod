@@ -15,7 +15,7 @@
             Always do an if check before invoking methods in this class or else unexpected errors will happen in-game.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.AddCustrone(System.String)">
+        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.AddCustomDrone(System.String)">
             <summary>
             Allows the Inspiring Drone to inspire the custom drone.
             </summary>

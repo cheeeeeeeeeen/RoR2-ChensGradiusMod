@@ -3,10 +3,10 @@
 
 ### [Chen.GradiusMod.Compatibility](./F8aFQlqLO5uD9A4izEhK-Q 'Chen.GradiusMod.Compatibility').[Aetherium](./A7DokKiQwPFh8Sb5RpHf9A 'Chen.GradiusMod.Compatibility.Aetherium')
 
-## Aetherium.AddCustrone(string) Method
+## Aetherium.AddCustomDrone(string) Method
 Allows the Inspiring Drone to inspire the custom drone.  
 ```csharp
-public static void AddCustrone(string masterName);
+public static void AddCustomDrone(string masterName);
 ```
 
 #### Parameters
