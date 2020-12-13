@@ -54,6 +54,9 @@
     <Reference Include="ChensHelpers">
       <HintPath>lib\ChensHelpers.dll</HintPath>
     </Reference>
+    <Reference Include="HGCSharpUtils">
+      <HintPath>lib\HGCSharpUtils.dll</HintPath>
+    </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp">
       <HintPath>lib\MMHOOK_Assembly-CSharp.dll</HintPath>
     </Reference>
