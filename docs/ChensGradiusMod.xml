@@ -15,7 +15,7 @@
             Always do an if check before invoking methods in this class or else unexpected errors will happen in-game.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.AddCustomDrone(System.String)">
+        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.AddCustrone(System.String)">
             <summary>
             Allows the Inspiring Drone to inspire the custom drone.
             </summary>
@@ -89,6 +89,11 @@
         <member name="P:Chen.GradiusMod.Drones.Drone`1.instance">
             <summary>
             The instance of the singleton class.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.Drone`1.#ctor">
+            <summary>
+            Constructor that creates the instance of the singleton class.
             </summary>
         </member>
         <member name="T:Chen.GradiusMod.Drones.Drone">

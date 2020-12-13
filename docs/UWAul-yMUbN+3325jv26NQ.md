@@ -16,5 +16,8 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 The drone class name  
   
 
+### Constructors
+- [Drone()](./sXfQkXRO1ML6lPAL8AIK-g 'Chen.GradiusMod.Drones.Drone&lt;T&gt;.Drone()')
+
 ### Properties
 - [instance](./JiNCVRg0sq3LIHTN0Xwc-A 'Chen.GradiusMod.Drones.Drone&lt;T&gt;.instance')
