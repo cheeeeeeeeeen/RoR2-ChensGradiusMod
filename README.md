@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-2.2.9-orange)
+![Version](https://img.shields.io/badge/Version-2.2.10-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -73,6 +73,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**2.2.10**
+- Fix a bug where the API refuses to create the singleton class of a custom drone.
+
 **2.2.9**
 - Update Compatibility API implementation with Aetherium for the breaking changes made.
 - Improve the Death States of Repurchasable Turrets. They used to die only when 12 seconds have passed.
@@ -85,21 +88,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Major changes in the project structure to follow the best practices.
 - This will make the code more readable for other contributors.
 - This will have a big impact for those who use this mod's API, but most likely on the namespaces. Check the documentation for correction references.
-
-**2.2.6**
-- Fix a bug where the Laser Drone would bug out if it has Options and the Options cannot target the enemy.
-- Integrate Queue Processors from ChensHelpers.
-- Fix a bug where the drones made repurchase-able by the mod would not have their costs scaled.
-- Refactored the FireForAllOptions API. Check the documentation for the change.
-
-**2.2.5**
-- Implement a custom Death State where mod creators can also inherit to easily define the death behavior of the custom drone.
-- The main use for the custom Death State is to be able to spawn the drone's respective interactable upon death.
-- Integrate the render infos builder from ChensHelpers.
-- Add more configs about the spawn settings of the custom drones.
-
-**2.2.4**
-- Integrate SoundPlayer from ChensHelpers for testing sounds. Only available for developers.
-- Improve DroneCatalog's implementation so that every Drone instance will have concurrent phases of setup.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
