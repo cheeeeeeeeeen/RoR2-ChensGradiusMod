@@ -15,7 +15,10 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         public static T instance { get; private set; }
 
-        internal Drone()
+        /// <summary>
+        /// Constructor that creates the instance of the singleton class.
+        /// </summary>
+        public Drone()
         {
             if (instance != null) throw new InvalidOperationException($"Singleton class \"{typeof(T).Name}\" instantiated twice.");
             instance = this as T;
