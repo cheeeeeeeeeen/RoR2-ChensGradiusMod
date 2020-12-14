@@ -132,7 +132,16 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             if (fixedAge >= duration && isAuthority)
             {
                 chargeEffect.Reset();
-                if (effectPrefab) EffectManager.SimpleEffect(effectPrefab, muzzle.transform.position, muzzle.transform.rotation, false);
+                if (effectPrefab)
+                {
+                    EffectData data = new EffectData
+                    {
+                        origin = muzzle.transform.position,
+                        rotation = muzzle.transform.rotation,
+                        rootObject = muzzle
+                    };
+                    EffectManager.SpawnEffect(effectPrefab, data, false);
+                }
                 if (isAuthority)
                 {
                     Ray aimRay = new Ray(muzzle.transform.position, GetAimRay().direction);
@@ -142,7 +151,16 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 Util.PlaySound(attackSoundString, gameObject);
                 GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, direction) =>
                 {
-                    if (effectPrefab) EffectManager.SimpleEffect(effectPrefab, option.transform.position, option.transform.rotation, false);
+                    if (effectPrefab)
+                    {
+                        EffectData data = new EffectData
+                        {
+                            origin = option.transform.position,
+                            rotation = option.transform.rotation,
+                            rootObject = option
+                        };
+                        EffectManager.SpawnEffect(effectPrefab, data, false);
+                    }
                     if (isAuthority)
                     {
                         Ray aimRay = new Ray(option.transform.position, direction);

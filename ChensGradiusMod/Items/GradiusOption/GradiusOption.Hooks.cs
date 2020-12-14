@@ -219,7 +219,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 if (FireGatling.effectPrefab)
                 {
-                    EffectManager.SimpleEffect(FireGatling.effectPrefab, option.transform.position, option.transform.rotation, false);
+                    EffectData data = new EffectData
+                    {
+                        origin = option.transform.position,
+                        rotation = option.transform.rotation,
+                        rootObject = option
+                    };
+                    EffectManager.SpawnEffect(FireGatling.effectPrefab, data, false);
                 }
                 if (self.isAuthority)
                 {
@@ -249,7 +255,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 if (FireTurret.effectPrefab)
                 {
-                    EffectManager.SimpleEffect(FireTurret.effectPrefab, option.transform.position, option.transform.rotation, false);
+                    EffectData data = new EffectData
+                    {
+                        origin = option.transform.position,
+                        rotation = option.transform.rotation,
+                        rootObject = option
+                    };
+                    EffectManager.SpawnEffect(FireTurret.effectPrefab, data, false);
                 }
                 if (self.isAuthority)
                 {
@@ -279,7 +291,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 if (FireMegaTurret.effectPrefab)
                 {
-                    EffectManager.SimpleEffect(FireMegaTurret.effectPrefab, option.transform.position, option.transform.rotation, false);
+                    EffectData data = new EffectData
+                    {
+                        origin = option.transform.position,
+                        rotation = option.transform.rotation,
+                        rootObject = option
+                    };
+                    EffectManager.SpawnEffect(FireMegaTurret.effectPrefab, data, false);
                 }
                 if (self.isAuthority)
                 {
@@ -309,7 +327,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 if (FireMissileBarrage.effectPrefab)
                 {
-                    EffectManager.SimpleEffect(FireMissileBarrage.effectPrefab, option.transform.position, option.transform.rotation, true);
+                    EffectData data = new EffectData
+                    {
+                        origin = option.transform.position,
+                        rotation = option.transform.rotation,
+                        rootObject = option
+                    };
+                    EffectManager.SpawnEffect(FireMissileBarrage.effectPrefab, data, false);
                 }
                 if (self.isAuthority)
                 {
@@ -340,7 +364,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 if (FireTwinRocket.muzzleEffectPrefab)
                 {
-                    EffectManager.SimpleEffect(FireTwinRocket.muzzleEffectPrefab, option.transform.position, option.transform.rotation, false);
+                    EffectData data = new EffectData
+                    {
+                        origin = option.transform.position,
+                        rotation = option.transform.rotation,
+                        rootObject = option
+                    };
+                    EffectManager.SpawnEffect(FireTwinRocket.muzzleEffectPrefab, data, false);
                 }
                 if (self.isAuthority && FireTwinRocket.projectilePrefab != null)
                 {
@@ -471,7 +501,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     {
                         if (self.effectPrefab)
                         {
-                            EffectManager.SimpleEffect(self.effectPrefab, option.transform.position, option.transform.rotation, false);
+                            EffectData data = new EffectData
+                            {
+                                origin = option.transform.position,
+                                rotation = option.transform.rotation,
+                                rootObject = option
+                            };
+                            EffectManager.SpawnEffect(self.effectPrefab, data, false);
                         }
                         if (self.isAuthority)
                         {
@@ -601,7 +637,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 };
                 if (FireSpine.muzzleflashEffectPrefab)
                 {
-                    EffectManager.SimpleEffect(FireSpine.muzzleflashEffectPrefab, option.transform.position, option.transform.rotation, true);
+                    EffectData data = new EffectData
+                    {
+                        origin = option.transform.position,
+                        rotation = option.transform.rotation,
+                        rootObject = option
+                    };
+                    EffectManager.SpawnEffect(FireSpine.muzzleflashEffectPrefab, data, true);
                 }
                 OrbManager.instance.AddOrb(squidOrb);
             });

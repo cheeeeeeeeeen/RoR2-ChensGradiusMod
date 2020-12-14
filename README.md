@@ -77,6 +77,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Fix a fatal bug where Options do not work with the new Effects system of Option Behavior.
 - Slightly raise the Interactable corpse of Beam Drone so it can still be at least be visible.
 - Remove Update implementations on graphical components.
+- Change Muzzle effects of Options to SpawnEffects to properly display them.
 
 **2.2.10**
 - Fix a bug where the API refuses to create the singleton class of a custom drone.
