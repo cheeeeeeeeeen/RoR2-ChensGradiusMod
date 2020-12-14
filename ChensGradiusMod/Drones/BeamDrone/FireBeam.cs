@@ -107,6 +107,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             characterBody.SetAimTimer(maximumDuration);
             Util.PlaySound(playAttackSoundString, gameObject);
             Util.PlaySound(playLoopSoundString, gameObject);
+            aimRay = GetAimRay();
             enemyFinder = new BullseyeSearch
             {
                 maxDistanceFilter = maxDistance,
@@ -118,7 +119,6 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                 teamMaskFilter = TeamMask.allButNeutral
             };
             if (teamComponent) enemyFinder.teamMaskFilter.RemoveTeam(teamComponent.teamIndex);
-            aimRay = GetAimRay();
             muzzle = transform.Find("ModelBase").Find("mdlBeamDrone").Find("AimOrigin");
             laserEffect = Object.Instantiate(laserPrefab, muzzle.position, muzzle.rotation);
             laserEffect.transform.parent = muzzle;
@@ -127,9 +127,9 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             UpdateLockOn();
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["laserFire"]) Destroy(behavior.D["laserFire"]);
-                if (behavior.D["laserChildLocator"]) Destroy(behavior.D["laserChildLocator"]);
-                if (behavior.D["laserFireEnd"]) Destroy(behavior.D["laserFireEnd"]);
+                if (behavior.D.ContainsKey("laserFire") && behavior.D["laserFire"]) Destroy(behavior.D["laserFire"]);
+                if (behavior.D.ContainsKey("laserChildLocator") && behavior.D["laserChildLocator"]) Destroy(behavior.D["laserChildLocator"]);
+                if (behavior.D.ContainsKey("laserFireEnd") && behavior.D["laserFireEnd"]) Destroy(behavior.D["laserFireEnd"]);
                 Transform transform = option.transform;
                 behavior.D["laserFire"] = Object.Instantiate(laserPrefab, transform.position, transform.rotation);
                 ((GameObject)behavior.D["laserFire"]).transform.parent = transform;

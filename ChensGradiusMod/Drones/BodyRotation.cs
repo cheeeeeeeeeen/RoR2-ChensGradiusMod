@@ -37,7 +37,7 @@ namespace Chen.GradiusMod.Drones
 
         private float currentAccel = 0f;
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (rotationDirection == 0) rotationDirection = (sbyte)(Random.Range(0, 2) * 2 - 1);
             if (PauseScreenController.paused) return;

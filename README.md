@@ -73,6 +73,11 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**2.2.11**
+- Fix a fatal bug where Options do not work with the new Effects system of Option Behavior.
+- Slightly raise the Interactable corpse of Beam Drone so it can still be at least be visible.
+- Remove Update implementations on graphical components.
+
 **2.2.10**
 - Fix a bug where the API refuses to create the singleton class of a custom drone.
 
@@ -83,10 +88,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **2.2.8**
 - Update the Compatibility API implementation according to the changes made to ChensClassicItems.
-
-**2.2.7**
-- Major changes in the project structure to follow the best practices.
-- This will make the code more readable for other contributors.
-- This will have a big impact for those who use this mod's API, but most likely on the namespaces. Check the documentation for correction references.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*

@@ -24,7 +24,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             haloLight = thrusterHalo.GetComponent<Light>();
         }
 
-        public void Update()
+        public void FixedUpdate()
         {
             if (PauseScreenController.paused) return;
             UpdateOrb();
