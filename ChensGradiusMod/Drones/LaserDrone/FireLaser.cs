@@ -151,16 +151,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 Util.PlaySound(attackSoundString, gameObject);
                 GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, direction) =>
                 {
-                    if (effectPrefab)
-                    {
-                        EffectData data = new EffectData
-                        {
-                            origin = option.transform.position,
-                            rotation = option.transform.rotation,
-                            rootObject = option
-                        };
-                        EffectManager.SpawnEffect(effectPrefab, data, false);
-                    }
+                    if (effectPrefab) GradiusOption.instance.OptionMuzzleEffect(effectPrefab, option, false);
                     if (isAuthority)
                     {
                         Ray aimRay = new Ray(option.transform.position, direction);

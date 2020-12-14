@@ -187,6 +187,23 @@ namespace Chen.GradiusMod.Items.GradiusOption
         }
 
         /// <summary>
+        /// Method that provides an easy way of displaying the effect prefab on Options.
+        /// </summary>
+        /// <param name="prefab">Effect prefab to display</param>
+        /// <param name="option">The Option Game Object</param>
+        /// <param name="transmit">Determines whether this effect should be networked</param>
+        public void OptionMuzzleEffect(GameObject prefab, GameObject option, bool transmit)
+        {
+            EffectData data = new EffectData
+            {
+                origin = option.transform.position,
+                rotation = option.transform.rotation,
+                rootObject = option
+            };
+            EffectManager.SpawnEffect(prefab, data, transmit);
+        }
+
+        /// <summary>
         /// Loops through all the Options of the minion. Always do a null check on the target parameter of actionToRun.
         /// </summary>
         /// <param name="optionOwner">The owner of the option.</param>

@@ -217,16 +217,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self);
             FireForAllOptions(self.characterBody, (option, behavior, _t, direction) =>
             {
-                if (FireGatling.effectPrefab)
-                {
-                    EffectData data = new EffectData
-                    {
-                        origin = option.transform.position,
-                        rotation = option.transform.rotation,
-                        rootObject = option
-                    };
-                    EffectManager.SpawnEffect(FireGatling.effectPrefab, data, false);
-                }
+                if (FireGatling.effectPrefab) OptionMuzzleEffect(FireGatling.effectPrefab, option, false);
                 if (self.isAuthority)
                 {
                     new BulletAttack
@@ -253,16 +244,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self);
             FireForAllOptions(self.characterBody, (option, behavior, _t, direction) =>
             {
-                if (FireTurret.effectPrefab)
-                {
-                    EffectData data = new EffectData
-                    {
-                        origin = option.transform.position,
-                        rotation = option.transform.rotation,
-                        rootObject = option
-                    };
-                    EffectManager.SpawnEffect(FireTurret.effectPrefab, data, false);
-                }
+                if (FireTurret.effectPrefab) OptionMuzzleEffect(FireTurret.effectPrefab, option, false);
                 if (self.isAuthority)
                 {
                     new BulletAttack
@@ -289,16 +271,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self, muzzleString);
             FireForAllOptions(self.characterBody, (option, behavior, _t, direction) =>
             {
-                if (FireMegaTurret.effectPrefab)
-                {
-                    EffectData data = new EffectData
-                    {
-                        origin = option.transform.position,
-                        rotation = option.transform.rotation,
-                        rootObject = option
-                    };
-                    EffectManager.SpawnEffect(FireMegaTurret.effectPrefab, data, false);
-                }
+                if (FireMegaTurret.effectPrefab) OptionMuzzleEffect(FireMegaTurret.effectPrefab, option, false);
                 if (self.isAuthority)
                 {
                     new BulletAttack
@@ -325,16 +298,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self, targetMuzzle);
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (FireMissileBarrage.effectPrefab)
-                {
-                    EffectData data = new EffectData
-                    {
-                        origin = option.transform.position,
-                        rotation = option.transform.rotation,
-                        rootObject = option
-                    };
-                    EffectManager.SpawnEffect(FireMissileBarrage.effectPrefab, data, false);
-                }
+                if (FireMissileBarrage.effectPrefab) OptionMuzzleEffect(FireMissileBarrage.effectPrefab, option, false);
                 if (self.isAuthority)
                 {
                     Ray aimRay = self.GetAimRay();
@@ -362,16 +326,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self, muzzleString);
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (FireTwinRocket.muzzleEffectPrefab)
-                {
-                    EffectData data = new EffectData
-                    {
-                        origin = option.transform.position,
-                        rotation = option.transform.rotation,
-                        rootObject = option
-                    };
-                    EffectManager.SpawnEffect(FireTwinRocket.muzzleEffectPrefab, data, false);
-                }
+                if (FireTwinRocket.muzzleEffectPrefab) OptionMuzzleEffect(FireTwinRocket.muzzleEffectPrefab, option, false);
                 if (self.isAuthority && FireTwinRocket.projectilePrefab != null)
                 {
                     float maxDistance = 1000f;
@@ -499,16 +454,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 {
                     if (!flag)
                     {
-                        if (self.effectPrefab)
-                        {
-                            EffectData data = new EffectData
-                            {
-                                origin = option.transform.position,
-                                rotation = option.transform.rotation,
-                                rootObject = option
-                            };
-                            EffectManager.SpawnEffect(self.effectPrefab, data, false);
-                        }
+                        if (self.effectPrefab) OptionMuzzleEffect(self.effectPrefab, option, false);
                         if (self.isAuthority)
                         {
                             new BulletAttack
@@ -635,16 +581,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     origin = option.transform.position,
                     target = hurtBox
                 };
-                if (FireSpine.muzzleflashEffectPrefab)
-                {
-                    EffectData data = new EffectData
-                    {
-                        origin = option.transform.position,
-                        rotation = option.transform.rotation,
-                        rootObject = option
-                    };
-                    EffectManager.SpawnEffect(FireSpine.muzzleflashEffectPrefab, data, true);
-                }
+                if (FireSpine.muzzleflashEffectPrefab) OptionMuzzleEffect(FireSpine.muzzleflashEffectPrefab, option, false);
                 OrbManager.instance.AddOrb(squidOrb);
             });
         }
@@ -684,10 +621,12 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     if (self.isAuthority && self.modelTransform && FireSunder.projectilePrefab)
                     {
                         Ray aimRay = new Ray(option.transform.position, direction);
-                        ProjectileManager.instance.FireProjectile(FireSunder.projectilePrefab, aimRay.origin, Util.QuaternionSafeLookRotation(aimRay.direction),
-                                                                  self.gameObject, self.damageStat * FireSunder.damageCoefficient * damageMultiplier,
-                                                                  FireSunder.forceMagnitude * damageMultiplier, Util.CheckRoll(self.critStat, self.characterBody.master),
-                                                                  DamageColorIndex.Default, null, -1f);
+                        ProjectileManager.instance.FireProjectile(
+                            FireSunder.projectilePrefab, aimRay.origin, Util.QuaternionSafeLookRotation(aimRay.direction),
+                            self.gameObject, self.damageStat * FireSunder.damageCoefficient * damageMultiplier,
+                            FireSunder.forceMagnitude * damageMultiplier, Util.CheckRoll(self.critStat, self.characterBody.master),
+                            DamageColorIndex.Default, null, -1f
+                        );
                     }
                     if (beetleGuardOptionSyncEffect)
                     {
