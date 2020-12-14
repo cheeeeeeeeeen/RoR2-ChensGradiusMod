@@ -464,6 +464,14 @@
             <param name="actionToRun">The sync action to perform. Inputs are as follows: NetworkIdentity optionIdentity, OptionTracker tracker.</param>
             <param name="queryTracker">If true, the Option tracker is automatically queried. If false, the Option tracker will not be queried.</param>
         </member>
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.OptionMuzzleEffect(UnityEngine.GameObject,UnityEngine.GameObject,System.Boolean)">
+            <summary>
+            Method that provides an easy way of displaying the effect prefab on Options.
+            </summary>
+            <param name="prefab">Effect prefab to display</param>
+            <param name="option">The Option Game Object</param>
+            <param name="transmit">Determines whether this effect should be networked</param>
+        </member>
         <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior,UnityEngine.GameObject})">
             <summary>
             Loops through all the Options of the minion. Always do a null check on the target parameter of actionToRun.
