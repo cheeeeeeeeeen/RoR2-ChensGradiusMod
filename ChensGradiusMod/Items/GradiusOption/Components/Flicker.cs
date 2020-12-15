@@ -64,7 +64,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
             }
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (PauseScreenController.paused) return;
             for (int i = 0; i < lightObjects.Length; i++)

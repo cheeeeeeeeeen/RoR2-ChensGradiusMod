@@ -67,27 +67,6 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
             t = gameObject.transform;
         }
 
-        private void Update()
-        {
-            if (PauseScreenController.paused) return;
-            if (!init && masterOptionTracker && characterMaster)
-            {
-                if (IsRotateUser() && masterOptionTracker.optionItemCount > 0)
-                {
-                    if (masterOptionTracker.optionItemCount % 2 == 0) currentOptionAngle += rotateOptionAngleSpeed;
-                    else currentOptionAngle -= rotateOptionAngleSpeed;
-                    if (currentOptionAngle >= 360f) currentOptionAngle = 360f - currentOptionAngle;
-                    else if (currentOptionAngle <= 0f) currentOptionAngle += 360f;
-                }
-                else if (previousPosition != t.position)
-                {
-                    flightPath.Insert(0, t.position);
-                    if (flightPath.Count > masterOptionTracker.optionItemCount * distanceInterval) flightPath.RemoveAt(flightPath.Count - 1);
-                }
-                previousPosition = t.position;
-            }
-        }
-
         private void FixedUpdate()
         {
             if (PauseScreenController.paused) return;
@@ -131,20 +110,39 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                 previousPosition = t.position;
                 ManageFlightPath(masterOptionTracker.optionItemCount);
             }
-            else if (!init && masterOptionTracker.optionItemCount > 0)
+            else if (!init)
             {
-                int diff = masterOptionTracker.optionItemCount - previousOptionItemCount;
-                if (diff > 0 || diff < 0)
+                if (masterOptionTracker.optionItemCount > 0)
                 {
-                    previousOptionItemCount = masterOptionTracker.optionItemCount;
-                    ManageFlightPath(diff);
+                    int diff = masterOptionTracker.optionItemCount - previousOptionItemCount;
+                    if (diff > 0 || diff < 0)
+                    {
+                        previousOptionItemCount = masterOptionTracker.optionItemCount;
+                        ManageFlightPath(diff);
+                    }
                 }
-            }
-            else if (!init && masterOptionTracker.optionItemCount <= 0)
-            {
-                init = true;
-                flightPath.Clear();
-                previousOptionItemCount = 0;
+                else
+                {
+                    init = true;
+                    flightPath.Clear();
+                    previousOptionItemCount = 0;
+                }
+                if (masterOptionTracker && characterMaster)
+                {
+                    if (IsRotateUser() && masterOptionTracker.optionItemCount > 0)
+                    {
+                        if (masterOptionTracker.optionItemCount % 2 == 0) currentOptionAngle += rotateOptionAngleSpeed;
+                        else currentOptionAngle -= rotateOptionAngleSpeed;
+                        if (currentOptionAngle >= 360f) currentOptionAngle = 360f - currentOptionAngle;
+                        else if (currentOptionAngle <= 0f) currentOptionAngle += 360f;
+                    }
+                    else if (previousPosition != t.position)
+                    {
+                        flightPath.Insert(0, t.position);
+                        if (flightPath.Count > masterOptionTracker.optionItemCount * distanceInterval) flightPath.RemoveAt(flightPath.Count - 1);
+                    }
+                    previousPosition = t.position;
+                }
             }
             SyncTargets();
         }

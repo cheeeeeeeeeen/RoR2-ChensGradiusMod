@@ -25,7 +25,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             haloLight = gameObject.GetComponent<Light>();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (PauseScreenController.paused || !haloLight) return;
             if (startCharging)

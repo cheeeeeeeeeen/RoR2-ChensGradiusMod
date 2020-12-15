@@ -19,7 +19,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             originalRange = light.range;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (PauseScreenController.paused) return;
             light.range = originalRange * Sine(0f, frequency, amplitude, baseValue);

@@ -53,9 +53,19 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
             t = gameObject.transform;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-            if (!PauseScreenController.paused && !init)
+            if (PauseScreenController.paused) return;
+            if (init && owner)
+            {
+                init = false;
+                ownerT = owner.transform;
+                ownerIbt = owner.GetComponent<InputBankTest>();
+                ownerOt = owner.GetComponent<OptionTracker>();
+                ownerBody = owner.GetComponent<CharacterBody>();
+                ownerMaster = ownerBody.master;
+            }
+            else if (!init)
             {
                 if (owner && ownerBody && ownerMaster && ownerOt)
                 {
@@ -77,22 +87,9 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                 }
                 else
                 {
-                    Log.Warning($"OptionBehavior.Update: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
+                    Log.Warning($"OptionBehavior.FixedUpdate: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
                     Destroy(gameObject);
                 }
-            }
-        }
-
-        private void FixedUpdate()
-        {
-            if (!PauseScreenController.paused && init && owner)
-            {
-                init = false;
-                ownerT = owner.transform;
-                ownerIbt = owner.GetComponent<InputBankTest>();
-                ownerOt = owner.GetComponent<OptionTracker>();
-                ownerBody = owner.GetComponent<CharacterBody>();
-                ownerMaster = ownerBody.master;
             }
         }
 
