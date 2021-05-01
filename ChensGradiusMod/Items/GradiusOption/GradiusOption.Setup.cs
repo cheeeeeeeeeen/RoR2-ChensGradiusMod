@@ -15,7 +15,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
     /// <summary>
     /// An item class powered by TILER2 which provides the main API related to the Options/Multiples.
     /// </summary>
-    public partial class GradiusOption : Item_V2<GradiusOption>
+    public partial class GradiusOption : Item<GradiusOption>
     {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public override string displayName => "Gradius' Option";
@@ -145,8 +145,8 @@ namespace Chen.GradiusMod.Items.GradiusOption
 
         public GradiusOption()
         {
-            modelResourcePath = "@ChensGradiusMod:assets/option/model/optionmodel.prefab";
-            iconResourcePath = "@ChensGradiusMod:assets/option/icon/gradiusoption_icon.png";
+            modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/optionmodel.prefab");
+            iconResource = assetBundle.LoadAsset<Sprite>("assets/option/icon/gradiusoption_icon.png");
         }
 
         public override void SetupConfig()
@@ -258,9 +258,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             itemDef.pickupModelPrefab.transform.localScale *= 2f;
 
             string path;
-            if (includeModelInsideOrb) path = "@ChensGradiusMod:assets/option/orb/optionorbwithmodel.prefab";
-            else path = "@ChensGradiusMod:assets/option/orb/optionorb.prefab";
-            gradiusOptionPrefab = Resources.Load<GameObject>(path);
+            if (includeModelInsideOrb) path = "assets/option/orb/optionorbwithmodel.prefab";
+            else path = "assets/option/orb/optionorb.prefab";
+            gradiusOptionPrefab = assetBundle.LoadAsset<GameObject>(path);
             if (gradiusOptionPrefab)
             {
                 gradiusOptionPrefab.AddComponent<NetworkIdentity>();

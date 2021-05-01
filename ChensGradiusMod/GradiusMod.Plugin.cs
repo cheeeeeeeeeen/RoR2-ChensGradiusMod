@@ -18,6 +18,7 @@ using TILER2;
 using static Chen.Helpers.GeneralHelpers.AssetsManager;
 using static TILER2.MiscUtil;
 using Path = System.IO.Path;
+using UnityEngine;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
 
@@ -59,6 +60,7 @@ namespace Chen.GradiusMod
         internal static FilingDictionary<CatalogBoilerplate> chensItemList = new FilingDictionary<CatalogBoilerplate>();
         internal static List<DroneInfo> gradiusDronesList = new List<DroneInfo>();
         internal static Log Log;
+        internal static AssetBundle assetBundle;
 
 #if DEBUG
 
@@ -99,8 +101,10 @@ namespace Chen.GradiusMod
             Log.Debug("Loading assets...");
             BundleInfo models = new BundleInfo("@ChensGradiusMod", "Chen.GradiusMod.chensgradiusmod_assets", BundleType.UnityAssetBundle);
             BundleInfo sounds = new BundleInfo("@ChensGradiusMod", "Chen.GradiusMod.chensgradiusmod_soundbank.bnk", BundleType.WWiseSoundBank);
-            AssetsManager manager = new AssetsManager(models, sounds);
-            manager.RegisterAll();
+            AssetsManager modelsManager = new AssetsManager(models);
+            AssetsManager soundsManager = new AssetsManager(sounds);
+            assetBundle = modelsManager.Register() as AssetBundle;
+            soundsManager.Register();
 
             cfgFile = new ConfigFile(Path.Combine(Paths.ConfigPath, ModGuid + ".cfg"), true);
 

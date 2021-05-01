@@ -648,9 +648,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             }
         }
 
-        private bool EquipmentSlot_PerformEquipmentAction(On.RoR2.EquipmentSlot.orig_PerformEquipmentAction orig, EquipmentSlot self, EquipmentIndex equipmentIndex)
+        private bool EquipmentSlot_PerformEquipmentAction(On.RoR2.EquipmentSlot.orig_PerformEquipmentAction orig, EquipmentSlot self, EquipmentDef equipmentDef)
         {
-            bool returnValue = orig(self, equipmentIndex);
+            bool returnValue = orig(self, equipmentDef);
             if (!returnValue) return false;
             CharacterBody body = self.characterBody;
             if (body)
@@ -662,7 +662,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     int numberOfTimes = Mathf.FloorToInt(tracker.existingOptions.Count * equipmentDuplicationMultiplier);
                     for (int i = 0; i < numberOfTimes; i++)
                     {
-                        orig(self, equipmentIndex);
+                        orig(self, equipmentDef);
                     }
                 }
             }

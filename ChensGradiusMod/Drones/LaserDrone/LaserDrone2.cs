@@ -11,6 +11,7 @@ using RoR2.CharacterAI;
 using RoR2.Skills;
 using System.Collections.Generic;
 using UnityEngine;
+using static Chen.GradiusMod.GradiusModPlugin;
 using static R2API.DirectorAPI;
 using Stage = R2API.DirectorAPI.Stage;
 
@@ -123,7 +124,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             purchaseInteraction.displayNameToken = "LASER_DRONE2_INTERACTABLE_NAME";
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE2_NAME";
-            GameObject customBrokenModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Model/mdlLaserDroneBroken.prefab");
+            GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDroneBroken.prefab");
             customBrokenModel.transform.parent = brokenObject.transform;
             Object.Destroy(brokenObject.transform.Find("mdlDrone1").gameObject);
             ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
@@ -156,7 +157,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             body.levelRegen *= 1.2f;
             body.levelDamage *= 10f;
             body.levelCrit *= 3f;
-            body.portraitIcon = Resources.Load<Texture>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Icon/texLaserDrone2Icon.png");
+            body.portraitIcon = assetBundle.LoadAsset<Texture>("Assets/Drones/LaserDrone2/Icon/texLaserDrone2Icon.png");
             ModifyDroneModel(body);
             ModifySkill();
             CharacterDeathBehavior death = body.GetOrAddComponent<CharacterDeathBehavior>();
@@ -165,7 +166,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
 
         private void ModifyDroneModel(CharacterBody body)
         {
-            GameObject customModel = Resources.Load<GameObject>("@ChensGradiusMod:Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab");
+            GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab");
             Object.Destroy(droneBody.transform.Find("Model Base").gameObject);
             GameObject modelBase = new GameObject("ModelBase");
             modelBase.transform.parent = droneBody.transform;
