@@ -2,7 +2,6 @@ using RoR2;
 using System;
 using UnityEngine;
 using VanillaDeathState = EntityStates.Drone.DeathState;
-using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Drones
 {

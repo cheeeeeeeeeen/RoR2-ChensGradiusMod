@@ -4,9 +4,9 @@
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
   "description": "This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games. Fully documented for other interested mod creators.",
   "dependencies": [
-    "bbepis-BepInExPack-5.3.1",
-    "tristanmcpherson-R2API-2.5.14",
-    "ThinkInvis-TILER2-3.0.4",
-    "Chen-ChensHelpers-1.0.5"
+    "bbepis-BepInExPack-5.4.9",
+    "tristanmcpherson-R2API-3.0.30",
+    "ThinkInvis-TILER2-4.0.6",
+    "Chen-ChensHelpers-1.0.8"
   ]
 }
