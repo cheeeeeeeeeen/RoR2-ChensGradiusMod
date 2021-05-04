@@ -331,13 +331,26 @@
             The number that represents the identification of the Option scoped under the owner.
             </summary>
         </member>
-        <member name="F:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.data">
+        <member name="F:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.unityData">
             <summary>
-            Useful for storing prefabs, components, scriptable objects or anything that needs to be saved from one state to another of the owner.
+            Useful for storing prefabs, components, scriptable objects that needs to be saved from one state to another of the owner.
             Utilizing this means that one does not need to create and attach a component for storing these objects.
+            Using this dictionary allows objects here to be checked using the Unity way.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.D">
+        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.U">
+            <summary>
+            Shorthand for the data dictionary.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.objectData">
+            <summary>
+            Useful for native objects or class instances that needs to be saved from one state to another of the owner.
+            Utilizing this means that one does not need to create and attach a component for storing these objects.
+            Casting is required when the object is accessed.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.O">
             <summary>
             Shorthand for the data dictionary.
             </summary>
