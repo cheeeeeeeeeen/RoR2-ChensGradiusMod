@@ -85,13 +85,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 Transform transform = option.transform;
                 if (transform && self.target)
                 {
-                    if (behavior.D.ContainsKey("healBeamController") && behavior.D["healBeamController"])
+                    if (behavior.U.ContainsKey("healBeamController") && behavior.U["healBeamController"])
                     {
-                        ((HealBeamController)behavior.D["healBeamController"]).BreakServer();
+                        ((HealBeamController)behavior.U["healBeamController"]).BreakServer();
                     }
                     GameObject gameObject = Object.Instantiate(HealBeam.healBeamPrefab, transform);
                     HealBeamController hbc = gameObject.GetComponent<HealBeamController>();
-                    behavior.D["healBeamController"] = hbc;
+                    behavior.U["healBeamController"] = hbc;
                     hbc.healRate = healRate;
                     hbc.target = self.target;
                     hbc.ownership.ownerObject = option.gameObject;
@@ -105,9 +105,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self);
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["healBeamController"])
+                if (behavior.U["healBeamController"])
                 {
-                    ((HealBeamController)behavior.D["healBeamController"]).BreakServer();
+                    ((HealBeamController)behavior.U["healBeamController"]).BreakServer();
                 }
             });
         }
@@ -142,9 +142,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
                 {
-                    if (behavior.D["flamethrower"])
+                    if (behavior.U["flamethrower"])
                     {
-                        EntityState.Destroy(behavior.D["flamethrower"]);
+                        EntityState.Destroy(behavior.U["flamethrower"]);
                     }
                 });
             }
@@ -162,16 +162,16 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     if (self.stopwatch >= self.entryDuration && !perMinionOldBegunFlamethrower)
                     {
                         perMinionOldBegunFlamethrower = true;
-                        if (behavior.D.ContainsKey("flamethrower") && behavior.D["flamethrower"])
+                        if (behavior.U.ContainsKey("flamethrower") && behavior.U["flamethrower"])
                         {
-                            EntityState.Destroy(behavior.D["flamethrower"]);
+                            EntityState.Destroy(behavior.U["flamethrower"]);
                         }
-                        behavior.D["flamethrower"] = Object.Instantiate(self.flamethrowerEffectPrefab, option.transform);
-                        ((GameObject)behavior.D["flamethrower"]).GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
+                        behavior.U["flamethrower"] = Object.Instantiate(self.flamethrowerEffectPrefab, option.transform);
+                        ((GameObject)behavior.U["flamethrower"]).GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
                     }
-                    if (perMinionOldBegunFlamethrower && behavior.D["flamethrower"] && target)
+                    if (perMinionOldBegunFlamethrower && behavior.U["flamethrower"] && target)
                     {
-                        ((GameObject)behavior.D["flamethrower"]).transform.forward = direction;
+                        ((GameObject)behavior.U["flamethrower"]).transform.forward = direction;
                     }
                 });
             }
@@ -355,13 +355,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 Transform transform = option.transform;
                 if (self.effectPrefab)
                 {
-                    if (behavior.D.ContainsKey("laserChargeEffect") && behavior.D["laserChargeEffect"])
+                    if (behavior.U.ContainsKey("laserChargeEffect") && behavior.U["laserChargeEffect"])
                     {
-                        EntityState.Destroy(behavior.D["laserChargeEffect"]);
+                        EntityState.Destroy(behavior.U["laserChargeEffect"]);
                     }
-                    behavior.D["laserChargeEffect"] = Object.Instantiate(self.effectPrefab, transform.position, transform.rotation);
-                    ((GameObject)behavior.D["laserChargeEffect"]).transform.parent = transform;
-                    var component = ((GameObject)behavior.D["laserChargeEffect"]).GetComponent<ScaleParticleSystemDuration>();
+                    behavior.U["laserChargeEffect"] = Object.Instantiate(self.effectPrefab, transform.position, transform.rotation);
+                    ((GameObject)behavior.U["laserChargeEffect"]).transform.parent = transform;
+                    var component = ((GameObject)behavior.U["laserChargeEffect"]).GetComponent<ScaleParticleSystemDuration>();
                     if (component) component.newDuration = self.duration;
                 }
             });
@@ -373,7 +373,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["laserChargeEffect"]) EntityState.Destroy(behavior.D["laserChargeEffect"]);
+                if (behavior.U["laserChargeEffect"]) EntityState.Destroy(behavior.U["laserChargeEffect"]);
             });
         }
 
@@ -385,14 +385,14 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 if (self.laserPrefab)
                 {
-                    if (behavior.D.ContainsKey("laserFire") && behavior.D["laserFire"]) EntityState.Destroy(behavior.D["laserFire"]);
-                    if (behavior.D.ContainsKey("laserChildLocator") && behavior.D["laserChildLocator"]) EntityState.Destroy(behavior.D["laserChildLocator"]);
-                    if (behavior.D.ContainsKey("laserFireEnd") && behavior.D["laserFireEnd"]) EntityState.Destroy(behavior.D["laserFireEnd"]);
+                    if (behavior.U.ContainsKey("laserFire") && behavior.U["laserFire"]) EntityState.Destroy(behavior.U["laserFire"]);
+                    if (behavior.U.ContainsKey("laserChildLocator") && behavior.U["laserChildLocator"]) EntityState.Destroy(behavior.U["laserChildLocator"]);
+                    if (behavior.U.ContainsKey("laserFireEnd") && behavior.U["laserFireEnd"]) EntityState.Destroy(behavior.U["laserFireEnd"]);
                     Transform transform = option.transform;
-                    behavior.D["laserFire"] = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
-                    ((GameObject)behavior.D["laserFire"]).transform.parent = transform;
-                    behavior.D["laserChildLocator"] = ((GameObject)behavior.D["laserFire"]).GetComponent<ChildLocator>();
-                    behavior.D["laserFireEnd"] = ((ChildLocator)behavior.D["laserChildLocator"]).FindChild("LaserEnd");
+                    behavior.U["laserFire"] = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
+                    ((GameObject)behavior.U["laserFire"]).transform.parent = transform;
+                    behavior.U["laserChildLocator"] = ((GameObject)behavior.U["laserFire"]).GetComponent<ChildLocator>();
+                    behavior.U["laserFireEnd"] = ((ChildLocator)behavior.U["laserChildLocator"]).FindChild("LaserEnd");
                 }
             });
         }
@@ -403,9 +403,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["laserFire"]) EntityState.Destroy(behavior.D["laserFire"]);
-                if (behavior.D["laserChildLocator"]) EntityState.Destroy(behavior.D["laserChildLocator"]);
-                if (behavior.D["laserFireEnd"]) EntityState.Destroy(behavior.D["laserFireEnd"]);
+                if (behavior.U["laserFire"]) EntityState.Destroy(behavior.U["laserFire"]);
+                if (behavior.U["laserChildLocator"]) EntityState.Destroy(behavior.U["laserChildLocator"]);
+                if (behavior.U["laserFireEnd"]) EntityState.Destroy(behavior.U["laserFireEnd"]);
             });
         }
 
@@ -433,7 +433,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 }
                 Ray ray = new Ray(position, point - position);
                 bool flag = false;
-                if (behavior.D["laserFire"] && behavior.D["laserChildLocator"])
+                if (behavior.U["laserFire"] && behavior.U["laserChildLocator"])
                 {
                     if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit raycastHit2, ray.direction.magnitude,
                                         LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
@@ -446,8 +446,8 @@ namespace Chen.GradiusMod.Items.GradiusOption
                             flag = true;
                         }
                     }
-                    ((GameObject)behavior.D["laserFire"]).transform.rotation = Util.QuaternionSafeLookRotation(point - position);
-                    ((Transform)behavior.D["laserFireEnd"]).position = point;
+                    ((GameObject)behavior.U["laserFire"]).transform.rotation = Util.QuaternionSafeLookRotation(point - position);
+                    ((Transform)behavior.U["laserFireEnd"]).position = point;
                 }
 
                 if (oldFireStopwatch > 1f / FireMegaLaser.fireFrequency)
@@ -491,7 +491,6 @@ namespace Chen.GradiusMod.Items.GradiusOption
 
         private void FireGoldFist_PlacePredictedAttack(On.EntityStates.TitanMonster.FireGoldFist.orig_PlacePredictedAttack orig, FireGoldFist self)
         {
-            // There is a known bug for predicted position markers in vanilla. Keep a close eye on that bug as this hook is affected.
             orig(self);
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
@@ -509,25 +508,21 @@ namespace Chen.GradiusMod.Items.GradiusOption
                         fistPosition = raycastHit.point;
                     }
                     float delay = FireGoldFist.delayBetweenFists * fistNumber++;
-                    EffectManager.SpawnEffect(self.predictedPositionEffectPrefab, new EffectData
+                    if (self.isAuthority)
                     {
-                        origin = fistPosition,
-                        scale = FireFist.fistRadius,
-                        rotation = Quaternion.identity
-                    }, true);
-                    GameObject gameObject = Object.Instantiate(Resources.Load<GameObject>("Prefabs/NetworkedObjects/GenericDelayBlast"), fistPosition, Quaternion.identity);
-                    DelayBlast component = gameObject.GetComponent<DelayBlast>();
-                    component.position = fistPosition;
-                    component.baseDamage = self.damageStat * FireFist.fistDamageCoefficient * damageMultiplier;
-                    component.baseForce = FireFist.fistForce * damageMultiplier;
-                    component.bonusForce = FireFist.fistVerticalForce * Vector3.up;
-                    component.attacker = self.gameObject;
-                    component.radius = FireFist.fistRadius;
-                    component.crit = Util.CheckRoll(self.characterBody.crit, self.characterBody.master);
-                    component.maxTimer = FireFist.entryDuration - FireFist.trackingDuration + delay;
-                    component.falloffModel = BlastAttack.FalloffModel.None;
-                    component.explosionEffect = self.fistEffectPrefab;
-                    gameObject.GetComponent<TeamFilter>().teamIndex = TeamComponent.GetObjectTeam(component.attacker);
+                        FireProjectileInfo fireProjectileInfo = new FireProjectileInfo()
+                        {
+                            projectilePrefab = self.fistProjectilePrefab,
+                            position = fistPosition,
+                            rotation = Quaternion.identity,
+                            owner = self.gameObject,
+                            damage = self.damageStat * FireFist.fistDamageCoefficient * damageMultiplier,
+                            force = FireFist.fistForce * damageMultiplier,
+                            crit = self.characterBody.RollCrit(),
+                            fuseOverride = FireFist.entryDuration - FireFist.trackingDuration + delay
+                        };
+                        ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                    }
                 }
             });
         }
@@ -538,11 +533,11 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D.ContainsKey("fistChargeEffect") && behavior.D["fistChargeEffect"])
+                if (behavior.U.ContainsKey("fistChargeEffect") && behavior.U["fistChargeEffect"])
                 {
-                    EntityState.Destroy(behavior.D["fistChargeEffect"]);
+                    EntityState.Destroy(behavior.U["fistChargeEffect"]);
                 }
-                behavior.D["fistChargeEffect"] = Object.Instantiate(self.chargeEffectPrefab, option.transform);
+                behavior.U["fistChargeEffect"] = Object.Instantiate(self.chargeEffectPrefab, option.transform);
             });
         }
 
@@ -552,7 +547,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["fistChargeEffect"]) EntityState.Destroy(behavior.D["fistChargeEffect"]);
+                if (behavior.U["fistChargeEffect"]) EntityState.Destroy(behavior.U["fistChargeEffect"]);
             });
         }
 
@@ -592,10 +587,10 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!beetleGuardOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D.ContainsKey("sunderEffect") && behavior.D["sunderEffect"]) EntityState.Destroy(behavior.D["sunderEffect"]);
+                if (behavior.U.ContainsKey("sunderEffect") && behavior.U["sunderEffect"]) EntityState.Destroy(behavior.U["sunderEffect"]);
                 if (FireSunder.chargeEffectPrefab)
                 {
-                    behavior.D["sunderEffect"] = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
+                    behavior.U["sunderEffect"] = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
                 }
             });
         }
@@ -606,7 +601,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!beetleGuardOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["sunderEffect"]) EntityState.Destroy(behavior.D["sunderEffect"]);
+                if (behavior.U["sunderEffect"]) EntityState.Destroy(behavior.U["sunderEffect"]);
             });
         }
 
@@ -630,7 +625,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     }
                     if (beetleGuardOptionSyncEffect)
                     {
-                        if (behavior.D["sunderEffect"]) EntityState.Destroy(behavior.D["sunderEffect"]);
+                        if (behavior.U["sunderEffect"]) EntityState.Destroy(behavior.U["sunderEffect"]);
                     }
                 }
             });

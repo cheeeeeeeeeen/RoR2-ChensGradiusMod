@@ -84,7 +84,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         {
             if (initialized) return;
             initialized = true;
-            FireMegaLaser fmlState = Instantiate(typeof(FireMegaLaser)) as FireMegaLaser;
+            FireMegaLaser fmlState = new FireMegaLaser();
             hitEffectPrefab = fmlState.hitEffectPrefab;
             laserPrefab = fmlState.laserPrefab;
             playAttackSoundString = FireMegaLaser.playAttackSoundString;
@@ -127,14 +127,14 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             UpdateLockOn();
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D.ContainsKey("laserFire") && behavior.D["laserFire"]) Destroy(behavior.D["laserFire"]);
-                if (behavior.D.ContainsKey("laserChildLocator") && behavior.D["laserChildLocator"]) Destroy(behavior.D["laserChildLocator"]);
-                if (behavior.D.ContainsKey("laserFireEnd") && behavior.D["laserFireEnd"]) Destroy(behavior.D["laserFireEnd"]);
+                if (behavior.U.ContainsKey("laserFire") && behavior.U["laserFire"]) Destroy(behavior.U["laserFire"]);
+                if (behavior.U.ContainsKey("laserChildLocator") && behavior.U["laserChildLocator"]) Destroy(behavior.U["laserChildLocator"]);
+                if (behavior.U.ContainsKey("laserFireEnd") && behavior.U["laserFireEnd"]) Destroy(behavior.U["laserFireEnd"]);
                 Transform transform = option.transform;
-                behavior.D["laserFire"] = Object.Instantiate(laserPrefab, transform.position, transform.rotation);
-                ((GameObject)behavior.D["laserFire"]).transform.parent = transform;
-                behavior.D["laserChildLocator"] = ((GameObject)behavior.D["laserFire"]).GetComponent<ChildLocator>();
-                behavior.D["laserFireEnd"] = ((ChildLocator)behavior.D["laserChildLocator"]).FindChild("LaserEnd");
+                behavior.U["laserFire"] = Object.Instantiate(laserPrefab, transform.position, transform.rotation);
+                ((GameObject)behavior.U["laserFire"]).transform.parent = transform;
+                behavior.U["laserChildLocator"] = ((GameObject)behavior.U["laserFire"]).GetComponent<ChildLocator>();
+                behavior.U["laserFireEnd"] = ((ChildLocator)behavior.U["laserChildLocator"]).FindChild("LaserEnd");
             });
             bodyRotation = transform.GetComponentInChildren<BodyRotation>();
             bodyRotation.accelerate = true;
@@ -147,9 +147,9 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             Util.PlaySound(stopLoopSoundString, gameObject);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["laserFire"]) Destroy(behavior.D["laserFire"]);
-                if (behavior.D["laserChildLocator"]) Destroy(behavior.D["laserChildLocator"]);
-                if (behavior.D["laserFireEnd"]) Destroy(behavior.D["laserFireEnd"]);
+                if (behavior.U["laserFire"]) Destroy(behavior.U["laserFire"]);
+                if (behavior.U["laserChildLocator"]) Destroy(behavior.U["laserChildLocator"]);
+                if (behavior.U["laserFireEnd"]) Destroy(behavior.U["laserFireEnd"]);
             });
             bodyRotation.accelerate = false;
             base.OnExit();
@@ -220,7 +220,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                 }
                 Ray optionRay = new Ray(position, point - position);
                 bool optionFlag = false;
-                if (behavior.D["laserFire"] && behavior.D["laserChildLocator"] && behavior.D["laserFireEnd"])
+                if (behavior.U["laserFire"] && behavior.U["laserChildLocator"] && behavior.U["laserFireEnd"])
                 {
                     if (Physics.Raycast(optionRay.origin, optionRay.direction, out RaycastHit raycastHit4, optionRay.direction.magnitude,
                                         LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
@@ -233,8 +233,8 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                             optionFlag = true;
                         }
                     }
-                    ((GameObject)behavior.D["laserFire"]).transform.rotation = Util.QuaternionSafeLookRotation(point - position);
-                    ((Transform)behavior.D["laserFireEnd"]).position = point;
+                    ((GameObject)behavior.U["laserFire"]).transform.rotation = Util.QuaternionSafeLookRotation(point - position);
+                    ((Transform)behavior.U["laserFireEnd"]).position = point;
                 }
                 if (optionFireStopwatch > 1f / fireFrequency)
                 {

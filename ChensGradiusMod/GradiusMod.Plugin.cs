@@ -61,6 +61,7 @@ namespace Chen.GradiusMod
         internal static List<DroneInfo> gradiusDronesList = new List<DroneInfo>();
         internal static Log Log;
         internal static AssetBundle assetBundle;
+        internal static ContentProvider contentProvider;
 
 #if DEBUG
 
@@ -89,6 +90,7 @@ namespace Chen.GradiusMod
         private void Awake()
         {
             Log = new Log(Logger);
+            contentProvider = new ContentProvider();
 
 #if DEBUG
             MultiplayerTest.Enable(Log);
@@ -125,6 +127,8 @@ namespace Chen.GradiusMod
             Log.Debug("Instantiating drones...");
             gradiusDronesList = DroneCatalog.Initialize(ModGuid, cfgFile);
             DroneCatalog.EfficientSetupAll(gradiusDronesList);
+
+            contentProvider.Initialize();
 
             Log.Debug("Applying vanilla fixes...");
             RegisterVanillaChanges();

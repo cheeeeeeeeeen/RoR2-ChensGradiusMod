@@ -105,9 +105,9 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 if (particleSystem) particleSystem.newDuration = duration;
                 GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
                 {
-                    behavior.D["laserChargeEffect"] = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
-                    ((GameObject)behavior.D["laserChargeEffect"]).transform.parent = option.transform;
-                    var optionParticleSystem = ((GameObject)behavior.D["laserChargeEffect"]).GetComponent<ScaleParticleSystemDuration>();
+                    behavior.U["laserChargeEffect"] = Object.Instantiate(particleEffectPrefab, option.transform.position, option.transform.rotation);
+                    ((GameObject)behavior.U["laserChargeEffect"]).transform.parent = option.transform;
+                    var optionParticleSystem = ((GameObject)behavior.U["laserChargeEffect"]).GetComponent<ScaleParticleSystemDuration>();
                     if (optionParticleSystem) optionParticleSystem.newDuration = duration;
                 });
             }
@@ -121,7 +121,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.D["laserChargeEffect"]) Destroy(behavior.D["laserChargeEffect"]);
+                if (behavior.U["laserChargeEffect"]) Destroy(behavior.U["laserChargeEffect"]);
             });
             base.OnExit();
         }

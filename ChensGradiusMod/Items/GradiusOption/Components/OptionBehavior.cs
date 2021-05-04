@@ -24,18 +24,35 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
         public int numbering = 0;
 
         /// <summary>
-        /// Useful for storing prefabs, components, scriptable objects or anything that needs to be saved from one state to another of the owner.
+        /// Useful for storing prefabs, components, scriptable objects that needs to be saved from one state to another of the owner.
         /// Utilizing this means that one does not need to create and attach a component for storing these objects.
+        /// Using this dictionary allows objects here to be checked using the Unity way.
         /// </summary>
-        public Dictionary<string, UnityObject> data = new Dictionary<string, UnityObject>();
+        public Dictionary<string, UnityObject> unityData = new Dictionary<string, UnityObject>();
 
         /// <summary>
         /// Shorthand for the data dictionary.
         /// </summary>
-        public Dictionary<string, UnityObject> D
+        public Dictionary<string, UnityObject> U
         {
-            get => data;
-            private set => data = value;
+            get => unityData;
+            private set => unityData = value;
+        }
+
+        /// <summary>
+        /// Useful for native objects or class instances that needs to be saved from one state to another of the owner.
+        /// Utilizing this means that one does not need to create and attach a component for storing these objects.
+        /// Casting is required when the object is accessed.
+        /// </summary>
+        public Dictionary<string, object> objectData = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Shorthand for the data dictionary.
+        /// </summary>
+        public Dictionary<string, object> O
+        {
+            get => objectData;
+            private set => objectData = value;
         }
 
         internal GameObject target;

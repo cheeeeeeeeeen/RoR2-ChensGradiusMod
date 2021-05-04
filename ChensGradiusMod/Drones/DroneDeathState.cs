@@ -63,7 +63,7 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         public override void OnEnter()
         {
-            VanillaDeathState originalState = Instantiate(typeof(VanillaDeathState)) as VanillaDeathState;
+            VanillaDeathState originalState = new VanillaDeathState();
             initialExplosionEffect = originalState.initialExplosionEffect;
             deathExplosionEffect = originalState.deathExplosionEffect;
             initialSoundString = originalState.initialSoundString;

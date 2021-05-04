@@ -109,11 +109,11 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         {
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
             droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}Master");
-            MasterCatalog.getAdditionalEntries += (list) => list.Add(droneMaster);
+            contentProvider.masterObjects.Add(droneMaster);
             ModifyDroneMaster();
             CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
             droneBody = master.bodyPrefab.InstantiateClone($"{name}Body");
-            BodyCatalog.getAdditionalEntries += (list) => list.Add(droneBody);
+            contentProvider.bodyObjects.Add(droneBody);
             ModifyDroneBody();
             master.bodyPrefab = droneBody;
             summonMasterBehavior.masterPrefab = droneMaster;
@@ -221,7 +221,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             newSkillFamily.variants[0] = new SkillFamily.Variant
             {
                 skillDef = newSkillDef,
-                unlockableName = "",
+                unlockableDef = null,
                 viewableNode = new ViewablesCatalog.Node("", false, null)
             };
             locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
@@ -256,9 +256,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
 #endif
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
-                preventOverhead = false,
-                requiredUnlockable = "",
-                forbiddenUnlockable = ""
+                preventOverhead = false
             };
             DirectorCard heavyDirectorCard = new DirectorCard
             {
@@ -267,9 +265,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                 minimumStageCompletions = skyMeadowMinimumStageCompletions,
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
                 allowAmbushSpawn = true,
-                preventOverhead = false,
-                requiredUnlockable = "",
-                forbiddenUnlockable = ""
+                preventOverhead = false
             };
             iDirectorCardHolder = new DirectorCardHolder
             {

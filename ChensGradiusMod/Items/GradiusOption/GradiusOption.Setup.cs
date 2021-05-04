@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static TILER2.MiscUtil;
+using RoR2Items = RoR2.RoR2Content.Items;
 
 namespace Chen.GradiusMod.Items.GradiusOption
 {
@@ -287,7 +288,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             CharacterMaster trueMaster = null;
             foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
             {
-                if (!trueMaster || pcmc.master.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP))
+                if (!trueMaster || pcmc.master.inventory.GetItemCount(RoR2Items.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(RoR2Items.TitanGoldDuringTP))
                 {
                     trueMaster = pcmc.master;
                 }
