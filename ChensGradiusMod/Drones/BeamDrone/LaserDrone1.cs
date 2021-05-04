@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using Chen.GradiusMod.Items.GradiusOption;
 using Chen.Helpers.CollectionHelpers;
@@ -125,10 +125,19 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE1_NAME";
             GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
-            customBrokenModel.transform.parent = brokenObject.transform;
-            Object.Destroy(brokenObject.transform.Find("mdlDrone1").gameObject);
+            Object.Destroy(brokenObject.transform.Find("ModelBase").gameObject);
+            GameObject modelBase = new GameObject("ModelBase");
+            modelBase.transform.parent = brokenObject.transform;
+            modelBase.transform.localPosition = Vector3.zero;
+            modelBase.transform.localRotation = Quaternion.identity;
+            modelBase.transform.localScale = Vector3.one;
+            Transform modelTransform = customBrokenModel.transform;
+            modelTransform.parent = modelBase.transform;
+            modelTransform.localPosition = Vector3.zero;
+            modelTransform.localRotation = Quaternion.identity;
             ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
             modelLocator.modelTransform = customBrokenModel.transform;
+            modelLocator.modelBaseTransform = modelBase.transform;
             Highlight highlight = brokenObject.GetComponent<Highlight>();
             highlight.targetRenderer = customBrokenModel.transform.Find("_mdlBeamDrone").gameObject.GetComponent<MeshRenderer>();
             EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();

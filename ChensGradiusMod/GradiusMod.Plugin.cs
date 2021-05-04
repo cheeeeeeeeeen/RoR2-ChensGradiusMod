@@ -6,6 +6,9 @@ using BepInEx.Configuration;
 using Chen.ClassicItems;
 using Chen.GradiusMod.Compatibility;
 using Chen.GradiusMod.Drones;
+using Chen.GradiusMod.Drones.LaserDrone;
+using Chen.GradiusMod.Items.GradiusOption;
+using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
@@ -44,7 +47,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "3.0.0";
+            "3.0.1";
 
         /// <summary>
         /// The name of the mod.

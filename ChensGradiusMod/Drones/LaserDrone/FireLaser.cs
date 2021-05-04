@@ -1,6 +1,7 @@
 ﻿using Chen.GradiusMod.Items.GradiusOption;
 using EntityStates;
 using RoR2;
+using RoR2.CharacterAI;
 using UnityEngine;
 using GolemChargeLaser = EntityStates.GolemMonster.ChargeLaser;
 using GolemLaser = EntityStates.GolemMonster.FireLaser;
@@ -117,7 +118,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
 
         public override void OnExit()
         {
-            AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
+            if (isAuthority) AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
@@ -144,7 +145,20 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 }
                 if (isAuthority)
                 {
-                    Ray aimRay = new Ray(muzzle.transform.position, GetAimRay().direction);
+                    //Ray aimRay = new Ray(muzzle.transform.position, GetAimRay().direction);
+                    //Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
+                    //GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
+                    Vector3 direction;
+                    GameObject target = null;
+                    BaseAI baseAi = characterBody.masterObject.GetComponent<BaseAI>();
+                    BaseAI.Target mainTarget = baseAi.currentEnemy;
+                    if (mainTarget != null && mainTarget.gameObject)
+                    {
+                        target = mainTarget.gameObject;
+                    }
+                    if (target) direction = (target.transform.position - muzzle.transform.position).normalized;
+                    else direction = GetAimRay().direction;
+                    Ray aimRay = new Ray(muzzle.transform.position, direction);
                     Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
                     GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
                 }

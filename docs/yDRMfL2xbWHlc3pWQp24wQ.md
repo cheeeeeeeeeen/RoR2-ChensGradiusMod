@@ -6,7 +6,7 @@
 ## GradiusModPlugin.ModVer Field
 The version of the mod.  
 ```csharp
-public const string ModVer = 3.0.0;
+public const string ModVer = 3.0.1;
 ```
 
 #### Field Value

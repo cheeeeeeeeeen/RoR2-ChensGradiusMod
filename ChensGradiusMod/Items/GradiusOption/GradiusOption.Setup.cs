@@ -141,7 +141,8 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private static readonly Dictionary<string, Vector3> RotateOffsets = new Dictionary<string, Vector3>
         {
             { "SquidTurret", Vector3.up },
-            { "EquipmentDrone", Vector3.down * 1.3f }
+            { "EquipmentDrone", Vector3.down * 1.3f },
+            { "Turret1", Vector3.up }
         };
 
         public GradiusOption()
