@@ -96,7 +96,8 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             maxDistance = 180f;
             minimumDuration = LaserDrone1.instance.laserDuration;
             maximumDuration = minimumDuration;
-            lockOnAngle = .3f;
+            //lockOnAngle = .3f;
+            lockOnAngle = 90f;
             procCoefficientPerTick = .25f;
         }
 
@@ -162,20 +163,27 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             stopwatch += Time.fixedDeltaTime;
             aimRay = GetAimRay();
             float optionFireStopwatch = fireStopwatch;
-            if (isAuthority && !lockedOnHurtBox && foundAnyTarget)
-            {
-                outer.SetNextState(new FireBeam { stopwatch = stopwatch });
-                return;
-            }
+            //if (isAuthority && !lockedOnHurtBox && foundAnyTarget)
+            //{
+            //    outer.SetNextState(new FireBeam { stopwatch = stopwatch });
+            //    return;
+            //}
             Vector3 origin = aimRay.origin;
             Vector3 target;
+            //if (lockedOnHurtBox) target = lockedOnHurtBox.transform.position;
+            //else if (Util.CharacterRaycast(gameObject, aimRay, out RaycastHit raycastHit, maxDistance,
+            //                               LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.Ignore))
+            //{
+            //    target = raycastHit.point;
+            //}
+            //else target = aimRay.GetPoint(maxDistance);
             if (lockedOnHurtBox) target = lockedOnHurtBox.transform.position;
-            else if (Util.CharacterRaycast(gameObject, aimRay, out RaycastHit raycastHit, maxDistance,
-                                           LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.Ignore))
+            else
             {
-                target = raycastHit.point;
+                UpdateLockOn();
+                if (foundAnyTarget) target = lockedOnHurtBox.transform.position;
+                else target = aimRay.GetPoint(maxDistance);
             }
-            else target = aimRay.GetPoint(maxDistance);
             Ray ray = new Ray(origin, target - origin);
             bool flag = false;
             if (laserEffect && laserChildLocator && laserEffectEnd)
