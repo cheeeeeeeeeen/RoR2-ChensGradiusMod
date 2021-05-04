@@ -117,7 +117,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
 
         public override void OnExit()
         {
-            AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
+            if (isAuthority) AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {

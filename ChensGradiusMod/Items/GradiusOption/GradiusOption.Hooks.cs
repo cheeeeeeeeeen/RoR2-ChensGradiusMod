@@ -55,19 +55,19 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 Log.Message($"OnInventoryChanged: Master: {master.name}, OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
                 if (diff > 0)
                 {
-                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(getOptionEventId, self.gameObject);
+                    if (playOptionGetSoundEffect == 1 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(getOptionEventId, self.gameObject);
                     LoopAllMinions(master, (minion) =>
                     {
-                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(getOptionEventId, minion);
+                        if (playOptionGetSoundEffect == 2 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(getOptionEventId, minion);
                         for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
                     });
                 }
                 else
                 {
-                    if (playOptionGetSoundEffect == 1) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
+                    if (playOptionGetSoundEffect == 1 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
                     LoopAllMinions(master, (minion) =>
                     {
-                        if (playOptionGetSoundEffect == 2) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
+                        if (playOptionGetSoundEffect == 2 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
                         OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
                         if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
                     });
