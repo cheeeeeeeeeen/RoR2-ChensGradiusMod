@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-2.2.11-orange)
+![Version](https://img.shields.io/badge/Version-3.0.0-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -72,6 +72,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Contact: Through Discord.
 
 ## Changelog
+
+**3.0.0**
+- Update the mod so that it works after the anniversary update.
 
 **2.2.11**
 - Fix a fatal bug where Options do not work with the new Effects system of Option Behavior.
