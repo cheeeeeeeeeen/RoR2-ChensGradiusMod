@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.0.0-orange)
+![Version](https://img.shields.io/badge/Version-3.0.1-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -73,6 +73,11 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.0.1**
+- Improve the custom drone attacks due to how vanilla AI acts wonky.
+- Fix a bad bug where null reference exceptions were raised.
+- The bug the causes null reference exceptions were caused by invisible broken models.
+
 **3.0.0**
 - Update the mod so that it works after the anniversary update.
 
@@ -90,8 +95,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Update Compatibility API implementation with Aetherium for the breaking changes made.
 - Improve the Death States of Repurchasable Turrets. They used to die only when 12 seconds have passed.
 - Add a config option for modifying the Flame Drone's spawn weight on Scorched Acres and Abyssal Depths.
-
-**2.2.8**
-- Update the Compatibility API implementation according to the changes made to ChensClassicItems.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
