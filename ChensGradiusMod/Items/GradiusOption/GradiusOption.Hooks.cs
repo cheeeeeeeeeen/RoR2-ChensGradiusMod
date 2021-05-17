@@ -85,7 +85,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 Transform transform = option.transform;
                 if (transform && self.target)
                 {
-                    if (behavior.U.ContainsKey("healBeamController") && behavior.U["healBeamController"])
+                    if (behavior.U.SafeCheck("healBeamController"))
                     {
                         ((HealBeamController)behavior.U["healBeamController"]).BreakServer();
                     }
@@ -105,7 +105,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self);
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U["healBeamController"])
+                if (behavior.U.SafeCheck("healBeamController"))
                 {
                     ((HealBeamController)behavior.U["healBeamController"]).BreakServer();
                 }
@@ -162,7 +162,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     if (self.stopwatch >= self.entryDuration && !perMinionOldBegunFlamethrower)
                     {
                         perMinionOldBegunFlamethrower = true;
-                        if (behavior.U.ContainsKey("flamethrower") && behavior.U["flamethrower"])
+                        if (behavior.U.SafeCheck("flamethrower"))
                         {
                             EntityState.Destroy(behavior.U["flamethrower"]);
                         }
@@ -355,7 +355,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 Transform transform = option.transform;
                 if (self.effectPrefab)
                 {
-                    if (behavior.U.ContainsKey("laserChargeEffect") && behavior.U["laserChargeEffect"])
+                    if (behavior.U.SafeCheck("laserChargeEffect"))
                     {
                         EntityState.Destroy(behavior.U["laserChargeEffect"]);
                     }
@@ -385,9 +385,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 if (self.laserPrefab)
                 {
-                    if (behavior.U.ContainsKey("laserFire") && behavior.U["laserFire"]) EntityState.Destroy(behavior.U["laserFire"]);
-                    if (behavior.U.ContainsKey("laserChildLocator") && behavior.U["laserChildLocator"]) EntityState.Destroy(behavior.U["laserChildLocator"]);
-                    if (behavior.U.ContainsKey("laserFireEnd") && behavior.U["laserFireEnd"]) EntityState.Destroy(behavior.U["laserFireEnd"]);
+                    if (behavior.U.SafeCheck("laserFire")) EntityState.Destroy(behavior.U["laserFire"]);
+                    if (behavior.U.SafeCheck("laserChildLocator")) EntityState.Destroy(behavior.U["laserChildLocator"]);
+                    if (behavior.U.SafeCheck("laserFireEnd")) EntityState.Destroy(behavior.U["laserFireEnd"]);
                     Transform transform = option.transform;
                     behavior.U["laserFire"] = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
                     ((GameObject)behavior.U["laserFire"]).transform.parent = transform;
@@ -533,7 +533,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U.ContainsKey("fistChargeEffect") && behavior.U["fistChargeEffect"])
+                if (behavior.U.SafeCheck("fistChargeEffect"))
                 {
                     EntityState.Destroy(behavior.U["fistChargeEffect"]);
                 }
@@ -587,7 +587,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!beetleGuardOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U.ContainsKey("sunderEffect") && behavior.U["sunderEffect"]) EntityState.Destroy(behavior.U["sunderEffect"]);
+                if (behavior.U.SafeCheck("sunderEffect")) EntityState.Destroy(behavior.U["sunderEffect"]);
                 if (FireSunder.chargeEffectPrefab)
                 {
                     behavior.U["sunderEffect"] = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);

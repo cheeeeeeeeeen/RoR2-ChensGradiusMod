@@ -128,9 +128,9 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             UpdateLockOn();
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U.ContainsKey("laserFire") && behavior.U["laserFire"]) Destroy(behavior.U["laserFire"]);
-                if (behavior.U.ContainsKey("laserChildLocator") && behavior.U["laserChildLocator"]) Destroy(behavior.U["laserChildLocator"]);
-                if (behavior.U.ContainsKey("laserFireEnd") && behavior.U["laserFireEnd"]) Destroy(behavior.U["laserFireEnd"]);
+                if (behavior.U.SafeCheck("laserFire")) Destroy(behavior.U["laserFire"]);
+                if (behavior.U.SafeCheck("laserChildLocator")) Destroy(behavior.U["laserChildLocator"]);
+                if (behavior.U.SafeCheck("laserFireEnd")) Destroy(behavior.U["laserFireEnd"]);
                 Transform transform = option.transform;
                 behavior.U["laserFire"] = Object.Instantiate(laserPrefab, transform.position, transform.rotation);
                 ((GameObject)behavior.U["laserFire"]).transform.parent = transform;
