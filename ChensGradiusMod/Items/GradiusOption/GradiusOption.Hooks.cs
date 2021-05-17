@@ -4,6 +4,7 @@ using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using EntityStates.BeetleGuardMonster;
 using EntityStates.Drone.DroneWeapon;
+using EntityStates.EngiTurret.EngiTurretWeapon;
 using EntityStates.Squid.SquidWeapon;
 using EntityStates.TitanMonster;
 using RoR2;
@@ -72,6 +73,97 @@ namespace Chen.GradiusMod.Items.GradiusOption
                         if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
                     });
                 }
+            }
+        }
+
+        private void FireBeam_FixedUpdate(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_FixedUpdate orig, FireBeam self)
+        {
+            float optionFireTimer = self.fireTimer + Time.fixedDeltaTime;
+            orig(self);
+            if ((self.characterBody.name.Contains("RoboBallGreenBuddy") && self.characterBody.master.name.Contains("RoboBallGreenBuddy")) ||
+                (self.characterBody.name.Contains("RoboBallRedBuddy") && self.characterBody.master.name.Contains("RoboBallRedBuddy")))
+            {
+                FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
+                {
+                    Ray laserRay = new Ray(option.transform.position, direction);
+                    float rate = self.fireFrequency * self.characterBody.attackSpeed;
+                    float fraction = 1f / rate;
+                    if (optionFireTimer > fraction)
+                    {
+                        if (self.effectPrefab) OptionMuzzleEffect(self.effectPrefab, option, false);
+                        if (self.isAuthority)
+                        {
+                            BulletAttack bulletAttack = new BulletAttack()
+                            {
+                                owner = self.gameObject,
+                                weapon = option,
+                                origin = laserRay.origin,
+                                aimVector = laserRay.direction,
+                                minSpread = self.minSpread,
+                                maxSpread = self.maxSpread,
+                                bulletCount = 1U,
+                                damage = self.damageCoefficient * self.damageStat / self.fireFrequency * damageMultiplier,
+                                procCoefficient = self.procCoefficient * self.fireFrequency,
+                                force = self.force * damageMultiplier,
+                                muzzleName = self.muzzleString,
+                                hitEffectPrefab = self.hitEffectPrefab,
+                                isCrit = self.characterBody.RollCrit(),
+                                HitEffectNormal = false,
+                                radius = 0f,
+                                maxDistance = self.maxDistance
+                            };
+                            self.ModifyBullet(bulletAttack);
+                            bulletAttack.Fire();
+                        }
+                    }
+                    if (behavior.U["laserEffectInstance"] && behavior.U["laserEffectInstanceEndTransform"])
+                    {
+                        Vector3 position = ((GameObject)behavior.U["laserEffectInstance"]).transform.parent.position;
+                        Vector3 point = laserRay.GetPoint(self.maxDistance);
+                        if (Physics.Raycast(laserRay.origin, laserRay.direction, out RaycastHit raycastHit, self.maxDistance,
+                                            LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                        {
+                            point = raycastHit.point;
+                        }
+                        ((Transform)behavior.U["laserEffectInstanceEndTransform"]).position = point;
+                    }
+                });
+            }
+        }
+
+        private void FireBeam_OnExit(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnExit orig, FireBeam self)
+        {
+            orig(self);
+            if ((self.characterBody.name.Contains("RoboBallGreenBuddy") && self.characterBody.master.name.Contains("RoboBallGreenBuddy")) ||
+                (self.characterBody.name.Contains("RoboBallRedBuddy") && self.characterBody.master.name.Contains("RoboBallRedBuddy")))
+            {
+                FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
+                {
+                    if (behavior.U["laserEffectInstance"]) EntityState.Destroy(behavior.U["laserEffectInstance"]);
+                    if (behavior.U["laserEffectInstanceEndTransform"]) EntityState.Destroy(behavior.U["laserEffectInstanceEndTransform"]);
+                });
+            }
+        }
+
+        private void FireBeam_OnEnter(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnEnter orig, FireBeam self)
+        {
+            orig(self);
+            if ((self.characterBody.name.Contains("RoboBallGreenBuddy") && self.characterBody.master.name.Contains("RoboBallGreenBuddy")) ||
+                (self.characterBody.name.Contains("RoboBallRedBuddy") && self.characterBody.master.name.Contains("RoboBallRedBuddy")))
+            {
+                FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
+                {
+                    Util.PlaySound(self.attackSoundString, option);
+                    if (self.laserPrefab)
+                    {
+                        if (behavior.U.SafeCheck("laserEffectInstance")) EntityState.Destroy(behavior.U["laserEffectInstance"]);
+                        if (behavior.U.SafeCheck("laserEffectInstanceEndTransform")) EntityState.Destroy(behavior.U["laserEffectInstanceEndTransform"]);
+                        Transform transform = option.transform;
+                        behavior.U["laserEffectInstance"] = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
+                        ((GameObject)behavior.U["laserEffectInstance"]).transform.parent = transform;
+                        behavior.U["laserEffectInstanceEndTransform"] = ((GameObject)behavior.U["laserEffectInstance"]).GetComponent<ChildLocator>().FindChild("LaserEnd");
+                    }
+                });
             }
         }
 

@@ -202,53 +202,5 @@ namespace Chen.GradiusMod.Items.GradiusOption
             };
             EffectManager.SpawnEffect(prefab, data, transmit);
         }
-
-        /// <summary>
-        /// Loops through all the Options of the minion. Always do a null check on the target parameter of actionToRun.
-        /// </summary>
-        /// <param name="optionOwner">The owner of the option.</param>
-        /// <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>
-        [Obsolete("Use the other overload with an Action that has 4 parameters. This one is old and only has an Action that has 3 parameters.")]
-        public void FireForAllOptions(CharacterBody optionOwner, Action<GameObject, OptionBehavior, GameObject> actionToRun)
-        {
-            if (!optionOwner) return;
-            OptionTracker optionTracker = optionOwner.GetComponent<OptionTracker>();
-            if (!optionTracker) return;
-
-            GameObject target = null;
-            GameObject masterObject = optionOwner.masterObject;
-            if (masterObject)
-            {
-                BaseAI ai = masterObject.GetComponent<BaseAI>();
-                BaseAI.Target mainTarget = ai.currentEnemy;
-                if (mainTarget != null && mainTarget.gameObject)
-                {
-                    target = mainTarget.gameObject;
-                }
-            }
-
-            foreach (GameObject option in optionTracker.existingOptions)
-            {
-                OptionBehavior behavior = option.GetComponent<OptionBehavior>();
-                if (behavior)
-                {
-                    if (includeModelInsideOrb && target)
-                    {
-                        behavior.target = target;
-                        NetworkIdentity targetNetworkIdentity = target.GetComponent<NetworkIdentity>();
-                        if (targetNetworkIdentity)
-                        {
-                            OptionSync(optionOwner, (networkIdentity, nullTracker) =>
-                            {
-                                optionTracker.targetIds.Add(Tuple.Create(
-                                    GameObjectType.Body, networkIdentity.netId, (short)behavior.numbering, targetNetworkIdentity.netId
-                                ));
-                            }, false);
-                        }
-                    }
-                    actionToRun(option, behavior, target);
-                }
-            }
-        }
     }
 }
