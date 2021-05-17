@@ -296,6 +296,19 @@
             Overrideable OnEnter method from the original state. Always call base.FixedUpdate.
             </summary>
         </member>
+        <member name="T:Chen.GradiusMod.Extensions">
+            <summary>
+            Helpful extensions for objects that will be recurring in the mod.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Extensions.SafeCheck(System.Collections.Generic.Dictionary{System.String,UnityEngine.Object},System.String)">
+            <summary>
+            Safely checks if the dictionary has the key and if they key has an existing object.
+            </summary>
+            <param name="dictionary">Supposedly the data dictionary from OptionBehavior</param>
+            <param name="key">Key to search from the dictionary</param>
+            <returns>True if the key exists and an object is found. False otherwise.</returns>
+        </member>
         <member name="T:Chen.GradiusMod.GradiusModPlugin">
             <summary>
             The mother plugin that allows the mod to be loaded to RoR2.
@@ -340,7 +353,7 @@
         </member>
         <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.U">
             <summary>
-            Shorthand for the data dictionary.
+            Shorthand for the Unity data dictionary.
             </summary>
         </member>
         <member name="F:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.objectData">
@@ -352,7 +365,7 @@
         </member>
         <member name="P:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.O">
             <summary>
-            Shorthand for the data dictionary.
+            Shorthand for the Object data dictionary.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior.DecidePosition(System.Single)">
@@ -484,13 +497,6 @@
             <param name="prefab">Effect prefab to display</param>
             <param name="option">The Option Game Object</param>
             <param name="transmit">Determines whether this effect should be networked</param>
-        </member>
-        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.FireForAllOptions(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior,UnityEngine.GameObject})">
-            <summary>
-            Loops through all the Options of the minion. Always do a null check on the target parameter of actionToRun.
-            </summary>
-            <param name="optionOwner">The owner of the option.</param>
-            <param name="actionToRun">An action to execute for each Option. The inputs are as follows: GameObject option, OptionBehavior behavior, GameObject target.</param>
         </member>
     </members>
 </doc>

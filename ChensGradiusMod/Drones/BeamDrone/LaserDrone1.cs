@@ -125,19 +125,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE1_NAME";
             GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
-            Object.Destroy(brokenObject.transform.Find("ModelBase").gameObject);
-            GameObject modelBase = new GameObject("ModelBase");
-            modelBase.transform.parent = brokenObject.transform;
-            modelBase.transform.localPosition = Vector3.zero;
-            modelBase.transform.localRotation = Quaternion.identity;
-            modelBase.transform.localScale = Vector3.one;
-            Transform modelTransform = customBrokenModel.transform;
-            modelTransform.parent = modelBase.transform;
-            modelTransform.localPosition = Vector3.zero;
-            modelTransform.localRotation = Quaternion.identity;
-            ModelLocator modelLocator = brokenObject.GetComponent<ModelLocator>();
-            modelLocator.modelTransform = customBrokenModel.transform;
-            modelLocator.modelBaseTransform = modelBase.transform;
+            brokenObject.ReplaceModel(customBrokenModel);
             Highlight highlight = brokenObject.GetComponent<Highlight>();
             highlight.targetRenderer = customBrokenModel.transform.Find("_mdlBeamDrone").gameObject.GetComponent<MeshRenderer>();
             EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
@@ -172,19 +160,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         private void ModifyDroneModel(CharacterBody body)
         {
             GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone1/Model/mdlBeamDrone.prefab");
-            Object.Destroy(droneBody.transform.Find("Model Base").gameObject);
-            GameObject modelBase = new GameObject("ModelBase");
-            modelBase.transform.parent = droneBody.transform;
-            modelBase.transform.localPosition = Vector3.zero;
-            modelBase.transform.localRotation = Quaternion.identity;
-            modelBase.transform.localScale = Vector3.one;
-            Transform modelTransform = customModel.transform;
-            modelTransform.parent = modelBase.transform;
-            modelTransform.localPosition = Vector3.zero;
-            modelTransform.localRotation = Quaternion.identity;
-            ModelLocator modelLocator = droneBody.GetComponent<ModelLocator>();
-            modelLocator.modelTransform = modelTransform;
-            modelLocator.modelBaseTransform = modelBase.transform;
+            droneBody.ReplaceModel(customModel);
             CharacterModel characterModel = customModel.AddComponent<CharacterModel>();
             characterModel.body = body;
             characterModel.BuildRendererInfos(customModel);

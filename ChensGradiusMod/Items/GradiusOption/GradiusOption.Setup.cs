@@ -120,7 +120,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             "TitanGoldAlly",
             "BeetleGuardAlly",
             "SquidTurret",
-            "EquipmentDrone"
+            "EquipmentDrone",
+            "RoboBallGreenBuddy",
+            "RoboBallRedBuddy"
         };
 
         private static readonly List<string> RotateUsers = new List<string>
@@ -129,13 +131,15 @@ namespace Chen.GradiusMod.Items.GradiusOption
             "TitanGoldAlly",
             "BeetleGuardAlly",
             "SquidTurret",
-            "EquipmentDrone"
+            "EquipmentDrone",
+            "RoboBallGreenBuddy"
         };
 
         private static readonly Dictionary<string, float> RotateMultipliers = new Dictionary<string, float>
         {
             { "TitanGoldAlly", 12f },
-            { "BeetleGuardAlly", 4f }
+            { "BeetleGuardAlly", 4f },
+            { "RoboBallGreenBuddy", 4f }
         };
 
         private static readonly Dictionary<string, Vector3> RotateOffsets = new Dictionary<string, Vector3>
@@ -218,6 +222,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
             On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter += GroundSlam_OnEnter;
             On.RoR2.EquipmentSlot.PerformEquipmentAction += EquipmentSlot_PerformEquipmentAction;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.FixedUpdate += FireBeam_FixedUpdate;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnEnter += FireBeam_OnEnter;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnExit += FireBeam_OnExit;
         }
 
         public override void Uninstall()

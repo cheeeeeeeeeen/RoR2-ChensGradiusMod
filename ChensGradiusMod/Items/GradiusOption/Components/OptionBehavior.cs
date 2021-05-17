@@ -31,7 +31,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
         public Dictionary<string, UnityObject> unityData = new Dictionary<string, UnityObject>();
 
         /// <summary>
-        /// Shorthand for the data dictionary.
+        /// Shorthand for the Unity data dictionary.
         /// </summary>
         public Dictionary<string, UnityObject> U
         {
@@ -47,7 +47,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
         public Dictionary<string, object> objectData = new Dictionary<string, object>();
 
         /// <summary>
-        /// Shorthand for the data dictionary.
+        /// Shorthand for the Object data dictionary.
         /// </summary>
         public Dictionary<string, object> O
         {

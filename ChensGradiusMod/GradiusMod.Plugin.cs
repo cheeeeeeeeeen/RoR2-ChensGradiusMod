@@ -47,7 +47,7 @@ namespace Chen.GradiusMod
 #if DEBUG
             "0." +
 #endif
-            "3.0.2";
+            "3.1.0";
 
         /// <summary>
         /// The name of the mod.
@@ -104,8 +104,8 @@ namespace Chen.GradiusMod
 #endif
 
             Log.Debug("Loading assets...");
-            BundleInfo models = new BundleInfo("@ChensGradiusMod", "Chen.GradiusMod.chensgradiusmod_assets", BundleType.UnityAssetBundle);
-            BundleInfo sounds = new BundleInfo("@ChensGradiusMod", "Chen.GradiusMod.chensgradiusmod_soundbank.bnk", BundleType.WWiseSoundBank);
+            BundleInfo models = new BundleInfo("Chen.GradiusMod.chensgradiusmod_assets", BundleType.UnityAssetBundle);
+            BundleInfo sounds = new BundleInfo("Chen.GradiusMod.chensgradiusmod_soundbank.bnk", BundleType.WWiseSoundBank);
             AssetsManager modelsManager = new AssetsManager(models);
             AssetsManager soundsManager = new AssetsManager(sounds);
             assetBundle = modelsManager.Register() as AssetBundle;

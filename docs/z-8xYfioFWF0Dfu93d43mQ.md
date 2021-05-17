@@ -4,7 +4,7 @@
 ### [Chen.GradiusMod.Items.GradiusOption.Components](./3b19l5ocTqQsEH2QAbTnXQ 'Chen.GradiusMod.Items.GradiusOption.Components').[OptionBehavior](./cwz-G2wxzba4Id7zOi0Rig 'Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior')
 
 ## OptionBehavior.U Property
-Shorthand for the data dictionary.  
+Shorthand for the Unity data dictionary.  
 ```csharp
 public System.Collections.Generic.Dictionary<string,UnityEngine.Object> U { get; set; }
 ```
