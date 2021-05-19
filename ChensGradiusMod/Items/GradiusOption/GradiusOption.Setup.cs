@@ -305,6 +305,11 @@ namespace Chen.GradiusMod.Items.GradiusOption
             goldMaster.AssignOwner(trueMaster);
         }
 
+        private bool DroneNameCheck(CharacterBody body, string name)
+        {
+            return body && body.master && body.name.Contains(name) && body.master.name.Contains(name);
+        }
+
         internal bool IsRotateUser(string masterName) => RotateUsers.Exists((name) => masterName.Contains(name));
 
         internal float GetRotateMultiplier(string name)

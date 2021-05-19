@@ -122,7 +122,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U["laserChargeEffect"]) Destroy(behavior.U["laserChargeEffect"]);
+                if (behavior.U.SafeCheck("laserChargeEffect")) Destroy(behavior.U["laserChargeEffect"]);
             });
             base.OnExit();
         }
