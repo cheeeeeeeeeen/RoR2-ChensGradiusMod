@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.1.0-orange)
+![Version](https://img.shields.io/badge/Version-3.1.1-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -72,6 +72,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Contact: Through Discord.
 
 ## Changelog
+
+**3.1.1**
+- Fix bugs regarding the effects for the allied Solus probes' Options.
+- Add more safe checks within the code to avoid exceptions.
 
 **3.1.0**
 - Add Gradius Option support for Empathy Cores allied Solus probes!
