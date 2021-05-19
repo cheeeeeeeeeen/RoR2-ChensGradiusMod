@@ -148,9 +148,9 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             Util.PlaySound(stopLoopSoundString, gameObject);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U["laserFire"]) Destroy(behavior.U["laserFire"]);
-                if (behavior.U["laserChildLocator"]) Destroy(behavior.U["laserChildLocator"]);
-                if (behavior.U["laserFireEnd"]) Destroy(behavior.U["laserFireEnd"]);
+                if (behavior.U.SafeCheck("laserFire")) Destroy(behavior.U["laserFire"]);
+                if (behavior.U.SafeCheck("laserChildLocator")) Destroy(behavior.U["laserChildLocator"]);
+                if (behavior.U.SafeCheck("laserFireEnd")) Destroy(behavior.U["laserFireEnd"]);
             });
             bodyRotation.accelerate = false;
             base.OnExit();
@@ -228,7 +228,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                 }
                 Ray optionRay = new Ray(position, point - position);
                 bool optionFlag = false;
-                if (behavior.U["laserFire"] && behavior.U["laserChildLocator"] && behavior.U["laserFireEnd"])
+                if (behavior.U.SafeCheck("laserFire") && behavior.U.SafeCheck("laserChildLocator") && behavior.U.SafeCheck("laserFireEnd"))
                 {
                     if (Physics.Raycast(optionRay.origin, optionRay.direction, out RaycastHit raycastHit4, optionRay.direction.magnitude,
                                         LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))

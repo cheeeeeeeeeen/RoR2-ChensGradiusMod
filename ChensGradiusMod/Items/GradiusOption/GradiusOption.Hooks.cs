@@ -80,8 +80,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         {
             float optionFireTimer = self.fireTimer + Time.fixedDeltaTime;
             orig(self);
-            if ((self.characterBody.name.Contains("RoboBallGreenBuddy") && self.characterBody.master.name.Contains("RoboBallGreenBuddy")) ||
-                (self.characterBody.name.Contains("RoboBallRedBuddy") && self.characterBody.master.name.Contains("RoboBallRedBuddy")))
+            if (DroneNameCheck(self.characterBody, "RoboBallGreenBuddy") || DroneNameCheck(self.characterBody, "RoboBallRedBuddy"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
                 {
@@ -116,7 +115,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                             bulletAttack.Fire();
                         }
                     }
-                    if (behavior.U["laserEffectInstance"] && behavior.U["laserEffectInstanceEndTransform"])
+                    if (behavior.U.SafeCheck("laserEffectInstance") && behavior.U.SafeCheck("laserEffectInstanceEndTransform"))
                     {
                         Vector3 position = ((GameObject)behavior.U["laserEffectInstance"]).transform.parent.position;
                         Vector3 point = laserRay.GetPoint(self.maxDistance);
@@ -134,13 +133,12 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private void FireBeam_OnExit(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnExit orig, FireBeam self)
         {
             orig(self);
-            if ((self.characterBody.name.Contains("RoboBallGreenBuddy") && self.characterBody.master.name.Contains("RoboBallGreenBuddy")) ||
-                (self.characterBody.name.Contains("RoboBallRedBuddy") && self.characterBody.master.name.Contains("RoboBallRedBuddy")))
+            if (DroneNameCheck(self.characterBody, "RoboBallGreenBuddy") || DroneNameCheck(self.characterBody, "RoboBallRedBuddy"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
                 {
-                    if (behavior.U["laserEffectInstance"]) EntityState.Destroy(behavior.U["laserEffectInstance"]);
-                    if (behavior.U["laserEffectInstanceEndTransform"]) EntityState.Destroy(behavior.U["laserEffectInstanceEndTransform"]);
+                    if (behavior.U.SafeCheck("laserEffectInstance")) EntityState.Destroy(behavior.U["laserEffectInstance"]);
+                    if (behavior.U.SafeCheck("laserEffectInstanceEndTransform")) EntityState.Destroy(behavior.U["laserEffectInstanceEndTransform"]);
                 });
             }
         }
@@ -148,8 +146,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private void FireBeam_OnEnter(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnEnter orig, FireBeam self)
         {
             orig(self);
-            if ((self.characterBody.name.Contains("RoboBallGreenBuddy") && self.characterBody.master.name.Contains("RoboBallGreenBuddy")) ||
-                (self.characterBody.name.Contains("RoboBallRedBuddy") && self.characterBody.master.name.Contains("RoboBallRedBuddy")))
+            if (DroneNameCheck(self.characterBody, "RoboBallGreenBuddy") || DroneNameCheck(self.characterBody, "RoboBallRedBuddy"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
                 {
@@ -230,11 +227,11 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private void Flamethrower_OnExit(On.EntityStates.Mage.Weapon.Flamethrower.orig_OnExit orig, MageWeapon.Flamethrower self)
         {
             orig(self);
-            if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
+            if (flamethrowerOptionSyncEffect && DroneNameCheck(self.characterBody, "FlameDrone"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
                 {
-                    if (behavior.U["flamethrower"])
+                    if (behavior.U.SafeCheck("flamethrower"))
                     {
                         EntityState.Destroy(behavior.U["flamethrower"]);
                     }
@@ -246,7 +243,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         {
             bool oldBegunFlamethrower = self.hasBegunFlamethrower;
             orig(self);
-            if (flamethrowerOptionSyncEffect && self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
+            if (flamethrowerOptionSyncEffect && DroneNameCheck(self.characterBody, "FlameDrone"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
                 {
@@ -272,7 +269,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private void Flamethrower_FireGauntlet(On.EntityStates.Mage.Weapon.Flamethrower.orig_FireGauntlet orig, MageWeapon.Flamethrower self, string muzzleString)
         {
             orig(self, muzzleString);
-            if (self.characterBody.name.Contains("FlameDrone") && self.characterBody.master.name.Contains("FlameDrone"))
+            if (DroneNameCheck(self.characterBody, "FlameDrone"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, _t, direction) =>
                 {
@@ -465,7 +462,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U["laserChargeEffect"]) EntityState.Destroy(behavior.U["laserChargeEffect"]);
+                if (behavior.U.SafeCheck("laserChargeEffect")) EntityState.Destroy(behavior.U["laserChargeEffect"]);
             });
         }
 
@@ -495,9 +492,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U["laserFire"]) EntityState.Destroy(behavior.U["laserFire"]);
-                if (behavior.U["laserChildLocator"]) EntityState.Destroy(behavior.U["laserChildLocator"]);
-                if (behavior.U["laserFireEnd"]) EntityState.Destroy(behavior.U["laserFireEnd"]);
+                if (behavior.U.SafeCheck("laserFire")) EntityState.Destroy(behavior.U["laserFire"]);
+                if (behavior.U.SafeCheck("laserChildLocator")) EntityState.Destroy(behavior.U["laserChildLocator"]);
+                if (behavior.U.SafeCheck("laserFireEnd")) EntityState.Destroy(behavior.U["laserFireEnd"]);
             });
         }
 
@@ -525,7 +522,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 }
                 Ray ray = new Ray(position, point - position);
                 bool flag = false;
-                if (behavior.U["laserFire"] && behavior.U["laserChildLocator"])
+                if (behavior.U.SafeCheck("laserFire") && behavior.U.SafeCheck("laserChildLocator"))
                 {
                     if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit raycastHit2, ray.direction.magnitude,
                                         LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
@@ -625,10 +622,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U.SafeCheck("fistChargeEffect"))
-                {
-                    EntityState.Destroy(behavior.U["fistChargeEffect"]);
-                }
+                if (behavior.U.SafeCheck("fistChargeEffect")) EntityState.Destroy(behavior.U["fistChargeEffect"]);
                 behavior.U["fistChargeEffect"] = Object.Instantiate(self.chargeEffectPrefab, option.transform);
             });
         }
@@ -639,7 +633,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!aurelioniteOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U["fistChargeEffect"]) EntityState.Destroy(behavior.U["fistChargeEffect"]);
+                if (behavior.U.SafeCheck("fistChargeEffect")) EntityState.Destroy(behavior.U["fistChargeEffect"]);
             });
         }
 
@@ -680,10 +674,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
                 if (behavior.U.SafeCheck("sunderEffect")) EntityState.Destroy(behavior.U["sunderEffect"]);
-                if (FireSunder.chargeEffectPrefab)
-                {
-                    behavior.U["sunderEffect"] = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
-                }
+                if (FireSunder.chargeEffectPrefab) behavior.U["sunderEffect"] = Object.Instantiate(FireSunder.chargeEffectPrefab, option.transform);
             });
         }
 
@@ -693,7 +684,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (!beetleGuardOptionSyncEffect) return;
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (behavior.U["sunderEffect"]) EntityState.Destroy(behavior.U["sunderEffect"]);
+                if (behavior.U.SafeCheck("sunderEffect")) EntityState.Destroy(behavior.U["sunderEffect"]);
             });
         }
 
@@ -717,7 +708,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     }
                     if (beetleGuardOptionSyncEffect)
                     {
-                        if (behavior.U["sunderEffect"]) EntityState.Destroy(behavior.U["sunderEffect"]);
+                        if (behavior.U.SafeCheck("sunderEffect")) EntityState.Destroy(behavior.U["sunderEffect"]);
                     }
                 }
             });
