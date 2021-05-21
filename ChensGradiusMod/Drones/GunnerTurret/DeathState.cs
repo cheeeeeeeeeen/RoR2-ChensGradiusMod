@@ -28,7 +28,7 @@ namespace Chen.GradiusMod.Drones.GunnerTurret
 
         public override void OnExit()
         {
-            OnImpactServer(characterBody.transform.position - characterBody.transform.up * 1.2f);
+            OnImpactServer(characterBody.transform.position);
             base.OnExit();
         }
     }

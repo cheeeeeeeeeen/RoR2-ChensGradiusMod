@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.1.1-orange)
+![Version](https://img.shields.io/badge/Version-3.1.2-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -73,6 +73,11 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.1.2**
+- Add config options for Empathy Cores.
+- Readjust Turret interactable spawn so that when they get decommissioned, the interactable will spawn properly.
+- Optimize some parts of the code so that it is more readable.
+
 **3.1.1**
 - Fix bugs regarding the effects for the allied Solus probes' Options.
 - Add more safe checks within the code to avoid exceptions.
@@ -88,15 +93,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Improve the custom drone attacks due to how vanilla AI acts wonky.
 - Fix a bad bug where null reference exceptions were raised.
 - The bug the causes null reference exceptions were caused by invisible broken models.
-
-**3.0.0**
-- Update the mod so that it works after the anniversary update.
-
-**2.2.11**
-- Fix a fatal bug where Options do not work with the new Effects system of Option Behavior.
-- Slightly raise the Interactable corpse of Beam Drone so it can still be at least be visible.
-- Remove Update implementations on graphical components.
-- Change Muzzle effects of Options to SpawnEffects to properly display them.
-- Introduce a new API for making spawning of Option effects easier and shorter.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
