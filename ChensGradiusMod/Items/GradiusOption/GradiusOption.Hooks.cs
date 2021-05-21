@@ -731,17 +731,13 @@ namespace Chen.GradiusMod.Items.GradiusOption
             bool returnValue = orig(self, equipmentDef);
             if (!returnValue) return false;
             CharacterBody body = self.characterBody;
-            if (body)
+            if (DroneNameCheck(body, "EquipmentDrone"))
             {
-                CharacterMaster master = body.master;
-                if (master && master.name.Contains("EquipmentDrone"))
+                OptionTracker tracker = body.GetOrAddComponent<OptionTracker>();
+                int numberOfTimes = Mathf.FloorToInt(tracker.existingOptions.Count * equipmentDuplicationMultiplier);
+                for (int i = 0; i < numberOfTimes; i++)
                 {
-                    OptionTracker tracker = body.GetOrAddComponent<OptionTracker>();
-                    int numberOfTimes = Mathf.FloorToInt(tracker.existingOptions.Count * equipmentDuplicationMultiplier);
-                    for (int i = 0; i < numberOfTimes; i++)
-                    {
-                        orig(self, equipmentDef);
-                    }
+                    orig(self, equipmentDef);
                 }
             }
             return true;
