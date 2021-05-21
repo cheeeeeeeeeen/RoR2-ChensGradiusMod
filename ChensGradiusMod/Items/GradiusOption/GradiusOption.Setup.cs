@@ -39,6 +39,10 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowSquidPolyp { get; private set; } = true;
 
+        [AutoConfig("Whether to support Empathy Core probes in using Options. Set to false to disable." +
+                    "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoConfigFlags.PreventNetMismatch)]
+        public bool allowEmpathyCores { get; private set; } = true;
+
         [AutoConfig("Determines the Option/Multiple movement type. 0 = Regular, 1 = Rotate. Server and Client.",
                     AutoConfigFlags.PreventNetMismatch, 0, 1)]
         public int beetleGuardOptionType { get; private set; } = 1;
@@ -57,6 +61,11 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     "Server and Client. The server and client must have the same settings for an optimized experience. " +
                     "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool beetleGuardOptionSyncEffect { get; private set; } = true;
+
+        [AutoConfig("Allows displaying and syncing some of allied Empathy Cores' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+                    "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
+        public bool empathyCoresOptionSyncEffect { get; private set; } = true;
 
         [AutoConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
@@ -171,6 +180,12 @@ namespace Chen.GradiusMod.Items.GradiusOption
             if (beetleGuardOptionType != 1) RotateUsers.Remove("BeetleGuardAlly");
             if (!allowSquidPolyp) MinionsList.Remove("SquidTurret");
             if (equipmentDuplicationMultiplier <= 0) MinionsList.Remove("EquipmentDrone");
+            if (!allowEmpathyCores)
+            {
+                MinionsList.Remove("RoboBallGreenBuddy");
+                MinionsList.Remove("RoboBallRedBuddy");
+                empathyCoresOptionSyncEffect = false;
+            }
         }
 
         public override void SetupBehavior()

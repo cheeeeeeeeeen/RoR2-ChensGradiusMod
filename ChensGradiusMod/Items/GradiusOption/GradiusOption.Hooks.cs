@@ -115,7 +115,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                             bulletAttack.Fire();
                         }
                     }
-                    if (behavior.U.SafeCheck("laserEffectInstance") && behavior.U.SafeCheck("laserEffectInstanceEndTransform"))
+                    if (empathyCoresOptionSyncEffect && behavior.U.SafeCheck("laserEffectInstance") && behavior.U.SafeCheck("laserEffectInstanceEndTransform"))
                     {
                         Vector3 position = ((GameObject)behavior.U["laserEffectInstance"]).transform.parent.position;
                         Vector3 point = laserRay.GetPoint(self.maxDistance);
@@ -133,6 +133,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private void FireBeam_OnExit(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnExit orig, FireBeam self)
         {
             orig(self);
+            if (!empathyCoresOptionSyncEffect) return;
             if (DroneNameCheck(self.characterBody, "RoboBallGreenBuddy") || DroneNameCheck(self.characterBody, "RoboBallRedBuddy"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
@@ -146,6 +147,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         private void FireBeam_OnEnter(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnEnter orig, FireBeam self)
         {
             orig(self);
+            if (!empathyCoresOptionSyncEffect) return;
             if (DroneNameCheck(self.characterBody, "RoboBallGreenBuddy") || DroneNameCheck(self.characterBody, "RoboBallRedBuddy"))
             {
                 FireForAllOptions(self.characterBody, (option, behavior, target, direction) =>
