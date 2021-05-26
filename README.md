@@ -13,7 +13,7 @@
 
 This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.
 
-For this mod's API, the documentation can be found in the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
+It contains a fully functional Drone API. The documentation can be found in the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
 ## Installation
 
