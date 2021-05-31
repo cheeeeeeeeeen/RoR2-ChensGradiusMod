@@ -107,7 +107,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             if (optionSeedPrefab)
             {
                 optionSeedPrefab.AddComponent<NetworkIdentity>();
-                optionSeedPrefab.AddComponent<Flicker>();
+                optionSeedPrefab.AddComponent<SeedFlicker>();
                 Log.Debug("Successfully initialized OptionSeedOrb prefab.");
             }
             else Log.Error("Failed to create OptionSeed: Resource not found or is null.");
