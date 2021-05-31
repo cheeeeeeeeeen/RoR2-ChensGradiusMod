@@ -54,6 +54,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="TILER2">
+      <HintPath>..\ChensGradiusMod\lib\TILER2.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\ChensGradiusMod\lib\UnityEngine.dll</HintPath>
     </Reference>
@@ -65,6 +68,7 @@
     <Compile Include="Drones\LaserDrone1.cs" />
     <Compile Include="Drones\LaserDrone2.cs" />
     <Compile Include="GradiusMod.cs" />
+    <Compile Include="Items\OptionSeed\OptionSeed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
