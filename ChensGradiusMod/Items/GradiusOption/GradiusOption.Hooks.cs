@@ -21,6 +21,79 @@ namespace Chen.GradiusMod.Items.GradiusOption
 {
     public partial class GradiusOption
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+        public override void Install()
+        {
+            base.Install();
+            On.RoR2.CharacterBody.OnInventoryChanged += CharacterBody_OnInventoryChanged;
+            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
+            On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter += FireGatling_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireTurret.OnEnter += FireTurret_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireMegaTurret.FireBullet += FireMegaTurret_FireBullet;
+            On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.FireMissile += FireMissileBarrage_FireMissile;
+            On.EntityStates.Drone.DroneWeapon.FireTwinRocket.FireProjectile += FireTwinRocket_FireProjectile;
+            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet += Flamethrower_FireGauntlet;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnExit += Flamethrower_OnExit;
+            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate += Flamethrower_FixedUpdate;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter += HealBeam_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit += HealBeam_OnExit;
+            On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter += StartHealBeam_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter += ChargeMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit += ChargeMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter += FireMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnExit += FireMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate += FireGoldMegaLaser_FixedUpdate;
+            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack += FireGoldFist_PlacePredictedAttack;
+            On.EntityStates.TitanMonster.FireFist.OnEnter += FireFist_OnEnter;
+            On.EntityStates.TitanMonster.FireFist.OnExit += FireFist_OnExit;
+            On.RoR2.TitanRockController.Start += TitanRockController_Start;
+            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow += FireSpine_FireOrbArrow;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter += FireSunder_OnEnter;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit += FireSunder_OnExit;
+            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate += FireSunder_FixedUpdate;
+            On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter += GroundSlam_OnEnter;
+            On.RoR2.EquipmentSlot.PerformEquipmentAction += EquipmentSlot_PerformEquipmentAction;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.FixedUpdate += FireBeam_FixedUpdate;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnEnter += FireBeam_OnEnter;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnExit += FireBeam_OnExit;
+        }
+
+        public override void Uninstall()
+        {
+            base.Uninstall();
+            On.RoR2.CharacterBody.OnInventoryChanged -= CharacterBody_OnInventoryChanged;
+            CharacterBody.onBodyStartGlobal -= CharacterBody_onBodyStartGlobal;
+            On.EntityStates.Drone.DroneWeapon.FireGatling.OnEnter -= FireGatling_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireTurret.OnEnter -= FireTurret_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.FireMegaTurret.FireBullet -= FireMegaTurret_FireBullet;
+            On.EntityStates.Drone.DroneWeapon.FireMissileBarrage.FireMissile -= FireMissileBarrage_FireMissile;
+            On.EntityStates.Drone.DroneWeapon.FireTwinRocket.FireProjectile -= FireTwinRocket_FireProjectile;
+            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet -= Flamethrower_FireGauntlet;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnExit -= Flamethrower_OnExit;
+            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate -= Flamethrower_FixedUpdate;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnEnter -= HealBeam_OnEnter;
+            On.EntityStates.Drone.DroneWeapon.HealBeam.OnExit -= HealBeam_OnExit;
+            On.EntityStates.Drone.DroneWeapon.StartHealBeam.OnEnter -= StartHealBeam_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnEnter -= ChargeMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.ChargeMegaLaser.OnExit -= ChargeMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnEnter -= FireMegaLaser_OnEnter;
+            On.EntityStates.TitanMonster.FireMegaLaser.OnExit -= FireMegaLaser_OnExit;
+            On.EntityStates.TitanMonster.FireGoldMegaLaser.FixedUpdate -= FireGoldMegaLaser_FixedUpdate;
+            On.EntityStates.TitanMonster.FireGoldFist.PlacePredictedAttack -= FireGoldFist_PlacePredictedAttack;
+            On.EntityStates.TitanMonster.FireFist.OnEnter -= FireFist_OnEnter;
+            On.EntityStates.TitanMonster.FireFist.OnExit -= FireFist_OnExit;
+            On.RoR2.TitanRockController.Start -= TitanRockController_Start;
+            On.EntityStates.Squid.SquidWeapon.FireSpine.FireOrbArrow -= FireSpine_FireOrbArrow;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnEnter -= FireSunder_OnEnter;
+            On.EntityStates.BeetleGuardMonster.FireSunder.OnExit -= FireSunder_OnExit;
+            On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
+            On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter -= GroundSlam_OnEnter;
+            On.RoR2.EquipmentSlot.PerformEquipmentAction -= EquipmentSlot_PerformEquipmentAction;
+        }
+
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
         {
             // This hook runs on Client and on Server
@@ -89,7 +162,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     float fraction = 1f / rate;
                     if (optionFireTimer > fraction)
                     {
-                        if (self.effectPrefab) OptionMuzzleEffect(self.effectPrefab, option, false);
+                        if (self.effectPrefab) option.MuzzleEffect(self.effectPrefab, false);
                         if (self.isAuthority)
                         {
                             BulletAttack bulletAttack = new BulletAttack()
@@ -308,7 +381,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self);
             FireForAllOptions(self.characterBody, (option, behavior, _t, direction) =>
             {
-                if (FireGatling.effectPrefab) OptionMuzzleEffect(FireGatling.effectPrefab, option, false);
+                if (FireGatling.effectPrefab) option.MuzzleEffect(FireGatling.effectPrefab, false);
                 if (self.isAuthority)
                 {
                     new BulletAttack
@@ -335,7 +408,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self);
             FireForAllOptions(self.characterBody, (option, behavior, _t, direction) =>
             {
-                if (FireTurret.effectPrefab) OptionMuzzleEffect(FireTurret.effectPrefab, option, false);
+                if (FireTurret.effectPrefab) option.MuzzleEffect(FireTurret.effectPrefab, false);
                 if (self.isAuthority)
                 {
                     new BulletAttack
@@ -362,7 +435,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self, muzzleString);
             FireForAllOptions(self.characterBody, (option, behavior, _t, direction) =>
             {
-                if (FireMegaTurret.effectPrefab) OptionMuzzleEffect(FireMegaTurret.effectPrefab, option, false);
+                if (FireMegaTurret.effectPrefab) option.MuzzleEffect(FireMegaTurret.effectPrefab, false);
                 if (self.isAuthority)
                 {
                     new BulletAttack
@@ -389,7 +462,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self, targetMuzzle);
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (FireMissileBarrage.effectPrefab) OptionMuzzleEffect(FireMissileBarrage.effectPrefab, option, false);
+                if (FireMissileBarrage.effectPrefab) option.MuzzleEffect(FireMissileBarrage.effectPrefab, false);
                 if (self.isAuthority)
                 {
                     Ray aimRay = self.GetAimRay();
@@ -417,7 +490,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             orig(self, muzzleString);
             FireForAllOptions(self.characterBody, (option, behavior, _t, _d) =>
             {
-                if (FireTwinRocket.muzzleEffectPrefab) OptionMuzzleEffect(FireTwinRocket.muzzleEffectPrefab, option, false);
+                if (FireTwinRocket.muzzleEffectPrefab) option.MuzzleEffect(FireTwinRocket.muzzleEffectPrefab, false);
                 if (self.isAuthority && FireTwinRocket.projectilePrefab != null)
                 {
                     float maxDistance = 1000f;
@@ -545,7 +618,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 {
                     if (!flag)
                     {
-                        if (self.effectPrefab) OptionMuzzleEffect(self.effectPrefab, option, false);
+                        if (self.effectPrefab) option.MuzzleEffect(self.effectPrefab, false);
                         if (self.isAuthority)
                         {
                             new BulletAttack
@@ -664,7 +737,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     origin = option.transform.position,
                     target = hurtBox
                 };
-                if (FireSpine.muzzleflashEffectPrefab) OptionMuzzleEffect(FireSpine.muzzleflashEffectPrefab, option, false);
+                if (FireSpine.muzzleflashEffectPrefab) option.MuzzleEffect(FireSpine.muzzleflashEffectPrefab, false);
                 OrbManager.instance.AddOrb(squidOrb);
             });
         }
