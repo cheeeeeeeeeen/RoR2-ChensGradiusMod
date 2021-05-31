@@ -190,6 +190,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
 
         public override void SetupBehavior()
         {
+            base.SetupBehavior();
             InitializeAssets();
             RegisterNetworkMessages();
             if (Compat_ItemStats.enabled)

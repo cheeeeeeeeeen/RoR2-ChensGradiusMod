@@ -35,6 +35,14 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Equipment Drones will use the attached equipment depending on the number of Options/Multiples it has. This is configurable.
 - Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
+![Gradius' Option Seed](https://puu.sh/HLbnU.png)
+**Gradius' Option Seed**
+- A new Green Item added to Risk of Rain 2. Upon acquiring this item, 2 Option Seeds will spawn for the player. They have a chance to duplicate the survivor's attacks.
+- The Option Seed is a fragment of the completed version of it. While it is in its younger stage, it is more organic than mechanical.
+- Only offensive skills of survivors can be duplicated.
+- The API makes it possible to implement customized skill behavior.
+- Documentation is available for other mod creators with modded survivors. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
+
 ![Beam Drone](https://puu.sh/GQz08.png)
 **Beam Drone**
 - A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki) on how to add your own custom drone.
@@ -73,6 +81,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.2.0**
+- Implement Option Seed, a fragment of Gradius' Option.
+
 **3.1.2**
 - Add config options for Empathy Cores.
 - Readjust Turret interactable spawn so that when they get decommissioned, the interactable will spawn properly.
@@ -88,10 +99,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **3.0.2**
 - Remove DEBUG!
-
-**3.0.1**
-- Improve the custom drone attacks due to how vanilla AI acts wonky.
-- Fix a bad bug where null reference exceptions were raised.
-- The bug the causes null reference exceptions were caused by invisible broken models.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*

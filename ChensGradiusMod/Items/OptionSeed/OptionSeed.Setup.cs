@@ -48,7 +48,22 @@ namespace Chen.GradiusMod.Items.OptionSeed
         }
 
         protected override string GetLoreString(string langid = null) =>
-            "";
+            "\"CASE, was it? I assume this another odd-looking lollipop is from your place?\" I asked the powerful, sentient A.I.\n\n" +
+            "We found another one of those things that look like the Gradius' Options. It is a really powerful weapon, and thus I can only imagine the power of this item.\n\n" +
+            "\"Analyzing,\" says CASE through the built speakers we made her, her female voice seemingly like a person more than a robot, \"Ah, it's the Seed.\"\n\n" +
+            "\"The Seed?\"\n\n\"Yes, the Option Seed. It is a fragment of the Options you now know. While it is a fragment, it is more organic, thus, more alive.\"\n\n" +
+            "I paused. I myself am not sure how to comprehend what she just said. Organic? Alive? Is she saying that it is some kind of alien creature instead?\n\n" +
+            "\"Think of it as a child who can become attached to the wielder,\" she continues to explain, \"It is somewhat complicated. When it reaches its " +
+            "full potential, it becomes fully mechanical.\"\n\nThere was silence in between us. As I was just going to set the odd lollipop aside, it brought itself to life " +
+            "and started circling around me intelligently without trying to collide with anything in its path.\n\n" +
+            "\"It has initiated and registered you as its host.\"\n\nI looked around while it circles around me, trying to find a way to stop it without a word. " +
+            "This is all too astonishing for me to say a word.\n\n\"This was first seen a long time ago in our planetary system. Victory Viper and Lord British set out together to " +
+            "save Planet Latis from the great evil called Salamander,\" she says.\n\nShe fell silent after, seemingly like reminiscing.\n\n" +
+            "The great evil? She sounds like she went through a lot. Now, she faces yet another chaotic scene of survival. She must have had it rougher than I expected.\n\n" +
+            "Can she feel pain? She had old allies and friends for sure. She sounds more human than me, now that I think about it!\n\n" +
+            "\"You mentioned about Katswell in your audio log when you were lost in space. Who is she?\" I boldly asked her.\n\n" +
+            "She made a soft, short giggle, then said, \"She is one of the legends who played a big role in saving our race.\"\n\n" +
+            "I nodded, and it strangely felt satisfying to hear that.";
 
         internal const uint getOptionEventId = GradiusOptionItem.getOptionEventId;
         internal const uint loseOptionEventId = GradiusOptionItem.loseOptionEventId;
@@ -57,8 +72,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         public OptionSeed()
         {
-            modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/optionmodel.prefab");
-            iconResource = assetBundle.LoadAsset<Sprite>("assets/option/icon/gradiusoption_icon.png");
+            modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/seedmodel.prefab");
+            iconResource = assetBundle.LoadAsset<Sprite>("assets/option/icon/optionseed_icon.png");
         }
 
         public override void SetupConfig()
@@ -68,6 +83,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         public override void SetupBehavior()
         {
+            base.SetupBehavior();
             InitializeAssets();
             if (Compat_ItemStats.enabled)
             {
