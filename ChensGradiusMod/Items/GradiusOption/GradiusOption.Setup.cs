@@ -221,7 +221,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 gradiusOptionPrefab.AddComponent<NetworkIdentity>();
                 gradiusOptionPrefab.AddComponent<OptionBehavior>();
                 gradiusOptionPrefab.AddComponent<Flicker>();
-                Log.Debug("Successfully initialized OptionOrb prefab.");
+                Log.Debug("Successfully initialized Gradius Option prefab.");
             }
             else Log.Error("Failed to create GradiusOption: Resource not found or is null.");
 

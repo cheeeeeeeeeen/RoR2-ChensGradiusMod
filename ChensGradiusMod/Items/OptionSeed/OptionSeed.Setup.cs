@@ -26,12 +26,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public float damageMultiplier { get; private set; } = .5f;
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Proc mode for Option Seeds. 0 = % Chance, 1 = every X attacks.", AutoConfigFlags.None, 0, 1)]
-        public int procMode { get; private set; } = 0;
-
-        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Proc value for Option Seeds. For 0 mode, 12 value means 12%. For 1 mode, 12 value means every 12 attacks.", AutoConfigFlags.None, 0, int.MaxValue)]
-        public int procValue { get; private set; } = 25;
+        [AutoConfig("Proc value for Option Seeds. A value of 0.25 means 25%. Multiplicative stacking.", AutoConfigFlags.None, 0f, float.MaxValue)]
+        public float procValue { get; private set; } = .25f;
 
         [AutoConfig("Set to true for the Orbs to have the Option Seed Pickup model in the center. Server and Client. Cosmetic only. " +
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
@@ -45,15 +41,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         protected override string GetDescString(string langid = null)
         {
-            string str = $"Deploy <style=cIsDamage>2</style> Option Seeds. ";
-            if (procMode == 0)
-            {
-                str += $"Option Seeds have a <style=cIsDamage>{Pct(procValue, 1)}</style> chance to copy the wielder's attacks ";
-            }
-            else
-            {
-                str += $"Option Seeds will copy the wielder's attacks every <style=cIsDamage>{procValue}</style> attack{NPlur(procValue)}";
-            }
+            string str = $"Deploy <style=cIsDamage>2</style> Option Seeds. Option Seeds have a <style=cIsDamage>{Pct(procValue)}</style>";
+            str += $" <style=cStack>(+{Pct(procValue)} per stack, multiplicative)</style> chance to copy the wielder's attacks";
             str += $" for <style=cIsDamage>{Pct(damageMultiplier, 0)}</style> of the damage dealt.";
             return str;
         }
@@ -84,12 +73,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
             {
                 Compat_ItemStats.CreateItemStatDef(itemDef,
                 (
-                    (count, inv, master) => { return count; },
-                    (value, inv, master) => { return $"Options per Drone: {value}"; }
+                    (count, inv, master) => { return ProcComputation(procValue, (int)count); },
+                    (value, inv, master) => { return $"Copy Chance: {Pct(value)}"; }
                 ),
                 (
                     (count, inv, master) => { return damageMultiplier; },
-                    (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
+                    (value, inv, master) => { return $"Damage: {Pct(value)}"; }
                 ));
             }
         }
@@ -107,10 +96,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
             if (optionSeedPrefab)
             {
                 optionSeedPrefab.AddComponent<NetworkIdentity>();
-                optionSeedPrefab.AddComponent<SeedFlicker>();
-                Log.Debug("Successfully initialized OptionSeedOrb prefab.");
+                optionSeedPrefab.AddComponent<Flicker>();
+                Log.Debug("Successfully initialized Option Seed prefab.");
             }
             else Log.Error("Failed to create OptionSeed: Resource not found or is null.");
         }
+
+        private float ProcComputation(float procChance, int stack) => (1f - Mathf.Pow(1f - procChance / 100f, stack)) * 100f;
     }
 }

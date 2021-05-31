@@ -26,8 +26,10 @@ namespace Chen.GradiusMod.Items.OptionSeed
             if (!inputBankTest) return;
 
             Vector3 direction = inputBankTest.aimDirection.normalized;
-            actionToRun(seedTracker.leftSeed, seedTracker, direction);
-            actionToRun(seedTracker.rightSeed, seedTracker, direction);
+            float chance = ProcComputation(procValue, GetCount(optionSeedOwner));
+
+            if (Util.CheckRoll(chance, optionSeedOwner.master)) actionToRun(seedTracker.leftSeed, seedTracker, direction);
+            if (Util.CheckRoll(chance, optionSeedOwner.master)) actionToRun(seedTracker.rightSeed, seedTracker, direction);
         }
     }
 }
