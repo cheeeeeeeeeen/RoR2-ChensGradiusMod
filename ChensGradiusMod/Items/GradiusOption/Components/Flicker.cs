@@ -7,12 +7,13 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
     internal class Flicker : MonoBehaviour
     {
         // Child Objects in Order:
-        // 0. sphere1:     Light
-        // 1. sphere2:     Light
-        // 2. sphere3:     Light
-        // 3. sphere4:     MeshRenderer, MeshFilter (only in OptionOrb)
-        // 4. sphere5:     MeshRenderer, MeshFilter (only in OptionOrbWithModel)
-        // 5. OptionModel: The option model (only in OptionOrbWithModel)
+        // 0. sphere1: Light
+        // 1. sphere2: Light
+        // 2. sphere3: Light
+        // 3. sphere4: MeshRenderer, MeshFilter (only in OptionOrb)
+        // 4. sphere5: MeshRenderer, MeshFilter (only in OptionOrbWithModel)
+        // 5. option:  The option model (only in OptionOrbWithModel)
+        // 6. seed:    The seed model (only in SeedOrbWithModel)
 
         private readonly float baseValue = 1f;
         private readonly float amplitude = .25f;
@@ -57,8 +58,9 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                         child.transform.localScale *= 1.5f;
                         break;
 
+                    case "seed":
                     case "option":
-                        child.transform.localScale = new Vector3(2f, 2f, 2f);
+                        child.transform.localScale *= 2f;
                         break;
                 }
             }
