@@ -75,67 +75,67 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             float seedFireTimer = self.fireTimer + Time.fixedDeltaTime;
             orig(self);
-            FireForSeeds(self.characterBody, (seed, tracker) =>
+            FireForSeeds(self.characterBody, (seed, behavior) =>
             {
-                if (tracker.O[seed].ContainsKey("activated") && (bool)tracker.O[seed]["activated"])
+                Ray laserRay = new Ray(seed.transform.position, self.GetAimRay().direction);
+                float rate = self.fireFrequency * self.characterBody.attackSpeed;
+                float fraction = 1f / rate;
+                if (seedFireTimer > fraction)
                 {
-                    Ray laserRay = new Ray(seed.transform.position, self.GetAimRay().direction);
-                    float rate = self.fireFrequency * self.characterBody.attackSpeed;
-                    float fraction = 1f / rate;
-                    if (seedFireTimer > fraction)
+                    if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
+                    if (self.isAuthority)
                     {
-                        if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
-                        if (self.isAuthority)
+                        BulletAttack bulletAttack = new BulletAttack()
                         {
-                            BulletAttack bulletAttack = new BulletAttack()
-                            {
-                                owner = self.gameObject,
-                                weapon = seed,
-                                origin = laserRay.origin,
-                                aimVector = laserRay.direction,
-                                minSpread = self.minSpread,
-                                maxSpread = self.maxSpread,
-                                bulletCount = 1U,
-                                damage = self.damageCoefficient * self.damageStat / self.fireFrequency * damageMultiplier,
-                                procCoefficient = self.procCoefficient * self.fireFrequency,
-                                force = self.force * damageMultiplier,
-                                muzzleName = self.muzzleString,
-                                hitEffectPrefab = self.hitEffectPrefab,
-                                isCrit = self.characterBody.RollCrit(),
-                                HitEffectNormal = false,
-                                radius = 0f,
-                                maxDistance = self.maxDistance
-                            };
-                            self.ModifyBullet(bulletAttack);
-                            if (!mobileTurretsSeedSyncEffect) bulletAttack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
-                            bulletAttack.Fire();
-                        }
-                    }
-                    if (mobileTurretsSeedSyncEffect && tracker.U[seed].SafeCheck("laserEffectInstance") && tracker.U[seed].SafeCheck("laserEffectInstanceEndTransform"))
-                    {
-                        Vector3 position = ((GameObject)tracker.U[seed]["laserEffectInstance"]).transform.parent.position;
-                        Vector3 point = laserRay.GetPoint(self.maxDistance);
-                        if (Physics.Raycast(laserRay.origin, laserRay.direction, out RaycastHit raycastHit, self.maxDistance,
-                                            LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
-                        {
-                            point = raycastHit.point;
-                        }
-                        ((Transform)tracker.U[seed]["laserEffectInstanceEndTransform"]).position = point;
+                            owner = self.gameObject,
+                            weapon = seed,
+                            origin = laserRay.origin,
+                            aimVector = laserRay.direction,
+                            minSpread = self.minSpread,
+                            maxSpread = self.maxSpread,
+                            bulletCount = 1U,
+                            damage = self.damageCoefficient * self.damageStat / self.fireFrequency * damageMultiplier,
+                            procCoefficient = self.procCoefficient * self.fireFrequency,
+                            force = self.force * damageMultiplier,
+                            muzzleName = self.muzzleString,
+                            hitEffectPrefab = self.hitEffectPrefab,
+                            isCrit = self.characterBody.RollCrit(),
+                            HitEffectNormal = false,
+                            radius = 0f,
+                            maxDistance = self.maxDistance
+                        };
+                        self.ModifyBullet(bulletAttack);
+                        if (!mobileTurretsSeedSyncEffect) bulletAttack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
+                        bulletAttack.Fire();
                     }
                 }
+                if (mobileTurretsSeedSyncEffect && behavior.U.SafeCheck("laserEffectInstance") && behavior.U.SafeCheck("laserEffectInstanceEndTransform"))
+                {
+                    Vector3 position = ((GameObject)behavior.U["laserEffectInstance"]).transform.parent.position;
+                    Vector3 point = laserRay.GetPoint(self.maxDistance);
+                    if (Physics.Raycast(laserRay.origin, laserRay.direction, out RaycastHit raycastHit, self.maxDistance,
+                                        LayerIndex.world.mask | LayerIndex.entityPrecise.mask, QueryTriggerInteraction.UseGlobal))
+                    {
+                        point = raycastHit.point;
+                    }
+                    ((Transform)behavior.U["laserEffectInstanceEndTransform"]).position = point;
+                }
+            }, (_chance, behavior) =>
+            {
+                return behavior.O.ContainsKey("beamActivated") && (bool)behavior.O["beamActivated"];
             });
         }
 
         private void FireBeam_OnExit(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnExit orig, FireBeam self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, tracker) =>
+            FireForSeeds(self.characterBody, (seed, behavior) =>
             {
-                if (tracker.O[seed].ContainsKey("activated") && (bool)tracker.O[seed]["activated"])
-                {
-                    if (tracker.U[seed].SafeCheck("laserEffectInstance")) EntityState.Destroy(tracker.U[seed]["laserEffectInstance"]);
-                    if (tracker.U[seed].SafeCheck("laserEffectInstanceEndTransform")) EntityState.Destroy(tracker.U[seed]["laserEffectInstanceEndTransform"]);
-                }
+                if (behavior.U.SafeCheck("laserEffectInstance")) EntityState.Destroy(behavior.U["laserEffectInstance"]);
+                if (behavior.U.SafeCheck("laserEffectInstanceEndTransform")) EntityState.Destroy(behavior.U["laserEffectInstanceEndTransform"]);
+            }, (_chance, behavior) =>
+            {
+                return behavior.O.ContainsKey("beamActivated") && (bool)behavior.O["beamActivated"];
             });
         }
 
@@ -143,21 +143,21 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             orig(self);
             if (!mobileTurretsSeedSyncEffect) return;
-            FireForSeeds(self.characterBody, (seed, tracker) =>
+            FireForSeeds(self.characterBody, (seed, behavior) =>
             {
                 if (self.laserPrefab)
                 {
-                    if (tracker.U[seed].SafeCheck("laserEffectInstance")) EntityState.Destroy(tracker.U[seed]["laserEffectInstance"]);
-                    if (tracker.U[seed].SafeCheck("laserEffectInstanceEndTransform")) EntityState.Destroy(tracker.U[seed]["laserEffectInstanceEndTransform"]);
+                    if (behavior.U.SafeCheck("laserEffectInstance")) EntityState.Destroy(behavior.U["laserEffectInstance"]);
+                    if (behavior.U.SafeCheck("laserEffectInstanceEndTransform")) EntityState.Destroy(behavior.U["laserEffectInstanceEndTransform"]);
                     Transform transform = seed.transform;
-                    tracker.U[seed]["laserEffectInstance"] = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
-                    ((GameObject)tracker.U[seed]["laserEffectInstance"]).transform.parent = transform;
-                    tracker.U[seed]["laserEffectInstanceEndTransform"] = ((GameObject)tracker.U[seed]["laserEffectInstance"]).GetComponent<ChildLocator>().FindChild("LaserEnd");
+                    behavior.U["laserEffectInstance"] = Object.Instantiate(self.laserPrefab, transform.position, transform.rotation);
+                    ((GameObject)behavior.U["laserEffectInstance"]).transform.parent = transform;
+                    behavior.U["laserEffectInstanceEndTransform"] = ((GameObject)behavior.U["laserEffectInstance"]).GetComponent<ChildLocator>().FindChild("LaserEnd");
                 }
-            }, (chance, seed, tracker) =>
+            }, (chance, behavior) =>
             {
-                bool activated = Util.CheckRoll(chance, tracker.characterMaster);
-                tracker.O[seed]["activated"] = activated;
+                bool activated = Util.CheckRoll(chance, behavior.ownerMaster);
+                behavior.O["beamActivated"] = activated;
                 return activated;
             });
         }

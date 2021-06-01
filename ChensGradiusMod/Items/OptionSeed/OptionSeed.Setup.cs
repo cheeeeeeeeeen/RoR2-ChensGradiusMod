@@ -1,5 +1,7 @@
 ﻿using Chen.GradiusMod.Items.GradiusOption.Components;
+using Chen.GradiusMod.Items.OptionSeed.Components;
 using RoR2;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TILER2;
 using UnityEngine;
@@ -72,8 +74,14 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         internal const uint getOptionEventId = GradiusOptionItem.getOptionEventId;
         internal const uint loseOptionEventId = GradiusOptionItem.loseOptionEventId;
+        internal const float defaultVerticalOffsetMultiplier = .4f;
 
         internal static GameObject optionSeedPrefab { get; private set; }
+
+        private static readonly Dictionary<string, float> VerticalOffsetMultipliers = new Dictionary<string, float>()
+        {
+            { "EngiWalkerTurret", 1.2f }
+        };
 
         public OptionSeed()
         {
@@ -118,11 +126,21 @@ namespace Chen.GradiusMod.Items.OptionSeed
             {
                 optionSeedPrefab.AddComponent<NetworkIdentity>();
                 optionSeedPrefab.AddComponent<Flicker>();
+                optionSeedPrefab.AddComponent<SeedBehavior>();
                 Log.Debug("Successfully initialized Option Seed prefab.");
             }
             else Log.Error("Failed to create OptionSeed: Resource not found or is null.");
         }
 
         private float ProcComputation(float procChance, int stack) => (1f - Mathf.Pow(1f - procChance, stack)) * 100f;
+
+        internal float GetVerticalOffsetMultiplier(string masterName)
+        {
+            foreach (var pair in VerticalOffsetMultipliers)
+            {
+                if (masterName.Contains(pair.Key)) return pair.Value;
+            }
+            return defaultVerticalOffsetMultiplier;
+        }
     }
 }
