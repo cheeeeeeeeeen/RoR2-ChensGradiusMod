@@ -90,6 +90,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
             On.EntityStates.BeetleGuardMonster.FireSunder.FixedUpdate -= FireSunder_FixedUpdate;
             On.EntityStates.BeetleGuardMonster.GroundSlam.OnEnter -= GroundSlam_OnEnter;
             On.RoR2.EquipmentSlot.PerformEquipmentAction -= EquipmentSlot_PerformEquipmentAction;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.FixedUpdate -= FireBeam_FixedUpdate;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnEnter -= FireBeam_OnEnter;
+            On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnExit -= FireBeam_OnExit;
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
@@ -185,6 +188,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                                 maxDistance = self.maxDistance
                             };
                             self.ModifyBullet(bulletAttack);
+                            if (!empathyCoresOptionSyncEffect) bulletAttack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
                             bulletAttack.Fire();
                         }
                     }
@@ -621,7 +625,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                         if (self.effectPrefab) option.MuzzleEffect(self.effectPrefab, false);
                         if (self.isAuthority)
                         {
-                            new BulletAttack
+                            BulletAttack bulletAttack = new BulletAttack
                             {
                                 owner = self.gameObject,
                                 weapon = option,
@@ -639,7 +643,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
                                 HitEffectNormal = false,
                                 radius = 0f,
                                 maxDistance = (point - ray.origin).magnitude + .1f
-                            }.Fire();
+                            };
+                            if (!aurelioniteOptionSyncEffect) bulletAttack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
+                            bulletAttack.Fire();
                         }
                     }
                 }

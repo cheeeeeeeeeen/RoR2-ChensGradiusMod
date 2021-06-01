@@ -35,7 +35,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Equipment Drones will use the attached equipment depending on the number of Options/Multiples it has. This is configurable.
 - Documentation is available for other mod creators. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
-![Gradius' Option Seed](https://puu.sh/HLbnU.png)
+![Gradius' Option Seed](https://puu.sh/HLj6S.png)
 **Gradius' Option Seed**
 - A new Green Item added to Risk of Rain 2. Upon acquiring this item, 2 Option Seeds will spawn for the player. They have a chance to duplicate the survivor's attacks.
 - The Option Seed is a fragment of the completed version of it. While it is in its younger stage, it is more organic than mechanical.

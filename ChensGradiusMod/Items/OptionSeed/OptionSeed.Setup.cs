@@ -29,6 +29,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
         [AutoConfig("Proc value for Option Seeds. A value of 0.25 means 25%. Multiplicative stacking.", AutoConfigFlags.None, 0f, float.MaxValue)]
         public float procValue { get; private set; } = .25f;
 
+        [AutoConfig("Allows displaying and syncing the laser effect of Option Seeds. Disabling this will replace the effect with bullets. " +
+                    "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
+                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
+        public bool mobileTurretsSeedSyncEffect { get; private set; } = true;
+
         [AutoConfig("Set to true for the Orbs to have the Option Seed Pickup model in the center. Server and Client. Cosmetic only. " +
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
@@ -118,6 +123,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
             else Log.Error("Failed to create OptionSeed: Resource not found or is null.");
         }
 
-        private float ProcComputation(float procChance, int stack) => (1f - Mathf.Pow(1f - procChance / 100f, stack)) * 100f;
+        private float ProcComputation(float procChance, int stack) => (1f - Mathf.Pow(1f - procChance, stack)) * 100f;
     }
 }
