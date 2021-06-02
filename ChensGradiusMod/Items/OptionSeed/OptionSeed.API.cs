@@ -54,9 +54,29 @@ namespace Chen.GradiusMod.Items.OptionSeed
         /// </summary>
         /// <param name="masterName">The CharacterMaster name of the character.</param>
         /// <param name="newValue">The multiplier value.</param>
-        public void SetVerticalOffsetMultiplier(string masterName, float newValue)
+        public void SetVerticalOffsetMultiplier(string masterName, float newValue) => VerticalOffsetMultipliers[masterName] = newValue;
+
+        /// <summary>
+        /// Used for storing a proc check value through the SeedBehavior's objectData dictionary so that it can be used for other states of the character.
+        /// Whether the proc is successful or not, it will always be stored in the dictionary.
+        /// </summary>
+        /// <param name="chance">Computed chance used for rolling.</param>
+        /// <param name="behavior">The Option Seed SeedBehavior component.</param>
+        /// <param name="key">Key that will be used to store in the dictionary.</param>
+        /// <returns>True or false if the proc is successful or not.</returns>
+        public bool StoreProcCheck(float chance, SeedBehavior behavior, string key)
         {
-            VerticalOffsetMultipliers[masterName] = newValue;
+            bool activated = Util.CheckRoll(chance, behavior.ownerMaster);
+            behavior.O[key] = activated;
+            return activated;
         }
+
+        /// <summary>
+        /// Checks the dictionary from the specified SeedBehavior for the key given as parameter, then returns it as a boolean value.
+        /// </summary>
+        /// <param name="behavior">The Option Seed SeedBehavior component which contains the dictionary.</param>
+        /// <param name="key">Key to check the value with.</param>
+        /// <returns>The stored value from the dictionary.</returns>
+        public bool CheckStoredProc(SeedBehavior behavior, string key) => behavior.O.ContainsKey(key) && (bool)behavior.O[key];
     }
 }

@@ -83,6 +83,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
             { "EngiWalkerTurret", 1.2f }
         };
 
+        private static readonly List<string> BasicMeleeAttackSkipModification = new List<string>()
+        {
+            "EntityStates.Merc.Assaulter2",
+            "EntityStates.Merc.FocusedAssaultDash"
+        };
+
         public OptionSeed()
         {
             modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/seedmodel.prefab");
