@@ -2,12 +2,14 @@
 
 using Chen.GradiusMod.Items.OptionSeed.Components;
 using EntityStates;
+using EntityStates.Bandit2.Weapon;
 using EntityStates.Commando.CommandoWeapon;
 using EntityStates.Drone.DroneWeapon;
 using EntityStates.Engi.EngiWeapon;
 using EntityStates.EngiTurret.EngiTurretWeapon;
 using EntityStates.Huntress.HuntressWeapon;
 using EntityStates.Merc;
+using EntityStates.Toolbot;
 using RoR2;
 using RoR2.Orbs;
 using RoR2.Projectile;
@@ -49,6 +51,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Merc.FocusedAssaultDash.OnMeleeHitAuthority += FocusedAssaultDash_OnMeleeHitAuthority;
             On.EntityStates.Merc.Uppercut.OnEnter += Uppercut_OnEnter;
             On.EntityStates.Merc.Uppercut.FixedUpdate += Uppercut_FixedUpdate;
+            On.EntityStates.Bandit2.Weapon.FireShotgun2.FireBullet += FireShotgun2_FireBullet;
+            On.EntityStates.Bandit2.Weapon.BaseFireSidearmRevolverState.OnEnter += BaseFireSidearmRevolverState_OnEnter;
+            On.EntityStates.Bandit2.Weapon.Bandit2FireShiv.FireShiv += Bandit2FireShiv_FireShiv;
+            On.EntityStates.Toolbot.BaseNailgunState.FireBullet += BaseNailgunState_FireBullet;
+            On.EntityStates.AimThrowableBase.FireProjectile += AimThrowableBase_FireProjectile;
+            On.EntityStates.Toolbot.RecoverAimStunDrone.OnEnter += RecoverAimStunDrone_OnEnter;
+            On.EntityStates.Toolbot.FireBuzzsaw.FixedUpdate += FireBuzzsaw_FixedUpdate;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter += EntityState_OnEnter;
 #endif
@@ -79,6 +88,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Merc.FocusedAssaultDash.OnMeleeHitAuthority -= FocusedAssaultDash_OnMeleeHitAuthority;
             On.EntityStates.Merc.Uppercut.OnEnter -= Uppercut_OnEnter;
             On.EntityStates.Merc.Uppercut.FixedUpdate -= Uppercut_FixedUpdate;
+            On.EntityStates.Bandit2.Weapon.FireShotgun2.FireBullet -= FireShotgun2_FireBullet;
+            On.EntityStates.Bandit2.Weapon.BaseFireSidearmRevolverState.OnEnter -= BaseFireSidearmRevolverState_OnEnter;
+            On.EntityStates.Bandit2.Weapon.Bandit2FireShiv.FireShiv -= Bandit2FireShiv_FireShiv;
+            On.EntityStates.Toolbot.BaseNailgunState.FireBullet -= BaseNailgunState_FireBullet;
+            On.EntityStates.AimThrowableBase.FireProjectile -= AimThrowableBase_FireProjectile;
+            On.EntityStates.Toolbot.RecoverAimStunDrone.OnEnter -= RecoverAimStunDrone_OnEnter;
+            On.EntityStates.Toolbot.FireBuzzsaw.FixedUpdate -= FireBuzzsaw_FixedUpdate;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter -= EntityState_OnEnter;
 #endif
@@ -100,10 +116,209 @@ namespace Chen.GradiusMod.Items.OptionSeed
             if (GetCount(obj) > 0) SeedTracker.SpawnSeeds(obj.gameObject);
         }
 
+        private void FireBuzzsaw_FixedUpdate(On.EntityStates.Toolbot.FireBuzzsaw.orig_FixedUpdate orig, FireBuzzsaw self)
+        {
+            float fireAge = self.fireAge + Time.fixedDeltaTime;
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, behavior) =>
+            {
+                if (self.isAuthority && fireAge >= 1f / self.fireFrequency)
+                {
+                    OverlapAttack attack = new OverlapAttack
+                    {
+                        attacker = self.gameObject,
+                        inflictor = self.gameObject,
+                        teamIndex = TeamComponent.GetObjectTeam(self.attack.attacker),
+                        damage = FireBuzzsaw.damageCoefficientPerSecond * self.damageStat / FireBuzzsaw.baseFireFrequency * damageMultiplier,
+                        procCoefficient = FireBuzzsaw.procCoefficientPerSecond / FireBuzzsaw.baseFireFrequency,
+                        hitBoxGroup = self.attack.hitBoxGroup,
+                        isCrit = self.characterBody.RollCrit()
+                    };
+                    if (FireBuzzsaw.impactEffectPrefab) attack.hitEffectPrefab = FireBuzzsaw.impactEffectPrefab;
+                    attack.ResetIgnoredHealthComponents();
+                    attack.Fire();
+                }
+            });
+        }
+
+        private void AimThrowableBase_FireProjectile(On.EntityStates.AimThrowableBase.orig_FireProjectile orig, AimThrowableBase self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                {
+                    crit = self.RollCrit(),
+                    owner = self.gameObject,
+                    position = seed.transform.position,
+                    projectilePrefab = self.projectilePrefab,
+                    rotation = Util.QuaternionSafeLookRotation(self.currentTrajectoryInfo.finalRay.direction, Vector3.up),
+                    speedOverride = self.currentTrajectoryInfo.speedOverride,
+                    damage = self.damageCoefficient * self.damageStat
+                };
+                if (self.setFuse) fireProjectileInfo.fuseOverride = self.currentTrajectoryInfo.travelTime;
+                self.ModifyProjectile(ref fireProjectileInfo);
+                fireProjectileInfo.force *= damageMultiplier;
+                fireProjectileInfo.damage *= damageMultiplier;
+                ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+            }, (chance, behavior) => StoreProcCheck(chance, behavior, $"{self.GetType().Name}.Activated"));
+        }
+
+        private void RecoverAimStunDrone_OnEnter(On.EntityStates.Toolbot.RecoverAimStunDrone.orig_OnEnter orig, RecoverAimStunDrone self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                if (RecoverAimStunDrone.muzzleEffectPrefab) seed.MuzzleEffect(RecoverAimStunDrone.muzzleEffectPrefab, false);
+            }, (_chance, behavior) => CheckStoredProc(behavior, $"{self.GetType().Name}.Activated"));
+        }
+
+        private void BaseNailgunState_FireBullet(On.EntityStates.Toolbot.BaseNailgunState.orig_FireBullet orig, BaseNailgunState self,
+                                                 Ray aimRay, int bulletCount, float spreadPitchScale, float spreadYawScale)
+        {
+            orig(self, aimRay, bulletCount, spreadPitchScale, spreadYawScale);
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                if (BaseNailgunState.muzzleFlashPrefab) seed.MuzzleEffect(BaseNailgunState.muzzleFlashPrefab, false);
+                if (self.isAuthority)
+                {
+                    new BulletAttack
+                    {
+                        aimVector = aimRay.direction,
+                        origin = seed.transform.position,
+                        owner = self.gameObject,
+                        weapon = seed,
+                        bulletCount = (uint)bulletCount,
+                        damage = self.damageStat * BaseNailgunState.damageCoefficient * damageMultiplier,
+                        damageColorIndex = DamageColorIndex.Default,
+                        damageType = DamageType.Generic,
+                        falloffModel = BulletAttack.FalloffModel.DefaultBullet,
+                        force = BaseNailgunState.force * damageMultiplier,
+                        HitEffectNormal = false,
+                        procChainMask = default,
+                        procCoefficient = BaseNailgunState.procCoefficient,
+                        maxDistance = BaseNailgunState.maxDistance,
+                        radius = 0f,
+                        isCrit = self.RollCrit(),
+                        muzzleName = "Muzzle",
+                        minSpread = 0f,
+                        hitEffectPrefab = BaseNailgunState.hitEffectPrefab,
+                        maxSpread = self.characterBody.spreadBloomAngle,
+                        smartCollision = false,
+                        sniper = false,
+                        spreadPitchScale = spreadPitchScale * spreadPitchScale,
+                        spreadYawScale = spreadYawScale * spreadYawScale,
+                        tracerEffectPrefab = BaseNailgunState.tracerEffectPrefab
+                    }.Fire();
+                }
+            });
+        }
+
+        private void Bandit2FireShiv_FireShiv(On.EntityStates.Bandit2.Weapon.Bandit2FireShiv.orig_FireShiv orig, Bandit2FireShiv self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                if (Bandit2FireShiv.muzzleEffectPrefab) seed.MuzzleEffect(Bandit2FireShiv.muzzleEffectPrefab, false);
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * damageMultiplier,
+                        force = self.force * damageMultiplier,
+                        crit = self.RollCrit(),
+                        damageTypeOverride = new DamageType?(DamageType.SuperBleedOnCrit)
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void BaseFireSidearmRevolverState_OnEnter(On.EntityStates.Bandit2.Weapon.BaseFireSidearmRevolverState.orig_OnEnter orig, BaseFireSidearmRevolverState self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
+                if (self.isAuthority)
+                {
+                    BulletAttack bulletAttack = new BulletAttack
+                    {
+                        owner = self.gameObject,
+                        weapon = seed,
+                        origin = seed.transform.position,
+                        aimVector = self.GetAimRay().direction,
+                        minSpread = self.minSpread,
+                        maxSpread = self.maxSpread,
+                        bulletCount = 1U,
+                        damage = self.damageCoefficient * self.damageStat,
+                        force = self.force,
+                        falloffModel = BulletAttack.FalloffModel.None,
+                        tracerEffectPrefab = self.tracerEffectPrefab,
+                        muzzleName = "MuzzlePistol",
+                        hitEffectPrefab = self.hitEffectPrefab,
+                        isCrit = self.RollCrit(),
+                        HitEffectNormal = false,
+                        radius = .1f,
+                        smartCollision = true
+                    };
+                    bulletAttack.damageType |= DamageType.BonusToLowHealth;
+                    self.ModifyBullet(bulletAttack);
+                    bulletAttack.damage *= damageMultiplier;
+                    bulletAttack.force *= damageMultiplier;
+                    bulletAttack.Fire();
+                }
+            });
+        }
+
+        private void FireShotgun2_FireBullet(On.EntityStates.Bandit2.Weapon.FireShotgun2.orig_FireBullet orig, FireShotgun2 self, Ray aimRay)
+        {
+            orig(self, aimRay);
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                if (self.muzzleFlashPrefab) seed.MuzzleEffect(self.muzzleFlashPrefab, false);
+                if (self.isAuthority)
+                {
+                    Vector3 rhs = Vector3.Cross(Vector3.up, aimRay.direction);
+                    Vector3 axis = Vector3.Cross(aimRay.direction, rhs);
+                    float spread = 0f;
+                    if (self.characterBody)
+                    {
+                        spread = self.characterBody.spreadBloomAngle;
+                    }
+                    float angle = 0f;
+                    float computedValue = 0f;
+                    if (self.bulletCount > 1)
+                    {
+                        computedValue = Random.Range(self.minFixedSpreadYaw + spread, self.maxFixedSpreadYaw + spread) * 2f;
+                        angle = computedValue / (self.bulletCount - 1f);
+                    }
+                    Vector3 direction = Quaternion.AngleAxis(-computedValue * .5f, axis) * aimRay.direction;
+                    Quaternion rotation = Quaternion.AngleAxis(angle, axis);
+                    Ray bulletRay = new Ray(seed.transform.position, direction);
+                    for (int i = 0; i < self.bulletCount; i++)
+                    {
+                        BulletAttack bulletAttack = self.GenerateBulletAttack(bulletRay);
+                        self.ModifyBullet(bulletAttack);
+                        bulletAttack.force *= damageMultiplier;
+                        bulletAttack.damage *= damageMultiplier;
+                        bulletAttack.weapon = seed;
+                        bulletAttack.radius = .1f;
+                        bulletAttack.Fire();
+                        bulletRay.direction = rotation * bulletRay.direction;
+                    }
+                }
+            });
+        }
+
         private void Uppercut_OnEnter(On.EntityStates.Merc.Uppercut.orig_OnEnter orig, Uppercut self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, behavior) =>
+            FireForSeeds(self.characterBody, (_seed, behavior) =>
             {
                 behavior.O["Uppercut.OverlapAttack"] = self.InitMeleeOverlap(Uppercut.baseDamageCoefficient, Uppercut.hitEffectPrefab, self.GetModelTransform(), Uppercut.hitboxString);
                 ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).forceVector = Vector3.up * Uppercut.upwardForceStrength * damageMultiplier;
@@ -115,7 +330,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             bool hasSwung = self.hasSwung;
             orig(self);
-            FireForSeeds(self.characterBody, (seed, behavior) =>
+            FireForSeeds(self.characterBody, (_seed, behavior) =>
             {
                 if (self.isAuthority)
                 {
@@ -301,11 +516,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 switch (behavior.numbering)
                 {
                     case 1:
-                        speedMultiplier = .75f;
+                        speedMultiplier = .8f;
                         break;
 
                     case -1:
-                        speedMultiplier = .5f;
+                        speedMultiplier = .6f;
                         break;
 
                     default:
@@ -386,9 +601,9 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             minSpread = self.minSpread,
                             maxSpread = self.maxSpread,
                             bulletCount = 1U,
-                            damage = self.damageCoefficient * self.damageStat / self.fireFrequency * damageMultiplier,
+                            damage = self.damageCoefficient * self.damageStat / self.fireFrequency,
                             procCoefficient = self.procCoefficient * self.fireFrequency,
-                            force = self.force * damageMultiplier,
+                            force = self.force,
                             muzzleName = self.muzzleString,
                             hitEffectPrefab = self.hitEffectPrefab,
                             isCrit = self.characterBody.RollCrit(),
@@ -397,6 +612,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             maxDistance = self.maxDistance
                         };
                         self.ModifyBullet(bulletAttack);
+                        bulletAttack.damage *= damageMultiplier;
+                        bulletAttack.force *= damageMultiplier;
                         if (!mobileTurretsSeedSyncEffect) bulletAttack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
                         bulletAttack.Fire();
                     }
@@ -554,11 +771,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 {
                     Ray seedRay = new Ray(seed.transform.position, aimRay.direction);
                     BulletAttack bulletAttack = self.GenerateBulletAttack(seedRay);
+                    self.ModifyBullet(bulletAttack);
                     bulletAttack.weapon = seed;
                     bulletAttack.damage *= damageMultiplier;
                     bulletAttack.force *= damageMultiplier;
                     bulletAttack.radius = 0.1f;
-                    self.ModifyBullet(bulletAttack);
                     bulletAttack.Fire();
                 }
             });
@@ -627,6 +844,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
             if (Helpers.GeneralHelpers.Instances.hostMasterObject == self.characterBody.masterObject)
             {
                 Log.Message($"EntityState.OnEnter: {self.GetType().FullName}");
+                if (self.characterBody)
+                {
+                    Log.Message($"EntityState.OnEnter: -> Body: {self.characterBody.name}");
+                    Log.Message($"EntityState.OnEnter: -> Master: {self.characterBody.master.name}");
+                }
             }
         }
 

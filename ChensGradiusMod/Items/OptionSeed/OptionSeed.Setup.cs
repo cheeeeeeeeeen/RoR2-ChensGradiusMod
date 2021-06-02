@@ -80,7 +80,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         private static readonly Dictionary<string, float> VerticalOffsetMultipliers = new Dictionary<string, float>()
         {
-            { "EngiWalkerTurret", 1.2f }
+            { "EngiWalkerTurret", 1.2f },
+            { "Toolbot", .5f }
         };
 
         private static readonly List<string> BasicMeleeAttackSkipModification = new List<string>()
@@ -140,11 +141,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         private float ProcComputation(float procChance, int stack) => (1f - Mathf.Pow(1f - procChance, stack)) * 100f;
 
-        internal float GetVerticalOffsetMultiplier(string masterName)
+        internal float GetVerticalOffsetMultiplier(string bodyName)
         {
             foreach (var pair in VerticalOffsetMultipliers)
             {
-                if (masterName.Contains(pair.Key)) return pair.Value;
+                if (bodyName.Contains(pair.Key)) return pair.Value;
             }
             return defaultVerticalOffsetMultiplier;
         }

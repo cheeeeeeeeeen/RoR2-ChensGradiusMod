@@ -52,9 +52,9 @@ namespace Chen.GradiusMod.Items.OptionSeed
         /// <summary>
         /// Sets the vertical offset multiplier for certain characters since some Option Seeds are positioned awkwardly. Vertical offset default is 0.4f.
         /// </summary>
-        /// <param name="masterName">The CharacterMaster name of the character.</param>
+        /// <param name="bodyName">The CharacterBody name of the character.</param>
         /// <param name="newValue">The multiplier value.</param>
-        public void SetVerticalOffsetMultiplier(string masterName, float newValue) => VerticalOffsetMultipliers[masterName] = newValue;
+        public void SetVerticalOffsetMultiplier(string bodyName, float newValue) => VerticalOffsetMultipliers[bodyName] = newValue;
 
         /// <summary>
         /// Used for storing a proc check value through the SeedBehavior's objectData dictionary so that it can be used for other states of the character.
