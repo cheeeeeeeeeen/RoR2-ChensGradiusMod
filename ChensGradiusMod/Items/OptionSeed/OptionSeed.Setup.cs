@@ -36,6 +36,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool mobileTurretsSeedSyncEffect { get; private set; } = true;
 
+        [AutoConfig("Allows displaying and syncing the flamethrower effect of Option Seeds. Disabling this will replace the effect with bullets. " +
+                    "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
+                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
+        public bool flamethrowerSeedSyncEffect { get; private set; } = true;
+
         [AutoConfig("Set to true for the Orbs to have the Option Seed Pickup model in the center. Server and Client. Cosmetic only. " +
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
@@ -80,8 +85,9 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         private static readonly Dictionary<string, float> VerticalOffsetMultipliers = new Dictionary<string, float>()
         {
-            { "EngiWalkerTurret", 1.2f },
-            { "Toolbot", .5f }
+            { "EngiWalkerTurretBody", 1.3f },
+            { "ToolbotBody", .5f },
+            { "MageBody", .8f }
         };
 
         private static readonly List<string> BasicMeleeAttackSkipModification = new List<string>()

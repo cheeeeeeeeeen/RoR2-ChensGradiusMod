@@ -87,7 +87,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
                     IncreaseInvalidity("SeedTracker Initialization: inputBankTest does not exist!");
                     return;
                 }
-                verticalOffsetMultiplier = OptionSeed.instance.GetVerticalOffsetMultiplier(characterMaster.name);
+                verticalOffsetMultiplier = OptionSeed.instance.GetVerticalOffsetMultiplier(characterBody.name);
             }
             if (invalidCheckTimer > 0f) invalidCheckTimer = 0f;
             currentOptionAngle += rotateSeedAngleSpeed;

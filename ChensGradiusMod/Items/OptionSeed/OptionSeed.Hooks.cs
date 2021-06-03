@@ -8,6 +8,7 @@ using EntityStates.Drone.DroneWeapon;
 using EntityStates.Engi.EngiWeapon;
 using EntityStates.EngiTurret.EngiTurretWeapon;
 using EntityStates.Huntress.HuntressWeapon;
+using EntityStates.Mage.Weapon;
 using EntityStates.Merc;
 using EntityStates.Toolbot;
 using RoR2;
@@ -19,6 +20,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using EngiMissilePainterFire = EntityStates.Engi.EngiMissilePainter.Fire;
+using MageFlamethrower = EntityStates.Mage.Weapon.Flamethrower;
 
 namespace Chen.GradiusMod.Items.OptionSeed
 {
@@ -58,6 +60,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.AimThrowableBase.FireProjectile += AimThrowableBase_FireProjectile;
             On.EntityStates.Toolbot.RecoverAimStunDrone.OnEnter += RecoverAimStunDrone_OnEnter;
             On.EntityStates.Toolbot.FireBuzzsaw.FixedUpdate += FireBuzzsaw_FixedUpdate;
+            On.EntityStates.Mage.Weapon.FireFireBolt.FireGauntlet += FireFireBolt_FireGauntlet;
+            On.EntityStates.Mage.Weapon.BaseThrowBombState.Fire += BaseThrowBombState_Fire;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnEnter += Flamethrower_OnEnter;
+            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet += Flamethrower_FireGauntlet;
+            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate += Flamethrower_FixedUpdate;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnExit += Flamethrower_OnExit;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter += EntityState_OnEnter;
 #endif
@@ -116,11 +124,130 @@ namespace Chen.GradiusMod.Items.OptionSeed
             if (GetCount(obj) > 0) SeedTracker.SpawnSeeds(obj.gameObject);
         }
 
+        private void Flamethrower_OnEnter(On.EntityStates.Mage.Weapon.Flamethrower.orig_OnEnter orig, MageFlamethrower self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (_seed, behavior) =>
+            {
+                behavior.O[$"{self.GetType().FullName}.IsCrit"] = self.RollCrit();
+            }, (chance, behavior) => StoreProcCheck(chance, behavior, $"{self.GetType().FullName}.Activated"));
+        }
+
+        private void Flamethrower_OnExit(On.EntityStates.Mage.Weapon.Flamethrower.orig_OnExit orig, MageFlamethrower self)
+        {
+            orig(self);
+            if (!flamethrowerSeedSyncEffect) return;
+            FireForSeeds(self.characterBody, (_seed, behavior) =>
+            {
+                string flamethrowerKey = $"{self.GetType().FullName}.flamethrower";
+                if (behavior.U.SafeCheck(flamethrowerKey)) EntityState.Destroy(behavior.U[flamethrowerKey]);
+            }, (_chance, behavior) => CheckStoredProc(behavior, $"{self.GetType().FullName}.Activated"));
+        }
+
+        private void Flamethrower_FixedUpdate(On.EntityStates.Mage.Weapon.Flamethrower.orig_FixedUpdate orig, MageFlamethrower self)
+        {
+            bool oldBegunFlamethrower = self.hasBegunFlamethrower;
+            orig(self);
+            if (!flamethrowerSeedSyncEffect) return;
+            FireForSeeds(self.characterBody, (seed, behavior) =>
+            {
+                string flamethrowerKey = $"{self.GetType().FullName}.flamethrower";
+                bool perMinionOldBegunFlamethrower = oldBegunFlamethrower;
+                if (self.stopwatch >= self.entryDuration && !perMinionOldBegunFlamethrower)
+                {
+                    perMinionOldBegunFlamethrower = true;
+                    if (behavior.U.SafeCheck(flamethrowerKey)) EntityState.Destroy(behavior.U[flamethrowerKey]);
+                    behavior.U[flamethrowerKey] = Object.Instantiate(self.flamethrowerEffectPrefab, seed.transform);
+                    ((GameObject)behavior.U[flamethrowerKey]).GetComponent<ScaleParticleSystemDuration>().newDuration = self.flamethrowerDuration;
+                }
+                if (perMinionOldBegunFlamethrower && behavior.U[flamethrowerKey])
+                {
+                    ((GameObject)behavior.U[flamethrowerKey]).transform.forward = self.GetAimRay().direction;
+                }
+            }, (_chance, behavior) => CheckStoredProc(behavior, $"{self.GetType().FullName}.Activated"));
+        }
+
+        private void Flamethrower_FireGauntlet(On.EntityStates.Mage.Weapon.Flamethrower.orig_FireGauntlet orig, MageFlamethrower self, string muzzleString)
+        {
+            orig(self, muzzleString);
+            FireForSeeds(self.characterBody, (seed, behavior) =>
+            {
+                if (self.isAuthority)
+                {
+                    BulletAttack attack = new BulletAttack
+                    {
+                        owner = self.gameObject,
+                        weapon = seed,
+                        origin = seed.transform.position,
+                        aimVector = self.GetAimRay().direction,
+                        minSpread = 0f,
+                        damage = self.tickDamageCoefficient * self.damageStat * damageMultiplier,
+                        force = MageFlamethrower.force * damageMultiplier,
+                        muzzleName = muzzleString,
+                        hitEffectPrefab = MageFlamethrower.impactEffectPrefab,
+                        isCrit = (bool)behavior.O[$"{self.GetType().FullName}.IsCrit"],
+                        radius = .1f,
+                        falloffModel = BulletAttack.FalloffModel.None,
+                        stopperMask = LayerIndex.world.mask,
+                        procCoefficient = MageFlamethrower.procCoefficientPerTick,
+                        maxDistance = self.maxDistance,
+                        damageType = Util.CheckRoll(MageFlamethrower.ignitePercentChance, self.characterBody.master) ? DamageType.IgniteOnHit : DamageType.Generic,
+                    };
+                    if (!flamethrowerSeedSyncEffect) attack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
+                    attack.Fire();
+                }
+            }, (_chance, behavior) => CheckStoredProc(behavior, $"{self.GetType().FullName}.Activated"));
+        }
+
+        private void BaseThrowBombState_Fire(On.EntityStates.Mage.Weapon.BaseThrowBombState.orig_Fire orig, BaseThrowBombState self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    float damage = Util.Remap(self.charge, 0f, 1f, self.minDamageCoefficient, self.maxDamageCoefficient) * self.damageStat;
+                    float force = self.charge * self.force;
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = damage,
+                        force = force,
+                        crit = self.RollCrit()
+                    };
+                    self.ModifyProjectile(ref fireProjectileInfo);
+                    fireProjectileInfo.damage *= damageMultiplier;
+                    fireProjectileInfo.force *= damageMultiplier;
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void FireFireBolt_FireGauntlet(On.EntityStates.Mage.Weapon.FireFireBolt.orig_FireGauntlet orig, FireFireBolt self)
+        {
+            bool hasFiredGauntlet = self.hasFiredGauntlet;
+            orig(self);
+            if (hasFiredGauntlet) return;
+            FireForSeeds(self.characterBody, (seed, _behavior) =>
+            {
+                if (self.muzzleflashEffectPrefab) seed.MuzzleEffect(self.muzzleflashEffectPrefab, false);
+                if (self.isAuthority)
+                {
+                    ProjectileManager.instance.FireProjectile(self.projectilePrefab, seed.transform.position, Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                                                              self.gameObject, self.damageCoefficient * self.damageStat * damageMultiplier, 0f, self.RollCrit(),
+                                                              DamageColorIndex.Default, null, -1f);
+                }
+            });
+        }
+
         private void FireBuzzsaw_FixedUpdate(On.EntityStates.Toolbot.FireBuzzsaw.orig_FixedUpdate orig, FireBuzzsaw self)
         {
             float fireAge = self.fireAge + Time.fixedDeltaTime;
             orig(self);
-            FireForSeeds(self.characterBody, (seed, behavior) =>
+            FireForSeeds(self.characterBody, (_seed, _behavior) =>
             {
                 if (self.isAuthority && fireAge >= 1f / self.fireFrequency)
                 {
@@ -844,11 +971,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             if (Helpers.GeneralHelpers.Instances.hostMasterObject == self.characterBody.masterObject)
             {
                 Log.Message($"EntityState.OnEnter: {self.GetType().FullName}");
-                if (self.characterBody)
-                {
-                    Log.Message($"EntityState.OnEnter: -> Body: {self.characterBody.name}");
-                    Log.Message($"EntityState.OnEnter: -> Master: {self.characterBody.master.name}");
-                }
+                if (self.characterBody) Log.Message($"EntityState.OnEnter: -> Body: {self.characterBody.name}");
             }
         }
 
