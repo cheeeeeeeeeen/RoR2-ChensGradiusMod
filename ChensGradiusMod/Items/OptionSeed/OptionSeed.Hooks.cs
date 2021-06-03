@@ -103,6 +103,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.AimThrowableBase.FireProjectile -= AimThrowableBase_FireProjectile;
             On.EntityStates.Toolbot.RecoverAimStunDrone.OnEnter -= RecoverAimStunDrone_OnEnter;
             On.EntityStates.Toolbot.FireBuzzsaw.FixedUpdate -= FireBuzzsaw_FixedUpdate;
+            On.EntityStates.Mage.Weapon.FireFireBolt.FireGauntlet -= FireFireBolt_FireGauntlet;
+            On.EntityStates.Mage.Weapon.BaseThrowBombState.Fire -= BaseThrowBombState_Fire;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnEnter -= Flamethrower_OnEnter;
+            On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet -= Flamethrower_FireGauntlet;
+            On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate -= Flamethrower_FixedUpdate;
+            On.EntityStates.Mage.Weapon.Flamethrower.OnExit -= Flamethrower_OnExit;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter -= EntityState_OnEnter;
 #endif
@@ -127,14 +133,14 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void Flamethrower_OnEnter(On.EntityStates.Mage.Weapon.Flamethrower.orig_OnEnter orig, MageFlamethrower self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t) => behavior.O[$"{self.GetType().FullName}.IsCrit"] = self.RollCrit());
+            FireForSeeds(self.characterBody, (_s, behavior, _t, _m) => behavior.O[$"{self.GetType().FullName}.IsCrit"] = self.RollCrit());
         }
 
         private void Flamethrower_OnExit(On.EntityStates.Mage.Weapon.Flamethrower.orig_OnExit orig, MageFlamethrower self)
         {
             orig(self);
             if (!flamethrowerSeedSyncEffect) return;
-            FireForSeeds(self.characterBody, (_s, behavior, _t) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, _m) =>
             {
                 string flamethrowerKey = $"{self.GetType().FullName}.flamethrower";
                 if (behavior.U.SafeCheck(flamethrowerKey)) EntityState.Destroy(behavior.U[flamethrowerKey]);
@@ -146,7 +152,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             bool oldBegunFlamethrower = self.hasBegunFlamethrower;
             orig(self);
             if (!flamethrowerSeedSyncEffect) return;
-            FireForSeeds(self.characterBody, (seed, behavior, _t) =>
+            FireForSeeds(self.characterBody, (seed, behavior, _t, _m) =>
             {
                 string flamethrowerKey = $"{self.GetType().FullName}.flamethrower";
                 bool perMinionOldBegunFlamethrower = oldBegunFlamethrower;
@@ -167,7 +173,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void Flamethrower_FireGauntlet(On.EntityStates.Mage.Weapon.Flamethrower.orig_FireGauntlet orig, MageFlamethrower self, string muzzleString)
         {
             orig(self, muzzleString);
-            FireForSeeds(self.characterBody, (seed, behavior, _t) =>
+            FireForSeeds(self.characterBody, (seed, behavior, _t, multiplier) =>
             {
                 if (self.isAuthority)
                 {
@@ -178,8 +184,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         origin = seed.transform.position,
                         aimVector = self.GetAimRay().direction,
                         minSpread = 0f,
-                        damage = self.tickDamageCoefficient * self.damageStat * damageMultiplier,
-                        force = MageFlamethrower.force * damageMultiplier,
+                        damage = self.tickDamageCoefficient * self.damageStat * multiplier,
+                        force = MageFlamethrower.force * multiplier,
                         muzzleName = muzzleString,
                         hitEffectPrefab = MageFlamethrower.impactEffectPrefab,
                         isCrit = (bool)behavior.O[$"{self.GetType().FullName}.IsCrit"],
@@ -199,7 +205,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void BaseThrowBombState_Fire(On.EntityStates.Mage.Weapon.BaseThrowBombState.orig_Fire orig, BaseThrowBombState self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (self.isAuthority && self.projectilePrefab)
                 {
@@ -216,8 +222,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         crit = self.RollCrit()
                     };
                     self.ModifyProjectile(ref fireProjectileInfo);
-                    fireProjectileInfo.damage *= damageMultiplier;
-                    fireProjectileInfo.force *= damageMultiplier;
+                    fireProjectileInfo.damage *= multiplier;
+                    fireProjectileInfo.force *= multiplier;
                     ProjectileManager.instance.FireProjectile(fireProjectileInfo);
                 }
             });
@@ -228,13 +234,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
             bool hasFiredGauntlet = self.hasFiredGauntlet;
             orig(self);
             if (hasFiredGauntlet) return;
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (self.muzzleflashEffectPrefab) seed.MuzzleEffect(self.muzzleflashEffectPrefab, false);
                 if (self.isAuthority)
                 {
                     ProjectileManager.instance.FireProjectile(self.projectilePrefab, seed.transform.position, Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
-                                                              self.gameObject, self.damageCoefficient * self.damageStat * damageMultiplier, 0f, self.RollCrit(),
+                                                              self.gameObject, self.damageCoefficient * self.damageStat * multiplier, 0f, self.RollCrit(),
                                                               DamageColorIndex.Default, null, -1f);
                 }
             });
@@ -244,7 +250,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             float fireAge = self.fireAge + Time.fixedDeltaTime;
             orig(self);
-            FireForSeeds(self.characterBody, (_s, _b, _t) =>
+            FireForSeeds(self.characterBody, (_s, _b, _t, multiplier) =>
             {
                 if (self.isAuthority && fireAge >= 1f / self.fireFrequency)
                 {
@@ -253,7 +259,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         attacker = self.gameObject,
                         inflictor = self.gameObject,
                         teamIndex = TeamComponent.GetObjectTeam(self.attack.attacker),
-                        damage = FireBuzzsaw.damageCoefficientPerSecond * self.damageStat / FireBuzzsaw.baseFireFrequency * damageMultiplier,
+                        damage = FireBuzzsaw.damageCoefficientPerSecond * self.damageStat / FireBuzzsaw.baseFireFrequency * multiplier,
                         procCoefficient = FireBuzzsaw.procCoefficientPerSecond / FireBuzzsaw.baseFireFrequency,
                         hitBoxGroup = self.attack.hitBoxGroup,
                         isCrit = self.characterBody.RollCrit()
@@ -268,7 +274,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void AimThrowableBase_FireProjectile(On.EntityStates.AimThrowableBase.orig_FireProjectile orig, AimThrowableBase self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
                 {
@@ -282,8 +288,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 };
                 if (self.setFuse) fireProjectileInfo.fuseOverride = self.currentTrajectoryInfo.travelTime;
                 self.ModifyProjectile(ref fireProjectileInfo);
-                fireProjectileInfo.force *= damageMultiplier;
-                fireProjectileInfo.damage *= damageMultiplier;
+                fireProjectileInfo.force *= multiplier;
+                fireProjectileInfo.damage *= multiplier;
                 ProjectileManager.instance.FireProjectile(fireProjectileInfo);
             });
         }
@@ -291,7 +297,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void RecoverAimStunDrone_OnEnter(On.EntityStates.Toolbot.RecoverAimStunDrone.orig_OnEnter orig, RecoverAimStunDrone self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, _m) =>
             {
                 if (RecoverAimStunDrone.muzzleEffectPrefab) seed.MuzzleEffect(RecoverAimStunDrone.muzzleEffectPrefab, false);
             });
@@ -301,7 +307,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                                                  Ray aimRay, int bulletCount, float spreadPitchScale, float spreadYawScale)
         {
             orig(self, aimRay, bulletCount, spreadPitchScale, spreadYawScale);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (BaseNailgunState.muzzleFlashPrefab) seed.MuzzleEffect(BaseNailgunState.muzzleFlashPrefab, false);
                 if (self.isAuthority)
@@ -313,11 +319,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         owner = self.gameObject,
                         weapon = seed,
                         bulletCount = (uint)bulletCount,
-                        damage = self.damageStat * BaseNailgunState.damageCoefficient * damageMultiplier,
+                        damage = self.damageStat * BaseNailgunState.damageCoefficient * multiplier,
                         damageColorIndex = DamageColorIndex.Default,
                         damageType = DamageType.Generic,
                         falloffModel = BulletAttack.FalloffModel.DefaultBullet,
-                        force = BaseNailgunState.force * damageMultiplier,
+                        force = BaseNailgunState.force * multiplier,
                         HitEffectNormal = false,
                         procChainMask = default,
                         procCoefficient = BaseNailgunState.procCoefficient,
@@ -341,7 +347,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void Bandit2FireShiv_FireShiv(On.EntityStates.Bandit2.Weapon.Bandit2FireShiv.orig_FireShiv orig, Bandit2FireShiv self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (Bandit2FireShiv.muzzleEffectPrefab) seed.MuzzleEffect(Bandit2FireShiv.muzzleEffectPrefab, false);
                 if (self.isAuthority && self.projectilePrefab)
@@ -352,8 +358,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         position = seed.transform.position,
                         rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
                         owner = self.gameObject,
-                        damage = self.damageStat * self.damageCoefficient * damageMultiplier,
-                        force = self.force * damageMultiplier,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
                         crit = self.RollCrit(),
                         damageTypeOverride = new DamageType?(DamageType.SuperBleedOnCrit)
                     };
@@ -365,7 +371,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void BaseFireSidearmRevolverState_OnEnter(On.EntityStates.Bandit2.Weapon.BaseFireSidearmRevolverState.orig_OnEnter orig, BaseFireSidearmRevolverState self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
                 if (self.isAuthority)
@@ -392,8 +398,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     };
                     bulletAttack.damageType |= DamageType.BonusToLowHealth;
                     self.ModifyBullet(bulletAttack);
-                    bulletAttack.damage *= damageMultiplier;
-                    bulletAttack.force *= damageMultiplier;
+                    bulletAttack.damage *= multiplier;
+                    bulletAttack.force *= multiplier;
                     bulletAttack.Fire();
                 }
             });
@@ -402,7 +408,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void FireShotgun2_FireBullet(On.EntityStates.Bandit2.Weapon.FireShotgun2.orig_FireBullet orig, FireShotgun2 self, Ray aimRay)
         {
             orig(self, aimRay);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (self.muzzleFlashPrefab) seed.MuzzleEffect(self.muzzleFlashPrefab, false);
                 if (self.isAuthority)
@@ -428,8 +434,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     {
                         BulletAttack bulletAttack = self.GenerateBulletAttack(bulletRay);
                         self.ModifyBullet(bulletAttack);
-                        bulletAttack.force *= damageMultiplier;
-                        bulletAttack.damage *= damageMultiplier;
+                        bulletAttack.force *= multiplier;
+                        bulletAttack.damage *= multiplier;
                         bulletAttack.weapon = seed;
                         bulletAttack.radius = .1f;
                         bulletAttack.Fire();
@@ -442,11 +448,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void Uppercut_OnEnter(On.EntityStates.Merc.Uppercut.orig_OnEnter orig, Uppercut self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, multiplier) =>
             {
                 behavior.O["Uppercut.OverlapAttack"] = self.InitMeleeOverlap(Uppercut.baseDamageCoefficient, Uppercut.hitEffectPrefab, self.GetModelTransform(), Uppercut.hitboxString);
-                ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).forceVector = Vector3.up * Uppercut.upwardForceStrength * damageMultiplier;
-                ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).damage *= damageMultiplier;
+                ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).forceVector = Vector3.up * Uppercut.upwardForceStrength * multiplier;
+                ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).damage *= multiplier;
             });
         }
 
@@ -454,7 +460,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             bool hasSwung = self.hasSwung;
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, _m) =>
             {
                 if (self.isAuthority)
                 {
@@ -479,12 +485,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void FocusedAssaultDash_OnMeleeHitAuthority(On.EntityStates.Merc.FocusedAssaultDash.orig_OnMeleeHitAuthority orig, FocusedAssaultDash self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, _b, _t) =>
+            FireForSeeds(self.characterBody, (_s, _b, _t, multiplier) =>
             {
                 foreach (HurtBox victimHurtBox in self.hitResults)
                 {
                     self.currentHitCount++;
-                    float damageValue = self.characterBody.damage * self.delayedDamageCoefficient * damageMultiplier;
+                    float damageValue = self.characterBody.damage * self.delayedDamageCoefficient * multiplier;
                     float actualDelay = self.delay + self.delayPerHit * self.currentHitCount;
                     bool isCrit = self.RollCrit();
                     FocusedAssaultDash.HandleHit(self.gameObject, victimHurtBox, damageValue, self.delayedProcCoefficient, isCrit, actualDelay, self.orbEffect, self.delayedEffectPrefab);
@@ -495,10 +501,10 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void WhirlwindBase_OnEnter(On.EntityStates.Merc.WhirlwindBase.orig_OnEnter orig, WhirlwindBase self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, multiplier) =>
             {
                 behavior.O["Whirlwind.OverlapAttack"] = self.InitMeleeOverlap(self.baseDamageCoefficient, WhirlwindBase.hitEffectPrefab, self.GetModelTransform(), self.hitboxString);
-                ((OverlapAttack)behavior.O["Whirlwind.OverlapAttack"]).damage *= damageMultiplier;
+                ((OverlapAttack)behavior.O["Whirlwind.OverlapAttack"]).damage *= multiplier;
             });
         }
 
@@ -506,7 +512,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             int swingCount = self.swingCount;
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, _m) =>
             {
                 int localSwingCount = swingCount;
                 if (self.animator.GetFloat("Sword.active") > localSwingCount)
@@ -534,7 +540,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             float attackStopwatch = self.attackStopwatch + Time.fixedDeltaTime;
             float tick = 1f / Evis.damageFrequency / self.attackSpeedStat;
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (attackStopwatch >= tick)
                 {
@@ -571,7 +577,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             {
                                 DamageInfo damageInfo = new DamageInfo
                                 {
-                                    damage = Evis.damageCoefficient * self.damageStat * damageMultiplier,
+                                    damage = Evis.damageCoefficient * self.damageStat * multiplier,
                                     attacker = self.gameObject,
                                     procCoefficient = Evis.procCoefficient,
                                     position = chosenHurtbox.transform.position,
@@ -590,7 +596,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void BasicMeleeAttack_AuthorityFireAttack(On.EntityStates.BasicMeleeAttack.orig_AuthorityFireAttack orig, BasicMeleeAttack self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, _m) =>
             {
                 string overlapKey = $"{self.GetType().FullName}.OverlapAttack";
                 if (!BasicMeleeAttackSkipModification.Contains(self.GetType().FullName))
@@ -604,14 +610,14 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void BasicMeleeAttack_OnEnter(On.EntityStates.BasicMeleeAttack.orig_OnEnter orig, BasicMeleeAttack self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, multiplier) =>
             {
                 if (self.isAuthority && self.hitBoxGroup)
                 {
                     OverlapAttack overlapAttack = new OverlapAttack
                     {
                         attacker = self.gameObject,
-                        damage = self.damageCoefficient * self.damageStat * damageMultiplier,
+                        damage = self.damageCoefficient * self.damageStat * multiplier,
                         damageColorIndex = DamageColorIndex.Default,
                         damageType = DamageType.Generic,
                         forceVector = self.forceVector,
@@ -620,7 +626,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         inflictor = self.gameObject,
                         isCrit = self.characterBody.RollCrit(),
                         procChainMask = default,
-                        pushAwayForce = self.pushAwayForce * damageMultiplier,
+                        pushAwayForce = self.pushAwayForce * multiplier,
                         procCoefficient = self.procCoefficient,
                         teamIndex = self.GetTeam()
                     };
@@ -634,7 +640,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             bool hasTriedToThrowGlaive = self.hasTriedToThrowGlaive;
             orig(self);
             if (!NetworkServer.active || hasTriedToThrowGlaive) return;
-            FireForSeeds(self.characterBody, (seed, behavior, _t) =>
+            FireForSeeds(self.characterBody, (seed, behavior, _t, multiplier) =>
             {
                 float speedMultiplier = 1f;
                 switch (behavior.numbering)
@@ -653,7 +659,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 LightningOrb lightningOrb = new LightningOrb
                 {
                     lightningType = LightningOrb.LightningType.HuntressGlaive,
-                    damageValue = self.characterBody.damage * ThrowGlaive.damageCoefficient * damageMultiplier,
+                    damageValue = self.characterBody.damage * ThrowGlaive.damageCoefficient * multiplier,
                     isCrit = Util.CheckRoll(self.characterBody.crit, self.characterBody.master),
                     teamIndex = TeamComponent.GetObjectTeam(self.gameObject),
                     attacker = self.gameObject,
@@ -682,10 +688,10 @@ namespace Chen.GradiusMod.Items.OptionSeed
             float arrowReloadTimer = self.arrowReloadTimer;
             orig(self);
             if (firedArrowCount >= self.maxArrowCount || arrowReloadTimer > 0f || !NetworkServer.active) return;
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 GenericDamageOrb genericDamageOrb = self.CreateArrowOrb();
-                genericDamageOrb.damageValue = self.characterBody.damage * self.orbDamageCoefficient * damageMultiplier;
+                genericDamageOrb.damageValue = self.characterBody.damage * self.orbDamageCoefficient * multiplier;
                 genericDamageOrb.isCrit = self.characterBody.RollCrit();
                 genericDamageOrb.teamIndex = TeamComponent.GetObjectTeam(self.gameObject);
                 genericDamageOrb.attacker = self.gameObject;
@@ -706,7 +712,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             float seedFireTimer = self.fireTimer + Time.fixedDeltaTime;
             orig(self);
-            FireForSeeds(self.characterBody, (seed, behavior, _t) =>
+            FireForSeeds(self.characterBody, (seed, behavior, _t, multiplier) =>
             {
                 Ray laserRay = new Ray(seed.transform.position, self.GetAimRay().direction);
                 float rate = self.fireFrequency * self.characterBody.attackSpeed;
@@ -736,8 +742,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             maxDistance = self.maxDistance
                         };
                         self.ModifyBullet(bulletAttack);
-                        bulletAttack.damage *= damageMultiplier;
-                        bulletAttack.force *= damageMultiplier;
+                        bulletAttack.damage *= multiplier;
+                        bulletAttack.force *= multiplier;
                         if (!mobileTurretsSeedSyncEffect) bulletAttack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
                         bulletAttack.Fire();
                     }
@@ -759,7 +765,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void FireBeam_OnExit(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_OnExit orig, FireBeam self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, behavior, _t) =>
+            FireForSeeds(self.characterBody, (seed, behavior, _t, _m) =>
             {
                 if (behavior.U.SafeCheck("laserEffectInstance")) EntityState.Destroy(behavior.U["laserEffectInstance"]);
                 if (behavior.U.SafeCheck("laserEffectInstanceEndTransform")) EntityState.Destroy(behavior.U["laserEffectInstanceEndTransform"]);
@@ -770,7 +776,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             orig(self);
             if (!mobileTurretsSeedSyncEffect) return;
-            FireForSeeds(self.characterBody, (seed, behavior, _t) =>
+            FireForSeeds(self.characterBody, (seed, behavior, _t, _m) =>
             {
                 if (self.laserPrefab)
                 {
@@ -787,7 +793,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void FireGauss_OnEnter(On.EntityStates.EngiTurret.EngiTurretWeapon.FireGauss.orig_OnEnter orig, FireGauss self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (FireGauss.effectPrefab) seed.MuzzleEffect(FireGauss.effectPrefab, false);
                 if (self.isAuthority)
@@ -801,8 +807,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         minSpread = FireGauss.minSpread,
                         maxSpread = FireGauss.maxSpread,
                         bulletCount = 1U,
-                        damage = FireGauss.damageCoefficient * self.damageStat * damageMultiplier,
-                        force = FireGauss.force * damageMultiplier,
+                        damage = FireGauss.damageCoefficient * self.damageStat * multiplier,
+                        force = FireGauss.force * multiplier,
                         tracerEffectPrefab = FireGauss.tracerEffectPrefab,
                         muzzleName = "Muzzle",
                         hitEffectPrefab = FireGauss.hitEffectPrefab,
@@ -817,7 +823,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void Fire_FireMissile(On.EntityStates.Engi.EngiMissilePainter.Fire.orig_FireMissile orig, EngiMissilePainterFire self, HurtBox target, Vector3 position)
         {
             orig(self, target, position);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (EngiMissilePainterFire.muzzleflashEffectPrefab) seed.MuzzleEffect(EngiMissilePainterFire.muzzleflashEffectPrefab, true);
                 FireProjectileInfo fireProjectileInfo = new FireProjectileInfo()
@@ -825,7 +831,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     position = seed.transform.position,
                     rotation = Quaternion.LookRotation(Vector3.up),
                     crit = self.RollCrit(),
-                    damage = self.damageStat * EngiMissilePainterFire.damageCoefficient * damageMultiplier,
+                    damage = self.damageStat * EngiMissilePainterFire.damageCoefficient * multiplier,
                     damageColorIndex = DamageColorIndex.Default,
                     owner = self.gameObject,
                     projectilePrefab = EngiMissilePainterFire.projectilePrefab,
@@ -838,7 +844,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void GenericProjectileBaseState_FireProjectile(On.EntityStates.GenericProjectileBaseState.orig_FireProjectile orig, GenericProjectileBaseState self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
                 if (self.isAuthority)
@@ -847,8 +853,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     aimRay = self.ModifyProjectileAimRay(aimRay);
                     aimRay.direction = Util.ApplySpread(aimRay.direction, self.minSpread, self.maxSpread, 1f, 1f, 0f, self.projectilePitchBonus);
                     ProjectileManager.instance.FireProjectile(self.projectilePrefab, seed.transform.position, Util.QuaternionSafeLookRotation(aimRay.direction),
-                                                              self.gameObject, self.damageStat * self.damageCoefficient * damageMultiplier,
-                                                              self.force * damageMultiplier, Util.CheckRoll(self.critStat, self.characterBody.master),
+                                                              self.gameObject, self.damageStat * self.damageCoefficient * multiplier,
+                                                              self.force * multiplier, Util.CheckRoll(self.critStat, self.characterBody.master),
                                                               DamageColorIndex.Default, null, -1f);
                 }
             });
@@ -857,7 +863,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void FireBarrage_FireBullet(On.EntityStates.Commando.CommandoWeapon.FireBarrage.orig_FireBullet orig, FireBarrage self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (FireBarrage.effectPrefab) seed.MuzzleEffect(FireBarrage.effectPrefab, false);
                 if (self.isAuthority)
@@ -871,8 +877,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         minSpread = FireBarrage.minSpread,
                         maxSpread = FireBarrage.maxSpread,
                         bulletCount = 1U,
-                        damage = FireBarrage.damageCoefficient * self.damageStat * damageMultiplier,
-                        force = FireBarrage.force * damageMultiplier,
+                        damage = FireBarrage.damageCoefficient * self.damageStat * multiplier,
+                        force = FireBarrage.force * multiplier,
                         tracerEffectPrefab = FireBarrage.tracerEffectPrefab,
                         muzzleName = "MuzzleRight",
                         hitEffectPrefab = FireBarrage.hitEffectPrefab,
@@ -888,7 +894,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void GenericBulletBaseState_FireBullet(On.EntityStates.GenericBulletBaseState.orig_FireBullet orig, GenericBulletBaseState self, Ray aimRay)
         {
             orig(self, aimRay);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (self.muzzleFlashPrefab) seed.MuzzleEffect(self.muzzleFlashPrefab, false);
                 if (self.isAuthority)
@@ -897,8 +903,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     BulletAttack bulletAttack = self.GenerateBulletAttack(seedRay);
                     self.ModifyBullet(bulletAttack);
                     bulletAttack.weapon = seed;
-                    bulletAttack.damage *= damageMultiplier;
-                    bulletAttack.force *= damageMultiplier;
+                    bulletAttack.damage *= multiplier;
+                    bulletAttack.force *= multiplier;
                     bulletAttack.radius = 0.1f;
                     bulletAttack.Fire();
                 }
@@ -908,7 +914,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void FirePistol2_FireBullet(On.EntityStates.Commando.CommandoWeapon.FirePistol2.orig_FireBullet orig, FirePistol2 self, string targetMuzzle)
         {
             orig(self, targetMuzzle);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (FirePistol2.muzzleEffectPrefab) seed.MuzzleEffect(FirePistol2.muzzleEffectPrefab, false);
                 if (self.isAuthority)
@@ -921,8 +927,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         aimVector = self.aimRay.direction,
                         minSpread = 0f,
                         maxSpread = self.characterBody.spreadBloomAngle,
-                        damage = FirePistol2.damageCoefficient * self.damageStat * damageMultiplier,
-                        force = FirePistol2.force * damageMultiplier,
+                        damage = FirePistol2.damageCoefficient * self.damageStat * multiplier,
+                        force = FirePistol2.force * multiplier,
                         tracerEffectPrefab = FirePistol2.tracerEffectPrefab,
                         muzzleName = targetMuzzle,
                         hitEffectPrefab = FirePistol2.hitEffectPrefab,
@@ -937,7 +943,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void FireGrenades_FireGrenade(On.EntityStates.Engi.EngiWeapon.FireGrenades.orig_FireGrenade orig, FireGrenades self, string targetMuzzle)
         {
             orig(self, targetMuzzle);
-            FireForSeeds(self.characterBody, (seed, _b, _t) =>
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
             {
                 if (FireGrenades.effectPrefab) seed.MuzzleEffect(FireGrenades.effectPrefab, false);
                 if (self.isAuthority)
@@ -953,7 +959,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     float angle2 = Mathf.Atan2(y, vector.magnitude) * 57.29578f + FireGrenades.arcAngle;
                     Vector3 forward = Quaternion.AngleAxis(angle, up) * (Quaternion.AngleAxis(angle2, axis) * self.projectileRay.direction);
                     ProjectileManager.instance.FireProjectile(FireGrenades.projectilePrefab, seed.transform.position, Util.QuaternionSafeLookRotation(forward),
-                                                              self.gameObject, self.damageStat * FireGrenades.damageCoefficient * damageMultiplier, 0f,
+                                                              self.gameObject, self.damageStat * FireGrenades.damageCoefficient * multiplier, 0f,
                                                               Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
                 }
             });
@@ -961,7 +967,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
 #if DEBUG
 
-        private void EntityState_OnEnter(On.EntityStates.EntityState.orig_OnEnter orig, EntityStates.EntityState self)
+        private void EntityState_OnEnter(On.EntityStates.EntityState.orig_OnEnter orig, EntityState self)
         {
             orig(self);
             if (!self.characterBody || !self.characterBody.master) return;

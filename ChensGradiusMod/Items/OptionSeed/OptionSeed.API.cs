@@ -8,15 +8,16 @@ namespace Chen.GradiusMod.Items.OptionSeed
     public partial class OptionSeed
     {
         /// <summary>
-        /// Loops through all the Option Seeds of the item wielder. The action has 2 useful parameters to use.
+        /// Loops through all the Option Seeds of the item wielder. The action has 4 useful parameters to use.
         /// The first parameter refers to the Option Seed itself. It is a GameObject.
         /// The second parameter refers to the SeedBehavior component of the Option Seed.
-        /// The last parameter refers to the SeedTracker component of the item wielder.
+        /// The third parameter refers to the SeedTracker component of the item wielder.
+        /// The last parameter is the computed damage multiplier based on configuration and item count of the owner.
         /// </summary>
         /// <param name="optionSeedOwner">The owner of the Option Seed.</param>
         /// <param name="actionToRun">An action to execute for each Option. The inputs are as follows:
-        /// GameObject seed, SeedBehavior behavior, SeedTracker tracker.</param>
-        public void FireForSeeds(CharacterBody optionSeedOwner, Action<GameObject, SeedBehavior, SeedTracker> actionToRun)
+        /// GameObject seed, SeedBehavior behavior, SeedTracker tracker, float multiplier.</param>
+        public void FireForSeeds(CharacterBody optionSeedOwner, Action<GameObject, SeedBehavior, SeedTracker, float> actionToRun)
         {
             if (!optionSeedOwner) return;
             SeedTracker seedTracker = optionSeedOwner.GetComponent<SeedTracker>();
@@ -24,8 +25,9 @@ namespace Chen.GradiusMod.Items.OptionSeed
             InputBankTest inputBankTest = seedTracker.inputBankTest;
             if (!inputBankTest) return;
 
-            actionToRun(seedTracker.leftSeed, seedTracker.leftBehavior, seedTracker);
-            actionToRun(seedTracker.rightSeed, seedTracker.rightBehavior, seedTracker);
+            float multiplier = ComputeMultiplier(optionSeedOwner);
+            actionToRun(seedTracker.leftSeed, seedTracker.leftBehavior, seedTracker, multiplier);
+            actionToRun(seedTracker.rightSeed, seedTracker.rightBehavior, seedTracker, multiplier);
         }
 
         /// <summary>
@@ -34,19 +36,5 @@ namespace Chen.GradiusMod.Items.OptionSeed
         /// <param name="bodyName">The CharacterBody name of the character.</param>
         /// <param name="newValue">The multiplier value.</param>
         public void SetVerticalOffsetMultiplier(string bodyName, float newValue) => VerticalOffsetMultipliers[bodyName] = newValue;
-
-        /// <summary>
-        /// Automatically computes for the damage multiplier based on the configuration and number of Option Seed items the owner has stacked.
-        /// </summary>
-        /// <param name="itemCount">The number of Option Seed items the owner has.</param>
-        /// <returns>The computed multiplier.</returns>
-        public float ComputeMultiplier(int itemCount) => damageMultiplier + (stackDamageMultiplier * (itemCount - 1));
-
-        /// <summary>
-        /// Automatically computes for the damage multiplier based on the configuration and number of Option Seed items the owner has stacked.
-        /// </summary>
-        /// <param name="ownerBody">Character Body of the owner.</param>
-        /// <returns>The computed multiplier.</returns>
-        public float ComputeMultiplier(CharacterBody ownerBody) => ComputeMultiplier(GetCount(ownerBody));
     }
 }

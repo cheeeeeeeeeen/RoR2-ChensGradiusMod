@@ -141,6 +141,10 @@ namespace Chen.GradiusMod.Items.OptionSeed
             else Log.Error("Failed to create OptionSeed: Resource not found or is null.");
         }
 
+        private float ComputeMultiplier(int itemCount) => damageMultiplier + (stackDamageMultiplier * (itemCount - 1));
+
+        private float ComputeMultiplier(CharacterBody ownerBody) => ComputeMultiplier(GetCount(ownerBody));
+
         internal float GetVerticalOffsetMultiplier(string bodyName)
         {
             foreach (var pair in VerticalOffsetMultipliers)
