@@ -24,12 +24,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public override ReadOnlyCollection<ItemTag> itemTags => new ReadOnlyCollection<ItemTag>(new[] { ItemTag.Utility });
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Damage multiplier of Option Seeds. 1 = 100%. Server only.", AutoConfigFlags.None, 0f, float.MaxValue)]
-        public float damageMultiplier { get; private set; } = .5f;
+        [AutoConfig("Damage multiplier of Option Seeds. This also affects Proc Coefficients and the knockback force of the attack. " +
+                    "1 = 100%. Server only.", AutoConfigFlags.None, 0f, float.MaxValue)]
+        public float damageMultiplier { get; private set; } = .12f;
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Proc value for Option Seeds. A value of 0.25 means 25%. Multiplicative stacking.", AutoConfigFlags.None, 0f, float.MaxValue)]
-        public float procValue { get; private set; } = .25f;
+        [AutoConfig("Additive increase to the damage multiplier when the item is stacked.", AutoConfigFlags.None, 0f, float.MaxValue)]
+        public float stackDamageMultiplier { get; private set; } = .03f;
 
         [AutoConfig("Allows displaying and syncing the laser effect of Option Seeds. Disabling this will replace the effect with bullets. " +
                     "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
@@ -53,9 +54,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         protected override string GetDescString(string langid = null)
         {
-            string str = $"Deploy <style=cIsDamage>2</style> Option Seeds. Option Seeds have a <style=cIsDamage>{Pct(procValue)}</style>";
-            str += $" <style=cStack>(+{Pct(procValue)} per stack, multiplicative)</style> chance to copy the wielder's attacks";
-            str += $" for <style=cIsDamage>{Pct(damageMultiplier, 0)}</style> of the damage dealt.";
+            string str = $"Deploy <style=cIsDamage>2</style> Option Seeds. Option Seeds copy the wielder's attacks";
+            str += $" for <style=cIsDamage>{Pct(damageMultiplier, 0)}</style> <style=cStack>(+{Pct(stackDamageMultiplier)} per stack)</style> of the damage dealt.";
             return str;
         }
 
@@ -115,12 +115,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
             {
                 Compat_ItemStats.CreateItemStatDef(itemDef,
                 (
-                    (count, inv, master) => { return ProcComputation(procValue, (int)count); },
-                    (value, inv, master) => { return $"Copy Chance: {Pct(value)}"; }
-                ),
-                (
-                    (count, inv, master) => { return damageMultiplier; },
-                    (value, inv, master) => { return $"Damage: {Pct(value)}"; }
+                    (count, inv, master) => ComputeMultiplier((int)count),
+                    (value, inv, master) => $"Damage: {Pct(value)}"
                 ));
             }
         }
@@ -144,8 +140,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
             }
             else Log.Error("Failed to create OptionSeed: Resource not found or is null.");
         }
-
-        private float ProcComputation(float procChance, int stack) => (1f - Mathf.Pow(1f - procChance, stack)) * 100f;
 
         internal float GetVerticalOffsetMultiplier(string bodyName)
         {

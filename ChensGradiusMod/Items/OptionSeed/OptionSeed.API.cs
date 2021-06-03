@@ -1,5 +1,4 @@
-﻿using Chen.GradiusMod.Items.GradiusOption.Components;
-using Chen.GradiusMod.Items.OptionSeed.Components;
+﻿using Chen.GradiusMod.Items.OptionSeed.Components;
 using RoR2;
 using System;
 using UnityEngine;
@@ -12,30 +11,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
         /// Loops through all the Option Seeds of the item wielder. The action has 2 useful parameters to use.
         /// The first parameter refers to the Option Seed itself. It is a GameObject.
         /// The second parameter refers to the SeedBehavior component of the Option Seed.
+        /// The last parameter refers to the SeedTracker component of the item wielder.
         /// </summary>
         /// <param name="optionSeedOwner">The owner of the Option Seed.</param>
         /// <param name="actionToRun">An action to execute for each Option. The inputs are as follows:
-        /// GameObject seed, SeedBehavior behavior.</param>
-        public void FireForSeeds(CharacterBody optionSeedOwner, Action<GameObject, SeedBehavior> actionToRun)
-        {
-            FireForSeeds(optionSeedOwner, actionToRun, (chance, _behavior) => Util.CheckRoll(chance, optionSeedOwner.master));
-        }
-
-        /// <summary>
-        /// Loops through all the Option Seeds of the item wielder. The action has 2 useful parameters to use.
-        /// The first parameter refers to the Option Seed itself. It is a GameObject.
-        /// The second parameter refers to the SeedBehavior component of the Option Seed.
-        /// The check can be customized in this overload. It has 2 parameters for use.
-        /// The first parameter is the computed chance.
-        /// The second parameter is the SeedBehavior of the Option Seed.
-        /// It returns true or false if the proc is activated or not.
-        /// </summary>
-        /// <param name="optionSeedOwner">The owner of the Option Seed.</param>
-        /// <param name="actionToRun">An action to execute for each Option. The inputs are as follows:
-        /// GameObject seed, SeedBehavior behavior.</param>
-        /// <param name="customCheck">Custom check for proc. Input are as follows:
-        /// float chance, SeedBehavior behavior. Returns true or false.</param>
-        public void FireForSeeds(CharacterBody optionSeedOwner, Action<GameObject, SeedBehavior> actionToRun, Func<float, SeedBehavior, bool> customCheck)
+        /// GameObject seed, SeedBehavior behavior, SeedTracker tracker.</param>
+        public void FireForSeeds(CharacterBody optionSeedOwner, Action<GameObject, SeedBehavior, SeedTracker> actionToRun)
         {
             if (!optionSeedOwner) return;
             SeedTracker seedTracker = optionSeedOwner.GetComponent<SeedTracker>();
@@ -43,10 +24,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
             InputBankTest inputBankTest = seedTracker.inputBankTest;
             if (!inputBankTest) return;
 
-            float chance = ProcComputation(procValue, GetCount(optionSeedOwner));
-
-            if (customCheck(chance, seedTracker.leftBehavior)) actionToRun(seedTracker.leftSeed, seedTracker.leftBehavior);
-            if (customCheck(chance, seedTracker.rightBehavior)) actionToRun(seedTracker.rightSeed, seedTracker.rightBehavior);
+            actionToRun(seedTracker.leftSeed, seedTracker.leftBehavior, seedTracker);
+            actionToRun(seedTracker.rightSeed, seedTracker.rightBehavior, seedTracker);
         }
 
         /// <summary>
@@ -57,26 +36,17 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public void SetVerticalOffsetMultiplier(string bodyName, float newValue) => VerticalOffsetMultipliers[bodyName] = newValue;
 
         /// <summary>
-        /// Used for storing a proc check value through the SeedBehavior's objectData dictionary so that it can be used for other states of the character.
-        /// Whether the proc is successful or not, it will always be stored in the dictionary.
+        /// Automatically computes for the damage multiplier based on the configuration and number of Option Seed items the owner has stacked.
         /// </summary>
-        /// <param name="chance">Computed chance used for rolling.</param>
-        /// <param name="behavior">The Option Seed SeedBehavior component.</param>
-        /// <param name="key">Key that will be used to store in the dictionary.</param>
-        /// <returns>True or false if the proc is successful or not.</returns>
-        public bool StoreProcCheck(float chance, SeedBehavior behavior, string key)
-        {
-            bool activated = Util.CheckRoll(chance, behavior.ownerMaster);
-            behavior.O[key] = activated;
-            return activated;
-        }
+        /// <param name="itemCount">The number of Option Seed items the owner has.</param>
+        /// <returns>The computed multiplier.</returns>
+        public float ComputeMultiplier(int itemCount) => damageMultiplier + (stackDamageMultiplier * (itemCount - 1));
 
         /// <summary>
-        /// Checks the dictionary from the specified SeedBehavior for the key given as parameter, then returns it as a boolean value.
+        /// Automatically computes for the damage multiplier based on the configuration and number of Option Seed items the owner has stacked.
         /// </summary>
-        /// <param name="behavior">The Option Seed SeedBehavior component which contains the dictionary.</param>
-        /// <param name="key">Key to check the value with.</param>
-        /// <returns>The stored value from the dictionary.</returns>
-        public bool CheckStoredProc(SeedBehavior behavior, string key) => behavior.O.ContainsKey(key) && (bool)behavior.O[key];
+        /// <param name="ownerBody">Character Body of the owner.</param>
+        /// <returns>The computed multiplier.</returns>
+        public float ComputeMultiplier(CharacterBody ownerBody) => ComputeMultiplier(GetCount(ownerBody));
     }
 }
