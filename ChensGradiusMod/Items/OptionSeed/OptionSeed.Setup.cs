@@ -87,13 +87,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             { "EngiWalkerTurretBody", 1.3f },
             { "ToolbotBody", .5f },
-            { "MageBody", .8f }
-        };
-
-        private static readonly List<string> BasicMeleeAttackSkipModification = new List<string>()
-        {
-            "EntityStates.Merc.Assaulter2",
-            "EntityStates.Merc.FocusedAssaultDash"
+            { "MageBody", .8f },
+            { "LoaderBody", .7f }
         };
 
         public OptionSeed()

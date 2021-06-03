@@ -7,10 +7,13 @@ using EntityStates.Commando.CommandoWeapon;
 using EntityStates.Drone.DroneWeapon;
 using EntityStates.Engi.EngiWeapon;
 using EntityStates.EngiTurret.EngiTurretWeapon;
+using EntityStates.Huntress;
 using EntityStates.Huntress.HuntressWeapon;
+using EntityStates.Loader;
 using EntityStates.Mage.Weapon;
 using EntityStates.Merc;
 using EntityStates.Toolbot;
+using EntityStates.Treebot.Weapon;
 using RoR2;
 using RoR2.Orbs;
 using RoR2.Projectile;
@@ -66,6 +69,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet += Flamethrower_FireGauntlet;
             On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate += Flamethrower_FixedUpdate;
             On.EntityStates.Mage.Weapon.Flamethrower.OnExit += Flamethrower_OnExit;
+            On.EntityStates.Treebot.Weapon.FireSyringe.FixedUpdate += FireSyringe_FixedUpdate;
+            On.EntityStates.Treebot.TreebotFireFruitSeed.OnEnter += TreebotFireFruitSeed_OnEnter;
+            On.EntityStates.FireFlower2.OnEnter += FireFlower2_OnEnter;
+            On.EntityStates.Huntress.ArrowRain.DoFireArrowRain += ArrowRain_DoFireArrowRain;
+            On.EntityStates.Loader.ThrowPylon.OnEnter += ThrowPylon_OnEnter;
+            On.EntityStates.Loader.SwingZapFist.OnMeleeHitAuthority += SwingZapFist_OnMeleeHitAuthority;
+            On.EntityStates.Loader.GroundSlam.DetonateAuthority += GroundSlam_DetonateAuthority;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter += EntityState_OnEnter;
 #endif
@@ -109,6 +119,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Mage.Weapon.Flamethrower.FireGauntlet -= Flamethrower_FireGauntlet;
             On.EntityStates.Mage.Weapon.Flamethrower.FixedUpdate -= Flamethrower_FixedUpdate;
             On.EntityStates.Mage.Weapon.Flamethrower.OnExit -= Flamethrower_OnExit;
+            On.EntityStates.Treebot.Weapon.FireSyringe.FixedUpdate -= FireSyringe_FixedUpdate;
+            On.EntityStates.Treebot.TreebotFireFruitSeed.OnEnter -= TreebotFireFruitSeed_OnEnter;
+            On.EntityStates.FireFlower2.OnEnter -= FireFlower2_OnEnter;
+            On.EntityStates.Huntress.ArrowRain.DoFireArrowRain -= ArrowRain_DoFireArrowRain;
+            On.EntityStates.Loader.ThrowPylon.OnEnter -= ThrowPylon_OnEnter;
+            On.EntityStates.Loader.SwingZapFist.OnMeleeHitAuthority -= SwingZapFist_OnMeleeHitAuthority;
+            On.EntityStates.Loader.GroundSlam.DetonateAuthority -= GroundSlam_DetonateAuthority;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter -= EntityState_OnEnter;
 #endif
@@ -128,6 +145,180 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             if (!obj.master) return;
             if (GetCount(obj) > 0) SeedTracker.SpawnSeeds(obj.gameObject);
+        }
+
+        private BlastAttack.Result GroundSlam_DetonateAuthority(On.EntityStates.Loader.GroundSlam.orig_DetonateAuthority orig, GroundSlam self)
+        {
+            BlastAttack.Result result = orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                new BlastAttack
+                {
+                    attacker = self.gameObject,
+                    baseDamage = self.damageStat * GroundSlam.blastDamageCoefficient * multiplier,
+                    baseForce = GroundSlam.blastForce * multiplier,
+                    bonusForce = GroundSlam.blastBonusForce,
+                    crit = self.RollCrit(),
+                    damageType = DamageType.Stun1s,
+                    falloffModel = BlastAttack.FalloffModel.None,
+                    procCoefficient = GroundSlam.blastProcCoefficient,
+                    radius = GroundSlam.blastRadius,
+                    position = seed.transform.position,
+                    attackerFiltering = AttackerFiltering.NeverHit,
+                    impactEffect = EffectCatalog.FindEffectIndexFromPrefab(GroundSlam.blastImpactEffectPrefab),
+                    teamIndex = self.teamComponent.teamIndex
+                }.Fire();
+            });
+            return result;
+        }
+
+        private void SwingZapFist_OnMeleeHitAuthority(On.EntityStates.Loader.SwingZapFist.orig_OnMeleeHitAuthority orig, SwingZapFist self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.FindModelChild(self.swingEffectMuzzleString))
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        position = seed.transform.position,
+                        rotation = Quaternion.LookRotation(self.punchVelocity),
+                        crit = self.isCritAuthority,
+                        damage = self.damageStat * multiplier,
+                        owner = self.gameObject,
+                        projectilePrefab = Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone")
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void ThrowPylon_OnEnter(On.EntityStates.Loader.ThrowPylon.orig_OnEnter orig, ThrowPylon self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (ThrowPylon.muzzleflashObject) seed.MuzzleEffect(ThrowPylon.muzzleflashObject, false);
+                if (self.isAuthority)
+                {
+                    Ray aimRay = self.GetAimRay();
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        crit = self.RollCrit(),
+                        damage = self.damageStat * ThrowPylon.damageCoefficient * multiplier,
+                        damageColorIndex = DamageColorIndex.Default,
+                        force = 0f,
+                        owner = self.gameObject,
+                        position = seed.transform.position,
+                        procChainMask = default,
+                        projectilePrefab = ThrowPylon.projectilePrefab,
+                        rotation = Quaternion.LookRotation(aimRay.direction),
+                        target = null
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void ArrowRain_DoFireArrowRain(On.EntityStates.Huntress.ArrowRain.orig_DoFireArrowRain orig, ArrowRain self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (ArrowRain.muzzleFlashEffect) seed.MuzzleEffect(ArrowRain.muzzleFlashEffect, false);
+                if (self.isAuthority && self.areaIndicatorInstance && self.shouldFireArrowRain)
+                {
+                    ProjectileManager.instance.FireProjectile(ArrowRain.projectilePrefab, self.areaIndicatorInstance.transform.position,
+                                                              self.areaIndicatorInstance.transform.rotation, self.gameObject,
+                                                              self.damageStat * ArrowRain.damageCoefficient * multiplier, 0f,
+                                                              Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
+                }
+            });
+        }
+
+        private void FireFlower2_OnEnter(On.EntityStates.FireFlower2.orig_OnEnter orig, FireFlower2 self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (FireFlower2.muzzleFlashPrefab) seed.MuzzleEffect(FireFlower2.muzzleFlashPrefab, false);
+                if (self.isAuthority)
+                {
+                    Ray aimRay = self.GetAimRay();
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        crit = self.RollCrit(),
+                        damage = FireFlower2.damageCoefficient * self.damageStat * multiplier,
+                        damageColorIndex = DamageColorIndex.Default,
+                        force = 0f,
+                        owner = self.gameObject,
+                        position = seed.transform.position,
+                        procChainMask = default,
+                        projectilePrefab = FireFlower2.projectilePrefab,
+                        rotation = Quaternion.LookRotation(aimRay.direction),
+                        useSpeedOverride = false
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void TreebotFireFruitSeed_OnEnter(On.EntityStates.Treebot.TreebotFireFruitSeed.orig_OnEnter orig, EntityStates.Treebot.TreebotFireFruitSeed self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.muzzleFlashPrefab) seed.MuzzleEffect(self.muzzleFlashPrefab, false);
+                if (self.isAuthority)
+                {
+                    Ray aimRay = self.GetAimRay();
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        crit = self.RollCrit(),
+                        damage = self.damageCoefficient * self.damageStat * multiplier,
+                        damageColorIndex = DamageColorIndex.Default,
+                        force = 0f,
+                        owner = self.gameObject,
+                        position = seed.transform.position,
+                        procChainMask = default,
+                        projectilePrefab = self.projectilePrefab,
+                        rotation = Quaternion.LookRotation(aimRay.direction),
+                        useSpeedOverride = false
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void FireSyringe_FixedUpdate(On.EntityStates.Treebot.Weapon.FireSyringe.orig_FixedUpdate orig, FireSyringe self)
+        {
+            int projectilesFired = self.projectilesFired;
+            orig(self);
+            int rate = Mathf.FloorToInt(self.fixedAge / self.fireDuration * FireSyringe.projectileCount);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (projectilesFired <= rate && projectilesFired < FireSyringe.projectileCount)
+                {
+                    GameObject prefab = FireSyringe.projectilePrefab;
+                    string soundString = FireSyringe.attackSound;
+                    if (projectilesFired == FireSyringe.projectileCount - 1)
+                    {
+                        prefab = FireSyringe.finalProjectilePrefab;
+                        soundString = FireSyringe.finalAttackSound;
+                    }
+                    if (FireSyringe.muzzleflashEffectPrefab) seed.MuzzleEffect(FireSyringe.muzzleflashEffectPrefab, false);
+                    if (self.isAuthority)
+                    {
+                        Ray aimRay = self.GetAimRay();
+                        float bonusYaw = self.projectilesFired - (FireSyringe.projectileCount - 1) / 2f;
+                        bonusYaw = Mathf.FloorToInt(bonusYaw) / (FireSyringe.projectileCount - 1) * FireSyringe.totalYawSpread;
+                        Vector3 forward = Util.ApplySpread(aimRay.direction, 0f, 0f, 1f, 1f, bonusYaw, 0f);
+                        ProjectileManager.instance.FireProjectile(prefab, seed.transform.position, Util.QuaternionSafeLookRotation(forward), self.gameObject,
+                                                                  self.damageStat * FireSyringe.damageCoefficient * multiplier, FireSyringe.force * multiplier,
+                                                                  Util.CheckRoll(self.critStat, self.characterBody.master), DamageColorIndex.Default, null, -1f);
+                    }
+                }
+            });
         }
 
         private void Flamethrower_OnEnter(On.EntityStates.Mage.Weapon.Flamethrower.orig_OnEnter orig, MageFlamethrower self)
@@ -596,28 +787,27 @@ namespace Chen.GradiusMod.Items.OptionSeed
         private void BasicMeleeAttack_AuthorityFireAttack(On.EntityStates.BasicMeleeAttack.orig_AuthorityFireAttack orig, BasicMeleeAttack self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t, _m) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, multiplier) =>
             {
-                string overlapKey = $"{self.GetType().FullName}.OverlapAttack";
-                if (!BasicMeleeAttackSkipModification.Contains(self.GetType().FullName))
-                {
-                    self.AuthorityModifyOverlapAttack((OverlapAttack)behavior.O[overlapKey]);
-                }
-                ((OverlapAttack)behavior.O[overlapKey]).Fire();
+                OverlapAttack attack = (OverlapAttack)behavior.O[$"{self.GetType().FullName}.OverlapAttack"];
+                self.AuthorityModifyOverlapAttack(attack);
+                attack.pushAwayForce *= multiplier;
+                attack.damage *= multiplier;
+                attack.Fire();
             });
         }
 
         private void BasicMeleeAttack_OnEnter(On.EntityStates.BasicMeleeAttack.orig_OnEnter orig, BasicMeleeAttack self)
         {
             orig(self);
-            FireForSeeds(self.characterBody, (_s, behavior, _t, multiplier) =>
+            FireForSeeds(self.characterBody, (_s, behavior, _t, _m) =>
             {
                 if (self.isAuthority && self.hitBoxGroup)
                 {
                     OverlapAttack overlapAttack = new OverlapAttack
                     {
                         attacker = self.gameObject,
-                        damage = self.damageCoefficient * self.damageStat * multiplier,
+                        damage = self.damageCoefficient * self.damageStat,
                         damageColorIndex = DamageColorIndex.Default,
                         damageType = DamageType.Generic,
                         forceVector = self.forceVector,
@@ -626,7 +816,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         inflictor = self.gameObject,
                         isCrit = self.characterBody.RollCrit(),
                         procChainMask = default,
-                        pushAwayForce = self.pushAwayForce * multiplier,
+                        pushAwayForce = self.pushAwayForce,
                         procCoefficient = self.procCoefficient,
                         teamIndex = self.GetTeam()
                     };
