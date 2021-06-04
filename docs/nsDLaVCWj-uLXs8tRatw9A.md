@@ -5,7 +5,7 @@
 
 ## DroneCatalog.EfficientSetupAll(System.Collections.Generic.List&lt;Chen.GradiusMod.Drones.DroneInfo&gt;) Method
 Sets all the custom drones contained in the list up. Mod creators may instantiate the drones their own if they have a sophisticated logic.  
-This flavor comes with efficient an setup by taking advantage of the boolean return values of each phase.  
+This flavor comes with an efficient setup by taking advantage of the boolean return values of each phase.  
 ```csharp
 public static void EfficientSetupAll(System.Collections.Generic.List<Chen.GradiusMod.Drones.DroneInfo> droneInfos);
 ```
