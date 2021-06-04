@@ -84,7 +84,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             AddLanguageTokens();
             InteractableSpawnCard origIsc = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1");
             brokenObject = origIsc.prefab;
-            brokenObject = brokenObject.InstantiateClone($"{name}Broken");
+            brokenObject = brokenObject.InstantiateClone($"{name}Broken", true);
             ModifyBrokenObject();
             iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
@@ -108,11 +108,11 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         private void ModifyBrokenObject()
         {
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
-            droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}Master");
+            droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}Master", true);
             contentProvider.masterObjects.Add(droneMaster);
             ModifyDroneMaster();
             CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
-            droneBody = master.bodyPrefab.InstantiateClone($"{name}Body");
+            droneBody = master.bodyPrefab.InstantiateClone($"{name}Body", true);
             contentProvider.bodyObjects.Add(droneBody);
             ModifyDroneBody();
             master.bodyPrefab = droneBody;

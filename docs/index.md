@@ -7,3 +7,5 @@
 - [Chen.GradiusMod.Drones](./Y-iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones')
 - [Chen.GradiusMod.Items.GradiusOption](./mfb9nYomeqOwYy2EkL-v0Q 'Chen.GradiusMod.Items.GradiusOption')
 - [Chen.GradiusMod.Items.GradiusOption.Components](./3b19l5ocTqQsEH2QAbTnXQ 'Chen.GradiusMod.Items.GradiusOption.Components')
+- [Chen.GradiusMod.Items.OptionSeed](./be1vnC2Vgp-vVFpwRHLjUQ 'Chen.GradiusMod.Items.OptionSeed')
+- [Chen.GradiusMod.Items.OptionSeed.Components](./DLK6-XagJC8yDTIwBWv4gg 'Chen.GradiusMod.Items.OptionSeed.Components')

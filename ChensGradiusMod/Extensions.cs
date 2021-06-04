@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using RoR2;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
 namespace Chen.GradiusMod
@@ -17,6 +19,24 @@ namespace Chen.GradiusMod
         public static bool SafeCheck(this Dictionary<string, UnityObject> dictionary, string key)
         {
             return dictionary.ContainsKey(key) && dictionary[key];
+        }
+
+        /// <summary>
+        /// Method that provides an easy way of displaying effect prefabs for muzzle effects.
+        /// Mainly used for Options and Option Seeds.
+        /// </summary>
+        /// <param name="catalyst">The Game Object of the user</param>
+        /// <param name="effectPrefab">Effect prefab to display</param>
+        /// <param name="transmit">Determines whether the effect should be networked</param>
+        public static void MuzzleEffect(this GameObject catalyst, GameObject effectPrefab, bool transmit)
+        {
+            EffectData data = new EffectData
+            {
+                origin = catalyst.transform.position,
+                rotation = catalyst.transform.rotation,
+                rootObject = catalyst
+            };
+            EffectManager.SpawnEffect(effectPrefab, data, transmit);
         }
     }
 }

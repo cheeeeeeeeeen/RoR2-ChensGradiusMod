@@ -187,11 +187,12 @@ namespace Chen.GradiusMod.Items.GradiusOption
         }
 
         /// <summary>
-        /// Method that provides an easy way of displaying the effect prefab on Options.
+        /// Deprecated method that provides an easy way of displaying the effect prefab on Options.
         /// </summary>
         /// <param name="prefab">Effect prefab to display</param>
         /// <param name="option">The Option Game Object</param>
         /// <param name="transmit">Determines whether this effect should be networked</param>
+        [Obsolete("Use Extensions.MuzzleEffect instead.", false)]
         public void OptionMuzzleEffect(GameObject prefab, GameObject option, bool transmit)
         {
             EffectData data = new EffectData
