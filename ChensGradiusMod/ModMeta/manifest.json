@@ -5,7 +5,7 @@
   "description": "This mod aims to implement features from classic shoot-em-up games. It contains a fully functional Drone API, fully documented for other interested mod creators.",
   "dependencies": [
     "bbepis-BepInExPack-5.4.9",
-    "tristanmcpherson-R2API-3.0.30",
+    "tristanmcpherson-R2API-3.0.43",
     "ThinkInvis-TILER2-4.0.7",
     "Chen-ChensHelpers-1.0.10"
   ]
