@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.1.2-orange)
+![Version](https://img.shields.io/badge/Version-3.2.0-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -37,10 +37,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ![Gradius' Option Seed](https://puu.sh/HLj6S.png)
 **Gradius' Option Seed**
-- A new Green Item added to Risk of Rain 2. Upon acquiring this item, 2 Option Seeds will spawn for the player. They have a chance to duplicate the survivor's attacks.
+- A new Green Item added to Risk of Rain 2. Upon acquiring this item, 2 Option Seeds will spawn for the player. They will duplicate the survivor's attacks for a % of damage dealt.
 - The Option Seed is a fragment of the completed version of it. While it is in its younger stage, it is more organic than mechanical.
-- Only offensive skills of survivors can be duplicated.
-- The API makes it possible to implement customized skill behavior.
+- Only offensive skills of vanilla survivors can be duplicated.
+- The API makes it possible to implement customized skill behavior, even with non-offensive ones.
 - Documentation is available for other mod creators with modded survivors. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
 ![Beam Drone](https://puu.sh/GQz08.png)
