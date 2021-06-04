@@ -4,6 +4,7 @@ using Chen.GradiusMod.Items.OptionSeed.Components;
 using EntityStates;
 using EntityStates.Bandit2.Weapon;
 using EntityStates.Commando.CommandoWeapon;
+using EntityStates.Croco;
 using EntityStates.Drone.DroneWeapon;
 using EntityStates.Engi.EngiWeapon;
 using EntityStates.EngiTurret.EngiTurretWeapon;
@@ -76,6 +77,9 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Loader.ThrowPylon.OnEnter += ThrowPylon_OnEnter;
             On.EntityStates.Loader.SwingZapFist.OnMeleeHitAuthority += SwingZapFist_OnMeleeHitAuthority;
             On.EntityStates.Loader.GroundSlam.DetonateAuthority += GroundSlam_DetonateAuthority;
+            On.EntityStates.Croco.BaseLeap.DetonateAuthority += BaseLeap_DetonateAuthority;
+            On.EntityStates.Croco.BaseLeap.DropAcidPoolAuthority += BaseLeap_DropAcidPoolAuthority;
+            On.EntityStates.Croco.FireSpit.OnEnter += FireSpit_OnEnter;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter += EntityState_OnEnter;
 #endif
@@ -145,6 +149,76 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             if (!obj.master) return;
             if (GetCount(obj) > 0) SeedTracker.SpawnSeeds(obj.gameObject);
+        }
+
+        private void FireSpit_OnEnter(On.EntityStates.Croco.FireSpit.orig_OnEnter orig, FireSpit self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
+                if (self.isAuthority)
+                {
+                    DamageType value = self.crocoDamageTypeController ? self.crocoDamageTypeController.GetDamageType() : DamageType.Generic;
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        damageTypeOverride = new DamageType?(value),
+                        force = self.force * multiplier,
+                        crit = Util.CheckRoll(self.critStat, self.characterBody.master)
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void BaseLeap_DropAcidPoolAuthority(On.EntityStates.Croco.BaseLeap.orig_DropAcidPoolAuthority orig, BaseLeap self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                Vector3 footPosition = seed.transform.position;
+                FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                {
+                    projectilePrefab = BaseLeap.projectilePrefab,
+                    crit = self.isCritAuthority,
+                    force = 0f,
+                    damage = self.damageStat * multiplier,
+                    owner = self.gameObject,
+                    rotation = Quaternion.identity,
+                    position = footPosition
+                };
+                ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+            });
+        }
+
+        private BlastAttack.Result BaseLeap_DetonateAuthority(On.EntityStates.Croco.BaseLeap.orig_DetonateAuthority orig, BaseLeap self)
+        {
+            BlastAttack.Result result = orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                new BlastAttack
+                {
+                    attacker = self.gameObject,
+                    baseDamage = self.damageStat * self.blastDamageCoefficient * multiplier,
+                    baseForce = self.blastForce * multiplier,
+                    bonusForce = self.blastBonusForce,
+                    crit = self.RollCrit(),
+                    damageType = self.GetBlastDamageType(),
+                    falloffModel = BlastAttack.FalloffModel.None,
+                    procCoefficient = BaseLeap.blastProcCoefficient,
+                    radius = BaseLeap.blastRadius,
+                    position = seed.transform.position,
+                    attackerFiltering = AttackerFiltering.NeverHit,
+                    impactEffect = EffectCatalog.FindEffectIndexFromPrefab(self.blastImpactEffectPrefab),
+                    teamIndex = self.teamComponent.teamIndex
+                }.Fire();
+            });
+            return result;
         }
 
         private BlastAttack.Result GroundSlam_DetonateAuthority(On.EntityStates.Loader.GroundSlam.orig_DetonateAuthority orig, GroundSlam self)
