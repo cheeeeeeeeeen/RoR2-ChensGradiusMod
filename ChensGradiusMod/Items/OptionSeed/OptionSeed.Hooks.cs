@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using Chen.GradiusMod.Items.OptionSeed.Components;
 using EntityStates;
