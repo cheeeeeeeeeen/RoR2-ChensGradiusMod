@@ -3,6 +3,7 @@
 using Chen.GradiusMod.Items.OptionSeed.Components;
 using EntityStates;
 using EntityStates.Bandit2.Weapon;
+using EntityStates.Captain.Weapon;
 using EntityStates.Commando.CommandoWeapon;
 using EntityStates.Croco;
 using EntityStates.Drone.DroneWeapon;
@@ -80,6 +81,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Croco.BaseLeap.DetonateAuthority += BaseLeap_DetonateAuthority;
             On.EntityStates.Croco.BaseLeap.DropAcidPoolAuthority += BaseLeap_DropAcidPoolAuthority;
             On.EntityStates.Croco.FireSpit.OnEnter += FireSpit_OnEnter;
+            On.EntityStates.Captain.Weapon.FireTazer.Fire += FireTazer_Fire;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter += EntityState_OnEnter;
 #endif
@@ -130,6 +132,10 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Loader.ThrowPylon.OnEnter -= ThrowPylon_OnEnter;
             On.EntityStates.Loader.SwingZapFist.OnMeleeHitAuthority -= SwingZapFist_OnMeleeHitAuthority;
             On.EntityStates.Loader.GroundSlam.DetonateAuthority -= GroundSlam_DetonateAuthority;
+            On.EntityStates.Croco.BaseLeap.DetonateAuthority -= BaseLeap_DetonateAuthority;
+            On.EntityStates.Croco.BaseLeap.DropAcidPoolAuthority -= BaseLeap_DropAcidPoolAuthority;
+            On.EntityStates.Croco.FireSpit.OnEnter -= FireSpit_OnEnter;
+            On.EntityStates.Captain.Weapon.FireTazer.Fire -= FireTazer_Fire;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter -= EntityState_OnEnter;
 #endif
@@ -149,6 +155,29 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             if (!obj.master) return;
             if (GetCount(obj) > 0) SeedTracker.SpawnSeeds(obj.gameObject);
+        }
+
+        private void FireTazer_Fire(On.EntityStates.Captain.Weapon.FireTazer.orig_Fire orig, FireTazer self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (FireTazer.muzzleflashEffectPrefab) seed.MuzzleEffect(FireTazer.muzzleflashEffectPrefab, false);
+                if (self.isAuthority)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = FireTazer.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * FireTazer.damageCoefficient * multiplier,
+                        force = FireTazer.force * multiplier,
+                        crit = Util.CheckRoll(self.critStat, self.characterBody.master)
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
         }
 
         private void FireSpit_OnEnter(On.EntityStates.Croco.FireSpit.orig_OnEnter orig, FireSpit self)
