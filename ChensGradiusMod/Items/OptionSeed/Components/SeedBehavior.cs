@@ -101,9 +101,15 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
 
         private Vector3 DecidePosition()
         {
-            Vector3 relativePosition = Quaternion.AngleAxis(ownerSt.currentOptionAngle * numbering, ownerIbt.aimDirection) * Vector3.Cross(ownerIbt.aimDirection, Vector3.down * numbering);
-            Vector3 newPosition = ownerT.position + (Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * Vector3.right * numbering) + (relativePosition.normalized * ownerSt.distanceAxis);
-            newPosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * Vector3.up * ownerSt.verticalOffsetMultiplier;
+            Vector3 relativePosition = Vector3.zero;
+            if (!OptionSeed.instance.staticPositions)
+            {
+                relativePosition = Quaternion.AngleAxis(ownerSt.currentOptionAngle * numbering, ownerIbt.aimDirection) * Vector3.Cross(ownerIbt.aimDirection, Vector3.down * numbering);
+                relativePosition = (relativePosition.normalized * ownerSt.distanceAxis);
+            }
+            relativePosition += (Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * Vector3.right * ownerSt.horizontalOffsetMultiplier * numbering);
+            relativePosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * Vector3.up * ownerSt.verticalOffsetMultiplier;
+            Vector3 newPosition = ownerT.position + relativePosition;
             return newPosition;
         }
     }

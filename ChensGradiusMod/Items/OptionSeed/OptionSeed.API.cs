@@ -36,5 +36,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
         /// <param name="bodyName">The CharacterBody name of the character.</param>
         /// <param name="newValue">The multiplier value.</param>
         public void SetVerticalOffsetMultiplier(string bodyName, float newValue) => VerticalOffsetMultipliers[bodyName] = newValue;
+
+        /// <summary>
+        /// Sets the horizontal offset multiplier for certain characters since some characters have a larger width than the default value. Horizontal offset default is 1f.
+        /// </summary>
+        /// <param name="bodyName">The CharacterBody name of the character.</param>
+        /// <param name="newValue">The multiplier value.</param>
+        public void SetHorizontalOffsetMultiplier(string bodyName, float newValue) => HorizontalOffsetMultipliers[bodyName] = newValue;
     }
 }

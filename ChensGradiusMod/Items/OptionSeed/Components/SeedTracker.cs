@@ -38,10 +38,32 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
         internal GameObject rightSeed { get; private set; }
         internal SeedBehavior leftBehavior { get; private set; }
         internal SeedBehavior rightBehavior { get; private set; }
-        internal float verticalOffsetMultiplier { get; private set; }
+
+        internal float verticalOffsetMultiplier
+        {
+            get
+            {
+                if (characterBody) return OptionSeed.instance.GetVerticalOffsetMultiplier(characterBody.name);
+                else return OptionSeed.defaultVerticalOffsetMultiplier;
+            }
+        }
+
+        internal float horizontalOffsetMultiplier
+        {
+            get
+            {
+                if (characterBody) return OptionSeed.instance.GetHorizontalOffsetMultiplier(characterBody.name);
+                else return OptionSeed.defaultVerticalOffsetMultiplier;
+            }
+        }
+
+        internal float rotateSeedAngleSpeed
+        {
+            get => OptionSeed.instance.rotationSpeed;
+        }
+
         internal float distanceAxis { get; private set; } = .4f;
-        internal float rotateSeedAngleSpeed { get; private set; } = 10f;
-        internal float seedLookRate { get; private set; } = .5f;
+        internal float seedLookRate { get; private set; } = .2f;
 
         private float invalidCheckTimer = 0f;
 
@@ -87,7 +109,6 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
                     IncreaseInvalidity("SeedTracker Initialization: inputBankTest does not exist!");
                     return;
                 }
-                verticalOffsetMultiplier = OptionSeed.instance.GetVerticalOffsetMultiplier(characterBody.name);
             }
             if (invalidCheckTimer > 0f) invalidCheckTimer = 0f;
             currentOptionAngle += rotateSeedAngleSpeed;

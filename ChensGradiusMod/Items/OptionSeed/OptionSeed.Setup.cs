@@ -46,6 +46,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
 
+        [AutoConfig("Sets the position of the Option Seeds to be static instead of them rotating.", AutoConfigFlags.PreventNetMismatch)]
+        public bool staticPositions { get; private set; } = false;
+
+        [AutoConfig("The rotational speed of the seeds in angle difference. A value of 10 means that the angular computation is increased by 10 every frame.",
+                    AutoConfigFlags.PreventNetMismatch)]
+        public float rotationSpeed { get; private set; } = 10f;
+
         public override bool itemIsAIBlacklisted { get; protected set; } = true;
 
         protected override string GetNameString(string langid = null) => displayName;
@@ -80,16 +87,20 @@ namespace Chen.GradiusMod.Items.OptionSeed
         internal const uint getOptionEventId = GradiusOptionItem.getOptionEventId;
         internal const uint loseOptionEventId = GradiusOptionItem.loseOptionEventId;
         internal const float defaultVerticalOffsetMultiplier = .4f;
+        internal const float defaultHorizontalOffsetMultiplier = 1f;
 
         internal static GameObject optionSeedPrefab { get; private set; }
 
         private static readonly Dictionary<string, float> VerticalOffsetMultipliers = new Dictionary<string, float>()
         {
+            { "EngiTurretBody", .5f },
             { "EngiWalkerTurretBody", 1.3f },
             { "ToolbotBody", .5f },
             { "MageBody", .8f },
             { "LoaderBody", .7f }
         };
+
+        private static readonly Dictionary<string, float> HorizontalOffsetMultipliers = new Dictionary<string, float>();
 
         public OptionSeed()
         {
@@ -143,6 +154,15 @@ namespace Chen.GradiusMod.Items.OptionSeed
         internal float GetVerticalOffsetMultiplier(string bodyName)
         {
             foreach (var pair in VerticalOffsetMultipliers)
+            {
+                if (bodyName.Contains(pair.Key)) return pair.Value;
+            }
+            return defaultVerticalOffsetMultiplier;
+        }
+
+        internal float GetHorizontalOffsetMultiplier(string bodyName)
+        {
+            foreach (var pair in HorizontalOffsetMultipliers)
             {
                 if (bodyName.Contains(pair.Key)) return pair.Value;
             }
