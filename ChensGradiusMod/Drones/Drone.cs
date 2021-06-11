@@ -143,7 +143,10 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         protected virtual void SetupBehavior()
         {
-            Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject);
+            if (allowToBeSpawnedWithMachinesArtifact)
+            {
+                Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject);
+            }
             if (canBeInspired && Compatibility.Aetherium.enabled)
             {
                 Compatibility.Aetherium.AddCustomDrone(name);
