@@ -1,5 +1,6 @@
 ﻿#undef DEBUG
 
+using Chen.BombasticMod;
 using Chen.GradiusMod.Items.GradiusOption;
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.UnityHelpers;
@@ -95,6 +96,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         {
             base.SetupBehavior();
             GradiusOption.instance.SupportMinionType(name);
+            Machines.instance.AddEnemyDroneType(droneMaster);
             InteractableActions += DirectorAPI_InteractableActions;
         }
 

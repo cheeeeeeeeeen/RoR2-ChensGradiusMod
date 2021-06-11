@@ -140,7 +140,7 @@ namespace Chen.GradiusMod.Drones
         /// This will still be performed whether the drone is enabled or disabled.
         /// This will still also be performed if the drone was already set up or not.
         /// </summary>
-        public void PostSetup()
+        public virtual void PostSetup()
         {
         }
 

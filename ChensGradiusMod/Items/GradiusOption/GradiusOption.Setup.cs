@@ -14,7 +14,7 @@ using RoR2Items = RoR2.RoR2Content.Items;
 namespace Chen.GradiusMod.Items.GradiusOption
 {
     /// <summary>
-    /// An item class powered by TILER2 which provides the main API related to the Options/Multiples.
+    /// An item class which provides the main API related to the Options/Multiples. It is powered by TILER2.
     /// </summary>
     public partial class GradiusOption : Item<GradiusOption>
     {

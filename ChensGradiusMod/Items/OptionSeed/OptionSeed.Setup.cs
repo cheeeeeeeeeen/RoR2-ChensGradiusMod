@@ -13,7 +13,7 @@ using GradiusOptionItem = Chen.GradiusMod.Items.GradiusOption.GradiusOption;
 namespace Chen.GradiusMod.Items.OptionSeed
 {
     /// <summary>
-    /// An item class powered by TILER2 which provides the main API related to the Option Seeds.
+    /// An item class which provides the main API related to the Option Seeds. It is powered by TILER2.
     /// </summary>
     public partial class OptionSeed : Item<OptionSeed>
     {

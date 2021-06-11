@@ -1,3 +1,4 @@
+using Chen.BombasticMod;
 using RoR2;
 using System;
 using UnityEngine;
@@ -43,6 +44,7 @@ namespace Chen.GradiusMod.Drones
         /// <param name="contactPoint">The point where the interactable spawns</param>
         public override void OnImpactServer(Vector3 contactPoint)
         {
+            if (Machines.instance.IsActiveAndEnabled()) return;
             var spawnCard = GetInteractableSpawnCard();
             if (spawnCard != null)
             {
