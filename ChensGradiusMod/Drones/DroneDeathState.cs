@@ -1,4 +1,4 @@
-using Chen.BombasticMod;
+using Chen.GradiusMod.Artifacts.Machines;
 using RoR2;
 using System;
 using UnityEngine;

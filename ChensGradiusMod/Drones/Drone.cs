@@ -1,5 +1,7 @@
 ﻿using BepInEx.Configuration;
+using Chen.GradiusMod.Artifacts.Machines;
 using System;
+using UnityEngine;
 using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Drones
@@ -34,6 +36,11 @@ namespace Chen.GradiusMod.Drones
         /// Determines if the drone should be enabled/disabled. Disabled drones will not be set up.
         /// </summary>
         public bool enabled { get; private set; } = true;
+
+        /// <summary>
+        /// Determines if the drone can be spawned in the enemy drone spawn pool with Artifact of Machines.
+        /// </summary>
+        public bool allowToBeSpawnedWithMachinesArtifact { get; private set; } = true;
 
         /// <summary>
         /// Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.
@@ -85,6 +92,12 @@ namespace Chen.GradiusMod.Drones
         protected ConfigFile config;
 
         /// <summary>
+        /// This refers to the CharacterMaster GameObject of the drone.
+        /// Implement this method in the drone class and have it return the CharacterMaster GameObject.
+        /// </summary>
+        protected abstract GameObject DroneCharacterMasterObject { get; }
+
+        /// <summary>
         /// The first step in the setup process. Place here the logic needed before any processing begins.
         /// </summary>
         public virtual void PreSetup()
@@ -99,6 +112,11 @@ namespace Chen.GradiusMod.Drones
             enabled = config.Bind(configCategory,
                 "Enabled", enabled,
                 "Set to false to disable this feature."
+            ).Value;
+
+            allowToBeSpawnedWithMachinesArtifact = config.Bind(configCategory,
+                "AllowToBeSpawnedWithMachinesArtifact", allowToBeSpawnedWithMachinesArtifact,
+                "Set to false to remove this drone from the spawn pool with Artifact of Machines."
             ).Value;
 
             canBeInspired = config.Bind(configCategory,
@@ -125,6 +143,7 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         protected virtual void SetupBehavior()
         {
+            Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject);
             if (canBeInspired && Compatibility.Aetherium.enabled)
             {
                 Compatibility.Aetherium.AddCustomDrone(name);

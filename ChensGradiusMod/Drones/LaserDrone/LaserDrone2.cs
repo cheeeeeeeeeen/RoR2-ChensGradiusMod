@@ -1,6 +1,5 @@
 ﻿#undef DEBUG
 
-using Chen.BombasticMod;
 using Chen.GradiusMod.Items.GradiusOption;
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.UnityHelpers;
@@ -38,6 +37,8 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         private int minimumStageCompletions { get => minimumStageSpawn - 1; }
 
         private int skyMeadowMinimumStageCompletions { get => skyMeadowMinimumStageSpawn - 1; }
+
+        protected override GameObject DroneCharacterMasterObject => droneMaster;
 
         protected override void SetupConfig()
         {
@@ -96,7 +97,6 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         {
             base.SetupBehavior();
             GradiusOption.instance.SupportMinionType(name);
-            Machines.instance.AddEnemyDroneType(droneMaster);
             InteractableActions += DirectorAPI_InteractableActions;
         }
 
