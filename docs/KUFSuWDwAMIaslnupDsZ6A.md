@@ -8,5 +8,5 @@ The fifth step in the setup process. Place here the code for cleanup, or for fin
 This will still be performed whether the drone is enabled or disabled.  
 This will still also be performed if the drone was already set up or not.  
 ```csharp
-public void PostSetup();
+public virtual void PostSetup();
 ```

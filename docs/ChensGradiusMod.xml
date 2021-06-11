@@ -4,6 +4,25 @@
         <name>ChensGradiusMod</name>
     </assembly>
     <members>
+        <member name="T:Chen.GradiusMod.Artifacts.Machines.Machines">
+            <summary>
+            As artifact class which provides the main API related to the controlling which drones the enemy may spawn with. It is powered by TILER2.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.AddEnemyDroneType(UnityEngine.GameObject)">
+            <summary>
+            Adds a drone to the spawn pool for the enemies.
+            </summary>
+            <param name="masterObject">CharacterMaster GameObject of the drone.</param>
+            <returns>True if the drone is added in the pool. False if it is already in the pool.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.RemoveEnemyDroneType(UnityEngine.GameObject)">
+            <summary>
+            Removes a drone from the spawn pool for the enemies.
+            </summary>
+            <param name="masterObject">CharacterMaster GameObject of the drone.</param>
+            <returns>True if the drone is removed from the pool. False if it is not in the pool.</returns>
+        </member>
         <member name="T:Chen.GradiusMod.Compatibility.Aetherium">
             <summary>
             A static class that contains compatibility features from Aetherium mod.
@@ -106,6 +125,11 @@
             Determines if the drone should be enabled/disabled. Disabled drones will not be set up.
             </summary>
         </member>
+        <member name="P:Chen.GradiusMod.Drones.Drone.allowToBeSpawnedWithMachinesArtifact">
+            <summary>
+            Determines if the drone can be spawned in the enemy drone spawn pool with Artifact of Machines.
+            </summary>
+        </member>
         <member name="P:Chen.GradiusMod.Drones.Drone.canBeInspired">
             <summary>
             Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.
@@ -134,6 +158,12 @@
         <member name="F:Chen.GradiusMod.Drones.Drone.config">
             <summary>
             The config file assigned to this custom drone. Use this to bind config options.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Drones.Drone.DroneCharacterMasterObject">
+            <summary>
+            This refers to the CharacterMaster GameObject of the drone.
+            Implement this method in the drone class and have it return the CharacterMaster GameObject.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Drones.Drone.PreSetup">
@@ -425,7 +455,7 @@
         </member>
         <member name="T:Chen.GradiusMod.Items.GradiusOption.GradiusOption">
             <summary>
-            An item class powered by TILER2 which provides the main API related to the Options/Multiples.
+            An item class which provides the main API related to the Options/Multiples. It is powered by TILER2.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SupportMinionType(System.String)">
@@ -575,7 +605,7 @@
         </member>
         <member name="T:Chen.GradiusMod.Items.OptionSeed.OptionSeed">
             <summary>
-            An item class powered by TILER2 which provides the main API related to the Option Seeds.
+            An item class which provides the main API related to the Option Seeds. It is powered by TILER2.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Items.OptionSeed.OptionSeed.FireForSeeds(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.Items.OptionSeed.Components.SeedBehavior,Chen.GradiusMod.Items.OptionSeed.Components.SeedTracker,System.Single})">
@@ -593,6 +623,13 @@
         <member name="M:Chen.GradiusMod.Items.OptionSeed.OptionSeed.SetVerticalOffsetMultiplier(System.String,System.Single)">
             <summary>
             Sets the vertical offset multiplier for certain characters since some Option Seeds are positioned awkwardly. Vertical offset default is 0.4f.
+            </summary>
+            <param name="bodyName">The CharacterBody name of the character.</param>
+            <param name="newValue">The multiplier value.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.OptionSeed.OptionSeed.SetHorizontalOffsetMultiplier(System.String,System.Single)">
+            <summary>
+            Sets the horizontal offset multiplier for certain characters since some characters have a larger width than the default value. Horizontal offset default is 1f.
             </summary>
             <param name="bodyName">The CharacterBody name of the character.</param>
             <param name="newValue">The multiplier value.</param>

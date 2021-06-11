@@ -18,9 +18,11 @@ Derived
 
 ### Properties
 - [affectedByDroneRepairKit](./LtK+HDvGfEOAosyKriPOxA 'Chen.GradiusMod.Drones.Drone.affectedByDroneRepairKit')
+- [allowToBeSpawnedWithMachinesArtifact](./ZNuk6fyjGKZI58U0VJVarQ 'Chen.GradiusMod.Drones.Drone.allowToBeSpawnedWithMachinesArtifact')
 - [alreadySetup](./N9oYEvtp1qDnSIojdZai9Q 'Chen.GradiusMod.Drones.Drone.alreadySetup')
 - [canBeInspired](./LxERhX2G1JKf7yIDtI0HSg 'Chen.GradiusMod.Drones.Drone.canBeInspired')
 - [configCategory](./oCCPZRl2yRxO1ooRx17R8g 'Chen.GradiusMod.Drones.Drone.configCategory')
+- [DroneCharacterMasterObject](./A1tlRZLu0v-MEW2ubLUQRQ 'Chen.GradiusMod.Drones.Drone.DroneCharacterMasterObject')
 - [enabled](./xPmiKVc3dVangaNc4oESVw 'Chen.GradiusMod.Drones.Drone.enabled')
 - [name](./g7Gy6uLkkvXY1NMU+razzw 'Chen.GradiusMod.Drones.Drone.name')
 

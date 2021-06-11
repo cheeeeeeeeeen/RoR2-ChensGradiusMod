@@ -4,7 +4,7 @@
 ### [Chen.GradiusMod.Items.OptionSeed](./be1vnC2Vgp-vVFpwRHLjUQ 'Chen.GradiusMod.Items.OptionSeed')
 
 ## OptionSeed Class
-An item class powered by TILER2 which provides the main API related to the Option Seeds.  
+An item class which provides the main API related to the Option Seeds. It is powered by TILER2.  
 ```csharp
 public class OptionSeed : Item<OptionSeed>
 ```
@@ -12,4 +12,5 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 ### Methods
 - [FireForSeeds(RoR2.CharacterBody, System.Action&lt;UnityEngine.GameObject,Chen.GradiusMod.Items.OptionSeed.Components.SeedBehavior,Chen.GradiusMod.Items.OptionSeed.Components.SeedTracker,float&gt;)](./SjLSn1N-vnVWRnAgi56XBw 'Chen.GradiusMod.Items.OptionSeed.OptionSeed.FireForSeeds(RoR2.CharacterBody, System.Action&lt;UnityEngine.GameObject,Chen.GradiusMod.Items.OptionSeed.Components.SeedBehavior,Chen.GradiusMod.Items.OptionSeed.Components.SeedTracker,float&gt;)')
+- [SetHorizontalOffsetMultiplier(string, float)](./MLFf+wYauT+b8xnJ7TpSlQ 'Chen.GradiusMod.Items.OptionSeed.OptionSeed.SetHorizontalOffsetMultiplier(string, float)')
 - [SetVerticalOffsetMultiplier(string, float)](./kA9cXMcoE80jabrUycIRmg 'Chen.GradiusMod.Items.OptionSeed.OptionSeed.SetVerticalOffsetMultiplier(string, float)')
