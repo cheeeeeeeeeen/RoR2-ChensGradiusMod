@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.2.1-orange)
+![Version](https://img.shields.io/badge/Version-3.3.0-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -60,6 +60,15 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - The drone will spawn more in Sky Meadow.
 - Options also copy this drone's attacks.
 
+![Artifact of Machines](https://puu.sh/HO6hC.png)
+**Artifact of Machines**
+- An artifact added to Risk of Rain 2. Survivors will have a TC-280 Prototype drone when they spawn. Enemies, however, will also get drones.
+- The Bacterian essence has drifted towards the embrace of the Planet. The Bulwark deemed it dangerous, and thus keeping it sealed in an artifact.
+- No more drones can be repurchased when this artifact is active.
+- When the owner dies, the drones will be decommissioned as well.
+- Enemy drones will also have Gradius' Option if the Artifact of Evolution gives the item to the enemy.
+- Configure Gradius' Option so that it is not blacklisted.
+
 ## Contact & Support
 
 - Issue Page: https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/issues
@@ -81,6 +90,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.3.0**
+- Implement Artifact of Machines.
+
 **3.2.1**
 - Add more config options for Option Seeds, mainly aesthetics.
 - Add Option Seed config to make them stay statically instead of rotating.
@@ -96,9 +108,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **3.1.1**
 - Fix bugs regarding the effects for the allied Solus probes' Options.
 - Add more safe checks within the code to avoid exceptions.
-
-**3.1.0**
-- Add Gradius Option support for Empathy Cores allied Solus probes!
-- Integrate ReplaceModel from ChensHelpers, as well as implement changes made by it.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*

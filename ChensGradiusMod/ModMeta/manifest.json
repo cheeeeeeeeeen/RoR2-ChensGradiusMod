@@ -1,6 +1,6 @@
 {
   "name": "ChensGradiusMod",
-  "version_number": "3.2.1",
+  "version_number": "3.3.0",
   "website_url": "https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod",
   "description": "This mod aims to implement features from classic shoot-em-up games. It contains a fully functional Drone API, fully documented for other interested mod creators.",
   "dependencies": [
