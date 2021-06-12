@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.3.1-orange)
+![Version](https://img.shields.io/badge/Version-3.3.2-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -90,6 +90,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.3.2**
+- Fix a bug in Artifact of Machines where Engineer Turrets also commit suicide when limit is reached, which affects all minions and destroys minions.
+
 **3.3.1**
 - Fix a bug where some of the features of the Artifact of Machines are still enabled even though it is disabled on a run.
 
@@ -102,10 +105,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **3.2.0**
 - Implement Option Seed, a fragment of Gradius' Option.
-
-**3.1.2**
-- Add config options for Empathy Cores.
-- Readjust Turret interactable spawn so that when they get decommissioned, the interactable will spawn properly.
-- Optimize some parts of the code so that it is more readable.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
