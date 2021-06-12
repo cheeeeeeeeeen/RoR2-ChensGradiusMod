@@ -39,7 +39,7 @@ namespace Chen.GradiusMod.Artifacts.Machines
         private void CharacterMaster_OnBodyDeath(On.RoR2.CharacterMaster.orig_OnBodyDeath orig, CharacterMaster self, CharacterBody body)
         {
             orig(self, body);
-            if (!NetworkServer.active || !IsActiveAndEnabled()) return;
+            if (!NetworkServer.active || !IsActiveAndEnabled() || self.minionOwnership.ownerMaster) return;
             self.LoopMinions(minion =>
             {
                 CharacterBody minionBody = minion.GetBody();
