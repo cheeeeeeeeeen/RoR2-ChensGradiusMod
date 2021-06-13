@@ -6,7 +6,7 @@
   "dependencies": [
     "bbepis-BepInExPack-5.4.9",
     "tristanmcpherson-R2API-3.0.43",
-    "ThinkInvis-TILER2-4.0.7",
+    "ThinkInvis-TILER2-5.0.0",
     "Chen-ChensHelpers-1.0.10"
   ]
 }
