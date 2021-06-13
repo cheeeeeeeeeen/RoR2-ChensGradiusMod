@@ -1,4 +1,5 @@
-﻿using Chen.GradiusMod.Items.GradiusOption;
+﻿using Chen.GradiusMod.Compatibility;
+using Chen.GradiusMod.Items.GradiusOption;
 using EntityStates;
 using RoR2;
 using RoR2.CharacterAI;
@@ -63,6 +64,10 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 };
                 EffectManager.SpawnEffect(tracerEffectPrefab, effectData, true);
                 EffectManager.SpawnEffect(hitEffectPrefab, effectData, true);
+            }
+            if (ChensClassicItems.enabled)
+            {
+                ChensClassicItems.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
             }
         }
 

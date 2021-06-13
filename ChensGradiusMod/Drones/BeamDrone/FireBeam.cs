@@ -77,6 +77,10 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                     radius = 0f,
                     maxDistance = maxDistance
                 }.Fire();
+                if (ChensClassicItems.enabled)
+                {
+                    ChensClassicItems.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
+                }
             }
         }
 
@@ -208,10 +212,6 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                 {
                     float damage = damageCoefficient * damageStat;
                     FireBullet(gameObject, damage, force, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
-                    if (ChensClassicItems.enabled)
-                    {
-                        ChensClassicItems.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
-                    }
                 }
                 fireStopwatch -= 1f / fireFrequency;
             }
