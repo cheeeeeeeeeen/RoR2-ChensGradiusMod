@@ -14,15 +14,19 @@ namespace Chen.GradiusMod.Artifacts.Machines
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public override string displayName => "Artifact of Machines";
 
+        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
         [AutoConfig("Percentage chance of enemies getting drones. 25 means 25% chance.", AutoConfigFlags.None, 0f, 100f)]
         public float hasDroneChance { get; private set; } = 100f;
 
+        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
         [AutoConfig("The least number of drones an enemy can spawn with.", AutoConfigFlags.None, 1, int.MaxValue)]
         public int minimumEnemyDroneCount { get; private set; } = 1;
 
+        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
         [AutoConfig("The max number of drones an enemy can spawn with.", AutoConfigFlags.None, 1, int.MaxValue)]
         public int maximumEnemyDroneCount { get; private set; } = 2;
 
+        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
         [AutoConfig("The max number of TC-280 Prototypes each player can own.", AutoConfigFlags.None, 0, int.MaxValue)]
         public int maxPrototypePlayerCount { get; private set; } = 1;
 

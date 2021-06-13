@@ -81,7 +81,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             "The great evil? She sounds like she went through a lot. Now, she faces yet another chaotic scene of survival. She must have had it rougher than I expected.\n\n" +
             "Can she feel pain? She had old allies and friends for sure. She sounds more human than me, now that I think about it!\n\n" +
             "\"You mentioned about Katswell in your audio log when you were lost in space. Who is she?\" I boldly asked her.\n\n" +
-            "She made a soft, short giggle, then said, \"She is one of the legends who played a big role in saving our race.\"\n\n" +
+            "She made a soft, short giggle, then said, \"She is one of the legends who played a big role in saving our race and our home planet.\"\n\n" +
             "I nodded, and it strangely felt satisfying to hear that.";
 
         internal const uint getOptionEventId = GradiusOptionItem.getOptionEventId;
