@@ -82,7 +82,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **Kirbsuke#0352** made the 3D model for the Option/Multiple, and later used for the icon.
 - Contact: `kirbydamaster@gmail.com` or through Discord.
 
-**manaboi#4887** helped me edit the icon to make it look like one with vanilla items.
+**manaboi#4887** helped me edit the icon to make it look like one with vanilla items. Also made Artifact of Machines icon.
 - Contact: Through Discord.
 
 **KomradeSpectre#8468** made the 3D model for the Beam Drone and Laser Drone, which was also used for their icons.
@@ -92,6 +92,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **3.3.4**
 - Add Arms Race support from Chen's Classic Items for Laser Drone.
+- Update the icon for Artifact of Machines.
+- Rework the spawning system of drones in Artifact of Machines so that spawn weights are respected.
+- Add more config options for Artifact of Machines to control which drone spawns through weights.
+- Add an API so that ground drones should stay on ground when spawned by Artifact of Machines.
 
 **3.3.3**
 - Update the mod so that it is fully compatible with the latest TILER2 update.

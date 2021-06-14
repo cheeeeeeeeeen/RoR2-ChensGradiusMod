@@ -3,7 +3,6 @@ using RoR2;
 using TILER2;
 using UnityEngine;
 using UnityEngine.Networking;
-using static Chen.GradiusMod.GradiusModPlugin;
 using DeathState = EntityStates.Drone.DeathState;
 using Random = UnityEngine.Random;
 
@@ -39,25 +38,24 @@ namespace Chen.GradiusMod.Artifacts.Machines
         private void CharacterMaster_OnBodyDeath(On.RoR2.CharacterMaster.orig_OnBodyDeath orig, CharacterMaster self, CharacterBody body)
         {
             orig(self, body);
-            if (!NetworkServer.active || !IsActiveAndEnabled() || self.minionOwnership.ownerMaster) return;
+            if (!NetworkServer.active || !IsActiveAndEnabled() || !self || !self.minionOwnership || self.minionOwnership.ownerMaster) return;
             self.LoopMinions(minion =>
             {
                 CharacterBody minionBody = minion.GetBody();
-                if (minionBody.healthComponent) minionBody.healthComponent.Suicide();
-                else Log.Warning($"CharacterMaster.OnBodyDeath: Minion {minion.name} of {body.name} does not have HealthComponent.");
+                if (minionBody && minionBody.healthComponent) minionBody.healthComponent.Suicide();
             });
         }
 
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
         {
-            if (!NetworkServer.active || !IsActiveAndEnabled()) return;
-            if (obj.master.minionOwnership.ownerMaster) return;
+            if (!NetworkServer.active || !IsActiveAndEnabled() || !obj || !obj.master || !obj.master.minionOwnership) return;
+            if (obj.master.minionOwnership.ownerMaster || !obj.teamComponent) return;
             switch (obj.teamComponent.teamIndex)
             {
                 case TeamIndex.Monster:
                     if (!Util.CheckRoll(hasDroneChance, obj.master)) return;
                     int droneNumber = Random.Range(minimumEnemyDroneCount, maximumEnemyDroneCount + 1 + Run.instance.loopClearCount);
-                    for (int i = 1; i <= droneNumber; i++) SummonDrone(obj, RandomlySelectDrone());
+                    for (int i = 1; i <= droneNumber; i++) SummonDrone(obj, RandomlySelectDrone(), i);
                     return;
 
                 case TeamIndex.Player:
@@ -67,58 +65,6 @@ namespace Chen.GradiusMod.Artifacts.Machines
                 default:
                     return;
             }
-        }
-
-        private GameObject RandomlySelectDrone()
-        {
-            int randomIndex = Random.Range(0, EnemyDrones.Count);
-            return EnemyDrones[randomIndex];
-        }
-
-        private void SummonDrone(CharacterBody ownerBody, GameObject droneMasterPrefab)
-        {
-            if (!ownerBody || !droneMasterPrefab)
-            {
-                Log.Warning("Machines.SummonDrone: ownerBody or droneMasterPrefab is null. Cancel drone summon.");
-                return;
-            }
-            CharacterMaster characterMaster = new MasterSummon
-            {
-                masterPrefab = droneMasterPrefab,
-                position = ownerBody.transform.position - ownerBody.transform.forward.normalized,
-                rotation = ownerBody.transform.rotation,
-                summonerBodyObject = ownerBody.gameObject,
-                ignoreTeamMemberLimit = true,
-                useAmbientLevel = true
-            }.Perform();
-            if (characterMaster)
-            {
-                GameObject bodyObject = characterMaster.GetBodyObject();
-                if (bodyObject)
-                {
-                    ModelLocator component = bodyObject.GetComponent<ModelLocator>();
-                    if (component && component.modelTransform)
-                    {
-                        TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
-                        temporaryOverlay.duration = 0.5f;
-                        temporaryOverlay.animateShaderAlpha = true;
-                        temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
-                        temporaryOverlay.destroyComponentOnEnd = true;
-                        temporaryOverlay.originalMaterial = Resources.Load<Material>("Materials/matSummonDrone");
-                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
-                    }
-                }
-            }
-        }
-
-        private bool IsPrototypeCountUncapped(CharacterMaster master)
-        {
-            int prototypeNumber = 0;
-            master.LoopMinions(minion =>
-            {
-                if (minion.name.Contains("MegaDroneMaster")) prototypeNumber++;
-            });
-            return prototypeNumber < maxPrototypePlayerCount;
         }
     }
 }

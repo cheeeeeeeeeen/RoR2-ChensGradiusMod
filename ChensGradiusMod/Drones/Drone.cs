@@ -35,22 +35,22 @@ namespace Chen.GradiusMod.Drones
         /// <summary>
         /// Determines if the drone should be enabled/disabled. Disabled drones will not be set up.
         /// </summary>
-        public bool enabled { get; private set; } = true;
+        public bool enabled { get; protected set; } = true;
 
         /// <summary>
         /// Determines if the drone can be spawned in the enemy drone spawn pool with Artifact of Machines.
         /// </summary>
-        public bool allowToBeSpawnedWithMachinesArtifact { get; private set; } = true;
+        public int spawnWeightWithMachinesArtifact { get; protected set; } = 1;
 
         /// <summary>
         /// Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.
         /// </summary>
-        public bool canBeInspired { get; private set; } = true;
+        public bool canBeInspired { get; protected set; } = true;
 
         /// <summary>
         /// Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.
         /// </summary>
-        public bool affectedByDroneRepairKit { get; private set; } = true;
+        public bool affectedByDroneRepairKit { get; protected set; } = true;
 
         /// <summary>
         /// Fetches the custom drone's class name.
@@ -114,9 +114,9 @@ namespace Chen.GradiusMod.Drones
                 "Set to false to disable this feature."
             ).Value;
 
-            allowToBeSpawnedWithMachinesArtifact = config.Bind(configCategory,
-                "AllowToBeSpawnedWithMachinesArtifact", allowToBeSpawnedWithMachinesArtifact,
-                "Set to false to remove this drone from the spawn pool with Artifact of Machines."
+            spawnWeightWithMachinesArtifact = config.Bind(configCategory,
+                "AllowToBeSpawnedWithMachinesArtifact", spawnWeightWithMachinesArtifact,
+                "Spawn weight of how likely enemies will get this drone. 0 means it will not spawn at all. 1 is the default."
             ).Value;
 
             canBeInspired = config.Bind(configCategory,
@@ -143,10 +143,7 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         protected virtual void SetupBehavior()
         {
-            if (allowToBeSpawnedWithMachinesArtifact)
-            {
-                Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject);
-            }
+            Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject, spawnWeightWithMachinesArtifact);
             if (canBeInspired && Compatibility.Aetherium.enabled)
             {
                 Compatibility.Aetherium.AddCustomDrone(name);

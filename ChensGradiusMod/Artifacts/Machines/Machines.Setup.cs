@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Chen.Helpers.GeneralHelpers;
+using RoR2;
+using System.Collections.Generic;
 using TILER2;
 using UnityEngine;
 using static Chen.GradiusMod.GradiusModPlugin;
+using static RoR2.Navigation.MapNodeGroup;
 using static TILER2.MiscUtil;
 
 namespace Chen.GradiusMod.Artifacts.Machines
@@ -15,20 +18,44 @@ namespace Chen.GradiusMod.Artifacts.Machines
         public override string displayName => "Artifact of Machines";
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Percentage chance of enemies getting drones. 25 means 25% chance.", AutoConfigFlags.None, 0f, 100f)]
+        [AutoConfig("Percentage chance of enemies getting drones. 25 means 25% chance.", AutoConfigFlags.PreventNetMismatch, 0f, 100f)]
         public float hasDroneChance { get; private set; } = 100f;
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("The least number of drones an enemy can spawn with.", AutoConfigFlags.None, 1, int.MaxValue)]
+        [AutoConfig("The least number of drones an enemy can spawn with.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
         public int minimumEnemyDroneCount { get; private set; } = 1;
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("The max number of drones an enemy can spawn with.", AutoConfigFlags.None, 1, int.MaxValue)]
+        [AutoConfig("The max number of drones an enemy can spawn with.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
         public int maximumEnemyDroneCount { get; private set; } = 2;
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("The max number of TC-280 Prototypes each player can own.", AutoConfigFlags.None, 0, int.MaxValue)]
+        [AutoConfig("The max number of TC-280 Prototypes each player can own.", AutoConfigFlags.PreventNetMismatch, 0, int.MaxValue)]
         public int maxPrototypePlayerCount { get; private set; } = 1;
+
+        [AutoConfig("Spawn Weight of the Strike Drone.", AutoConfigFlags.None, 0, 10)]
+        public int backupDroneSpawnWeight { get; private set; } = 2;
+
+        [AutoConfig("Spawn Weight of the Gunner Drone.", AutoConfigFlags.None, 0, 10)]
+        public int drone1SpawnWeight { get; private set; } = 4;
+
+        [AutoConfig("Spawn Weight of the Healer Drone.", AutoConfigFlags.None, 0, 10)]
+        public int drone2SpawnWeight { get; private set; } = 3;
+
+        [AutoConfig("Spawn Weight of the Emergency Drone.", AutoConfigFlags.None, 0, 10)]
+        public int emergencyDroneSpawnWeight { get; private set; } = 2;
+
+        [AutoConfig("Spawn Weight of the Flame Drone.", AutoConfigFlags.None, 0, 10)]
+        public int flameDroneSpawnWeight { get; private set; } = 1;
+
+        [AutoConfig("Spawn Weight of the Missile Drone.", AutoConfigFlags.None, 0, 10)]
+        public int missileDroneSpawnWeight { get; private set; } = 2;
+
+        [AutoConfig("Spawn Weight of the Gunner Turret.", AutoConfigFlags.None, 0, 10)]
+        public int gunnerTurretSpawnWeight { get; private set; } = 1;
+
+        [AutoConfig("Spawn Weight of the TC-280 Prototype for enemies.", AutoConfigFlags.None, 0, 10)]
+        public int tc280SpawnWeight { get; private set; } = 0;
 
         protected override string GetNameString(string langid = null) => displayName;
 
@@ -45,17 +72,22 @@ namespace Chen.GradiusMod.Artifacts.Machines
             return str;
         }
 
-        private readonly List<GameObject> EnemyDrones = new List<GameObject>()
+        private readonly List<GameObject> EnemyDrones = new List<GameObject>();
+
+        private readonly List<string> GroundedDrones = new List<string>()
         {
-            Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster"),
-            Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master"),
-            Resources.Load<GameObject>("prefabs/charactermasters/Drone2Master"),
-            Resources.Load<GameObject>("prefabs/charactermasters/EmergencyDroneMaster"),
-            Resources.Load<GameObject>("prefabs/charactermasters/FlameDroneMaster"),
-            Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster")
+            "Turret1"
         };
 
+        private readonly GameObject backupDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster");
+        private readonly GameObject drone1Master = Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master");
+        private readonly GameObject drone2Master = Resources.Load<GameObject>("prefabs/charactermasters/Drone2Master");
+        private readonly GameObject emergencyDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/EmergencyDroneMaster");
+        private readonly GameObject flameDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/FlameDroneMaster");
+        private readonly GameObject missileDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster");
+        private readonly GameObject turret1Master = Resources.Load<GameObject>("prefabs/charactermasters/Turret1Master");
         private readonly GameObject tc280DroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster");
+        private readonly GameObject helperPrefab = Resources.Load<GameObject>("SpawnCards/HelperPrefab");
 
         public Machines()
         {
@@ -72,6 +104,107 @@ namespace Chen.GradiusMod.Artifacts.Machines
                 minimumEnemyDroneCount = maximumEnemyDroneCount;
                 maximumEnemyDroneCount = origMinCount;
             }
+        }
+
+        public override void SetupBehavior()
+        {
+            base.SetupBehavior();
+            AddEnemyDroneType(backupDroneMaster, backupDroneSpawnWeight);
+            AddEnemyDroneType(drone1Master, drone1SpawnWeight);
+            AddEnemyDroneType(drone2Master, drone2SpawnWeight);
+            AddEnemyDroneType(emergencyDroneMaster, emergencyDroneSpawnWeight);
+            AddEnemyDroneType(flameDroneMaster, flameDroneSpawnWeight);
+            AddEnemyDroneType(missileDroneMaster, missileDroneSpawnWeight);
+            AddEnemyDroneType(turret1Master, gunnerTurretSpawnWeight);
+            AddEnemyDroneType(tc280DroneMaster, tc280SpawnWeight);
+        }
+
+        private bool IsPrototypeCountUncapped(CharacterMaster master)
+        {
+            int prototypeNumber = 0;
+            master.LoopMinions(minion =>
+            {
+                if (minion.name.Contains("MegaDroneMaster")) prototypeNumber++;
+            });
+            return prototypeNumber < maxPrototypePlayerCount;
+        }
+
+        private GameObject RandomlySelectDrone()
+        {
+            int randomIndex = Random.Range(0, EnemyDrones.Count);
+            return EnemyDrones[randomIndex];
+        }
+
+        private void SummonDrone(CharacterBody ownerBody, GameObject droneMasterPrefab, int counter = 1)
+        {
+            if (!ownerBody || !droneMasterPrefab)
+            {
+                Log.Warning("Machines.SummonDrone: ownerBody or droneMasterPrefab is null. Cancel drone summon.");
+                return;
+            }
+            CharacterMaster characterMaster = new MasterSummon
+            {
+                masterPrefab = droneMasterPrefab,
+                position = ownerBody.transform.position - (ownerBody.transform.forward.normalized * counter) + (Vector3.up * .25f * counter),
+                rotation = ownerBody.transform.rotation,
+                summonerBodyObject = ownerBody.gameObject,
+                ignoreTeamMemberLimit = true,
+                useAmbientLevel = true
+            }.Perform();
+            if (characterMaster)
+            {
+                GameObject bodyObject = characterMaster.GetBodyObject();
+                if (bodyObject)
+                {
+                    ModelLocator component = bodyObject.GetComponent<ModelLocator>();
+                    if (component && component.modelTransform)
+                    {
+                        TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
+                        temporaryOverlay.duration = 0.5f;
+                        temporaryOverlay.animateShaderAlpha = true;
+                        temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+                        temporaryOverlay.destroyComponentOnEnd = true;
+                        temporaryOverlay.originalMaterial = Resources.Load<Material>("Materials/matSummonDrone");
+                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
+                    }
+                }
+                RepositionGroundedDrones(characterMaster.GetBody(), ownerBody.transform.position);
+            }
+        }
+
+        private void RepositionGroundedDrones(CharacterBody droneBody, Vector3 desiredPosition)
+        {
+            bool isGrounded = false;
+            foreach (string subname in GroundedDrones)
+            {
+                if (droneBody.name.Contains(subname))
+                {
+                    isGrounded = true;
+                    break;
+                }
+            }
+            if (!isGrounded) return;
+            SpawnCard spawnCard = ScriptableObject.CreateInstance<SpawnCard>();
+            spawnCard.hullSize = droneBody.hullClassification;
+            spawnCard.nodeGraphType = GraphType.Ground;
+            spawnCard.prefab = helperPrefab;
+            GameObject gameObject = DirectorCore.instance.TrySpawnObject(new DirectorSpawnRequest(spawnCard, new DirectorPlacementRule
+            {
+                placementMode = DirectorPlacementRule.PlacementMode.Approximate,
+                position = desiredPosition,
+                minDistance = 0,
+                maxDistance = 50
+            }, Run.instance.runRNG));
+            if (gameObject)
+            {
+                TeleportHelper.TeleportBody(droneBody, gameObject.transform.position);
+                Object.Destroy(gameObject);
+            }
+            else
+            {
+                Log.Warning($"Machines.RepositionGroundedDrones: Failed to reposition {droneBody.name}. It might be floating now.");
+            }
+            Object.Destroy(spawnCard);
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

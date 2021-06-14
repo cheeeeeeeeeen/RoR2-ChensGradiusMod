@@ -42,6 +42,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
 
         protected override void SetupConfig()
         {
+            spawnWeightWithMachinesArtifact = 0;
             base.SetupConfig();
 
             laserDuration = config.Bind(configCategory,

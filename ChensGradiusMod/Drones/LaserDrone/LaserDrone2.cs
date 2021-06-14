@@ -42,6 +42,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
 
         protected override void SetupConfig()
         {
+            spawnWeightWithMachinesArtifact = 0;
             base.SetupConfig();
 
             laserCooldown = config.Bind(configCategory,
