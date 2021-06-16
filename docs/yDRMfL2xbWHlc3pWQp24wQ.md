@@ -1,7 +1,7 @@
 
-#### [ChensGradiusMod](./index 'index')
+#### [ChensGradiusMod](index 'index')
 
-### [Chen.GradiusMod](./neHTXX+yFsk1RpXqjkv9zg 'Chen.GradiusMod').[GradiusModPlugin](./l92m4Dah9rvPq366O3unNQ 'Chen.GradiusMod.GradiusModPlugin')
+### [Chen.GradiusMod](neHTXX+yFsk1RpXqjkv9zg 'Chen.GradiusMod').[GradiusModPlugin](l92m4Dah9rvPq366O3unNQ 'Chen.GradiusMod.GradiusModPlugin')
 
 ## GradiusModPlugin.ModVer Field
 The version of the mod.  
@@ -10,4 +10,4 @@ public const string ModVer = 3.3.4;
 ```
 
 #### Field Value
-[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
+[System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

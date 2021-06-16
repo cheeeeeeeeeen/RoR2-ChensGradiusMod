@@ -1,7 +1,7 @@
 
-#### [ChensGradiusMod](./index 'index')
+#### [ChensGradiusMod](index 'index')
 
-### [Chen.GradiusMod.Drones](./Y-iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[DroneInfo](./HgBDP9HfqsUu394-FlkKCg 'Chen.GradiusMod.Drones.DroneInfo')
+### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[DroneInfo](HgBDP9HfqsUu394_FlkKCg 'Chen.GradiusMod.Drones.DroneInfo')
 
 ## DroneInfo.instance Field
 The instance of a Drone.  
@@ -10,4 +10,4 @@ public Drone instance;
 ```
 
 #### Field Value
-[Drone](./o+an11PxrqGB40HSHXgvpQ 'Chen.GradiusMod.Drones.Drone')  
+[Drone](o+an11PxrqGB40HSHXgvpQ 'Chen.GradiusMod.Drones.Drone')

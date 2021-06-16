@@ -1,7 +1,7 @@
 
-#### [ChensGradiusMod](./index 'index')
+#### [ChensGradiusMod](index 'index')
 
-### [Chen.GradiusMod.Compatibility](./F8aFQlqLO5uD9A4izEhK-Q 'Chen.GradiusMod.Compatibility').[Aetherium](./A7DokKiQwPFh8Sb5RpHf9A 'Chen.GradiusMod.Compatibility.Aetherium')
+### [Chen.GradiusMod.Compatibility](F8aFQlqLO5uD9A4izEhK_Q 'Chen.GradiusMod.Compatibility').[Aetherium](A7DokKiQwPFh8Sb5RpHf9A 'Chen.GradiusMod.Compatibility.Aetherium')
 
 ## Aetherium.enabled Property
 The check to use if Aetherium mod is enabled.  
@@ -11,4 +11,4 @@ public static bool enabled { get; }
 ```
 
 #### Property Value
-[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
+[System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')

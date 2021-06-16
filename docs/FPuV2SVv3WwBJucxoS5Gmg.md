@@ -1,7 +1,7 @@
 
-#### [ChensGradiusMod](./index 'index')
+#### [ChensGradiusMod](index 'index')
 
-### [Chen.GradiusMod.Drones](./Y-iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[DroneDeathState](./8ui+PJgGZL18czsU0lHbsw 'Chen.GradiusMod.Drones.DroneDeathState')
+### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[DroneDeathState](8ui+PJgGZL18czsU0lHbsw 'Chen.GradiusMod.Drones.DroneDeathState')
 
 ## DroneDeathState.OnEnter() Method
 Overrideable OnEnter method from the original state. Always call base.OnEnter. Initialize values at runtime here.  

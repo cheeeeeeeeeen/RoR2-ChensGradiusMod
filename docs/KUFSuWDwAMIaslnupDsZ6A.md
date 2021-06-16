@@ -1,7 +1,7 @@
 
-#### [ChensGradiusMod](./index 'index')
+#### [ChensGradiusMod](index 'index')
 
-### [Chen.GradiusMod.Drones](./Y-iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[Drone](./o+an11PxrqGB40HSHXgvpQ 'Chen.GradiusMod.Drones.Drone')
+### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[Drone](o+an11PxrqGB40HSHXgvpQ 'Chen.GradiusMod.Drones.Drone')
 
 ## Drone.PostSetup() Method
 The fifth step in the setup process. Place here the code for cleanup, or for finalization.  
