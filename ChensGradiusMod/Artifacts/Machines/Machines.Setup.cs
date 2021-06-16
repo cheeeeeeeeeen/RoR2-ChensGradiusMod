@@ -145,7 +145,7 @@ namespace Chen.GradiusMod.Artifacts.Machines
             CharacterMaster characterMaster = new MasterSummon
             {
                 masterPrefab = droneMasterPrefab,
-                position = ownerBody.transform.position - (ownerBody.transform.forward.normalized * counter) + (Vector3.up * .25f * counter),
+                position = ownerBody.transform.position - (ownerBody.transform.forward.normalized * counter) + (.25f * counter * Vector3.up),
                 rotation = ownerBody.transform.rotation,
                 summonerBodyObject = ownerBody.gameObject,
                 ignoreTeamMemberLimit = true,

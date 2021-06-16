@@ -88,7 +88,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                 {
                     if (ownerOt.IsRotateUser())
                     {
-                        Vector3 newPosition = DecidePosition(ownerOt.currentOptionAngle) * ownerOt.distanceAxis * ownerOt.GetRotateMultiplier();
+                        Vector3 newPosition = ownerOt.distanceAxis * ownerOt.GetRotateMultiplier() * DecidePosition(ownerOt.currentOptionAngle);
                         newPosition = ownerT.position + ownerOt.GetRotateOffset() + newPosition;
                         t.position = Vector3.Lerp(t.position, newPosition, ownerOt.optionLookRate);
                     }

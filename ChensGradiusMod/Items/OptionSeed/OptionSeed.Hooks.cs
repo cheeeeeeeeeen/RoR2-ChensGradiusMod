@@ -745,7 +745,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             FireForSeeds(self.characterBody, (_s, behavior, _t, multiplier) =>
             {
                 behavior.O["Uppercut.OverlapAttack"] = self.InitMeleeOverlap(Uppercut.baseDamageCoefficient, Uppercut.hitEffectPrefab, self.GetModelTransform(), Uppercut.hitboxString);
-                ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).forceVector = Vector3.up * Uppercut.upwardForceStrength * multiplier;
+                ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).forceVector = Uppercut.upwardForceStrength * multiplier * Vector3.up;
                 ((OverlapAttack)behavior.O["Uppercut.OverlapAttack"]).damage *= multiplier;
             });
         }

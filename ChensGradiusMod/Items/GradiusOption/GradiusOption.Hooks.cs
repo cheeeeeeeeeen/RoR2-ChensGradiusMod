@@ -262,7 +262,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     behavior.U["healBeamController"] = hbc;
                     hbc.healRate = healRate;
                     hbc.target = self.target;
-                    hbc.ownership.ownerObject = option.gameObject;
+                    hbc.ownership.ownerObject = option;
                     NetworkServer.Spawn(gameObject);
                 }
             });
@@ -295,7 +295,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                         HealBeamController hbc = gameObject.GetComponent<HealBeamController>();
                         hbc.healRate = self.healRateCoefficient * self.damageStat * self.attackSpeedStat * damageMultiplier;
                         hbc.target = self.targetHurtBox;
-                        hbc.ownership.ownerObject = option.gameObject;
+                        hbc.ownership.ownerObject = option;
                         gameObject.AddComponent<DestroyOnTimer>().duration = self.duration;
                         NetworkServer.Spawn(gameObject);
                     }
@@ -671,7 +671,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 int halfCount = FireGoldFist.fistCount / 2;
                 for (int i = -halfCount; i < halfCount; i++)
                 {
-                    Vector3 fistPosition = predictedTargetPosition + a * FireGoldFist.distanceBetweenFists * i;
+                    Vector3 fistPosition = predictedTargetPosition + FireGoldFist.distanceBetweenFists * i * a;
                     if (Physics.Raycast(new Ray(fistPosition + Vector3.up * 30f, Vector3.down), out RaycastHit raycastHit, 60f,
                                         LayerIndex.world.mask, QueryTriggerInteraction.Ignore))
                     {

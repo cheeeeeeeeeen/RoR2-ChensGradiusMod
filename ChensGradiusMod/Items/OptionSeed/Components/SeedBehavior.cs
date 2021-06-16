@@ -107,8 +107,8 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
                 relativePosition = Quaternion.AngleAxis(ownerSt.currentOptionAngle * numbering, ownerIbt.aimDirection) * Vector3.Cross(ownerIbt.aimDirection, Vector3.down * numbering);
                 relativePosition = (relativePosition.normalized * ownerSt.distanceAxis);
             }
-            relativePosition += (Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * Vector3.right * ownerSt.horizontalOffsetMultiplier * numbering);
-            relativePosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * Vector3.up * ownerSt.verticalOffsetMultiplier;
+            relativePosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * (ownerSt.horizontalOffsetMultiplier * numbering * Vector3.right);
+            relativePosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * (ownerSt.verticalOffsetMultiplier * Vector3.up);
             Vector3 newPosition = ownerT.position + relativePosition;
             return newPosition;
         }
