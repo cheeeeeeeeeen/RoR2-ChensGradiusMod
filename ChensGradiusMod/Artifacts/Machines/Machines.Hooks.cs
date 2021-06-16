@@ -3,6 +3,7 @@ using RoR2;
 using TILER2;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.GradiusMod.GradiusModPlugin;
 using DeathState = EntityStates.Drone.DeathState;
 using Random = UnityEngine.Random;
 

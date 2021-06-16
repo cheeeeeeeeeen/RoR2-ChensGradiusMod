@@ -49,6 +49,11 @@ namespace Chen.GradiusMod
                 Log.Debug("Vanilla Change: Modifying Flame Drone spawn weight on Abyssal Depths or Scorched Acres (or both).");
                 InteractableActions += FlameDrone_InteractableActions;
             }
+            if (generalCfg.smarterVanillaDrones)
+            {
+                Log.Debug("Vanilla Change: Modifying vanilla drone behavior to be smarter.");
+                ModifyVanillaDronesSkillDrivers();
+            }
         }
 
         private void FlameDrone_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
@@ -56,17 +61,21 @@ namespace Chen.GradiusMod
             DirectorCard dcFlameDrone = null;
             foreach (DirectorCardHolder dch in arg1)
             {
-                if (dcFlameDrone == null && dch.Card.spawnCard.name.Contains("FlameDrone")) dcFlameDrone = dch.Card;
+                if (dcFlameDrone == null && dch.Card.spawnCard.name.Contains("FlameDrone"))
+                {
+                    dcFlameDrone = dch.Card;
+                    break;
+                }
             }
             if (dcFlameDrone != null)
             {
                 if (generalCfg.flameDroneWeightAbyssalDepths > 0 && arg2.stage == R2APIStage.AbyssalDepths)
                 {
-                    dcFlameDrone.selectionWeight = generalCfg.flameDroneWeightAbyssalDepths;
+                    dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightAbyssalDepths;
                 }
                 else if (generalCfg.flameDroneWeightScorchedAcres > 0 && arg2.stage == R2APIStage.ScorchedAcres)
                 {
-                    dcFlameDrone.selectionWeight = generalCfg.flameDroneWeightScorchedAcres;
+                    dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightScorchedAcres;
                 }
             }
         }
@@ -101,6 +110,15 @@ namespace Chen.GradiusMod
             deathBehavior.deathState = new SerializableEntityStateType(newStateType);
         }
 
+        private void ModifyVanillaDronesSkillDrivers()
+        {
+            drone1Master.SetAllDriversToAimTowardsEnemies();
+            tc280DroneMaster.SetAllDriversToAimTowardsEnemies();
+            missileDroneMaster.SetAllDriversToAimTowardsEnemies();
+            backupDroneMaster.SetAllDriversToAimTowardsEnemies();
+            flameDroneMaster.SetAllDriversToAimTowardsEnemies();
+        }
+
         internal class GlobalConfig : AutoConfigContainer
         {
             [AutoConfig("Applies a fix for Emergency Drones. Set to false if there are issues regarding compatibility.", AutoConfigFlags.PreventNetMismatch)]
@@ -124,6 +142,9 @@ namespace Chen.GradiusMod
 
             [AutoConfig("Flame Drone spawn weight multiplier in Abyssal Depths. Set to 0 for default.", AutoConfigFlags.PreventNetMismatch, 0, int.MaxValue)]
             public int flameDroneWeightAbyssalDepths { get; private set; } = 3;
+
+            [AutoConfig("Modifies the vanilla Drone A.I. to be smarter. For example, this change makes Gunner Drones not attack the players.", AutoConfigFlags.PreventNetMismatch)]
+            public bool smarterVanillaDrones { get; private set; } = true;
         }
     }
 }

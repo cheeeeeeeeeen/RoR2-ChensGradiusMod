@@ -79,16 +79,6 @@ namespace Chen.GradiusMod.Artifacts.Machines
             "Turret1"
         };
 
-        private readonly GameObject backupDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster");
-        private readonly GameObject drone1Master = Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master");
-        private readonly GameObject drone2Master = Resources.Load<GameObject>("prefabs/charactermasters/Drone2Master");
-        private readonly GameObject emergencyDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/EmergencyDroneMaster");
-        private readonly GameObject flameDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/FlameDroneMaster");
-        private readonly GameObject missileDroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster");
-        private readonly GameObject turret1Master = Resources.Load<GameObject>("prefabs/charactermasters/Turret1Master");
-        private readonly GameObject tc280DroneMaster = Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster");
-        private readonly GameObject helperPrefab = Resources.Load<GameObject>("SpawnCards/HelperPrefab");
-
         public Machines()
         {
             iconResource = assetBundle.LoadAsset<Sprite>("Assets/Artifacts/machines_artifact_on_icon.png");

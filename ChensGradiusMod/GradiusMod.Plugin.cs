@@ -66,6 +66,16 @@ namespace Chen.GradiusMod
         internal static AssetBundle assetBundle;
         internal static ContentProvider contentProvider;
 
+        internal static GameObject backupDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster"); }
+        internal static GameObject drone1Master { get => Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master"); }
+        internal static GameObject drone2Master { get => Resources.Load<GameObject>("prefabs/charactermasters/Drone2Master"); }
+        internal static GameObject emergencyDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/EmergencyDroneMaster"); }
+        internal static GameObject flameDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/FlameDroneMaster"); }
+        internal static GameObject missileDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster"); }
+        internal static GameObject turret1Master { get => Resources.Load<GameObject>("prefabs/charactermasters/Turret1Master"); }
+        internal static GameObject tc280DroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"); }
+        internal static GameObject helperPrefab { get => Resources.Load<GameObject>("SpawnCards/HelperPrefab"); }
+
 #if DEBUG
 
         internal static SoundPlayer soundPlayer = new SoundPlayer();
