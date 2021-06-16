@@ -1,4 +1,5 @@
 ﻿using RoR2;
+using RoR2.CharacterAI;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
@@ -37,6 +38,20 @@ namespace Chen.GradiusMod
                 rootObject = catalyst
             };
             EffectManager.SpawnEffect(effectPrefab, data, transmit);
+        }
+
+        internal static void SetAllDriversToAimTowardsEnemies(this GameObject masterObject)
+        {
+            AISkillDriver[] skillDrivers = masterObject.GetComponents<AISkillDriver>();
+            SetAllDriversToAimTowardsEnemies(skillDrivers);
+        }
+
+        internal static void SetAllDriversToAimTowardsEnemies(this AISkillDriver[] skillDrivers)
+        {
+            foreach (var skillDriver in skillDrivers)
+            {
+                skillDriver.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            }
         }
     }
 }

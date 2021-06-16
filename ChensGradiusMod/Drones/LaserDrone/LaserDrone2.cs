@@ -143,6 +143,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             AISkillDriver[] skillDrivers = droneMaster.GetComponents<AISkillDriver>();
             skillDrivers[3].maxDistance = 30f;
             skillDrivers[4].maxDistance = 90f;
+            skillDrivers.SetAllDriversToAimTowardsEnemies();
         }
 
         private void ModifyDroneBody()

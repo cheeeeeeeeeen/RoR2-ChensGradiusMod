@@ -150,22 +150,22 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 }
                 if (isAuthority)
                 {
-                    //Ray aimRay = new Ray(muzzle.transform.position, GetAimRay().direction);
-                    //Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
-                    //GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
-                    Vector3 direction;
-                    GameObject target = null;
-                    BaseAI baseAi = characterBody.masterObject.GetComponent<BaseAI>();
-                    BaseAI.Target mainTarget = baseAi.currentEnemy;
-                    if (mainTarget != null && mainTarget.gameObject)
-                    {
-                        target = mainTarget.gameObject;
-                    }
-                    if (target) direction = (target.transform.position - muzzle.transform.position).normalized;
-                    else direction = GetAimRay().direction;
-                    Ray aimRay = new Ray(muzzle.transform.position, direction);
+                    Ray aimRay = new Ray(muzzle.transform.position, GetAimRay().direction);
                     Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
                     GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
+                    //Vector3 direction;
+                    //GameObject target = null;
+                    //BaseAI baseAi = characterBody.masterObject.GetComponent<BaseAI>();
+                    //BaseAI.Target mainTarget = baseAi.currentEnemy;
+                    //if (mainTarget != null && mainTarget.gameObject)
+                    //{
+                    //    target = mainTarget.gameObject;
+                    //}
+                    //if (target) direction = (target.transform.position - muzzle.transform.position).normalized;
+                    //else direction = GetAimRay().direction;
+                    //Ray aimRay = new Ray(muzzle.transform.position, direction);
+                    //Vector3 vector = aimRay.origin + aimRay.direction * maxDistance;
+                    //GenerateLaser(aimRay, vector, damageStat * damageCoefficient, force);
                 }
                 Util.PlaySound(attackSoundString, gameObject);
                 GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, direction) =>
