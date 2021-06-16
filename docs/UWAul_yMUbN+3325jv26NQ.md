@@ -1,15 +1,11 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones')
-
 ## Drone&lt;T&gt; Class
 Allows for making drone classes into singleton classes.  
 ```csharp
 public abstract class Drone<T> : Chen.GradiusMod.Drones.Drone
     where T : Chen.GradiusMod.Drones.Drone<T>
 ```
-
 #### Type parameters
 <a name='Chen_GradiusMod_Drones_Drone_T__T'></a>
 `T`  

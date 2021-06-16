@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones')
-
 ## Drone Class
 The drone class where mod creators should inherit from to ease up development.  
 ```csharp

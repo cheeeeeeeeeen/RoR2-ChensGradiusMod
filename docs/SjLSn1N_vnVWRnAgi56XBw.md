@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.OptionSeed](be1vnC2Vgp_vVFpwRHLjUQ 'Chen.GradiusMod.Items.OptionSeed').[OptionSeed](U6Iu4qSqg_tWdEO+2QhjqQ 'Chen.GradiusMod.Items.OptionSeed.OptionSeed')
-
 ## OptionSeed.FireForSeeds(CharacterBody, Action&lt;GameObject,SeedBehavior,SeedTracker,float&gt;) Method
 Loops through all the Option Seeds of the item wielder. The action has 4 useful parameters to use.  
 The first parameter refers to the Option Seed itself. It is a GameObject.  
@@ -12,7 +9,6 @@ The last parameter is the computed damage multiplier based on configuration and 
 ```csharp
 public void FireForSeeds(RoR2.CharacterBody optionSeedOwner, System.Action<UnityEngine.GameObject,Chen.GradiusMod.Items.OptionSeed.Components.SeedBehavior,Chen.GradiusMod.Items.OptionSeed.Components.SeedTracker,float> actionToRun);
 ```
-
 #### Parameters
 <a name='Chen_GradiusMod_Items_OptionSeed_OptionSeed_FireForSeeds(RoR2_CharacterBody_System_Action_UnityEngine_GameObject_Chen_GradiusMod_Items_OptionSeed_Components_SeedBehavior_Chen_GradiusMod_Items_OptionSeed_Components_SeedTracker_float_)_optionSeedOwner'></a>
 `optionSeedOwner` [RoR2.CharacterBody](https://docs.microsoft.com/en-us/dotnet/api/RoR2.CharacterBody 'RoR2.CharacterBody')  

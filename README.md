@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.3.4-orange)
+![Version](https://img.shields.io/badge/Version-3.3.5-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -11,7 +11,7 @@
 
 ## Description
 
-This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games.
+This mod aims to implement features from the Gradius series as well as from other classic shoot-em-up games. The mod also changes some vanilla aspects of the game regarding drones.
 
 It contains a fully functional Drone API. The documentation can be found in the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
 
@@ -69,6 +69,14 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Enemy drones will also have Gradius' Option if the Artifact of Evolution gives the item to the enemy.
 - Configure Gradius' Option so that it is not blacklisted.
 
+#### Other Features
+
+- Emergency Drone's Null Exception Reference fix. Configurable to be turned off.
+- Allows all drones to be repurchaseable. Configurable.
+- Allows an Equipment Drone to have a chance to drop its equipment upon being destroyed. Configurable.
+- Makes the Flame Drones spawn more in Abyssal Depths. Config options also offer to allow Flame Drones to spawn more in Scorched Acres.
+- Changes vanilla drone behaviors to be smarter, eliminating the problem of them attacking their own owners. Configurable to be turned off.
+
 ## Contact & Support
 
 - Issue Page: https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/issues
@@ -90,6 +98,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.3.5**
+- Improve Custom Drone Skill Drivers so that they are smarter, and may miss when the target is fast.
+- Add a config option to make vanilla drones smarter, eliminating the problem of them attacking their owners.
+
 **3.3.4**
 - Add Arms Race support from Chen's Classic Items for Laser Drone.
 - Update the icon for Artifact of Machines.
@@ -106,8 +118,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **3.3.1**
 - Fix a bug where some of the features of the Artifact of Machines are still enabled even though it is disabled on a run.
-
-**3.3.0**
-- Implement Artifact of Machines.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*

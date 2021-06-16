@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Compatibility](F8aFQlqLO5uD9A4izEhK_Q 'Chen.GradiusMod.Compatibility')
-
 ## Aetherium Class
 A static class that contains compatibility features from Aetherium mod.  
 ```csharp

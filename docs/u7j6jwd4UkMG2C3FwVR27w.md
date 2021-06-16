@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.GradiusOption.Components](3b19l5ocTqQsEH2QAbTnXQ 'Chen.GradiusMod.Items.GradiusOption.Components')
-
 ## OptionTracker Class
 A component attached to a Character Body that may own Options/Multiples.  
 The mod handles attaching the component when necessary.  

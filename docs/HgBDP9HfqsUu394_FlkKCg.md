@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones')
-
 ## DroneInfo Struct
 A structure that stores data of custom drones as well as where they originated from.  
 ```csharp

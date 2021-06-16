@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.OptionSeed.Components](DLK6_XagJC8yDTIwBWv4gg 'Chen.GradiusMod.Items.OptionSeed.Components')
-
 ## SeedTracker Class
 A component attached to a Character Body owning Option Seeds.  
 The mod handles attaching the component when necessary.  

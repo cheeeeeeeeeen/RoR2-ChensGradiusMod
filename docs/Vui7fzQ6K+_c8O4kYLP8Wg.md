@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.GradiusOption](mfb9nYomeqOwYy2EkL_v0Q 'Chen.GradiusMod.Items.GradiusOption')
-
 ## GradiusOption Class
 An item class which provides the main API related to the Options/Multiples. It is powered by TILER2.  
 ```csharp

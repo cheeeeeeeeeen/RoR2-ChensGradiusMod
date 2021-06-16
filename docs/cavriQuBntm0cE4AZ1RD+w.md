@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones')
-
 ## BodyRotation Class
 A component that allows the model to be rotated along the Z-axis.  
 May be useful to certain custom drones and some behavioral effects.  

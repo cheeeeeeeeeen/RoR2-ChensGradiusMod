@@ -1,6 +1,4 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ## Chen.GradiusMod.Artifacts.Machines Namespace
 
 | Classes | |

@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones')
-
 ## DroneDeathState Class
 An Entity State that should inherit from the original EntityStates.Drone.DeathState.  
 The original code does not support custom spawn cards to be detected when dying so that the interactable can spawn again.  

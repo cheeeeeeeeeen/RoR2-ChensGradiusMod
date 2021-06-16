@@ -1,14 +1,10 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.GradiusOption](mfb9nYomeqOwYy2EkL_v0Q 'Chen.GradiusMod.Items.GradiusOption').[GradiusOption](Vui7fzQ6K+_c8O4kYLP8Wg 'Chen.GradiusMod.Items.GradiusOption.GradiusOption')
-
 ## GradiusOption.OptionSync(CharacterBody, Action&lt;NetworkIdentity,OptionTracker&gt;, bool) Method
 Method that provides the Network Identity and Option Tracker for easier syncing. Sync logic should be provided in actionToRun.  
 ```csharp
 public void OptionSync(RoR2.CharacterBody optionOwner, System.Action<UnityEngine.Networking.NetworkIdentity,Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker> actionToRun, bool queryTracker=true);
 ```
-
 #### Parameters
 <a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_OptionSync(RoR2_CharacterBody_System_Action_UnityEngine_Networking_NetworkIdentity_Chen_GradiusMod_Items_GradiusOption_Components_OptionTracker__bool)_optionOwner'></a>
 `optionOwner` [RoR2.CharacterBody](https://docs.microsoft.com/en-us/dotnet/api/RoR2.CharacterBody 'RoR2.CharacterBody')  

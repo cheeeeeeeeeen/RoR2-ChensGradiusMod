@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.OptionSeed.Components](DLK6_XagJC8yDTIwBWv4gg 'Chen.GradiusMod.Items.OptionSeed.Components')
-
 ## SeedBehavior Class
 A component attached to the Options/Multiples for their behavioral functions.  
 ```csharp

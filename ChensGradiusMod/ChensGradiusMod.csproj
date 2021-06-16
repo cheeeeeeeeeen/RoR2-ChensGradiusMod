@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ChensGradiusMod</AssemblyName>
     <RootNamespace>Chen.GradiusMod</RootNamespace>
-    <Version>3.3.4</Version>
+    <Version>3.3.5</Version>
     <PackageProjectUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</RepositoryUrl>
     <Copyright />
@@ -12,14 +12,14 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
-    <DocumentationFile>_docs\ChensGradiusMod.xml</DocumentationFile>
+    <DocumentationFile>..\docs\ChensGradiusMod.xml</DocumentationFile>
     <DefaultDocumentationFileNameMode>Md5</DefaultDocumentationFileNameMode>
     <DefaultDocumentationRemoveFileExtensionFromLinks>true</DefaultDocumentationRemoveFileExtensionFromLinks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>5</WarningLevel>
-    <DocumentationFile>_docs\ChensGradiusMod.xml</DocumentationFile>
+    <DocumentationFile>..\docs\ChensGradiusMod.xml</DocumentationFile>
     <DefaultDocumentationFileNameMode>Md5</DefaultDocumentationFileNameMode>
     <DefaultDocumentationRemoveFileExtensionFromLinks>true</DefaultDocumentationRemoveFileExtensionFromLinks>
   </PropertyGroup>
@@ -98,7 +98,7 @@
   </ProjectExtensions>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mkdir &quot;$(ProjectDir)Build&quot;&#xD;&#xA;cd &quot;$(ProjectDir)Build&quot;&#xD;&#xA;del * /Q&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; /Y&#xD;&#xA;if '$(ConfigurationName)' == 'Debug' (&#xD;&#xA;  copy &quot;$(ProjectDir)ModMeta&quot; . /Y&#xD;&#xA;  copy &quot;$(SolutionDir)README.md&quot; . /Y&#xD;&#xA;  copy &quot;$(SolutionDir)LICENSE.txt&quot; . /Y&#xD;&#xA;  copy &quot;$(ProjectDir)_docs\$(TargetName).xml&quot; . /Y&#xD;&#xA;  7z a Build.zip .\* -x!Build.zip -x!old_*&#xD;&#xA;  copy &quot;$(TargetName).xml&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;  copy &quot;$(TargetFileName)&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;)" />
+    <Exec Command="mkdir &quot;$(ProjectDir)Build&quot;&#xD;&#xA;cd &quot;$(ProjectDir)Build&quot;&#xD;&#xA;del * /Q&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; /Y&#xD;&#xA;if '$(ConfigurationName)' == 'Debug' (&#xD;&#xA;  copy &quot;$(ProjectDir)ModMeta&quot; . /Y&#xD;&#xA;  copy &quot;$(SolutionDir)README.md&quot; . /Y&#xD;&#xA;  copy &quot;$(SolutionDir)LICENSE.txt&quot; . /Y&#xD;&#xA;  copy &quot;$(SolutionDir)docs\$(TargetName).xml&quot; . /Y&#xD;&#xA;  7z a Build.zip .\* -x!Build.zip -x!old_*&#xD;&#xA;  copy &quot;$(TargetName).xml&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;  copy &quot;$(TargetFileName)&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;)" />
   </Target>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.GradiusOption.Components](3b19l5ocTqQsEH2QAbTnXQ 'Chen.GradiusMod.Items.GradiusOption.Components')
-
 ## OptionBehavior Class
 A component attached to the Options/Multiples for their behavioral functions.  
 ```csharp

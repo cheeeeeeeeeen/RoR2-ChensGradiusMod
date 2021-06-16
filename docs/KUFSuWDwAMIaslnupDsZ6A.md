@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[Drone](o+an11PxrqGB40HSHXgvpQ 'Chen.GradiusMod.Drones.Drone')
-
 ## Drone.PostSetup() Method
 The fifth step in the setup process. Place here the code for cleanup, or for finalization.  
 This will still be performed whether the drone is enabled or disabled.  

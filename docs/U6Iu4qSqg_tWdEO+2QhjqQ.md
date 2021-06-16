@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Items.OptionSeed](be1vnC2Vgp_vVFpwRHLjUQ 'Chen.GradiusMod.Items.OptionSeed')
-
 ## OptionSeed Class
 An item class which provides the main API related to the Option Seeds. It is powered by TILER2.  
 ```csharp

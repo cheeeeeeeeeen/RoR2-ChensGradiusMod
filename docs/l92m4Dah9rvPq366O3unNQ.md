@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod](neHTXX+yFsk1RpXqjkv9zg 'Chen.GradiusMod')
-
 ## GradiusModPlugin Class
 The mother plugin that allows the mod to be loaded to RoR2.  
 ```csharp

@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod.Artifacts.Machines](ayrCd5wE1fGIQOox6GFHYA 'Chen.GradiusMod.Artifacts.Machines')
-
 ## Machines Class
 As artifact class which provides the main API related to the controlling which drones the enemy may spawn with. It is powered by TILER2.  
 ```csharp

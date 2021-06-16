@@ -1,8 +1,5 @@
-
 #### [ChensGradiusMod](index 'index')
-
 ### [Chen.GradiusMod](neHTXX+yFsk1RpXqjkv9zg 'Chen.GradiusMod')
-
 ## Extensions Class
 Helpful extensions for objects that will be recurring in the mod.  
 ```csharp
