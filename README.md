@@ -103,6 +103,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Improve the Drone class so that work flow on some of the properties will be clearer.
 - Changes on Vanilla Drone Behaviors are now enforced and no longer configurable as they are now necessary for Artifact of Machines to work as well as mod compatibilities.
 - Every vanilla and custom drone can now be configured each to be repurchased upon being decommissioned.
+- Publicized all extension methods as it proves to be useful for shortcuts.
 
 **3.3.5**
 - Improve Custom Drone Skill Drivers so that they are smarter, and may miss when the target is fast.
