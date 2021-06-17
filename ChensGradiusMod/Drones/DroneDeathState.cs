@@ -1,4 +1,6 @@
 using Chen.GradiusMod.Artifacts.Machines;
+using Chen.GradiusMod.Compatibility;
+using Chen.Helpers.LogHelpers;
 using RoR2;
 using System;
 using UnityEngine;
@@ -14,6 +16,11 @@ namespace Chen.GradiusMod.Drones
     /// </summary>
     public class DroneDeathState : VanillaDeathState
     {
+        /// <summary>
+        /// Flag that is used to check if the interactable will be spawned upon death. Modify this in OnEnter.
+        /// </summary>
+        protected bool spawnInteractable = true;
+
         /// <summary>
         /// A method that should be implemented by the child class. This will be the Spawn Card that will be used to spawn when the drone is destroyed.
         /// </summary>
@@ -44,7 +51,7 @@ namespace Chen.GradiusMod.Drones
         /// <param name="contactPoint">The point where the interactable spawns</param>
         public override void OnImpactServer(Vector3 contactPoint)
         {
-            if (Machines.instance.IsActiveAndEnabled()) return;
+            if (!spawnInteractable) return;
             var spawnCard = GetInteractableSpawnCard();
             if (spawnCard != null)
             {
@@ -74,6 +81,8 @@ namespace Chen.GradiusMod.Drones
             forceAmount = originalState.forceAmount;
             hardCutoffDuration = maxFallDuration = bodyPreservationDuration = deathDuration = 12f;
             destroyOnImpact = true;
+            spawnInteractable &= !Machines.instance.IsActiveAndEnabled();
+            if (Compatibility.Aetherium.enabled) spawnInteractable &= !Compatibility.Aetherium.RevivedByEngineersToolbelt(characterBody);
             base.OnEnter();
         }
 

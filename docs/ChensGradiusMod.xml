@@ -55,6 +55,13 @@
             </summary>
             <param name="masterName">The Character Master name of the drone to add</param>
         </member>
+        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.RevivedByEngineersToolbelt(RoR2.CharacterBody)">
+            <summary>
+            Determines if the CharacterBody is revived by Engineers Toolbelt.
+            </summary>
+            <param name="body">CharacterBody to check on.</param>
+            <returns>True if revived by the item's effect. False if not.</returns>
+        </member>
         <member name="T:Chen.GradiusMod.Compatibility.ChensClassicItems">
             <summary>
             A static class that contains compatibility features from Chen's Classic Items.
@@ -302,6 +309,11 @@
             The original code does not support custom spawn cards to be detected when dying so that the interactable can spawn again.
             This state will cater to custom drones so they are also able to spawn interactables upon death.
             Do not use this class directly. Always inherit from this class and implement the interactable property.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Drones.DroneDeathState.spawnInteractable">
+            <summary>
+            Flag that is used to check if the interactable will be spawned upon death. Modify this in OnEnter.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Drones.DroneDeathState.GetInteractableSpawnCard">

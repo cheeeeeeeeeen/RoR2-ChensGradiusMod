@@ -1,5 +1,7 @@
 ﻿using Aetherium;
 using Aetherium.Items;
+using RoR2;
+using static Aetherium.Items.EngineersToolbelt;
 using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Compatibility
@@ -48,6 +50,16 @@ namespace Chen.GradiusMod.Compatibility
         public static void AddCustomDrone(string masterName)
         {
             InspiringDrone.instance.AddCustomDrone(masterName);
+        }
+
+        /// <summary>
+        /// Determines if the CharacterBody is revived by Engineers Toolbelt.
+        /// </summary>
+        /// <param name="body">CharacterBody to check on.</param>
+        /// <returns>True if revived by the item's effect. False if not.</returns>
+        public static bool RevivedByEngineersToolbelt(CharacterBody body)
+        {
+            return body.gameObject.GetComponent<EngineersToolbeltRevivalFlag>();
         }
     }
 }

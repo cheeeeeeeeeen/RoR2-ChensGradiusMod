@@ -11,6 +11,10 @@ public class DroneDeathState : EntityStates.Drone.DeathState
 
 Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.Object 'System.Object') &#129106; [EntityStates.EntityState](https://docs.microsoft.com/en-us/dotnet/api/EntityStates.EntityState 'EntityStates.EntityState') &#129106; [EntityStates.BaseState](https://docs.microsoft.com/en-us/dotnet/api/EntityStates.BaseState 'EntityStates.BaseState') &#129106; [EntityStates.GenericCharacterDeath](https://docs.microsoft.com/en-us/dotnet/api/EntityStates.GenericCharacterDeath 'EntityStates.GenericCharacterDeath') &#129106; [EntityStates.Drone.DeathState](https://docs.microsoft.com/en-us/dotnet/api/EntityStates.Drone.DeathState 'EntityStates.Drone.DeathState') &#129106; DroneDeathState  
 
+| Fields | |
+| :--- | :--- |
+| [spawnInteractable](RyPDbqBCfZjCwT9AQD+69w 'Chen.GradiusMod.Drones.DroneDeathState.spawnInteractable') | Flag that is used to check if the interactable will be spawned upon death. Modify this in OnEnter.<br/> |
+
 | Methods | |
 | :--- | :--- |
 | [FixedUpdate()](2AqJyYy_iWUfEyKdaA+9Rw 'Chen.GradiusMod.Drones.DroneDeathState.FixedUpdate()') | Overrideable OnEnter method from the original state. Always call base.FixedUpdate.<br/> |
