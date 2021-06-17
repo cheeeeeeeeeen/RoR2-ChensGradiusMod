@@ -1,4 +1,5 @@
-﻿using EntityStates;
+﻿using Chen.Helpers.UnityHelpers;
+using EntityStates;
 using RoR2;
 using RoR2.CharacterAI;
 using System;
@@ -79,7 +80,7 @@ namespace Chen.GradiusMod
                 return;
             }
             GameObject droneBody = master.bodyPrefab;
-            CharacterDeathBehavior deathBehavior = droneBody.GetComponent<CharacterDeathBehavior>();
+            CharacterDeathBehavior deathBehavior = droneBody.GetOrAddComponent<CharacterDeathBehavior>();
             deathBehavior.deathState = new SerializableEntityStateType(newStateType);
         }
     }
