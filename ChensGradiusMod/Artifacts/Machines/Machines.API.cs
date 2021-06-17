@@ -11,10 +11,10 @@ namespace Chen.GradiusMod.Artifacts.Machines
         /// </summary>
         /// <param name="masterObject">CharacterMaster GameObject of the drone.</param>
         /// <param name="spawnWeight">Spawn Weight of the drone.</param>
-        /// <returns>True if the drone is added to the pool. False if it is already in the pool, or it was not added due to the spawn weight being less than 1.</returns>
+        /// <returns>True if the drone is added to the pool. False if it is already in the pool, or it was not added.</returns>
         public bool AddEnemyDroneType(GameObject masterObject, int spawnWeight)
         {
-            if (spawnWeight <= 0 || EnemyDrones.Contains(masterObject)) return false;
+            if (spawnWeight <= 0 || !masterObject || EnemyDrones.Contains(masterObject)) return false;
             for (int i = 0; i < spawnWeight; i++)
             {
                 EnemyDrones.Add(masterObject);

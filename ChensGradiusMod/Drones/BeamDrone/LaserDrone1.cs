@@ -1,6 +1,5 @@
 ﻿#undef DEBUG
 
-using Chen.GradiusMod.Items.GradiusOption;
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
@@ -37,6 +36,8 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         private int minimumStageCompletions { get => minimumStageSpawn - 1; }
 
         private int skyMeadowMinimumStageCompletions { get => skyMeadowMinimumStageSpawn - 1; }
+
+        protected override bool canHaveOptions => true;
 
         protected override GameObject DroneCharacterMasterObject => droneMaster;
 
@@ -97,7 +98,6 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         protected override void SetupBehavior()
         {
             base.SetupBehavior();
-            GradiusOption.instance.SupportMinionType(name);
             InteractableActions += DirectorAPI_InteractableActions;
         }
 

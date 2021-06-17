@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using Chen.GradiusMod.Artifacts.Machines;
+using Chen.GradiusMod.Items.GradiusOption;
 using System;
 using UnityEngine;
 using static Chen.GradiusMod.GradiusModPlugin;
@@ -92,6 +93,11 @@ namespace Chen.GradiusMod.Drones
         protected ConfigFile config;
 
         /// <summary>
+        /// Determines if the drone can be spawned with Gradius' Options. Required to explicitly implement.
+        /// </summary>
+        protected abstract bool canHaveOptions { get; }
+
+        /// <summary>
         /// This refers to the CharacterMaster GameObject of the drone.
         /// Implement this method in the drone class and have it return the CharacterMaster GameObject.
         /// </summary>
@@ -143,6 +149,7 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         protected virtual void SetupBehavior()
         {
+            if (canHaveOptions) GradiusOption.instance.SupportMinionType(name);
             Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject, spawnWeightWithMachinesArtifact);
             if (canBeInspired && Compatibility.Aetherium.enabled)
             {
