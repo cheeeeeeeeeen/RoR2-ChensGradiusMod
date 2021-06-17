@@ -367,8 +367,8 @@
             <summary>
             Safely checks if the dictionary has the key and if they key has an existing object.
             </summary>
-            <param name="dictionary">Supposedly the data dictionary from OptionBehavior</param>
-            <param name="key">Key to search from the dictionary</param>
+            <param name="dictionary">Supposedly the data dictionary from OptionBehavior.</param>
+            <param name="key">Key to search from the dictionary.</param>
             <returns>True if the key exists and an object is found. False otherwise.</returns>
         </member>
         <member name="M:Chen.GradiusMod.Extensions.MuzzleEffect(UnityEngine.GameObject,UnityEngine.GameObject,System.Boolean)">
@@ -379,6 +379,25 @@
             <param name="catalyst">The Game Object of the user</param>
             <param name="effectPrefab">Effect prefab to display</param>
             <param name="transmit">Determines whether the effect should be networked</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Extensions.SetAllDriversToAimTowardsEnemies(UnityEngine.GameObject)">
+            <summary>
+            Sets all Skill Drivers of the drone to aim towards the enemy.
+            </summary>
+            <param name="masterObject">The CharacterMaster GameObject whose Skill Drivers are being modified.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Extensions.SetAllDriversToAimTowardsEnemies(RoR2.CharacterAI.AISkillDriver[])">
+            <summary>
+            Sets all Skill Drivers within the array to aim towards the enemy.
+            </summary>
+            <param name="skillDrivers">An array of Skill Drivers that will be modified.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Extensions.AssignDeathBehavior(UnityEngine.GameObject,System.Type)">
+            <summary>
+            Assigns the Death Behavior of the CharacterMaster GameObject.
+            </summary>
+            <param name="masterObject">CharacterMaster GameObject whose DeathBehavior state is being modified.</param>
+            <param name="newStateType">The new DeathBehavior state.</param>
         </member>
         <member name="T:Chen.GradiusMod.GradiusModPlugin">
             <summary>

@@ -17,8 +17,8 @@ namespace Chen.GradiusMod
         /// <summary>
         /// Safely checks if the dictionary has the key and if they key has an existing object.
         /// </summary>
-        /// <param name="dictionary">Supposedly the data dictionary from OptionBehavior</param>
-        /// <param name="key">Key to search from the dictionary</param>
+        /// <param name="dictionary">Supposedly the data dictionary from OptionBehavior.</param>
+        /// <param name="key">Key to search from the dictionary.</param>
         /// <returns>True if the key exists and an object is found. False otherwise.</returns>
         public static bool SafeCheck(this Dictionary<string, UnityObject> dictionary, string key)
         {
@@ -43,13 +43,21 @@ namespace Chen.GradiusMod
             EffectManager.SpawnEffect(effectPrefab, data, transmit);
         }
 
-        internal static void SetAllDriversToAimTowardsEnemies(this GameObject masterObject)
+        /// <summary>
+        /// Sets all Skill Drivers of the drone to aim towards the enemy.
+        /// </summary>
+        /// <param name="masterObject">The CharacterMaster GameObject whose Skill Drivers are being modified.</param>
+        public static void SetAllDriversToAimTowardsEnemies(this GameObject masterObject)
         {
             AISkillDriver[] skillDrivers = masterObject.GetComponents<AISkillDriver>();
             SetAllDriversToAimTowardsEnemies(skillDrivers);
         }
 
-        internal static void SetAllDriversToAimTowardsEnemies(this AISkillDriver[] skillDrivers)
+        /// <summary>
+        /// Sets all Skill Drivers within the array to aim towards the enemy.
+        /// </summary>
+        /// <param name="skillDrivers">An array of Skill Drivers that will be modified.</param>
+        public static void SetAllDriversToAimTowardsEnemies(this AISkillDriver[] skillDrivers)
         {
             foreach (var skillDriver in skillDrivers)
             {
@@ -57,7 +65,12 @@ namespace Chen.GradiusMod
             }
         }
 
-        internal static void AssignDeathBehavior(this GameObject masterObject, Type newStateType)
+        /// <summary>
+        /// Assigns the Death Behavior of the CharacterMaster GameObject.
+        /// </summary>
+        /// <param name="masterObject">CharacterMaster GameObject whose DeathBehavior state is being modified.</param>
+        /// <param name="newStateType">The new DeathBehavior state.</param>
+        public static void AssignDeathBehavior(this GameObject masterObject, Type newStateType)
         {
             CharacterMaster master = masterObject.GetComponent<CharacterMaster>();
             if (!master)
