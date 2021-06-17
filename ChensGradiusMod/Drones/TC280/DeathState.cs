@@ -1,21 +1,19 @@
 ﻿using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.GradiusMod.GradiusModPlugin;
 using VanillaMegaDroneState = EntityStates.Drone.MegaDroneDeathState;
 
 namespace Chen.GradiusMod.Drones.TC280
 {
     internal class DeathState : DroneDeathState
     {
-        private InteractableSpawnCard spawnCard;
         private ChildLocator childLocator;
         private Transform modelTransform;
 
-        protected override InteractableSpawnCard GetInteractableSpawnCard()
-        {
-            if (!spawnCard) spawnCard = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenMegaDrone");
-            return spawnCard;
-        }
+        protected override bool SpawnInteractable { get; set; } = generalCfg.megaDronesAreRepurchaseable;
+
+        protected override InteractableSpawnCard GetInteractableSpawnCard => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenMegaDrone");
 
         public override void OnEnter()
         {

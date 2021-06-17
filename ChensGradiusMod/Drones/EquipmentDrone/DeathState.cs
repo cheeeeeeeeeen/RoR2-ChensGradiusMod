@@ -8,13 +8,9 @@ namespace Chen.GradiusMod.Drones.EquipmentDrone
 {
     internal class DeathState : DroneDeathState
     {
-        private InteractableSpawnCard spawnCard;
+        protected override bool SpawnInteractable { get; set; } = generalCfg.equipmentDronesAreRepurchaseable;
 
-        protected override InteractableSpawnCard GetInteractableSpawnCard()
-        {
-            if (!spawnCard) spawnCard = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenEquipmentDrone");
-            return spawnCard;
-        }
+        protected override InteractableSpawnCard GetInteractableSpawnCard => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenEquipmentDrone");
 
         protected override void OnInteractableSpawn(GameObject spawnedObject)
         {

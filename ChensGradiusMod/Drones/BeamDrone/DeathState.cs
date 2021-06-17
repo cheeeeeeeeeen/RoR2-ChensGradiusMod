@@ -5,10 +5,9 @@ namespace Chen.GradiusMod.Drones.BeamDrone
 {
     internal class DeathState : DroneDeathState
     {
-        protected override InteractableSpawnCard GetInteractableSpawnCard()
-        {
-            return LaserDrone1.iSpawnCard;
-        }
+        protected override bool SpawnInteractable { get; set; } = LaserDrone1.instance.canBeRepurchased;
+
+        protected override InteractableSpawnCard GetInteractableSpawnCard => LaserDrone1.iSpawnCard;
 
         protected override void OnInteractableSpawn(GameObject spawnedObject)
         {

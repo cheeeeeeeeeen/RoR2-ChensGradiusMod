@@ -12,17 +12,19 @@ namespace Chen.GradiusMod.Drones
     /// This state will cater to custom drones so they are also able to spawn interactables upon death.
     /// Do not use this class directly. Always inherit from this class and implement the interactable property.
     /// </summary>
-    public class DroneDeathState : VanillaDeathState
+    public abstract class DroneDeathState : VanillaDeathState
     {
+        /// <summary>
+        /// Flag that is used to check if the interactable will be spawned upon death. Modify this in OnEnter.
+        /// Required implementation for its default value.
+        /// </summary>
+        protected abstract bool SpawnInteractable { get; set; }
+
         /// <summary>
         /// A method that should be implemented by the child class. This will be the Spawn Card that will be used to spawn when the drone is destroyed.
         /// </summary>
         /// <returns>The spawn card of the interactable if implemented.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when the Property is not implemented.</exception>
-        protected virtual InteractableSpawnCard GetInteractableSpawnCard()
-        {
-            throw new InvalidOperationException($"{GetType().Name}.interactable Property is not implemented/overridden.");
-        }
+        protected abstract InteractableSpawnCard GetInteractableSpawnCard { get; }
 
         /// <summary>
         /// A method that can be overridden to add or change the logic when the interactable is spawned.
@@ -44,8 +46,8 @@ namespace Chen.GradiusMod.Drones
         /// <param name="contactPoint">The point where the interactable spawns</param>
         public override void OnImpactServer(Vector3 contactPoint)
         {
-            if (Machines.instance.IsActiveAndEnabled()) return;
-            var spawnCard = GetInteractableSpawnCard();
+            if (!SpawnInteractable) return;
+            var spawnCard = GetInteractableSpawnCard;
             if (spawnCard != null)
             {
                 DirectorPlacementRule placementRule = new DirectorPlacementRule
@@ -74,6 +76,7 @@ namespace Chen.GradiusMod.Drones
             forceAmount = originalState.forceAmount;
             hardCutoffDuration = maxFallDuration = bodyPreservationDuration = deathDuration = 12f;
             destroyOnImpact = true;
+            SpawnInteractable &= !Machines.instance.IsActiveAndEnabled();
             base.OnEnter();
         }
 

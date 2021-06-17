@@ -145,6 +145,13 @@
             Determines if the drone can be spawned in the enemy drone spawn pool with Artifact of Machines.
             </summary>
         </member>
+        <member name="P:Chen.GradiusMod.Drones.Drone.canBeRepurchased">
+            <summary>
+            Allow the drone to be repurchased upon being decommissioned.
+            The implementation of this config is manual and cannot be automated.
+            Use the config option by inheriting DroneDeathState and implementing SpawnInteractable.
+            </summary>
+        </member>
         <member name="P:Chen.GradiusMod.Drones.Drone.canBeInspired">
             <summary>
             Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.
@@ -153,6 +160,11 @@
         <member name="P:Chen.GradiusMod.Drones.Drone.affectedByDroneRepairKit">
             <summary>
             Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Drones.Drone.canHaveOptions">
+            <summary>
+            Determines if the drone can be spawned with Gradius' Options. Required to explicitly implement.
             </summary>
         </member>
         <member name="P:Chen.GradiusMod.Drones.Drone.name">
@@ -173,11 +185,6 @@
         <member name="F:Chen.GradiusMod.Drones.Drone.config">
             <summary>
             The config file assigned to this custom drone. Use this to bind config options.
-            </summary>
-        </member>
-        <member name="P:Chen.GradiusMod.Drones.Drone.canHaveOptions">
-            <summary>
-            Determines if the drone can be spawned with Gradius' Options. Required to explicitly implement.
             </summary>
         </member>
         <member name="P:Chen.GradiusMod.Drones.Drone.DroneCharacterMasterObject">
@@ -309,12 +316,17 @@
             Do not use this class directly. Always inherit from this class and implement the interactable property.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Drones.DroneDeathState.GetInteractableSpawnCard">
+        <member name="P:Chen.GradiusMod.Drones.DroneDeathState.SpawnInteractable">
+            <summary>
+            Flag that is used to check if the interactable will be spawned upon death. Modify this in OnEnter.
+            Required implementation for its default value.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Drones.DroneDeathState.GetInteractableSpawnCard">
             <summary>
             A method that should be implemented by the child class. This will be the Spawn Card that will be used to spawn when the drone is destroyed.
             </summary>
             <returns>The spawn card of the interactable if implemented.</returns>
-            <exception cref="T:System.InvalidOperationException">Thrown when the Property is not implemented.</exception>
         </member>
         <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnInteractableSpawn(UnityEngine.GameObject)">
             <summary>

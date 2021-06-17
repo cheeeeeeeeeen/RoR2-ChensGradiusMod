@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using Aetherium;
 using BepInEx;
@@ -12,16 +12,27 @@ using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
+using EntityStates;
 using R2API;
 using R2API.Networking;
 using R2API.Utils;
+using RoR2;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TILER2;
 using UnityEngine;
 using static Chen.Helpers.GeneralHelpers.AssetsManager;
 using static TILER2.MiscUtil;
+using GunnerDroneDeathState = Chen.GradiusMod.Drones.GunnerDrone.DeathState;
 using Path = System.IO.Path;
+using GunnerTurretDeathState = Chen.GradiusMod.Drones.GunnerTurret.DeathState;
+using EmergencyDroneDeathState = Chen.GradiusMod.Drones.EmergencyDrone.DeathState;
+using EquipmentDroneDeathState = Chen.GradiusMod.Drones.EquipmentDrone.DeathState;
+using HealingDroneDeathState = Chen.GradiusMod.Drones.HealingDrone.DeathState;
+using IncineratorDroneDeathState = Chen.GradiusMod.Drones.IncineratorDrone.DeathState;
+using MissileDroneDeathState = Chen.GradiusMod.Drones.MissileDrone.DeathState;
+using TC280DeathState = Chen.GradiusMod.Drones.TC280.DeathState;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
 
@@ -74,6 +85,7 @@ namespace Chen.GradiusMod
         internal static GameObject missileDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster"); }
         internal static GameObject turret1Master { get => Resources.Load<GameObject>("prefabs/charactermasters/Turret1Master"); }
         internal static GameObject tc280DroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"); }
+        internal static GameObject equipmentDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/EquipmentDroneMaster"); }
         internal static GameObject helperPrefab { get => Resources.Load<GameObject>("SpawnCards/HelperPrefab"); }
 
 #if DEBUG
@@ -126,6 +138,10 @@ namespace Chen.GradiusMod
             Log.Debug("Loading global configs...");
             generalCfg.BindAll(cfgFile, ModName, "General");
 
+            Log.Debug("Modifying vanilla drone behavior...");
+            ModifyVanillaDroneDeathBehaviors();
+            ModifyVanillaDronesSkillDrivers();
+
             Log.Debug("Instantiating item classes...");
             chensItemList = T2Module.InitAll<CatalogBoilerplate>(new T2Module.ModInfo
             {
@@ -137,18 +153,39 @@ namespace Chen.GradiusMod
             T2Module.SetupAll_PluginAwake(chensItemList);
             T2Module.SetupAll_PluginStart(chensItemList);
 
-            Log.Debug("Instantiating drones...");
+            Log.Debug("Instantiating custom drones...");
             gradiusDronesList = DroneCatalog.Initialize(ModGuid, cfgFile);
             DroneCatalog.EfficientSetupAll(gradiusDronesList);
 
             contentProvider.Initialize();
 
-            Log.Debug("Applying vanilla fixes...");
+            Log.Debug("Applying vanilla changes and fixes...");
             RegisterVanillaChanges();
 
             Log.Debug("Applying compatibility changes...");
             if (Compatibility.Aetherium.enabled) Compatibility.Aetherium.Setup();
             if (ChensClassicItems.enabled) ChensClassicItems.Setup();
+        }
+
+        private void ModifyVanillaDroneDeathBehaviors()
+        {
+            emergencyDroneMaster.AssignDeathBehavior(typeof(EmergencyDroneDeathState));
+            equipmentDroneMaster.AssignDeathBehavior(typeof(EquipmentDroneDeathState));
+            drone1Master.AssignDeathBehavior(typeof(GunnerDroneDeathState));
+            turret1Master.AssignDeathBehavior(typeof(GunnerTurretDeathState));
+            drone2Master.AssignDeathBehavior(typeof(HealingDroneDeathState));
+            flameDroneMaster.AssignDeathBehavior(typeof(IncineratorDroneDeathState));
+            missileDroneMaster.AssignDeathBehavior(typeof(MissileDroneDeathState));
+            tc280DroneMaster.AssignDeathBehavior(typeof(TC280DeathState));
+        }
+
+        private void ModifyVanillaDronesSkillDrivers()
+        {
+            drone1Master.SetAllDriversToAimTowardsEnemies();
+            tc280DroneMaster.SetAllDriversToAimTowardsEnemies();
+            missileDroneMaster.SetAllDriversToAimTowardsEnemies();
+            backupDroneMaster.SetAllDriversToAimTowardsEnemies();
+            flameDroneMaster.SetAllDriversToAimTowardsEnemies();
         }
 
         internal static bool DebugCheck()

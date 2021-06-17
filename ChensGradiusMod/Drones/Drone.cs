@@ -44,6 +44,13 @@ namespace Chen.GradiusMod.Drones
         public int spawnWeightWithMachinesArtifact { get; protected set; } = 1;
 
         /// <summary>
+        /// Allow the drone to be repurchased upon being decommissioned.
+        /// The implementation of this config is manual and cannot be automated.
+        /// Use the config option by inheriting DroneDeathState and implementing SpawnInteractable.
+        /// </summary>
+        public bool canBeRepurchased { get; protected set; } = true;
+
+        /// <summary>
         /// Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.
         /// </summary>
         public bool canBeInspired { get; protected set; } = true;
@@ -52,6 +59,11 @@ namespace Chen.GradiusMod.Drones
         /// Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.
         /// </summary>
         public bool affectedByDroneRepairKit { get; protected set; } = true;
+
+        /// <summary>
+        /// Determines if the drone can be spawned with Gradius' Options. Required to explicitly implement.
+        /// </summary>
+        public abstract bool canHaveOptions { get; }
 
         /// <summary>
         /// Fetches the custom drone's class name.
@@ -91,11 +103,6 @@ namespace Chen.GradiusMod.Drones
         /// The config file assigned to this custom drone. Use this to bind config options.
         /// </summary>
         protected ConfigFile config;
-
-        /// <summary>
-        /// Determines if the drone can be spawned with Gradius' Options. Required to explicitly implement.
-        /// </summary>
-        protected abstract bool canHaveOptions { get; }
 
         /// <summary>
         /// This refers to the CharacterMaster GameObject of the drone.

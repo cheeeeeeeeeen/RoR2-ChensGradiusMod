@@ -26,6 +26,8 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         public int spawnWeight { get; private set; } = 1;
         public int skyMeadowSpawnWeight { get; private set; } = 4;
 
+        public override bool canHaveOptions => true;
+
         public static InteractableSpawnCard iSpawnCard { get; private set; }
         public static GameObject brokenObject { get; private set; }
         public static DirectorCardHolder iDirectorCardHolder { get; private set; }
@@ -36,8 +38,6 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         private int minimumStageCompletions { get => minimumStageSpawn - 1; }
 
         private int skyMeadowMinimumStageCompletions { get => skyMeadowMinimumStageSpawn - 1; }
-
-        protected override bool canHaveOptions => true;
 
         protected override GameObject DroneCharacterMasterObject => droneMaster;
 

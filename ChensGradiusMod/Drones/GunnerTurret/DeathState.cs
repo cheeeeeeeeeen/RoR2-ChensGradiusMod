@@ -1,17 +1,14 @@
 using RoR2;
 using UnityEngine;
+using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Drones.GunnerTurret
 {
     internal class DeathState : DroneDeathState
     {
-        private InteractableSpawnCard spawnCard;
+        protected override bool SpawnInteractable { get; set; } = generalCfg.turretsAreRepurchaseable;
 
-        protected override InteractableSpawnCard GetInteractableSpawnCard()
-        {
-            if (!spawnCard) spawnCard = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1");
-            return spawnCard;
-        }
+        protected override InteractableSpawnCard GetInteractableSpawnCard => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1");
 
         protected override void OnInteractableSpawn(GameObject spawnedObject)
         {

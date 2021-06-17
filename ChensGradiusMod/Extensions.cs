@@ -1,7 +1,10 @@
-﻿using RoR2;
+﻿using EntityStates;
+using RoR2;
 using RoR2.CharacterAI;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static Chen.GradiusMod.GradiusModPlugin;
 using UnityObject = UnityEngine.Object;
 
 namespace Chen.GradiusMod
@@ -52,6 +55,19 @@ namespace Chen.GradiusMod
             {
                 skillDriver.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             }
+        }
+
+        internal static void AssignDeathBehavior(this GameObject masterObject, Type newStateType)
+        {
+            CharacterMaster master = masterObject.GetComponent<CharacterMaster>();
+            if (!master)
+            {
+                Log.Warning("Extensions.AssignDeathBehavior: CharacterMaster component not found!");
+                return;
+            }
+            GameObject droneBody = master.bodyPrefab;
+            CharacterDeathBehavior deathBehavior = droneBody.GetComponent<CharacterDeathBehavior>();
+            deathBehavior.deathState = new SerializableEntityStateType(newStateType);
         }
     }
 }
