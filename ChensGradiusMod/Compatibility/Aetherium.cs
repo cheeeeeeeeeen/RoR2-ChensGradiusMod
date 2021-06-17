@@ -38,7 +38,7 @@ namespace Chen.GradiusMod.Compatibility
             if (generalCfg.equipmentDroneInspire)
             {
                 Log.Debug("Aetherium.Setup: Applying equipmentDroneInspire.");
-                AddCustomDrone("EquipmentDrone");
+                AddInspiredCustomDrone("EquipmentDrone");
             }
             hasSetup = true;
         }
@@ -46,10 +46,19 @@ namespace Chen.GradiusMod.Compatibility
         /// <summary>
         /// Allows the Inspiring Drone to inspire the custom drone.
         /// </summary>
-        /// <param name="masterName">The Character Master name of the drone to add</param>
-        public static void AddCustomDrone(string masterName)
+        /// <param name="masterName">The Character Master name of the drone to add.</param>
+        public static void AddInspiredCustomDrone(string masterName)
         {
             InspiringDrone.instance.AddCustomDrone(masterName);
+        }
+
+        /// <summary>
+        /// Allows the Engineers Toolbelt to revive and duplicate the custom drone.
+        /// </summary>
+        /// <param name="masterName">The Character Master name of the drone to add.</param>
+        public static void AddEngineersToolbeltCustomDrone(string masterName)
+        {
+            EngineersToolbelt.instance.AddCustomDrone(masterName);
         }
 
         /// <summary>
