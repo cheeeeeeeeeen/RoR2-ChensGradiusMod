@@ -16,4 +16,4 @@ Spawn Weight of the drone.
   
 #### Returns
 [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
-True if the drone is added to the pool. False if it is already in the pool, or it was not added due to the spawn weight being less than 1.
+True if the drone is added to the pool. False if it is already in the pool, or it was not added.

@@ -15,7 +15,7 @@
             </summary>
             <param name="masterObject">CharacterMaster GameObject of the drone.</param>
             <param name="spawnWeight">Spawn Weight of the drone.</param>
-            <returns>True if the drone is added to the pool. False if it is already in the pool, or it was not added due to the spawn weight being less than 1.</returns>
+            <returns>True if the drone is added to the pool. False if it is already in the pool, or it was not added.</returns>
         </member>
         <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.RemoveEnemyDroneType(UnityEngine.GameObject)">
             <summary>
@@ -173,6 +173,11 @@
         <member name="F:Chen.GradiusMod.Drones.Drone.config">
             <summary>
             The config file assigned to this custom drone. Use this to bind config options.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Drones.Drone.canHaveOptions">
+            <summary>
+            Determines if the drone can be spawned with Gradius' Options. Required to explicitly implement.
             </summary>
         </member>
         <member name="P:Chen.GradiusMod.Drones.Drone.DroneCharacterMasterObject">

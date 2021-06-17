@@ -20,6 +20,7 @@ Derived
 | [affectedByDroneRepairKit](LtK+HDvGfEOAosyKriPOxA 'Chen.GradiusMod.Drones.Drone.affectedByDroneRepairKit') | Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.<br/> |
 | [alreadySetup](N9oYEvtp1qDnSIojdZai9Q 'Chen.GradiusMod.Drones.Drone.alreadySetup') | Used to determine if the custom drone was already set up.<br/> |
 | [canBeInspired](LxERhX2G1JKf7yIDtI0HSg 'Chen.GradiusMod.Drones.Drone.canBeInspired') | Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.<br/> |
+| [canHaveOptions](XkBw6JYh+1Iu4w4pFJ9EXg 'Chen.GradiusMod.Drones.Drone.canHaveOptions') | Determines if the drone can be spawned with Gradius' Options. Required to explicitly implement.<br/> |
 | [configCategory](oCCPZRl2yRxO1ooRx17R8g 'Chen.GradiusMod.Drones.Drone.configCategory') | The category that will be used in the config file that contains the custom drone's config options.<br/> |
 | [DroneCharacterMasterObject](A1tlRZLu0v_MEW2ubLUQRQ 'Chen.GradiusMod.Drones.Drone.DroneCharacterMasterObject') | This refers to the CharacterMaster GameObject of the drone.<br/>Implement this method in the drone class and have it return the CharacterMaster GameObject.<br/> |
 | [enabled](xPmiKVc3dVangaNc4oESVw 'Chen.GradiusMod.Drones.Drone.enabled') | Determines if the drone should be enabled/disabled. Disabled drones will not be set up.<br/> |
