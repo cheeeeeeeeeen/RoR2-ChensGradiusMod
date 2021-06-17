@@ -1,6 +1,5 @@
 using Chen.GradiusMod.Artifacts.Machines;
 using RoR2;
-using System;
 using UnityEngine;
 using VanillaDeathState = EntityStates.Drone.DeathState;
 

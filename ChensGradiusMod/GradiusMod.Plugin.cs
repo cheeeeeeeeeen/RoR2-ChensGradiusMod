@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using Aetherium;
 using BepInEx;
@@ -12,26 +12,23 @@ using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
-using EntityStates;
 using R2API;
 using R2API.Networking;
 using R2API.Utils;
-using RoR2;
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TILER2;
 using UnityEngine;
 using static Chen.Helpers.GeneralHelpers.AssetsManager;
 using static TILER2.MiscUtil;
-using GunnerDroneDeathState = Chen.GradiusMod.Drones.GunnerDrone.DeathState;
-using Path = System.IO.Path;
-using GunnerTurretDeathState = Chen.GradiusMod.Drones.GunnerTurret.DeathState;
 using EmergencyDroneDeathState = Chen.GradiusMod.Drones.EmergencyDrone.DeathState;
 using EquipmentDroneDeathState = Chen.GradiusMod.Drones.EquipmentDrone.DeathState;
+using GunnerDroneDeathState = Chen.GradiusMod.Drones.GunnerDrone.DeathState;
+using GunnerTurretDeathState = Chen.GradiusMod.Drones.GunnerTurret.DeathState;
 using HealingDroneDeathState = Chen.GradiusMod.Drones.HealingDrone.DeathState;
 using IncineratorDroneDeathState = Chen.GradiusMod.Drones.IncineratorDrone.DeathState;
 using MissileDroneDeathState = Chen.GradiusMod.Drones.MissileDrone.DeathState;
+using Path = System.IO.Path;
 using TC280DeathState = Chen.GradiusMod.Drones.TC280.DeathState;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
