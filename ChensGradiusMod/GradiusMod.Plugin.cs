@@ -183,6 +183,7 @@ namespace Chen.GradiusMod
             missileDroneMaster.SetAllDriversToAimTowardsEnemies();
             backupDroneMaster.SetAllDriversToAimTowardsEnemies();
             flameDroneMaster.SetAllDriversToAimTowardsEnemies();
+            equipmentDroneMaster.SetAllDriversToAimTowardsEnemies();
         }
 
         internal static bool DebugCheck()
