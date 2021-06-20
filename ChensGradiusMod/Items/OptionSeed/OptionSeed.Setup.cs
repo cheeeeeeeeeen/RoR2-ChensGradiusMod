@@ -102,6 +102,10 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         private static readonly Dictionary<string, float> HorizontalOffsetMultipliers = new Dictionary<string, float>();
 
+        private static GameObject loaderZapCone { get => Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone"); }
+
+        private static Material evisTargetMaterial { get => Resources.Load<Material>("Materials/matMercEvisTarget"); }
+
         public OptionSeed()
         {
             modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/seedmodel.prefab");

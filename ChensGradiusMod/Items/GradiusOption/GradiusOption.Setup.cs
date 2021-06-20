@@ -114,7 +114,6 @@ namespace Chen.GradiusMod.Items.GradiusOption
         internal const uint loseOptionEventId = 2603869165;
 
         internal static GameObject gradiusOptionPrefab { get; private set; }
-        internal static GameObject flamethrowerEffectPrefab { get; private set; }
 
         private static readonly List<string> MinionsList = new List<string>
         {
@@ -225,8 +224,6 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 Log.Debug("Successfully initialized Gradius Option prefab.");
             }
             else Log.Error("Failed to create GradiusOption: Resource not found or is null.");
-
-            flamethrowerEffectPrefab = Resources.Load<GameObject>("prefabs/effects/DroneFlamethrowerEffect");
         }
 
         private void RegisterNetworkMessages()

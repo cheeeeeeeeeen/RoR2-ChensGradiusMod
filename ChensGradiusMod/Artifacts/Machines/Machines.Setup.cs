@@ -72,6 +72,8 @@ namespace Chen.GradiusMod.Artifacts.Machines
             return str;
         }
 
+        private Material summonDroneMaterial { get => Resources.Load<Material>("Materials/matSummonDrone"); }
+
         private readonly List<GameObject> EnemyDrones = new List<GameObject>();
 
         private readonly List<string> GroundedDrones = new List<string>()
@@ -154,7 +156,7 @@ namespace Chen.GradiusMod.Artifacts.Machines
                         temporaryOverlay.animateShaderAlpha = true;
                         temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
                         temporaryOverlay.destroyComponentOnEnd = true;
-                        temporaryOverlay.originalMaterial = Resources.Load<Material>("Materials/matSummonDrone");
+                        temporaryOverlay.originalMaterial = summonDroneMaterial;
                         temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
                     }
                 }

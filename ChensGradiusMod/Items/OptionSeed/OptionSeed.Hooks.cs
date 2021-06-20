@@ -289,7 +289,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         crit = self.isCritAuthority,
                         damage = self.damageStat * multiplier,
                         owner = self.gameObject,
-                        projectilePrefab = Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone")
+                        projectilePrefab = loaderZapCone
                     };
                     ProjectileManager.instance.FireProjectile(fireProjectileInfo);
                 }
@@ -865,7 +865,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             temporaryOverlay.animateShaderAlpha = true;
                             temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
                             temporaryOverlay.destroyComponentOnEnd = true;
-                            temporaryOverlay.originalMaterial = Resources.Load<Material>("Materials/matMercEvisTarget");
+                            temporaryOverlay.originalMaterial = evisTargetMaterial;
                             temporaryOverlay.AddToCharacerModel(transform.GetComponent<CharacterModel>());
                             if (NetworkServer.active)
                             {

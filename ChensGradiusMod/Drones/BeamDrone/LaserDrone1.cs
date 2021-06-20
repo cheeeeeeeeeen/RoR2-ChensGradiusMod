@@ -86,9 +86,8 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         {
             base.SetupComponents();
             AddLanguageTokens();
-            InteractableSpawnCard origIsc = Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1");
-            brokenObject = origIsc.prefab;
-            brokenObject = brokenObject.InstantiateClone($"{name}Broken", true);
+            InteractableSpawnCard origIsc = drone1SpawnCard;
+            brokenObject = origIsc.prefab.InstantiateClone($"{name}Broken", true);
             ModifyBrokenObject();
             iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
@@ -212,8 +211,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         private void ModifySkill()
         {
             LoadoutAPI.AddSkill(typeof(FireBeam));
-            SkillDef origSkillDef = Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun");
-            SkillDef newSkillDef = Object.Instantiate(origSkillDef);
+            SkillDef newSkillDef = Object.Instantiate(drone1Skill);
             newSkillDef.activationState = new SerializableEntityStateType(typeof(FireBeam));
             newSkillDef.baseRechargeInterval = laserCooldown;
             newSkillDef.beginSkillCooldownOnSkillEnd = true;
