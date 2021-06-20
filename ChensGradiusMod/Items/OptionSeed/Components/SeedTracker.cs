@@ -62,8 +62,10 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
             get => OptionSeed.instance.rotationSpeed;
         }
 
+        internal float distanceOwner { get; private set; } = 2f;
         internal float distanceAxis { get; private set; } = .4f;
         internal float seedLookRate { get; private set; } = .2f;
+        internal float positionSmoothRate { get; private set; } = .7f;
 
         private float invalidCheckTimer = 0f;
 
@@ -82,7 +84,6 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
 
         private void FixedUpdate()
         {
-            if (PauseScreenController.paused) return;
             if (invalidCheckTimer >= invalidThreshold)
             {
                 Log.Warning($"Invalid SeedTracker: Cannot find the values through the threshold time. Destroying the tracker from GameObject {gameObject.name}.");
@@ -111,6 +112,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
                 }
             }
             if (invalidCheckTimer > 0f) invalidCheckTimer = 0f;
+            if (PauseScreenController.paused) return;
             currentOptionAngle += rotateSeedAngleSpeed;
             if (currentOptionAngle >= 360f) currentOptionAngle = 360f - currentOptionAngle;
         }

@@ -71,7 +71,6 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
 
         private void FixedUpdate()
         {
-            if (PauseScreenController.paused) return;
             if (init && owner)
             {
                 init = false;
@@ -81,21 +80,28 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
                 ownerMaster = ownerBody.master;
                 ownerT = owner.transform;
             }
-            else if (!init)
+            else if (!init && (!owner || !ownerBody || !ownerMaster || !ownerSt || !ownerIbt))
             {
-                if (owner && ownerBody && ownerMaster && ownerSt && ownerIbt)
+                Log.Warning($"SeedBehavior.FixedUpdate: Lost owner or one of its components. Destroying this Option Seed. numbering = {numbering}");
+                Destroy(gameObject);
+            }
+        }
+
+        private void Update()
+        {
+            if (PauseScreenController.paused) return;
+            if (!init && ownerSt && ownerIbt)
+            {
+                t.position = Vector3.Lerp(t.position, DecidePosition(), ownerSt.positionSmoothRate);
+                if (OptionSeed.instance.includeModelInsideOrb)
                 {
-                    t.position = Vector3.Lerp(t.position, DecidePosition(), ownerSt.seedLookRate);
-                    if (OptionSeed.instance.includeModelInsideOrb)
-                    {
-                        t.rotation = Quaternion.Lerp(t.rotation, Util.QuaternionSafeLookRotation(ownerIbt.aimDirection), ownerSt.seedLookRate);
-                    }
+                    t.rotation = Quaternion.Lerp(t.rotation, Util.QuaternionSafeLookRotation(ownerIbt.aimDirection), ownerSt.seedLookRate);
                 }
-                else
-                {
-                    Log.Warning($"SeedBehavior.FixedUpdate: Lost owner or one of its components. Destroying this Option Seed. numbering = {numbering}");
-                    Destroy(gameObject);
-                }
+            }
+            else
+            {
+                Log.Warning($"SeedBehavior.Update: Lost one of the components. Destroying this Option Seed. numbering = {numbering}");
+                Destroy(gameObject);
             }
         }
 
@@ -107,7 +113,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
                 relativePosition = Quaternion.AngleAxis(ownerSt.currentOptionAngle * numbering, ownerIbt.aimDirection) * Vector3.Cross(ownerIbt.aimDirection, Vector3.down * numbering);
                 relativePosition = (relativePosition.normalized * ownerSt.distanceAxis);
             }
-            relativePosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * (ownerSt.horizontalOffsetMultiplier * numbering * Vector3.right);
+            relativePosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * (ownerSt.horizontalOffsetMultiplier * numbering * ownerSt.distanceOwner * Vector3.right);
             relativePosition += Util.QuaternionSafeLookRotation(ownerIbt.aimDirection) * (ownerSt.verticalOffsetMultiplier * Vector3.up);
             Vector3 newPosition = ownerT.position + relativePosition;
             return newPosition;
