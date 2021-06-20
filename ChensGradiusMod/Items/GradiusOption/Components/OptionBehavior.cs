@@ -72,7 +72,6 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
 
         private void FixedUpdate()
         {
-            if (PauseScreenController.paused) return;
             if (init && owner)
             {
                 init = false;
@@ -82,31 +81,38 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                 ownerBody = owner.GetComponent<CharacterBody>();
                 ownerMaster = ownerBody.master;
             }
-            else if (!init)
+            else if (!init && (!owner || !ownerBody || !ownerMaster || !ownerOt))
             {
-                if (owner && ownerBody && ownerMaster && ownerOt)
+                Log.Warning($"OptionBehavior.FixedUpdate: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
+                Destroy(gameObject);
+            }
+        }
+
+        private void Update()
+        {
+            if (PauseScreenController.paused) return;
+            if (!init || !ownerOt)
+            {
+                if (ownerOt.IsRotateUser())
                 {
-                    if (ownerOt.IsRotateUser())
-                    {
-                        Vector3 newPosition = ownerOt.distanceAxis * ownerOt.GetRotateMultiplier() * DecidePosition(ownerOt.currentOptionAngle);
-                        newPosition = ownerT.position + ownerOt.GetRotateOffset() + newPosition;
-                        t.position = Vector3.Lerp(t.position, newPosition, ownerOt.optionLookRate);
-                    }
-                    else t.position = ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1];
-                    if (GradiusOption.instance.includeModelInsideOrb)
-                    {
-                        Vector3 direction;
-                        if (target) direction = (target.transform.position - t.position).normalized;
-                        else if (ownerIbt) direction = ownerIbt.aimDirection;
-                        else direction = (ownerT.position - t.position).normalized;
-                        t.rotation = Quaternion.Lerp(t.rotation, Util.QuaternionSafeLookRotation(direction), ownerOt.optionLookRate);
-                    }
+                    Vector3 newPosition = ownerOt.distanceAxis * ownerOt.GetRotateMultiplier() * DecidePosition(ownerOt.currentOptionAngle);
+                    newPosition = ownerT.position + ownerOt.GetRotateOffset() + newPosition;
+                    t.position = Vector3.Lerp(t.position, newPosition, ownerOt.positionSmoothRate);
                 }
-                else
+                else t.position = Vector3.Lerp(t.position, ownerOt.flightPath[numbering * ownerOt.distanceInterval - 1], ownerOt.positionSmoothRate);
+                if (GradiusOption.instance.includeModelInsideOrb)
                 {
-                    Log.Warning($"OptionBehavior.FixedUpdate: Lost owner or one of its components. Destroying this Option. numbering = {numbering}");
-                    Destroy(gameObject);
+                    Vector3 direction;
+                    if (target) direction = (target.transform.position - t.position).normalized;
+                    else if (ownerIbt) direction = ownerIbt.aimDirection;
+                    else direction = (ownerT.position - t.position).normalized;
+                    t.rotation = Quaternion.Lerp(t.rotation, Util.QuaternionSafeLookRotation(direction), ownerOt.optionLookRate);
                 }
+            }
+            else
+            {
+                Log.Warning($"OptionBehavior.Update: Lost Tracker. Destroying this Option. numbering = {numbering}");
+                Destroy(gameObject);
             }
         }
 

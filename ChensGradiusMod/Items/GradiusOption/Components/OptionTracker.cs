@@ -45,6 +45,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
         internal float distanceAxis { get; private set; } = 1.2f;
         internal float rotateOptionAngleSpeed { get; private set; } = 2f;
         internal float optionLookRate { get; private set; } = .15f;
+        internal float positionSmoothRate { get; private set; } = .5f;
         internal OptionMasterTracker masterOptionTracker { get; private set; }
 
         internal List<Tuple<GameObjectType, NetworkInstanceId, short, NetworkInstanceId>> targetIds { get; private set; } =
