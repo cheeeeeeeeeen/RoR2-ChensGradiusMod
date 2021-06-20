@@ -70,7 +70,6 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
 
         private void FixedUpdate()
         {
-            if (PauseScreenController.paused) return;
             if (invalidCheckTimer >= invalidThreshold)
             {
                 Log.Warning($"Invalid OptionTracker: Cannot find the values through the threshold time. Destroying the tracker from GameObject {gameObject.name}.");
@@ -105,6 +104,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                 }
             }
             if (invalidCheckTimer > 0f) invalidCheckTimer = 0f;
+            SyncTargets();
             if (init && masterOptionTracker.optionItemCount > 0)
             {
                 init = false;
@@ -128,6 +128,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                     flightPath.Clear();
                     previousOptionItemCount = 0;
                 }
+                if (PauseScreenController.paused) return;
                 if (masterOptionTracker && characterMaster)
                 {
                     if (IsRotateUser() && masterOptionTracker.optionItemCount > 0)
@@ -145,7 +146,6 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
                     previousPosition = t.position;
                 }
             }
-            SyncTargets();
         }
 
         private void SyncTargets()
