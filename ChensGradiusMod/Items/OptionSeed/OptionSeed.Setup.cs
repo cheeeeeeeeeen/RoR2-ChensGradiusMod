@@ -24,13 +24,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public override ReadOnlyCollection<ItemTag> itemTags => new ReadOnlyCollection<ItemTag>(new[] { ItemTag.Utility });
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Damage multiplier of Option Seeds. This also affects Proc Coefficients and the knockback force of the attack. " +
+        [AutoConfig("Damage multiplier of Option Seeds. This also affects the knockback force of the attack. " +
                     "1 = 100%. Server only.", AutoConfigFlags.None, 0f, float.MaxValue)]
-        public float damageMultiplier { get; private set; } = .12f;
+        public float damageMultiplier { get; private set; } = .2f;
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
         [AutoConfig("Additive increase to the damage multiplier when the item is stacked.", AutoConfigFlags.None, 0f, float.MaxValue)]
-        public float stackDamageMultiplier { get; private set; } = .03f;
+        public float stackDamageMultiplier { get; private set; } = .05f;
 
         [AutoConfig("Allows displaying and syncing the laser effect of Option Seeds. Disabling this will replace the effect with bullets. " +
                     "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
