@@ -60,7 +60,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - The drone will spawn more in Sky Meadow.
 - Options also copy this drone's attacks.
 
-![Artifact of Machines](https://puu.sh/HO6hC.png)
+![Artifact of Machines](https://puu.sh/HQkF4.png)
 **Artifact of Machines**
 - An artifact added to Risk of Rain 2. Survivors will have a TC-280 Prototype drone when they spawn. Enemies, however, will also get drones.
 - The Bacterian essence has drifted towards the embrace of the Planet. The Bulwark deemed it dangerous, and thus keeping it sealed in an artifact.
