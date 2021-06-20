@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.3.6-orange)
+![Version](https://img.shields.io/badge/Version-3.3.7-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -99,6 +99,14 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.3.7**
+- Remove the jitter movement of the Options.
+- Widen the distance of the seeds from the survivor to avoid self collisions.
+- Increase the damage of Option Seed through the default config.
+- Improve a a lot of the checking so that it also checks when the game is paused without affecting visual computations.
+- Improve the implementation of Gradius' Option so that sound effects will properly register.
+- Warnings reported within the game are actually safe bugs. Finally resolved that and properly disposed of data when possible.
+
 **3.3.6**
 - Rewrite and improve Drone Death Behaviors.
 - Add a config option for setting category of Gunner Turrets as Drones instead of Miscellaneous.
@@ -123,11 +131,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **3.3.3**
 - Update the mod so that it is fully compatible with the latest TILER2 update.
 - Minor adjustments in config options.
-
-**3.3.2**
-- Fix a bug in Artifact of Machines where Engineer Turrets also commit suicide when limit is reached, which affects all minions and destroys minions.
-
-**3.3.1**
-- Fix a bug where some of the features of the Artifact of Machines are still enabled even though it is disabled on a run.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
