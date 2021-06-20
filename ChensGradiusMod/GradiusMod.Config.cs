@@ -46,6 +46,7 @@ namespace Chen.GradiusMod
             foreach (var cardHolder in cardHolders)
             {
                 cardHolder.InteractableCategory = InteractableCategory.Drones;
+                cardHolder.Card.selectionWeight = 1;
             }
         }
 
