@@ -19,7 +19,7 @@ namespace Chen.GradiusMod.Artifacts.Machines
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
         [AutoConfig("Percentage chance of enemies getting drones. 25 means 25% chance.", AutoConfigFlags.PreventNetMismatch, 0f, 100f)]
-        public float hasDroneChance { get; private set; } = 100f;
+        public float hasDroneChance { get; private set; } = 25f;
 
         [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
         [AutoConfig("The least number of drones an enemy can spawn with.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
@@ -33,28 +33,28 @@ namespace Chen.GradiusMod.Artifacts.Machines
         [AutoConfig("The max number of TC-280 Prototypes each player can own.", AutoConfigFlags.PreventNetMismatch, 0, int.MaxValue)]
         public int maxPrototypePlayerCount { get; private set; } = 1;
 
-        [AutoConfig("Spawn Weight of the Strike Drone.", AutoConfigFlags.None, 0, 10)]
-        public int backupDroneSpawnWeight { get; private set; } = 2;
+        [AutoConfig("Spawn Weight of the Strike Drone.", AutoConfigFlags.None, 0, 20)]
+        public int backupDroneSpawnWeight { get; private set; } = 1;
 
-        [AutoConfig("Spawn Weight of the Gunner Drone.", AutoConfigFlags.None, 0, 10)]
-        public int drone1SpawnWeight { get; private set; } = 4;
+        [AutoConfig("Spawn Weight of the Gunner Drone.", AutoConfigFlags.None, 0, 20)]
+        public int drone1SpawnWeight { get; private set; } = 8;
 
-        [AutoConfig("Spawn Weight of the Healer Drone.", AutoConfigFlags.None, 0, 10)]
-        public int drone2SpawnWeight { get; private set; } = 3;
+        [AutoConfig("Spawn Weight of the Healer Drone.", AutoConfigFlags.None, 0, 20)]
+        public int drone2SpawnWeight { get; private set; } = 8;
 
-        [AutoConfig("Spawn Weight of the Emergency Drone.", AutoConfigFlags.None, 0, 10)]
-        public int emergencyDroneSpawnWeight { get; private set; } = 2;
+        [AutoConfig("Spawn Weight of the Emergency Drone.", AutoConfigFlags.None, 0, 20)]
+        public int emergencyDroneSpawnWeight { get; private set; } = 4;
 
-        [AutoConfig("Spawn Weight of the Flame Drone.", AutoConfigFlags.None, 0, 10)]
+        [AutoConfig("Spawn Weight of the Flame Drone.", AutoConfigFlags.None, 0, 20)]
         public int flameDroneSpawnWeight { get; private set; } = 1;
 
-        [AutoConfig("Spawn Weight of the Missile Drone.", AutoConfigFlags.None, 0, 10)]
-        public int missileDroneSpawnWeight { get; private set; } = 2;
+        [AutoConfig("Spawn Weight of the Missile Drone.", AutoConfigFlags.None, 0, 20)]
+        public int missileDroneSpawnWeight { get; private set; } = 4;
 
-        [AutoConfig("Spawn Weight of the Gunner Turret.", AutoConfigFlags.None, 0, 10)]
+        [AutoConfig("Spawn Weight of the Gunner Turret.", AutoConfigFlags.None, 0, 20)]
         public int gunnerTurretSpawnWeight { get; private set; } = 1;
 
-        [AutoConfig("Spawn Weight of the TC-280 Prototype for enemies.", AutoConfigFlags.None, 0, 10)]
+        [AutoConfig("Spawn Weight of the TC-280 Prototype for enemies.", AutoConfigFlags.None, 0, 20)]
         public int tc280SpawnWeight { get; private set; } = 0;
 
         protected override string GetNameString(string langid = null) => displayName;
