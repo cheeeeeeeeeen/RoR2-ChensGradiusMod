@@ -686,9 +686,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         muzzleName = "MuzzlePistol",
                         hitEffectPrefab = self.hitEffectPrefab,
                         isCrit = self.RollCrit(),
-                        HitEffectNormal = false,
-                        radius = .1f,
-                        smartCollision = true
+                        HitEffectNormal = false
                     };
                     bulletAttack.damageType |= DamageType.BonusToLowHealth;
                     self.ModifyBullet(bulletAttack);
@@ -1176,8 +1174,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         muzzleName = "MuzzleRight",
                         hitEffectPrefab = FireBarrage.hitEffectPrefab,
                         isCrit = Util.CheckRoll(self.critStat, self.characterBody.master),
-                        radius = 0.1f,
-                        smartCollision = true,
                         damageType = DamageType.Stun1s
                     }.Fire();
                 }
@@ -1225,9 +1221,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         tracerEffectPrefab = FirePistol2.tracerEffectPrefab,
                         muzzleName = targetMuzzle,
                         hitEffectPrefab = FirePistol2.hitEffectPrefab,
-                        isCrit = Util.CheckRoll(self.critStat, self.characterBody.master),
-                        radius = 0.1f,
-                        smartCollision = true
+                        isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
                     }.Fire();
                 }
             });
