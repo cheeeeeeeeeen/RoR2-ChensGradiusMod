@@ -71,10 +71,6 @@ namespace Chen.GradiusMod.Items.GradiusOption
                     "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
 
-        [AutoConfig("Play a sound effect when an Option is acquired. 0 = disabled, 1 = Play sound in Owner, 2 = Play sound for all Drones, " +
-                    "3 = Play sound for both. Client only.", AutoConfigFlags.None, 0, 3)]
-        public int playOptionGetSoundEffect { get; private set; } = 3;
-
         [AutoConfig("For Equipment Drones. Determines the number of uses the Equipment Drone will perform the equipment's effect. e.g. " +
                     "A value of 0.3 and having an Option number of 4 will result to the Equipment Drone performing the effect 1 more time. " +
                     "(4 * 0.3 = 1.2 -> Floored to 1). Having a value of 0 will disable the config.", AutoConfigFlags.None, 0f, 1f)]

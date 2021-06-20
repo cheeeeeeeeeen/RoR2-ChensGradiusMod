@@ -109,7 +109,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 {
                     OptionMasterTracker masterTracker = masterMaster.GetOrAddComponent<OptionMasterTracker>();
                     Log.Message($"OnBodyStartGlobal: Minion: {master.name}, Master: {masterMaster.name}, Options: {masterTracker.optionItemCount}");
-                    for (int t = 1; t <= masterTracker.optionItemCount; t++) OptionMasterTracker.SpawnOption(obj.gameObject, t);
+                    OptionMasterTracker.SpawnOptions(obj.gameObject, 1, masterTracker.optionItemCount);
                 }
             }
         }
@@ -130,25 +130,8 @@ namespace Chen.GradiusMod.Items.GradiusOption
             {
                 masterTracker.optionItemCount = newCount;
                 Log.Message($"OnInventoryChanged: Master: {master.name}, OldCount: {oldCount}, NewCount: {newCount}, Difference: {diff}");
-                if (diff > 0)
-                {
-                    if (playOptionGetSoundEffect == 1 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(getOptionEventId, self.gameObject);
-                    LoopAllMinions(master, (minion) =>
-                    {
-                        if (playOptionGetSoundEffect == 2 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(getOptionEventId, minion);
-                        for (int t = oldCount + 1; t <= newCount; t++) OptionMasterTracker.SpawnOption(minion, t);
-                    });
-                }
-                else
-                {
-                    if (playOptionGetSoundEffect == 1 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
-                    LoopAllMinions(master, (minion) =>
-                    {
-                        if (playOptionGetSoundEffect == 2 || playOptionGetSoundEffect == 3) AkSoundEngine.PostEvent(loseOptionEventId, self.gameObject);
-                        OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
-                        if (minionOptionTracker) for (int t = oldCount; t > newCount; t--) OptionMasterTracker.DestroyOption(minionOptionTracker, t);
-                    });
-                }
+                if (diff > 0) LoopAllMinions(master, minion => OptionMasterTracker.SpawnOptions(minion, oldCount, newCount));
+                else LoopAllMinions(master, minion => OptionMasterTracker.DestroyOptions(minion, oldCount, newCount));
             }
         }
 

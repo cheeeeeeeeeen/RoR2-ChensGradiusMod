@@ -148,6 +148,13 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
             }
         }
 
+        private void OnDestroy()
+        {
+            foreach (var option in existingOptions) Destroy(option);
+            AkSoundEngine.PostEvent(GradiusOption.loseOptionEventId, gameObject);
+            Log.Message($"OptionTracker.OnDestroy: Destroying all Options of {gameObject.name}.");
+        }
+
         private void SyncTargets()
         {
             if (GradiusOption.instance.includeModelInsideOrb && NetworkServer.active && NetworkUser.AllParticipatingNetworkUsersReady() && targetIds.Count > 0)

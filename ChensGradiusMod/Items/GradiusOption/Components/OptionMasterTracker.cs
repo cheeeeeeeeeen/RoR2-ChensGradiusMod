@@ -1,5 +1,6 @@
 ﻿using Chen.Helpers.UnityHelpers;
 using UnityEngine;
+using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Items.GradiusOption.Components
 {
@@ -23,6 +24,23 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
             GameObject option = optionTracker.existingOptions[index];
             optionTracker.existingOptions.RemoveAt(index);
             Destroy(option);
+        }
+
+        public static void SpawnOptions(GameObject minion, int oldCount, int newCount)
+        {
+            AkSoundEngine.PostEvent(GradiusOption.getOptionEventId, minion);
+            for (int t = oldCount + 1; t <= newCount; t++) SpawnOption(minion, t);
+        }
+
+        public static void DestroyOptions(GameObject minion, int oldCount, int newCount)
+        {
+            AkSoundEngine.PostEvent(GradiusOption.loseOptionEventId, minion);
+            OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
+            if (minionOptionTracker)
+            {
+                for (int t = oldCount; t > newCount; t--) DestroyOption(minionOptionTracker, t);
+            }
+            else Log.Warning($"OptionMasterTracker.DestroyOptions: OptionTracker not found for {minion.name}.");
         }
     }
 }
