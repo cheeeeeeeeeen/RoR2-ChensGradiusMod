@@ -136,6 +136,22 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             GameObject coreObject = customBrokenModel.transform.Find("Core").gameObject;
             EntityLocator coreEntityLocator = coreObject.AddComponent<EntityLocator>();
             coreEntityLocator.entity = brokenObject;
+            AddBrokenEffects(customBrokenModel, (MeshRenderer)highlight.targetRenderer);
+        }
+
+        private void AddBrokenEffects(GameObject customBrokenModel, MeshRenderer meshRenderer)
+        {
+            GameObject brokenEffects = brokenObject.transform.Find("ModelBase").Find("BrokenDroneVFX").gameObject;
+            brokenEffects.transform.parent = customBrokenModel.transform;
+            GameObject sparks = brokenEffects.transform.Find("Small Sparks, Mesh").gameObject;
+            ParticleSystem.ShapeModule sparksShape = sparks.GetComponent<ParticleSystem>().shape;
+            sparksShape.shapeType = ParticleSystemShapeType.MeshRenderer;
+            sparksShape.meshShapeType = ParticleSystemMeshShapeType.Edge;
+            sparksShape.meshRenderer = meshRenderer;
+            GameObject damagePoint = brokenEffects.transform.Find("Damage Point").gameObject;
+            damagePoint.transform.localPosition = Vector3.zero;
+            damagePoint.transform.localRotation = Quaternion.identity;
+            damagePoint.transform.localScale = Vector3.one;
         }
 
         private void ModifyDroneMaster()
