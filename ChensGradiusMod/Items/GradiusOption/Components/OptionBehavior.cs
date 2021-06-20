@@ -90,8 +90,8 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
 
         private void Update()
         {
-            if (PauseScreenController.paused) return;
-            if (!init || !ownerOt)
+            if (PauseScreenController.paused || init) return;
+            if (ownerOt)
             {
                 if (ownerOt.IsRotateUser())
                 {

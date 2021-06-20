@@ -109,7 +109,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                 {
                     OptionMasterTracker masterTracker = masterMaster.GetOrAddComponent<OptionMasterTracker>();
                     Log.Message($"OnBodyStartGlobal: Minion: {master.name}, Master: {masterMaster.name}, Options: {masterTracker.optionItemCount}");
-                    OptionMasterTracker.SpawnOptions(obj.gameObject, 1, masterTracker.optionItemCount);
+                    OptionMasterTracker.SpawnOptions(obj.gameObject, 0, masterTracker.optionItemCount);
                 }
             }
         }
