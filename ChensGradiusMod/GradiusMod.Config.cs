@@ -29,6 +29,24 @@ namespace Chen.GradiusMod
                 Log.Debug("Vanilla Change: Modifying Flame Drone spawn weight on Abyssal Depths or Scorched Acres (or both).");
                 InteractableActions += FlameDrone_InteractableActions;
             }
+            if (generalCfg.turretsAsDroneCategory)
+            {
+                Log.Debug("Vanilla Change: Modifying category of Gunner Turrets to Drones category.");
+                InteractableActions += GradiusModPlugin_InteractableActions;
+            }
+        }
+
+        private void GradiusModPlugin_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        {
+            List<DirectorCardHolder> cardHolders = arg1.FindAll(item =>
+            {
+                return item.InteractableCategory == InteractableCategory.Misc &&
+                       item.Card.spawnCard == turret1SpawnCard;
+            });
+            foreach (var cardHolder in cardHolders)
+            {
+                cardHolder.InteractableCategory = InteractableCategory.Drones;
+            }
         }
 
         private void FlameDrone_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
@@ -133,6 +151,10 @@ namespace Chen.GradiusMod
 
             [AutoConfig("Flame Drone spawn weight multiplier in Abyssal Depths. Set to 1 for default.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
             public int flameDroneWeightAbyssalDepths { get; private set; } = 3;
+
+            [AutoConfig("Gunner Turrets are not treated as Drones by the Director and they fall under Miscellaneous Category, hence why gunner turrets spawn more often. " +
+                        "Setting this to true will change the category of turrets to Drones as well.", AutoConfigFlags.PreventNetMismatch)]
+            public bool turretsAsDroneCategory { get; private set; } = true;
 
             [AutoConfig("Aetherium Compatibility: Allow Equipment Drones to be Inspired by Inspiring Drone.", AutoConfigFlags.PreventNetMismatch)]
             public bool equipmentDroneInspire { get; private set; } = true;

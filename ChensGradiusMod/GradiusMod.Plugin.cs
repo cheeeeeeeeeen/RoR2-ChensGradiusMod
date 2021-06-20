@@ -15,6 +15,8 @@ using Chen.Helpers.LogHelpers;
 using R2API;
 using R2API.Networking;
 using R2API.Utils;
+using RoR2;
+using RoR2.Skills;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TILER2;
@@ -84,6 +86,9 @@ namespace Chen.GradiusMod
         internal static GameObject tc280DroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"); }
         internal static GameObject equipmentDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/EquipmentDroneMaster"); }
         internal static GameObject helperPrefab { get => Resources.Load<GameObject>("SpawnCards/HelperPrefab"); }
+        internal static SpawnCard turret1SpawnCard { get => Resources.Load<SpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1"); }
+        internal static InteractableSpawnCard drone1SpawnCard { get => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1"); }
+        internal static SkillDef drone1Skill { get => Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun"); }
 
 #if DEBUG
 
