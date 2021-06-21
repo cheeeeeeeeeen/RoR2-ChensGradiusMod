@@ -483,7 +483,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         muzzleName = muzzleString,
                         hitEffectPrefab = MageFlamethrower.impactEffectPrefab,
                         isCrit = (bool)behavior.O[$"{self.GetType().FullName}.IsCrit"],
-                        radius = .1f,
                         falloffModel = BulletAttack.FalloffModel.None,
                         stopperMask = LayerIndex.world.mask,
                         procCoefficient = MageFlamethrower.procCoefficientPerTick,
@@ -622,7 +621,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         procChainMask = default,
                         procCoefficient = BaseNailgunState.procCoefficient,
                         maxDistance = BaseNailgunState.maxDistance,
-                        radius = 0f,
                         isCrit = self.RollCrit(),
                         muzzleName = "Muzzle",
                         minSpread = 0f,
@@ -729,7 +727,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         bulletAttack.force *= multiplier;
                         bulletAttack.damage *= multiplier;
                         bulletAttack.weapon = seed;
-                        bulletAttack.radius = .1f;
                         bulletAttack.Fire();
                         bulletRay.direction = rotation * bulletRay.direction;
                     }
@@ -1029,7 +1026,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             hitEffectPrefab = self.hitEffectPrefab,
                             isCrit = self.characterBody.RollCrit(),
                             HitEffectNormal = false,
-                            radius = 0f,
                             maxDistance = self.maxDistance
                         };
                         self.ModifyBullet(bulletAttack);
@@ -1104,8 +1100,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         muzzleName = "Muzzle",
                         hitEffectPrefab = FireGauss.hitEffectPrefab,
                         isCrit = Util.CheckRoll(self.critStat, self.characterBody.master),
-                        HitEffectNormal = false,
-                        radius = 0.1f
+                        HitEffectNormal = false
                     }.Fire();
                 }
             });
@@ -1194,7 +1189,6 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     bulletAttack.weapon = seed;
                     bulletAttack.damage *= multiplier;
                     bulletAttack.force *= multiplier;
-                    bulletAttack.radius = 0.1f;
                     bulletAttack.Fire();
                 }
             });
