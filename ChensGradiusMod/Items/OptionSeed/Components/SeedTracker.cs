@@ -53,18 +53,21 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
             get
             {
                 if (characterBody) return OptionSeed.instance.GetHorizontalOffsetMultiplier(characterBody.name);
-                else return OptionSeed.defaultVerticalOffsetMultiplier;
+                else return OptionSeed.defaultHorizontalOffsetMultiplier;
             }
         }
 
-        internal float rotateSeedAngleSpeed
+        internal float distanceAxis
         {
-            get => OptionSeed.instance.rotationSpeed;
+            get
+            {
+                if (characterBody) return OptionSeed.instance.GetRadius(characterBody.name);
+                else return OptionSeed.defaultRotationRadius;
+            }
         }
 
-        internal float distanceOwner { get; private set; } = 2f;
-        internal float distanceAxis { get; private set; } = .4f;
-        internal float seedLookRate { get; private set; } = .2f;
+        internal float rotateSeedAngleSpeed { get => OptionSeed.instance.rotationSpeed; }
+        internal float seedLookRate { get; private set; } = .1f;
         internal float positionSmoothRate { get; private set; } = .7f;
 
         private float invalidCheckTimer = 0f;

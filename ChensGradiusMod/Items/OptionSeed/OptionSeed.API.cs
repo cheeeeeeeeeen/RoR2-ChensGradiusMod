@@ -38,10 +38,17 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public void SetVerticalOffsetMultiplier(string bodyName, float newValue) => VerticalOffsetMultipliers[bodyName] = newValue;
 
         /// <summary>
-        /// Sets the horizontal offset multiplier for certain characters since some characters have a larger width than the default value. Horizontal offset default is 1f.
+        /// Sets the horizontal offset multiplier for certain characters since some characters have a larger width than the default value. Horizontal offset default is 0.8f.
         /// </summary>
         /// <param name="bodyName">The CharacterBody name of the character.</param>
         /// <param name="newValue">The multiplier value.</param>
         public void SetHorizontalOffsetMultiplier(string bodyName, float newValue) => HorizontalOffsetMultipliers[bodyName] = newValue;
+
+        /// <summary>
+        /// Sets the rotational radius of Option Seeds for certain characters since some characters have a larger sizes just for the sake of matching. Radius default is .2f.
+        /// </summary>
+        /// <param name="bodyName">The CharacterBody name of the character.</param>
+        /// <param name="newValue">The multiplier value.</param>
+        public void SetRotationalRadius(string bodyName, float newValue) => RotationRadius[bodyName] = newValue;
     }
 }

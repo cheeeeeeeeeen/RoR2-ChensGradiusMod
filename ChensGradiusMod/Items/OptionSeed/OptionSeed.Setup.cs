@@ -87,7 +87,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
         internal const uint getOptionEventId = GradiusOptionItem.getOptionEventId;
         internal const uint loseOptionEventId = GradiusOptionItem.loseOptionEventId;
         internal const float defaultVerticalOffsetMultiplier = .4f;
-        internal const float defaultHorizontalOffsetMultiplier = 1f;
+        internal const float defaultHorizontalOffsetMultiplier = .8f;
+        internal const float defaultRotationRadius = .2f;
 
         internal static GameObject optionSeedPrefab { get; private set; }
 
@@ -100,7 +101,17 @@ namespace Chen.GradiusMod.Items.OptionSeed
             { "LoaderBody", .7f }
         };
 
-        private static readonly Dictionary<string, float> HorizontalOffsetMultipliers = new Dictionary<string, float>();
+        private static readonly Dictionary<string, float> HorizontalOffsetMultipliers = new Dictionary<string, float>()
+        {
+            { "ToolbotBody", 1f },
+            { "CrocoBody", 1f },
+        };
+
+        private static readonly Dictionary<string, float> RotationRadius = new Dictionary<string, float>()
+        {
+            { "ToolbotBody", .3f },
+            { "CrocoBody", .3f },
+        };
 
         private static GameObject loaderZapCone { get => Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone"); }
 
@@ -170,7 +181,16 @@ namespace Chen.GradiusMod.Items.OptionSeed
             {
                 if (bodyName.Contains(pair.Key)) return pair.Value;
             }
-            return defaultVerticalOffsetMultiplier;
+            return defaultHorizontalOffsetMultiplier;
+        }
+
+        internal float GetRadius(string bodyName)
+        {
+            foreach (var pair in RotationRadius)
+            {
+                if (bodyName.Contains(pair.Key)) return pair.Value;
+            }
+            return defaultRotationRadius;
         }
     }
 }
