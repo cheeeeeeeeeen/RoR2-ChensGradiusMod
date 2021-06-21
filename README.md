@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.3.7-orange)
+![Version](https://img.shields.io/badge/Version-3.3.8-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -99,6 +99,11 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.3.8**
+- Fix a bad logic in Seed Behavior which causes it to self-destruct.
+- Add API for adjusting rotational radius on the Option Seed.
+- Change default values for horizontal offset within the API due to a bad computation being reworked.
+
 **3.3.7**
 - Remove the jitter movement of the Options.
 - Widen the distance of the seeds from the survivor to avoid self collisions.
@@ -127,9 +132,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Rework the spawning system of drones in Artifact of Machines so that spawn weights are respected.
 - Add more config options for Artifact of Machines to control which drone spawns through weights.
 - Add an API so that ground drones should stay on ground when spawned by Artifact of Machines.
-
-**3.3.3**
-- Update the mod so that it is fully compatible with the latest TILER2 update.
-- Minor adjustments in config options.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
