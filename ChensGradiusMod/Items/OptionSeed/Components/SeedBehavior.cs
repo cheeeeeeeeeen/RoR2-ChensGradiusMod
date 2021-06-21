@@ -89,8 +89,8 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
 
         private void Update()
         {
-            if (PauseScreenController.paused) return;
-            if (!init && ownerSt && ownerIbt)
+            if (PauseScreenController.paused || init) return;
+            if (ownerSt && ownerIbt)
             {
                 t.position = Vector3.Lerp(t.position, DecidePosition(), ownerSt.positionSmoothRate);
                 if (OptionSeed.instance.includeModelInsideOrb)
