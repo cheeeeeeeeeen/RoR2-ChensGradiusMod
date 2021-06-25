@@ -68,7 +68,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
 
         internal float rotateSeedAngleSpeed { get => OptionSeed.instance.rotationSpeed; }
         internal float seedLookRate { get; private set; } = .1f;
-        internal float positionSmoothRate { get; private set; } = .7f;
+        internal float positionSmoothRate { get; private set; } = .3f;
 
         private float invalidCheckTimer = 0f;
 

@@ -488,8 +488,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         procCoefficient = MageFlamethrower.procCoefficientPerTick,
                         maxDistance = self.maxDistance,
                         damageType = Util.CheckRoll(MageFlamethrower.ignitePercentChance, self.characterBody.master) ? DamageType.IgniteOnHit : DamageType.Generic,
+                        radius = MageFlamethrower.radius,
+                        smartCollision = true
                     };
                     if (!flamethrowerSeedSyncEffect) attack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
+                    attack.FilterOutOwnerFromAttack();
                     attack.Fire();
                 }
             });
@@ -605,7 +608,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 if (BaseNailgunState.muzzleFlashPrefab) seed.MuzzleEffect(BaseNailgunState.muzzleFlashPrefab, false);
                 if (self.isAuthority)
                 {
-                    new BulletAttack
+                    BulletAttack attack = new BulletAttack
                     {
                         aimVector = aimRay.direction,
                         origin = seed.transform.position,
@@ -630,8 +633,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         sniper = false,
                         spreadPitchScale = spreadPitchScale * spreadPitchScale,
                         spreadYawScale = spreadYawScale * spreadYawScale,
-                        tracerEffectPrefab = BaseNailgunState.tracerEffectPrefab
-                    }.Fire();
+                        tracerEffectPrefab = BaseNailgunState.tracerEffectPrefab,
+                        radius = 0f
+                    };
+                    attack.FilterOutOwnerFromAttack();
+                    attack.Fire();
                 }
             });
         }
@@ -684,12 +690,15 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         muzzleName = "MuzzlePistol",
                         hitEffectPrefab = self.hitEffectPrefab,
                         isCrit = self.RollCrit(),
-                        HitEffectNormal = false
+                        HitEffectNormal = false,
+                        smartCollision = true,
+                        radius = self.bulletRadius
                     };
                     bulletAttack.damageType |= DamageType.BonusToLowHealth;
                     self.ModifyBullet(bulletAttack);
                     bulletAttack.damage *= multiplier;
                     bulletAttack.force *= multiplier;
+                    bulletAttack.FilterOutOwnerFromAttack();
                     bulletAttack.Fire();
                 }
             });
@@ -727,6 +736,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         bulletAttack.force *= multiplier;
                         bulletAttack.damage *= multiplier;
                         bulletAttack.weapon = seed;
+                        bulletAttack.FilterOutOwnerFromAttack();
                         bulletAttack.Fire();
                         bulletRay.direction = rotation * bulletRay.direction;
                     }
@@ -1026,11 +1036,13 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             hitEffectPrefab = self.hitEffectPrefab,
                             isCrit = self.characterBody.RollCrit(),
                             HitEffectNormal = false,
+                            radius = 0f,
                             maxDistance = self.maxDistance
                         };
                         self.ModifyBullet(bulletAttack);
                         bulletAttack.damage *= multiplier;
                         bulletAttack.force *= multiplier;
+                        bulletAttack.FilterOutOwnerFromAttack();
                         if (!mobileTurretsSeedSyncEffect) bulletAttack.tracerEffectPrefab = FireGatling.tracerEffectPrefab;
                         bulletAttack.Fire();
                     }
@@ -1085,7 +1097,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 if (FireGauss.effectPrefab) seed.MuzzleEffect(FireGauss.effectPrefab, false);
                 if (self.isAuthority)
                 {
-                    new BulletAttack
+                    BulletAttack attack = new BulletAttack
                     {
                         owner = self.gameObject,
                         weapon = seed,
@@ -1100,8 +1112,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         muzzleName = "Muzzle",
                         hitEffectPrefab = FireGauss.hitEffectPrefab,
                         isCrit = Util.CheckRoll(self.critStat, self.characterBody.master),
-                        HitEffectNormal = false
-                    }.Fire();
+                        HitEffectNormal = false,
+                        radius = 0.15f
+                    };
+                    attack.FilterOutOwnerFromAttack();
+                    attack.Fire();
                 }
             });
         }
@@ -1154,7 +1169,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 if (FireBarrage.effectPrefab) seed.MuzzleEffect(FireBarrage.effectPrefab, false);
                 if (self.isAuthority)
                 {
-                    new BulletAttack
+                    BulletAttack attack = new BulletAttack
                     {
                         owner = self.gameObject,
                         weapon = seed,
@@ -1169,8 +1184,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         muzzleName = "MuzzleRight",
                         hitEffectPrefab = FireBarrage.hitEffectPrefab,
                         isCrit = Util.CheckRoll(self.critStat, self.characterBody.master),
-                        damageType = DamageType.Stun1s
-                    }.Fire();
+                        damageType = DamageType.Stun1s,
+                        radius = FireBarrage.bulletRadius,
+                        smartCollision = true
+                    };
+                    attack.FilterOutOwnerFromAttack();
+                    attack.Fire();
                 }
             });
         }
@@ -1189,6 +1208,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     bulletAttack.weapon = seed;
                     bulletAttack.damage *= multiplier;
                     bulletAttack.force *= multiplier;
+                    bulletAttack.FilterOutOwnerFromAttack();
                     bulletAttack.Fire();
                 }
             });
@@ -1202,7 +1222,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 if (FirePistol2.muzzleEffectPrefab) seed.MuzzleEffect(FirePistol2.muzzleEffectPrefab, false);
                 if (self.isAuthority)
                 {
-                    new BulletAttack
+                    BulletAttack attack = new BulletAttack
                     {
                         owner = self.gameObject,
                         weapon = seed,
@@ -1215,8 +1235,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         tracerEffectPrefab = FirePistol2.tracerEffectPrefab,
                         muzzleName = targetMuzzle,
                         hitEffectPrefab = FirePistol2.hitEffectPrefab,
-                        isCrit = Util.CheckRoll(self.critStat, self.characterBody.master)
-                    }.Fire();
+                        isCrit = Util.CheckRoll(self.critStat, self.characterBody.master),
+                        radius = 0.1f,
+                        smartCollision = true
+                    };
+                    attack.FilterOutOwnerFromAttack();
+                    attack.Fire();
                 }
             });
         }

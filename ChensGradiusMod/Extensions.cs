@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static Chen.GradiusMod.GradiusModPlugin;
+using static RoR2.BulletAttack;
 using UnityObject = UnityEngine.Object;
 
 namespace Chen.GradiusMod
@@ -82,6 +83,28 @@ namespace Chen.GradiusMod
             GameObject droneBody = master.bodyPrefab;
             CharacterDeathBehavior deathBehavior = droneBody.GetOrAddComponent<CharacterDeathBehavior>();
             deathBehavior.deathState = new SerializableEntityStateType(newStateType);
+        }
+
+        /// <summary>
+        /// Filters the owner out from the attack so that they do not hit themselves with their own attack.
+        /// Useful for Option Seeds' behavior to avoid hitting the owner.
+        /// </summary>
+        /// <param name="bulletAttack">The bullet attack being worked on.</param>
+        public static void FilterOutOwnerFromAttack(this BulletAttack bulletAttack)
+        {
+            bulletAttack.filterCallback = (ref BulletHit hitInfo) =>
+            {
+                if (bulletAttack.owner == hitInfo.entityObject || bulletAttack.weapon == hitInfo.entityObject) return false;
+
+                return bulletAttack.DefaultFilterCallback(ref hitInfo);
+            };
+
+            bulletAttack.hitCallback = (ref BulletHit hitInfo) =>
+            {
+                if (bulletAttack.owner == hitInfo.entityObject || bulletAttack.weapon == hitInfo.entityObject) return false;
+
+                return bulletAttack.DefaultHitCallback(ref hitInfo);
+            };
         }
     }
 }

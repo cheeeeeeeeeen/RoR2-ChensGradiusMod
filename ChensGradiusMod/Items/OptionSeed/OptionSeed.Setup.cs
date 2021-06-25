@@ -88,7 +88,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         internal const uint loseOptionEventId = GradiusOptionItem.loseOptionEventId;
         internal const float defaultVerticalOffsetMultiplier = .4f;
         internal const float defaultHorizontalOffsetMultiplier = .8f;
-        internal const float defaultRotationRadius = .2f;
+        internal const float defaultRotationRadius = .3f;
 
         internal static GameObject optionSeedPrefab { get; private set; }
 
@@ -109,8 +109,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         private static readonly Dictionary<string, float> RotationRadius = new Dictionary<string, float>()
         {
-            { "ToolbotBody", .3f },
-            { "CrocoBody", .3f },
+            { "ToolbotBody", .5f },
+            { "CrocoBody", .5f },
         };
 
         private static GameObject loaderZapCone { get => Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone"); }
