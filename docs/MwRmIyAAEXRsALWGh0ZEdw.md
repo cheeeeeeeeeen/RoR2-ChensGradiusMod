@@ -11,6 +11,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 | Methods | |
 | :--- | :--- |
 | [AssignDeathBehavior(GameObject, Type)](lm5QfeIEC4A80PITFu34bQ 'Chen.GradiusMod.Extensions.AssignDeathBehavior(UnityEngine.GameObject, System.Type)') | Assigns the Death Behavior of the CharacterMaster GameObject.<br/> |
+| [FilterOutOwnerFromAttack(BulletAttack)](Tqr3eIr8BwWGwm6rgpylvQ 'Chen.GradiusMod.Extensions.FilterOutOwnerFromAttack(RoR2.BulletAttack)') | Filters the owner out from the attack so that they do not hit themselves with their own attack.<br/>Useful for Option Seeds' behavior to avoid hitting the owner.<br/> |
 | [MuzzleEffect(GameObject, GameObject, bool)](7roQPfGASRtMvS48E57GWQ 'Chen.GradiusMod.Extensions.MuzzleEffect(UnityEngine.GameObject, UnityEngine.GameObject, bool)') | Method that provides an easy way of displaying effect prefabs for muzzle effects.<br/>Mainly used for Options and Option Seeds.<br/> |
 | [SafeCheck(Dictionary&lt;string,Object&gt;, string)](UcBLHVdDDZkETVaa0moaRw 'Chen.GradiusMod.Extensions.SafeCheck(System.Collections.Generic.Dictionary&lt;string,UnityEngine.Object&gt;, string)') | Safely checks if the dictionary has the key and if they key has an existing object.<br/> |
 | [SetAllDriversToAimTowardsEnemies(AISkillDriver[])](gnPOJV62YUPZiTf4ltA7QA 'Chen.GradiusMod.Extensions.SetAllDriversToAimTowardsEnemies(RoR2.CharacterAI.AISkillDriver[])') | Sets all Skill Drivers within the array to aim towards the enemy.<br/> |

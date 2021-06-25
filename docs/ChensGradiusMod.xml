@@ -399,6 +399,13 @@
             <param name="masterObject">CharacterMaster GameObject whose DeathBehavior state is being modified.</param>
             <param name="newStateType">The new DeathBehavior state.</param>
         </member>
+        <member name="M:Chen.GradiusMod.Extensions.FilterOutOwnerFromAttack(RoR2.BulletAttack)">
+            <summary>
+            Filters the owner out from the attack so that they do not hit themselves with their own attack.
+            Useful for Option Seeds' behavior to avoid hitting the owner.
+            </summary>
+            <param name="bulletAttack">The bullet attack being worked on.</param>
+        </member>
         <member name="T:Chen.GradiusMod.GradiusModPlugin">
             <summary>
             The mother plugin that allows the mod to be loaded to RoR2.
@@ -687,7 +694,7 @@
         </member>
         <member name="M:Chen.GradiusMod.Items.OptionSeed.OptionSeed.SetRotationalRadius(System.String,System.Single)">
             <summary>
-            Sets the rotational radius of Option Seeds for certain characters since some characters have a larger sizes just for the sake of matching. Radius default is .2f.
+            Sets the rotational radius of Option Seeds for certain characters since some characters have a larger sizes just for the sake of matching. Radius default is .3f.
             </summary>
             <param name="bodyName">The CharacterBody name of the character.</param>
             <param name="newValue">The multiplier value.</param>

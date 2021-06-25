@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.3.8-orange)
+![Version](https://img.shields.io/badge/Version-3.3.9-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -99,6 +99,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.3.9**
+- Improve Option Seed Behavior by not letting generated attacks hit the owner, the weapon or the Options themselves.
+- Add an API for easily filtering the owners from the hit registration of the attacks.
+
 **3.3.8**
 - Fix a bad logic in Seed Behavior which causes it to self-destruct.
 - Add API for adjusting rotational radius on the Option Seed.
@@ -125,12 +129,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **3.3.5**
 - Improve Custom Drone Skill Drivers so that they are smarter, and may miss when the target is fast.
 - Add a config option to make vanilla drones smarter, eliminating the problem of them attacking their owners.
-
-**3.3.4**
-- Add Arms Race support from Chen's Classic Items for Laser Drone.
-- Update the icon for Artifact of Machines.
-- Rework the spawning system of drones in Artifact of Machines so that spawn weights are respected.
-- Add more config options for Artifact of Machines to control which drone spawns through weights.
-- Add an API so that ground drones should stay on ground when spawned by Artifact of Machines.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*

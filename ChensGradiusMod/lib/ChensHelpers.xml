@@ -753,6 +753,33 @@
             <param name="addAction">Post-Processor code for adding</param>
             <returns>The component specified as T</returns>
         </member>
+        <member name="M:Chen.Helpers.UnityHelpers.Extensions.DeepCopyComponentsFrom``1(UnityEngine.GameObject,UnityEngine.GameObject)">
+            <summary>
+            Creates a deep copy of components from the source towards another Game Object.
+            </summary>
+            <typeparam name="T">A Unity Component</typeparam>
+            <param name="targetGameObject">The target Game Object where components will be copied to</param>
+            <param name="sourceGameObject">Source where the original components derived from</param>
+            <returns>List of deep copied components</returns>
+        </member>
+        <member name="M:Chen.Helpers.UnityHelpers.Extensions.DeepCopyComponentsTo``1(UnityEngine.GameObject,UnityEngine.GameObject)">
+            <summary>
+            Creates a deep copy of components from the source towards the specified Game Object.
+            </summary>
+            <typeparam name="T">A Unity Component</typeparam>
+            <param name="targetGameObject">The target Game Object where components will be copied to</param>
+            <param name="sourceGameObject">Source where the original components derived from</param>
+            <returns>List of deep copied components</returns>
+        </member>
+        <member name="M:Chen.Helpers.UnityHelpers.Extensions.DeepCopy``1(``0,UnityEngine.GameObject)">
+            <summary>
+            Creates a deep copy of a component and attaches it to the target Game Object.
+            </summary>
+            <typeparam name="T">A Unity Component</typeparam>
+            <param name="originalComponent">The basis of the deep copy</param>
+            <param name="targetGameObject">The target Game Object where the deep copy component will be added to</param>
+            <returns>The deep copied component</returns>
+        </member>
         <member name="T:Chen.Helpers.UnityHelpers.ListProcessor`1">
             <summary>
             A generic component for implementing a List Processor.
