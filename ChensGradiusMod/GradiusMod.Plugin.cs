@@ -132,7 +132,7 @@ namespace Chen.GradiusMod
             BundleInfo sounds = new BundleInfo("Chen.GradiusMod.chensgradiusmod_soundbank.bnk", BundleType.WWiseSoundBank);
             AssetsManager modelsManager = new AssetsManager(models);
             AssetsManager soundsManager = new AssetsManager(sounds);
-            assetBundle = modelsManager.Register() as AssetBundle;
+            assetBundle = modelsManager.Register();
             soundsManager.Register();
 
             cfgFile = new ConfigFile(Path.Combine(Paths.ConfigPath, ModGuid + ".cfg"), true);
