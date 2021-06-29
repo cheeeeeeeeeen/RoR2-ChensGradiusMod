@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.3.10-orange)
+![Version](https://img.shields.io/badge/Version-3.3.11-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -99,6 +99,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.3.11**
+- Update the mod so that it works after the breaking changes of Chen's Helpers.
+
 **3.3.10**
 - Recompile the code so that it properly registers dependencies.
 - There's no change from 3.3.9 really. Just a hope that it fixes an issue for somebody with a dependency error.
@@ -119,19 +122,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Improve a a lot of the checking so that it also checks when the game is paused without affecting visual computations.
 - Improve the implementation of Gradius' Option so that sound effects will properly register.
 - Warnings reported within the game are actually safe bugs. Finally resolved that and properly disposed of data when possible.
-
-**3.3.6**
-- Rewrite and improve Drone Death Behaviors.
-- Add a config option for setting category of Gunner Turrets as Drones instead of Miscellaneous.
-- Add broken effects to the custom drones.
-- Improve the Drone class so that work flow on some of the properties will be clearer.
-- Changes on Vanilla Drone Behaviors are now enforced and no longer configurable as they are now necessary for Artifact of Machines to work as well as mod compatibilities.
-- Every vanilla and custom drone can now be configured each to be repurchased upon being decommissioned.
-- Publicized all extension methods as it proves to be useful for shortcuts.
-- Cache all resource loading for optimization.
-
-**3.3.5**
-- Improve Custom Drone Skill Drivers so that they are smarter, and may miss when the target is fast.
-- Add a config option to make vanilla drones smarter, eliminating the problem of them attacking their owners.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
