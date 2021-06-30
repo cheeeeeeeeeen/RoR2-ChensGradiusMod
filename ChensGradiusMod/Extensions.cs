@@ -1,4 +1,5 @@
-﻿using Chen.Helpers.UnityHelpers;
+﻿using Chen.Helpers.RoR2Helpers;
+using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using RoR2;
 using RoR2.CharacterAI;
@@ -105,6 +106,46 @@ namespace Chen.GradiusMod
 
                 return bulletAttack.DefaultHitCallback(ref hitInfo);
             };
+        }
+
+        /// <summary>
+        /// Shortcut for initializing a custom drone model. Only applies when work flow is followed the same as this mod's drones.
+        /// </summary>
+        /// <param name="droneModel">The custom drone model to initialize.</param>
+        /// <param name="droneBody">The associated body of the model.</param>
+        public static void InitializeDroneModelComponents(this GameObject droneModel, CharacterBody droneBody)
+        {
+            CapsuleCollider hurtBoxCapsuleCollider = droneModel.GetComponentInChildren<CapsuleCollider>();
+            if (!hurtBoxCapsuleCollider)
+            {
+                Log.Warning("Extensions.InitializeDroneModelComponents: CapsuleCollider not found! Cannot setup HurtBoxes without it.");
+                return;
+            }
+            CharacterModel characterModel = droneModel.AddComponent<CharacterModel>();
+            characterModel.body = droneBody;
+            characterModel.BuildRendererInfos(droneModel);
+            characterModel.autoPopulateLightInfos = true;
+            characterModel.invisibilityCount = 0;
+            characterModel.temporaryOverlays = new List<TemporaryOverlay>();
+            HurtBoxGroup hurtBoxGroup = droneModel.AddComponent<HurtBoxGroup>();
+            HurtBox hurtBox = hurtBoxCapsuleCollider.gameObject.AddComponent<HurtBox>();
+            hurtBox.gameObject.layer = LayerIndex.entityPrecise.intVal;
+            hurtBox.healthComponent = droneBody.healthComponent;
+            hurtBox.isBullseye = true;
+            hurtBox.damageModifier = HurtBox.DamageModifier.Normal;
+            hurtBox.hurtBoxGroup = hurtBoxGroup;
+            hurtBox.indexInGroup = 0;
+            hurtBoxGroup.hurtBoxes = new HurtBox[] { hurtBox };
+            hurtBoxGroup.mainHurtBox = hurtBox;
+            hurtBoxGroup.bullseyeCount = 1;
+            CapsuleCollider capsuleCollider = droneBody.GetComponent<CapsuleCollider>();
+            if (capsuleCollider)
+            {
+                capsuleCollider.center = hurtBoxCapsuleCollider.center;
+                capsuleCollider.radius = hurtBoxCapsuleCollider.radius;
+                capsuleCollider.height = hurtBoxCapsuleCollider.height;
+                capsuleCollider.direction = hurtBoxCapsuleCollider.direction;
+            }
         }
     }
 }
