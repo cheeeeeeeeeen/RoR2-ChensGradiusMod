@@ -101,6 +101,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **3.3.11**
 - Update the mod so that it works after the breaking changes of Chen's Helpers.
+- Implement a new API for a shortcut way to setup custom broken drone models.
 
 **3.3.10**
 - Recompile the code so that it properly registers dependencies.

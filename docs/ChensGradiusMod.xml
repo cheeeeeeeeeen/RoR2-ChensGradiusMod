@@ -406,6 +406,13 @@
             </summary>
             <param name="bulletAttack">The bullet attack being worked on.</param>
         </member>
+        <member name="M:Chen.GradiusMod.Extensions.InitializeDroneModelComponents(UnityEngine.GameObject,RoR2.CharacterBody)">
+            <summary>
+            Shortcut for initializing a custom drone model. Only applies when work flow is followed the same as this mod's drones.
+            </summary>
+            <param name="droneModel">The custom drone model to initialize.</param>
+            <param name="droneBody">The associated body of the model.</param>
+        </member>
         <member name="T:Chen.GradiusMod.GradiusModPlugin">
             <summary>
             The mother plugin that allows the mod to be loaded to RoR2.
