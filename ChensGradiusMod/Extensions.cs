@@ -130,7 +130,7 @@ namespace Chen.GradiusMod
             HurtBoxGroup hurtBoxGroup = droneModel.AddComponent<HurtBoxGroup>();
             HurtBox hurtBox = hurtBoxCapsuleCollider.gameObject.AddComponent<HurtBox>();
             hurtBox.gameObject.layer = LayerIndex.entityPrecise.intVal;
-            hurtBox.healthComponent = droneBody.healthComponent;
+            hurtBox.healthComponent = droneBody.GetComponent<HealthComponent>();
             hurtBox.isBullseye = true;
             hurtBox.damageModifier = HurtBox.DamageModifier.Normal;
             hurtBox.hurtBoxGroup = hurtBoxGroup;
