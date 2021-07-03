@@ -730,6 +730,14 @@
             </summary>
             <param name="assetBundle">Asset bundle whose materials will be converted</param>
         </member>
+        <member name="T:Chen.Helpers.RoR2Helpers.MaterialController">
+            <summary>
+            A controller for materials so that properties can be inspected and modified.
+            Attach this component to a Game Object and let it do its magic.
+            It will attempt to find the correct shader controller from the Renderer's material, attach the said shader controller if found.
+            After the proper shader controller is found, this component will destroy itself.
+            </summary>
+        </member>
         <member name="T:Chen.Helpers.UnityHelpers.Extensions">
             <summary>
             Extensions for Unity objects.
