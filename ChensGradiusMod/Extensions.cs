@@ -142,8 +142,8 @@ namespace Chen.GradiusMod
             if (capsuleCollider)
             {
                 capsuleCollider.center = hurtBoxCapsuleCollider.center;
-                capsuleCollider.radius = hurtBoxCapsuleCollider.radius;
-                capsuleCollider.height = hurtBoxCapsuleCollider.height;
+                capsuleCollider.radius = hurtBoxCapsuleCollider.radius * 3f;
+                capsuleCollider.height = hurtBoxCapsuleCollider.height * 3f;
                 capsuleCollider.direction = hurtBoxCapsuleCollider.direction;
             }
         }

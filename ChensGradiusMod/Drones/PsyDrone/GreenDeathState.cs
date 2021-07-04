@@ -2,10 +2,8 @@
 
 namespace Chen.GradiusMod.Drones.PsyDrone
 {
-    internal class GreenDeathState : DroneDeathState
+    internal class GreenDeathState : RedDeathState
     {
         protected override bool SpawnInteractable { get; set; } = PsyDrone.instance.canBeRepurchased;
-
-        protected override InteractableSpawnCard GetInteractableSpawnCard => PsyDrone.iSpawnCard;
     }
 }

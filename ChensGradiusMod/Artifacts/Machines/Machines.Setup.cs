@@ -72,8 +72,6 @@ namespace Chen.GradiusMod.Artifacts.Machines
             return str;
         }
 
-        private Material summonDroneMaterial { get => Resources.Load<Material>("Materials/matSummonDrone"); }
-
         private readonly List<GameObject> EnemyDrones = new List<GameObject>();
 
         private readonly List<string> GroundedDrones = new List<string>()

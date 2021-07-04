@@ -2,7 +2,6 @@
 using Chen.GradiusMod.Items.GradiusOption;
 using EntityStates;
 using RoR2;
-using RoR2.CharacterAI;
 using UnityEngine;
 using GolemChargeLaser = EntityStates.GolemMonster.ChargeLaser;
 using GolemLaser = EntityStates.GolemMonster.FireLaser;

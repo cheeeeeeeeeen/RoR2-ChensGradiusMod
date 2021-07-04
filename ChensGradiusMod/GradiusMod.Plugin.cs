@@ -90,6 +90,7 @@ namespace Chen.GradiusMod
         internal static SpawnCard turret1SpawnCard { get => Resources.Load<SpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1"); }
         internal static InteractableSpawnCard drone1SpawnCard { get => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1"); }
         internal static SkillDef drone1Skill { get => Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun"); }
+        internal static Material summonDroneMaterial { get => Resources.Load<Material>("Materials/matSummonDrone"); }
 
 #if DEBUG
 

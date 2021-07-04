@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.RoR2Helpers;
@@ -11,6 +11,7 @@ using RoR2.CharacterAI;
 using RoR2.Skills;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static R2API.DirectorAPI;
 
@@ -30,6 +31,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         public static GameObject droneMasterRed { get; private set; }
         public static GameObject droneBodyGreen { get; private set; }
         public static GameObject droneMasterGreen { get; private set; }
+        public static GameObject mirrorLaserPrefab { get; private set; }
 
         protected override GameObject DroneCharacterMasterObject => droneMasterRed;
 
@@ -60,6 +62,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         {
             base.SetupBehavior();
             InteractableActions += DirectorAPI_InteractableActions;
+            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
         }
 
         private void AddLanguageTokens()
@@ -223,6 +226,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             };
             locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
             LoadoutAPI.AddSkillFamily(newSkillFamily);
+            mirrorLaserPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaser.prefab");
+            mirrorLaserPrefab.AddComponent<NetworkIdentity>();
         }
 
         private void ModifyInteractableSpawnCard()
@@ -258,6 +263,41 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 MonsterCategory = MonsterCategory.None,
                 InteractableCategory = InteractableCategory.Drones,
             };
+        }
+
+        private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
+        {
+            if (!NetworkServer.active) return;
+            if (!obj.name.Contains("PsyDroneRed")) return;
+            CharacterMaster characterMaster = new MasterSummon
+            {
+                masterPrefab = droneMasterGreen,
+                position = obj.transform.position + Vector3.up,
+                rotation = obj.transform.rotation,
+                summonerBodyObject = obj.master.minionOwnership.ownerMaster.GetBodyObject(),
+                ignoreTeamMemberLimit = true,
+                useAmbientLevel = true
+            }.Perform();
+            if (characterMaster)
+            {
+                GameObject bodyObject = characterMaster.GetBodyObject();
+                if (bodyObject)
+                {
+                    ModelLocator component = bodyObject.GetComponent<ModelLocator>();
+                    if (component && component.modelTransform)
+                    {
+                        TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
+                        temporaryOverlay.duration = 0.5f;
+                        temporaryOverlay.animateShaderAlpha = true;
+                        temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+                        temporaryOverlay.destroyComponentOnEnd = true;
+                        temporaryOverlay.originalMaterial = summonDroneMaterial;
+                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
+                    }
+                    obj.GetOrAddComponent<Twins>().twin = bodyObject;
+                    bodyObject.GetOrAddComponent<Twins>().twin = obj.gameObject;
+                }
+            }
         }
 
         internal static bool DebugCheck()
