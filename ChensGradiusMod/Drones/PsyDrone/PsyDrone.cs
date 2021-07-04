@@ -171,7 +171,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/mdlPsiBitRed.prefab");
             droneBodyRed.ReplaceModel(customModel);
             customModel.transform.localRotation = Util.QuaternionSafeLookRotation(Vector3.left);
-            customModel.InitializeDroneModelComponents(bodyRed);
+            customModel.InitializeDroneModelComponents(bodyRed, DebugCheck());
             customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
             BodyRotation rotationComponent = customModel.transform.parent.gameObject.AddComponent<BodyRotation>();
             rotationComponent.rotationDirection = -1;
@@ -179,7 +179,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/mdlPsiBitGreen.prefab");
             droneBodyGreen.ReplaceModel(customModel);
             customModel.transform.localRotation = Util.QuaternionSafeLookRotation(Vector3.left);
-            customModel.InitializeDroneModelComponents(bodyGreen);
+            customModel.InitializeDroneModelComponents(bodyGreen, DebugCheck());
             customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
             rotationComponent = customModel.transform.parent.gameObject.AddComponent<BodyRotation>();
             rotationComponent.rotationDirection = 1;

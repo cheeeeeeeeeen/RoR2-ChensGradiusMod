@@ -113,7 +113,8 @@ namespace Chen.GradiusMod
         /// </summary>
         /// <param name="droneModel">The custom drone model to initialize.</param>
         /// <param name="droneBody">The associated body of the model.</param>
-        public static void InitializeDroneModelComponents(this GameObject droneModel, CharacterBody droneBody)
+        /// <param name="debug">Set to true to attach the Material Controller for modifying materials in-game.</param>
+        public static void InitializeDroneModelComponents(this GameObject droneModel, CharacterBody droneBody, bool debug = false)
         {
             CapsuleCollider hurtBoxCapsuleCollider = droneModel.GetComponentInChildren<CapsuleCollider>();
             if (!hurtBoxCapsuleCollider)
@@ -146,6 +147,7 @@ namespace Chen.GradiusMod
                 capsuleCollider.height = hurtBoxCapsuleCollider.height * 3f;
                 capsuleCollider.direction = hurtBoxCapsuleCollider.direction;
             }
+            if (debug) droneModel.AddComponent<MaterialController>();
         }
     }
 }

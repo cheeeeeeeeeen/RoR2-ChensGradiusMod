@@ -135,6 +135,7 @@ namespace Chen.GradiusMod
             AssetsManager modelsManager = new AssetsManager(models);
             AssetsManager soundsManager = new AssetsManager(sounds);
             assetBundle = modelsManager.Register();
+            assetBundle.ConvertShaders();
             soundsManager.Register();
 
             cfgFile = new ConfigFile(Path.Combine(Paths.ConfigPath, ModGuid + ".cfg"), true);

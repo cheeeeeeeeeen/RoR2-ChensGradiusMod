@@ -181,7 +181,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         {
             GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone1/Model/mdlBeamDrone.prefab");
             droneBody.ReplaceModel(customModel);
-            customModel.InitializeDroneModelComponents(body);
+            customModel.InitializeDroneModelComponents(body, DebugCheck());
             customModel.AddComponent<ThrusterFlicker>();
             BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();
             rotationComponent.maxRotationSpeed = rotationComponent.rotationSpeed = 4f;
