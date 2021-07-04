@@ -127,6 +127,11 @@ namespace Chen.GradiusMod.Drones
                 "Set to false to disable this feature."
             ).Value;
 
+            canBeRepurchased = config.Bind(configCategory,
+                "CanBeRepurchased", canBeRepurchased,
+                "Allow this drone to be repurchased upon being decommissioned."
+            ).Value;
+
             spawnWeightWithMachinesArtifact = config.Bind(configCategory,
                 "AllowToBeSpawnedWithMachinesArtifact", spawnWeightWithMachinesArtifact,
                 "Spawn weight of how likely enemies will get this drone. 0 means it will not spawn at all. 1 is the default."
