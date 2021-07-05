@@ -147,7 +147,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             bodyRed.levelRegen *= 1.2f;
             bodyRed.levelCrit = 0f;
             bodyRed.levelMoveSpeed *= 1.3f;
-            bodyRed.portraitIcon = assetBundle.LoadAsset<Texture>("Assets/Drones/LaserDrone1/Icon/texLaserDrone1IconOld.png");
+            bodyRed.portraitIcon = assetBundle.LoadAsset<Texture>("Assets/Drones/PsiBits/Icon/PsiBitRed.png");
             CharacterBody bodyGreen = droneBodyGreen.GetComponent<CharacterBody>();
             bodyGreen.baseNameToken = bodyRed.baseNameToken;
             bodyGreen.baseMoveSpeed = bodyRed.baseMoveSpeed;
@@ -159,7 +159,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             bodyGreen.levelRegen = bodyRed.levelRegen;
             bodyGreen.levelCrit = bodyRed.levelCrit;
             bodyGreen.levelMoveSpeed = bodyRed.levelMoveSpeed;
-            bodyGreen.portraitIcon = assetBundle.LoadAsset<Texture>("Assets/Drones/LaserDrone1/Icon/texLaserDrone1IconOld.png");
+            bodyGreen.portraitIcon = assetBundle.LoadAsset<Texture>("Assets/Drones/PsiBits/Icon/PsiBitGreen.png");
             ModifyDroneModel(bodyRed, bodyGreen);
             ModifySkill();
             CharacterDeathBehavior death = bodyRed.GetOrAddComponent<CharacterDeathBehavior>();
