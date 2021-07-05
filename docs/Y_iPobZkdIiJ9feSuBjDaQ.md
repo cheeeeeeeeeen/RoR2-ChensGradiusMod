@@ -8,6 +8,7 @@
 | [Drone&lt;T&gt;](UWAul_yMUbN+3325jv26NQ 'Chen.GradiusMod.Drones.Drone&lt;T&gt;') | Allows for making drone classes into singleton classes.<br/> |
 | [DroneCatalog](qPWMsXW14ySl71rXQaL2KQ 'Chen.GradiusMod.Drones.DroneCatalog') | A static class that caters initializing and registering custom drones.<br/> |
 | [DroneDeathState](8ui+PJgGZL18czsU0lHbsw 'Chen.GradiusMod.Drones.DroneDeathState') | An Entity State that should inherit from the original EntityStates.Drone.DeathState.<br/>The original code does not support custom spawn cards to be detected when dying so that the interactable can spawn again.<br/>This state will cater to custom drones so they are also able to spawn interactables upon death.<br/>Do not use this class directly. Always inherit from this class and implement the interactable property.<br/> |
+| [SineFlicker](gODJKXdVL5Utx1IRTLZr6w 'Chen.GradiusMod.Drones.SineFlicker') | An abstract component that needs to be implemented.<br/>It allows the Light component to flicker in a sine math function pattern.<br/> |
 
 | Structs | |
 | :--- | :--- |

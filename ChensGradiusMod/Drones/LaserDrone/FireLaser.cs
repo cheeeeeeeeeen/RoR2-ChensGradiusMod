@@ -10,8 +10,8 @@ namespace Chen.GradiusMod.Drones.LaserDrone
 {
     internal class FireLaser : BaseState
     {
-        public const uint chargeLaserEventId = 3954655918;
-        public const uint dissipateLaserEventId = 2908790270;
+        public const uint ChargeLaserEventId = 3954655918;
+        public const uint DissipateLaserEventId = 2908790270;
 
         public static GameObject effectPrefab;
         public static GameObject hitEffectPrefab;
@@ -97,7 +97,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             if (characterBody)
             {
                 characterBody.SetAimTimer(baseDuration);
-                if (isAuthority) AkSoundEngine.PostEvent(chargeLaserEventId, gameObject);
+                if (isAuthority) AkSoundEngine.PostEvent(ChargeLaserEventId, gameObject);
             }
             muzzle = transform.Find("ModelBase").Find("mdlLaserDrone").Find("AimOrigin").gameObject;
             chargeEffect = muzzle.GetComponent<ChargeEffect>();
@@ -122,7 +122,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
 
         public override void OnExit()
         {
-            if (isAuthority) AkSoundEngine.PostEvent(dissipateLaserEventId, gameObject);
+            if (isAuthority) AkSoundEngine.PostEvent(DissipateLaserEventId, gameObject);
             if (particleChargeEffect) Destroy(particleChargeEffect);
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, _t, _d) =>
             {

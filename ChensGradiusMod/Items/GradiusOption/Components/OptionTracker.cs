@@ -61,7 +61,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
 
         private Transform t;
 
-        private const float invalidThreshold = 3f;
+        private const float InvalidThreshold = 3f;
 
         private void Awake()
         {
@@ -70,7 +70,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
 
         private void FixedUpdate()
         {
-            if (invalidCheckTimer >= invalidThreshold)
+            if (invalidCheckTimer >= InvalidThreshold)
             {
                 Log.Warning($"Invalid OptionTracker: Cannot find the values through the threshold time. Destroying the tracker from GameObject {gameObject.name}.");
                 Destroy(this);
@@ -151,7 +151,7 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
         private void OnDestroy()
         {
             foreach (var option in existingOptions) Destroy(option);
-            AkSoundEngine.PostEvent(GradiusOption.loseOptionEventId, gameObject);
+            AkSoundEngine.PostEvent(GradiusOption.LoseOptionEventId, gameObject);
             Log.Message($"OptionTracker.OnDestroy: Destroying all Options of {gameObject.name}.");
         }
 

@@ -28,13 +28,13 @@ namespace Chen.GradiusMod.Items.GradiusOption.Components
 
         public static void SpawnOptions(GameObject minion, int oldCount, int newCount)
         {
-            AkSoundEngine.PostEvent(GradiusOption.getOptionEventId, minion);
+            AkSoundEngine.PostEvent(GradiusOption.GetOptionEventId, minion);
             for (int t = oldCount + 1; t <= newCount; t++) SpawnOption(minion, t);
         }
 
         public static void DestroyOptions(GameObject minion, int oldCount, int newCount)
         {
-            AkSoundEngine.PostEvent(GradiusOption.loseOptionEventId, minion);
+            AkSoundEngine.PostEvent(GradiusOption.LoseOptionEventId, minion);
             OptionTracker minionOptionTracker = minion.GetComponent<OptionTracker>();
             if (minionOptionTracker)
             {

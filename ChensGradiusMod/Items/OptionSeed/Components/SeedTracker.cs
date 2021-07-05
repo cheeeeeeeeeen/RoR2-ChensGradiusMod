@@ -44,7 +44,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
             get
             {
                 if (characterBody) return OptionSeed.instance.GetVerticalOffsetMultiplier(characterBody.name);
-                else return OptionSeed.defaultVerticalOffsetMultiplier;
+                else return OptionSeed.DefaultVerticalOffsetMultiplier;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
             get
             {
                 if (characterBody) return OptionSeed.instance.GetHorizontalOffsetMultiplier(characterBody.name);
-                else return OptionSeed.defaultHorizontalOffsetMultiplier;
+                else return OptionSeed.DefaultHorizontalOffsetMultiplier;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
             get
             {
                 if (characterBody) return OptionSeed.instance.GetRadius(characterBody.name);
-                else return OptionSeed.defaultRotationRadius;
+                else return OptionSeed.DefaultRotationRadius;
             }
         }
 
@@ -72,7 +72,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
 
         private float invalidCheckTimer = 0f;
 
-        private const float invalidThreshold = 3f;
+        private const float InvalidThreshold = 3f;
 
         private void Awake()
         {
@@ -81,13 +81,13 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
             rightSeed = Instantiate(OptionSeed.optionSeedPrefab, transform.position, transform.rotation);
             rightBehavior = InitializeSeed(rightSeed, 1);
 
-            AkSoundEngine.PostEvent(OptionSeed.getOptionEventId, gameObject);
+            AkSoundEngine.PostEvent(OptionSeed.GetOptionEventId, gameObject);
             Log.Message($"SeedTracker.Awake: 2 new Option Seeds for {gameObject.name}.");
         }
 
         private void FixedUpdate()
         {
-            if (invalidCheckTimer >= invalidThreshold)
+            if (invalidCheckTimer >= InvalidThreshold)
             {
                 Log.Warning($"Invalid SeedTracker: Cannot find the values through the threshold time. Destroying the tracker from GameObject {gameObject.name}.");
                 Destroy(this);
@@ -124,7 +124,7 @@ namespace Chen.GradiusMod.Items.OptionSeed.Components
         {
             Destroy(leftSeed);
             Destroy(rightSeed);
-            AkSoundEngine.PostEvent(OptionSeed.loseOptionEventId, gameObject);
+            AkSoundEngine.PostEvent(OptionSeed.LoseOptionEventId, gameObject);
             Log.Message($"SeedTracker.OnDestroy: Destroying Seeds of {gameObject.name}.");
         }
 

@@ -84,11 +84,11 @@ namespace Chen.GradiusMod.Items.OptionSeed
             "She made a soft, short giggle, then said, \"She is one of the legends who played a big role in saving our race and our home planet.\"\n\n" +
             "I nodded, and it strangely felt satisfying to hear that.";
 
-        internal const uint getOptionEventId = GradiusOptionItem.getOptionEventId;
-        internal const uint loseOptionEventId = GradiusOptionItem.loseOptionEventId;
-        internal const float defaultVerticalOffsetMultiplier = .4f;
-        internal const float defaultHorizontalOffsetMultiplier = .8f;
-        internal const float defaultRotationRadius = .3f;
+        internal const uint GetOptionEventId = GradiusOptionItem.GetOptionEventId;
+        internal const uint LoseOptionEventId = GradiusOptionItem.LoseOptionEventId;
+        internal const float DefaultVerticalOffsetMultiplier = .4f;
+        internal const float DefaultHorizontalOffsetMultiplier = .8f;
+        internal const float DefaultRotationRadius = .3f;
 
         internal static GameObject optionSeedPrefab { get; private set; }
 
@@ -172,7 +172,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             {
                 if (bodyName.Contains(pair.Key)) return pair.Value;
             }
-            return defaultVerticalOffsetMultiplier;
+            return DefaultVerticalOffsetMultiplier;
         }
 
         internal float GetHorizontalOffsetMultiplier(string bodyName)
@@ -181,7 +181,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             {
                 if (bodyName.Contains(pair.Key)) return pair.Value;
             }
-            return defaultHorizontalOffsetMultiplier;
+            return DefaultHorizontalOffsetMultiplier;
         }
 
         internal float GetRadius(string bodyName)
@@ -190,7 +190,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
             {
                 if (bodyName.Contains(pair.Key)) return pair.Value;
             }
-            return defaultRotationRadius;
+            return DefaultRotationRadius;
         }
     }
 }

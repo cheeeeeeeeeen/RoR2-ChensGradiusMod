@@ -13,9 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
-using static EntityStates.Drone.DeathState;
 using static R2API.DirectorAPI;
-using UnityObject = UnityEngine.Object;
 
 namespace Chen.GradiusMod.Drones.PsyDrone
 {
@@ -34,6 +32,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         public static GameObject droneBodyGreen { get; private set; }
         public static GameObject droneMasterGreen { get; private set; }
         public static GameObject mirrorLaserPrefab { get; private set; }
+        public static GameObject searchLaserPrefab { get; private set; }
 
         protected override GameObject DroneCharacterMasterObject => droneMasterRed;
 
@@ -229,7 +228,10 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
             LoadoutAPI.AddSkillFamily(newSkillFamily);
             mirrorLaserPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaser.prefab");
-            mirrorLaserPrefab.AddComponent<NetworkIdentity>();
+            mirrorLaserPrefab.GetOrAddComponent<NetworkIdentity>();
+            searchLaserPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaser.prefab");
+            searchLaserPrefab.GetOrAddComponent<NetworkIdentity>();
+            searchLaserPrefab.transform.Find("Sphere").Find("Point Light").gameObject.AddComponent<SearchLaserBallFlicker>();
         }
 
         private void ModifyInteractableSpawnCard()

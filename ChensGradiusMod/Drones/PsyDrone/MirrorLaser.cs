@@ -44,12 +44,17 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-            if (firstLC.complete && secondLC.complete && thirdLC.complete) outer.SetNextStateToMain();
+            if (AllLasersComplete()) outer.SetNextStateToMain();
         }
 
         private Vector3 ComputeDirection(Vector3 localDirection)
         {
             return (Util.QuaternionSafeLookRotation(modelBaseTransform.forward) * localDirection).normalized;
+        }
+
+        private bool AllLasersComplete()
+        {
+            return firstLC.complete && secondLC.complete && thirdLC.complete && fourthLC.complete && fifthLC.complete;
         }
     }
 }

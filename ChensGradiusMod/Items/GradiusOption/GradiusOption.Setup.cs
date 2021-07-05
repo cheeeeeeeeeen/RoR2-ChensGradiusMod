@@ -106,8 +106,8 @@ namespace Chen.GradiusMod.Items.GradiusOption
             "It sounds like this item came from a far away place. The A.I. took their chance, and now she's coming back live again. " +
             "Makes me imagine the world is small when it's really not. Well, that's it for my personal log.";
 
-        internal const uint getOptionEventId = 649757048;
-        internal const uint loseOptionEventId = 2603869165;
+        internal const uint GetOptionEventId = 649757048;
+        internal const uint LoseOptionEventId = 2603869165;
 
         internal static GameObject gradiusOptionPrefab { get; private set; }
 

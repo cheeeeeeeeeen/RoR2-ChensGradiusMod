@@ -358,6 +358,27 @@
             Overrideable OnEnter method from the original state. Always call base.FixedUpdate.
             </summary>
         </member>
+        <member name="T:Chen.GradiusMod.Drones.SineFlicker">
+            <summary>
+            An abstract component that needs to be implemented.
+            It allows the Light component to flicker in a sine math function pattern.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Drones.SineFlicker.baseValue">
+            <summary>
+            The offset from the base range of the light.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Drones.SineFlicker.amplitude">
+            <summary>
+            The maximum and minimum value of the light's range.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Drones.SineFlicker.frequency">
+            <summary>
+            Determines how fast the light flickers.
+            </summary>
+        </member>
         <member name="T:Chen.GradiusMod.Extensions">
             <summary>
             Helpful extensions for objects that will be recurring in the mod.
