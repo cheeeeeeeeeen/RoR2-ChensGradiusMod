@@ -174,7 +174,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                             position = vertex,
                             radius = Radius,
                             attackerFiltering = AttackerFiltering.NeverHit,
-                            damageType = DamageType.Stun1s
+                            damageType = DamageType.Stun1s,
+                            falloffModel = BlastAttack.FalloffModel.None
                         }.Fire();
                         interval = DamageAuraInterval;
                     }

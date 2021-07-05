@@ -1,6 +1,7 @@
 ﻿using RoR2;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Chen.GradiusMod.Drones.PsyDrone
 {
@@ -15,7 +16,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private const float MaxSpeed = 1f;
         private const float MaxSmoothCurveRate = 1f;
         private const float SmoothCurveRate = .005f;
-        private const float Radius = 2f;
+        private const float Radius = 1f;
         private const float Force = 1f;
 
         public CharacterBody owner
@@ -145,17 +146,21 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void PerformDamageEnemy()
         {
-            new BlastAttack
+            if (NetworkServer.active && owner)
             {
-                attacker = owner.gameObject,
-                inflictor = owner.gameObject,
-                teamIndex = teamComponent.teamIndex,
-                baseDamage = owner.damage,
-                baseForce = Force,
-                position = computedPosition,
-                radius = Radius,
-                attackerFiltering = AttackerFiltering.NeverHit
-            }.Fire();
+                new BlastAttack
+                {
+                    attacker = owner.gameObject,
+                    inflictor = owner.gameObject,
+                    teamIndex = teamComponent.teamIndex,
+                    baseDamage = owner.damage,
+                    baseForce = Force,
+                    position = computedPosition,
+                    radius = Radius,
+                    attackerFiltering = AttackerFiltering.NeverHit,
+                    falloffModel = BlastAttack.FalloffModel.None
+                }.Fire();
+            }
             currentState = States.DestroySelf;
             Destroy(transform.Find("Sphere").gameObject);
         }
