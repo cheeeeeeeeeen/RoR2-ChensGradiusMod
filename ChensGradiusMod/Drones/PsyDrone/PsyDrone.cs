@@ -65,7 +65,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             base.SetupBehavior();
             InteractableActions += DirectorAPI_InteractableActions;
             CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
-            On.EntityStates.Drone.DeathState.RigidbodyCollisionListener.OnCollisionEnter += RigidbodyCollisionListener_OnCollisionEnter;
         }
 
         private void AddLanguageTokens()
@@ -301,23 +300,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     bodyObject.GetOrAddComponent<Twins>().twin = obj.gameObject;
                 }
             }
-        }
-
-        private void RigidbodyCollisionListener_OnCollisionEnter(On.EntityStates.Drone.DeathState.RigidbodyCollisionListener.orig_OnCollisionEnter orig,
-                                                                 RigidbodyCollisionListener self, Collision collision)
-        {
-            if (self.deathState.GetType() == typeof(DeathState))
-            {
-                Twins twinComponent = self.GetComponent<Twins>();
-                if (twinComponent)
-                {
-                    orig(self, collision);
-                    UnityObject.Destroy(twinComponent);
-                    UnityObject.Destroy(twinComponent.twinTwinComponent);
-                }
-                else return;
-            }
-            orig(self, collision);
         }
 
         internal static bool DebugCheck()
