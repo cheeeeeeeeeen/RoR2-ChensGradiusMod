@@ -41,6 +41,9 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private float currentSpeed;
         private HurtBox target;
         private float smoothCurveValue;
+        private TrailRenderer trailRenderer;
+        private GameObject endBall;
+        private Vector3 computedEndPosition;
 
         private void Awake()
         {
@@ -51,6 +54,9 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             currentSpeed = DefaultSpeed;
             target = null;
             smoothCurveValue = 0f;
+            trailRenderer = transform.Find("Trail").gameObject.GetComponent<TrailRenderer>();
+            endBall = null;
+            computedEndPosition = computedPosition;
         }
 
         private void FixedUpdate()
@@ -77,11 +83,13 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     PerformDestroySelf();
                     break;
             }
+            ManageEndBall();
         }
 
         private void Update()
         {
             transform.position = computedPosition;
+            if (endBall) endBall.transform.position = computedEndPosition;
         }
 
         private void PerformStraightDecelerate()
@@ -167,7 +175,20 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void PerformDestroySelf()
         {
-            if (!GetComponentInChildren<TrailRenderer>()) Destroy(gameObject);
+            if (!trailRenderer)
+            {
+                Destroy(gameObject);
+                Destroy(endBall);
+            }
+        }
+
+        private void ManageEndBall()
+        {
+            if (trailRenderer.positionCount > 0)
+            {
+                computedEndPosition = trailRenderer.GetPosition(0);
+                if (!endBall) endBall = Instantiate(PsyDrone.searchLaserSubPrefab, computedEndPosition, transform.rotation);
+            }
         }
 
         private enum States

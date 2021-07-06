@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.Helpers.GeneralHelpers.BlastAttack;
+using static RoR2.BlastAttack;
+
+using BlastAttack = Chen.Helpers.GeneralHelpers.BlastAttack;
 
 namespace Chen.GradiusMod.Drones.PsyDrone
 {
@@ -50,6 +54,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private int maxPositions;
         private float hitTimer;
         private bool foundTargetAlready;
+        private List<GameObject> bodyEffects;
 
         private void Awake()
         {
@@ -62,6 +67,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             maxPositions = MaxPositions;
             hitTimer = 0f;
             foundTargetAlready = false;
+            bodyEffects = new List<GameObject>();
         }
 
         private void Start()
@@ -85,6 +91,10 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         {
             lineRenderer.positionCount = vertices.Count;
             lineRenderer.SetPositions(vertices.ToArray());
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                bodyEffects[i].transform.position = vertices[i];
+            }
         }
 
         private void GetTarget(Vector3 origin)
@@ -143,8 +153,18 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 vertices[0] = newEndPosition;
                 maxPositions--;
             }
-            else if (!expired) vertices.Insert(0, newEndPosition);
-            if (complete) vertices.RemoveAt(vertices.Count - 1);
+            else if (!expired)
+            {
+                vertices.Insert(0, newEndPosition);
+                bodyEffects.Insert(0, Instantiate(PsyDrone.mirrorLaserBodyEffect, newEndPosition, Quaternion.identity));
+            }
+            if (complete)
+            {
+                int index = vertices.Count - 1;
+                vertices.RemoveAt(index);
+                Destroy(bodyEffects[index]);
+                bodyEffects.RemoveAt(index);
+            }
             else if (vertices.Count >= maxPositions)
             {
                 complete = true;
@@ -164,7 +184,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 {
                     if (interval <= 0)
                     {
-                        new BlastAttack
+                        HitPointAndResult result = new BlastAttack
                         {
                             attacker = owner.gameObject,
                             inflictor = owner.gameObject,
@@ -175,13 +195,32 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                             radius = Radius,
                             attackerFiltering = AttackerFiltering.NeverHit,
                             damageType = DamageType.Stun1s,
-                            falloffModel = BlastAttack.FalloffModel.None
-                        }.Fire();
+                            falloffModel = FalloffModel.None
+                        }.InformativeFire();
+                        ApplyHitEffect(result);
                         interval = DamageAuraInterval;
                     }
                     interval--;
                 }
                 hitTimer += HitCooldown;
+            }
+        }
+
+        private void ApplyHitEffect(HitPointAndResult result)
+        {
+            if (!PsyDrone.instance.hitSoundEffect) return;
+
+            foreach (var victim in result.hitPoints)
+            {
+                HurtBox hurtBox = victim.hurtBox;
+                if (hurtBox)
+                {
+                    HealthComponent healthComponent = hurtBox.healthComponent;
+                    if (healthComponent)
+                    {
+                        AkSoundEngine.PostEvent(PsyDrone.HitEffectEventId, healthComponent.gameObject);
+                    }
+                }
             }
         }
     }

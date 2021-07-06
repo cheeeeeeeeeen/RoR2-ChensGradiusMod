@@ -1,7 +1,7 @@
 ﻿#undef DEBUG
 
 using Chen.Helpers.CollectionHelpers;
-using Chen.Helpers.RoR2Helpers;
+using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using R2API;

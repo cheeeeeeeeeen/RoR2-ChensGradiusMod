@@ -1,7 +1,7 @@
 ﻿#undef DEBUG
 
 using Chen.Helpers.CollectionHelpers;
-using Chen.Helpers.RoR2Helpers;
+using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using R2API;
@@ -19,7 +19,10 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 {
     internal class PsyDrone : Drone<PsyDrone>
     {
+        public const uint HitEffectEventId = 1227075968;
+
         public int spawnWeight { get; private set; } = 1;
+        public bool hitSoundEffect { get; private set; } = true;
 
         public override bool canHaveOptions => false;
 
@@ -33,6 +36,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         public static GameObject droneMasterGreen { get; private set; }
         public static GameObject mirrorLaserPrefab { get; private set; }
         public static GameObject searchLaserPrefab { get; private set; }
+        public static GameObject mirrorLaserBodyEffect { get; private set; }
+        public static GameObject searchLaserSubPrefab { get; private set; }
 
         protected override GameObject DroneCharacterMasterObject => droneMasterRed;
 
@@ -44,6 +49,10 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             spawnWeight = config.Bind(configCategory,
                 "SpawnWeight", spawnWeight,
                 "The weight for which the Director is biased towards spawning this drone."
+            ).Value;
+            hitSoundEffect = config.Bind(configCategory,
+                "HitSoundEffect", hitSoundEffect,
+                "Allow playing of a sound effect when victims are hit by the drones' attacks."
             ).Value;
         }
 
@@ -232,6 +241,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             searchLaserPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaser.prefab");
             searchLaserPrefab.GetOrAddComponent<NetworkIdentity>();
             searchLaserPrefab.transform.Find("Sphere").Find("Point Light").gameObject.AddComponent<SearchLaserBallFlicker>();
+            mirrorLaserBodyEffect = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaserBodyEffect.prefab");
+            searchLaserSubPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaserSub.prefab");
         }
 
         private void ModifyInteractableSpawnCard()
@@ -271,8 +282,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
         {
-            if (!NetworkServer.active) return;
-            if (!obj.name.Contains("PsyDroneRed")) return;
+            if (!NetworkServer.active || obj.isPlayerControlled || !obj.name.Contains("PsyDroneRed")) return;
             CharacterMaster characterMaster = new MasterSummon
             {
                 masterPrefab = droneMasterGreen,

@@ -1,4 +1,4 @@
-﻿using Chen.Helpers.RoR2Helpers;
+﻿using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
 using RoR2;

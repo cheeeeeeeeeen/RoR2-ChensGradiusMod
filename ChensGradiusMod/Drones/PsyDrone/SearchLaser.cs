@@ -37,7 +37,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 laserNumber++;
             }
             fireTimer += Time.fixedDeltaTime;
-            if (laserNumber >= TotalLasers) outer.SetNextStateToMain();
+            if (laserNumber > TotalLasers) outer.SetNextStateToMain();
         }
     }
 }
