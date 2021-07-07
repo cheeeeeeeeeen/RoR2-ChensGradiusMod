@@ -971,5 +971,25 @@
             There is no need to override this, however if complex code is required, one may do so.
             </summary>
         </member>
+        <member name="T:Chen.Helpers.UnityHelpers.TemporaryParticleSystem">
+            <summary>
+            A component that should make temporary Particle Systems destroy themselves when the detonate switch is set to true and when the Particle System stops emitting.
+            </summary>
+        </member>
+        <member name="F:Chen.Helpers.UnityHelpers.TemporaryParticleSystem.detonate">
+            <summary>
+            A field switch to signal that the Game Object owning the particle system can be destroyed as soon as the Particle System stops emitting.
+            </summary>
+        </member>
+        <member name="M:Chen.Helpers.UnityHelpers.TemporaryParticleSystem.Awake">
+            <summary>
+            Overrideable Awake method.
+            </summary>
+        </member>
+        <member name="M:Chen.Helpers.UnityHelpers.TemporaryParticleSystem.FixedUpdate">
+            <summary>
+            Overrideable FixedUpdate method.
+            </summary>
+        </member>
     </members>
 </doc>

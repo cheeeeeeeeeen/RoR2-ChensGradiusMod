@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;
@@ -38,6 +38,9 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         public static GameObject searchLaserPrefab { get; private set; }
         public static GameObject mirrorLaserBodyEffect { get; private set; }
         public static GameObject searchLaserSubPrefab { get; private set; }
+        public static GameObject searchLaserSubExplosion { get; private set; }
+        public static GameObject mirrorLaserHitEffect { get; private set; }
+        public static GameObject searchLaserHitEffect { get; private set; }
 
         protected override GameObject DroneCharacterMasterObject => droneMasterRed;
 
@@ -243,6 +246,12 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             searchLaserPrefab.transform.Find("Sphere").Find("Point Light").gameObject.AddComponent<SearchLaserBallFlicker>();
             mirrorLaserBodyEffect = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaserBodyEffect.prefab");
             searchLaserSubPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaserSub.prefab");
+            searchLaserSubExplosion = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaserSubExplosion.prefab");
+            searchLaserSubExplosion.GetOrAddComponent<TemporaryParticleSystemWithSound>();
+            searchLaserHitEffect = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaserHitEffect.prefab");
+            searchLaserHitEffect.GetOrAddComponent<TemporaryParticleSystem>();
+            mirrorLaserHitEffect = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaserHitEffect.prefab");
+            mirrorLaserHitEffect.GetOrAddComponent<TemporaryParticleSystem>();
         }
 
         private void ModifyInteractableSpawnCard()

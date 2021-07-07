@@ -2,6 +2,10 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using static Chen.Helpers.GeneralHelpers.BlastAttack;
+using static RoR2.BlastAttack;
+
+using BlastAttack = Chen.Helpers.GeneralHelpers.BlastAttack;
 
 namespace Chen.GradiusMod.Drones.PsyDrone
 {
@@ -11,13 +15,17 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private const float DecelerationStateDuration = 1f;
         private const float AccelerationRate = .03f;
         private const float DecelerateLeastSpeed = .1f;
-        private const float MaxDetectionRange = 200f;
+        private const float MaxDetectionRange = 100f;
         private const float MaxAngleDetection = 180f;
         private const float MaxSpeed = 1f;
         private const float MaxSmoothCurveRate = 1f;
         private const float SmoothCurveRate = .005f;
-        private const float Radius = 1f;
+        private const float Radius = 2f;
         private const float Force = 1f;
+        private const float DamageMultiplier = 2f;
+        private const float SubRadius = 8f;
+        private const float SubForce = 8f;
+        private const float Expiration = 10f;
 
         public CharacterBody owner
         {
@@ -44,6 +52,9 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private TrailRenderer trailRenderer;
         private GameObject endBall;
         private Vector3 computedEndPosition;
+        private float age;
+        private bool expired;
+        private bool destroyTrailRenderer;
 
         private void Awake()
         {
@@ -57,10 +68,19 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             trailRenderer = transform.Find("Trail").gameObject.GetComponent<TrailRenderer>();
             endBall = null;
             computedEndPosition = computedPosition;
+            age = 0f;
+            expired = false;
+            destroyTrailRenderer = false;
         }
 
         private void FixedUpdate()
         {
+            age += Time.fixedDeltaTime;
+            if (!expired && age >= Expiration)
+            {
+                currentState = States.DamageEnemy;
+                expired = true;
+            }
             switch (currentState)
             {
                 case States.StraightDecelerate:
@@ -83,13 +103,13 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     PerformDestroySelf();
                     break;
             }
+            DetectHits();
             ManageEndBall();
         }
 
         private void Update()
         {
             transform.position = computedPosition;
-            if (endBall) endBall.transform.position = computedEndPosition;
         }
 
         private void PerformStraightDecelerate()
@@ -156,18 +176,19 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         {
             if (NetworkServer.active && owner)
             {
-                new BlastAttack
+                HitPointAndResult result = new BlastAttack
                 {
                     attacker = owner.gameObject,
                     inflictor = owner.gameObject,
                     teamIndex = teamComponent.teamIndex,
-                    baseDamage = owner.damage,
+                    baseDamage = owner.damage * DamageMultiplier,
                     baseForce = Force,
                     position = computedPosition,
                     radius = Radius,
                     attackerFiltering = AttackerFiltering.NeverHit,
-                    falloffModel = BlastAttack.FalloffModel.None
-                }.Fire();
+                    falloffModel = FalloffModel.None
+                }.InformativeFire();
+                ApplyHitEffects(result);
             }
             currentState = States.DestroySelf;
             Destroy(transform.Find("Sphere").gameObject);
@@ -175,19 +196,68 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void PerformDestroySelf()
         {
+            if (!destroyTrailRenderer && trailRenderer)
+            {
+                Destroy(trailRenderer.gameObject, trailRenderer.time);
+                destroyTrailRenderer = true;
+            }
             if (!trailRenderer)
             {
                 Destroy(gameObject);
                 Destroy(endBall);
+                new BlastAttack
+                {
+                    attacker = owner.gameObject,
+                    inflictor = owner.gameObject,
+                    teamIndex = teamComponent.teamIndex,
+                    baseDamage = owner.damage,
+                    baseForce = SubForce,
+                    position = computedPosition,
+                    radius = SubRadius,
+                    attackerFiltering = AttackerFiltering.NeverHit,
+                    falloffModel = FalloffModel.None
+                }.Fire();
+                Instantiate(PsyDrone.searchLaserSubExplosion, computedPosition, Quaternion.identity);
             }
         }
 
         private void ManageEndBall()
         {
-            if (trailRenderer.positionCount > 0)
+            if (trailRenderer && trailRenderer.positionCount > 0)
             {
                 computedEndPosition = trailRenderer.GetPosition(0);
                 if (!endBall) endBall = Instantiate(PsyDrone.searchLaserSubPrefab, computedEndPosition, transform.rotation);
+                if (endBall) endBall.transform.position = computedEndPosition;
+            }
+        }
+
+        private void ApplyHitEffects(HitPointAndResult result)
+        {
+            foreach (var victim in result.hitPoints)
+            {
+                HurtBox hurtBox = victim.hurtBox;
+                if (hurtBox)
+                {
+                    HealthComponent healthComponent = hurtBox.healthComponent;
+                    if (healthComponent)
+                    {
+                        GameObject body = healthComponent.gameObject;
+                        if (PsyDrone.instance.hitSoundEffect) AkSoundEngine.PostEvent(PsyDrone.HitEffectEventId, body);
+                        Instantiate(PsyDrone.searchLaserHitEffect, body.transform.position, Quaternion.identity);
+                    }
+                }
+            }
+        }
+
+        private void DetectHits()
+        {
+            float distance = Vector3.Distance(transform.position, computedPosition);
+            bool hit = Physics.Raycast(transform.position, direction, out RaycastHit raycastHit, distance,
+                                       LayerIndex.world.mask | LayerIndex.entityPrecise.mask | LayerIndex.defaultLayer.mask, QueryTriggerInteraction.UseGlobal);
+            if (hit)
+            {
+                computedPosition = raycastHit.point;
+                currentState = States.DamageEnemy;
             }
         }
 

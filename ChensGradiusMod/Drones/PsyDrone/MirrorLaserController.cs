@@ -19,7 +19,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private const float MaxAngleDetection = 180f;
         private const float LifeTime = 5f;
         private const float LaserSpeed = 2f;
-        private const float HitCooldown = .1f;
+        private const float HitCooldown = .2f;
         private const float HitAdjustmentMultiplier = .02f;
         private const float Force = 1f;
         private const float Radius = 3f;
@@ -202,14 +202,12 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     }
                     interval--;
                 }
-                hitTimer += HitCooldown;
+                hitTimer += HitCooldown / owner.attackSpeed;
             }
         }
 
         private void ApplyHitEffect(HitPointAndResult result)
         {
-            if (!PsyDrone.instance.hitSoundEffect) return;
-
             foreach (var victim in result.hitPoints)
             {
                 HurtBox hurtBox = victim.hurtBox;
@@ -218,7 +216,9 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     HealthComponent healthComponent = hurtBox.healthComponent;
                     if (healthComponent)
                     {
-                        AkSoundEngine.PostEvent(PsyDrone.HitEffectEventId, healthComponent.gameObject);
+                        GameObject body = healthComponent.gameObject;
+                        if (PsyDrone.instance.hitSoundEffect) AkSoundEngine.PostEvent(PsyDrone.HitEffectEventId, body);
+                        Instantiate(PsyDrone.mirrorLaserHitEffect, body.transform.position, Quaternion.identity);
                     }
                 }
             }
