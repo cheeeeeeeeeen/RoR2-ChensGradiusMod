@@ -12,16 +12,16 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 {
     internal class MirrorLaserController : MonoBehaviour
     {
-        private const uint FireSoundEffect = 108801625;
+        public const float BaseForce = 1f;
+
         private const int MaxPositions = 100;
         private const float CurveAge = .5f;
         private const float MaxDetectionRange = 70f;
         private const float MaxAngleDetection = 180f;
         private const float LifeTime = 5f;
         private const float LaserSpeed = 2f;
-        private const float HitCooldown = .2f;
+        private const float HitCooldown = .15f;
         private const float HitAdjustmentMultiplier = .02f;
-        private const float Force = 1f;
         private const float Radius = 3f;
         private const int DamageAuraInterval = 3;
 
@@ -35,6 +35,41 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             }
         }
 
+        public float damage
+        {
+            get
+            {
+                float value = 0f;
+                if (_damage == null)
+                {
+                    if (owner) _damage = value = owner.damage;
+                }
+                else value = (float)_damage;
+                return value;
+            }
+            set => _damage = value;
+        }
+
+        public float force
+        {
+            get
+            {
+                if (_force == null) _force = BaseForce;
+                return (float)_force;
+            }
+            set => _force = value;
+        }
+
+        public float speed
+        {
+            get
+            {
+                if (_speed == null) _speed = LaserSpeed;
+                return (float)_speed;
+            }
+            set => _speed = value;
+        }
+
         public Vector3 direction { get => _direction.normalized; set => _direction = value.normalized; }
         public bool spawnEffects { get; set; }
         public bool complete { get; private set; }
@@ -46,6 +81,9 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private CharacterBody _owner;
         private TeamComponent _teamComponent;
         private Vector3 _direction;
+        private float? _damage;
+        private float? _speed;
+        private float? _force;
         private LineRenderer lineRenderer;
         private ParticleSystem spawnerEffect;
         private ParticleSystem muzzleEffect;
@@ -76,7 +114,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             {
                 muzzleEffect.Play();
                 spawnerEffect.Play();
-                AkSoundEngine.PostEvent(FireSoundEffect, gameObject);
             }
         }
 
@@ -122,14 +159,14 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private Vector3 CheckHits(out bool hit, Vector3 origin)
         {
             Vector3 newEndPosition;
-            hit = Physics.Raycast(origin, direction, out RaycastHit raycastHit, LaserSpeed,
+            hit = Physics.Raycast(origin, direction, out RaycastHit raycastHit, speed,
                                   LayerIndex.world.mask | LayerIndex.entityPrecise.mask | LayerIndex.defaultLayer.mask, QueryTriggerInteraction.UseGlobal);
             if (hit)
             {
-                newEndPosition = raycastHit.point - (HitAdjustmentMultiplier * LaserSpeed * direction);
+                newEndPosition = raycastHit.point - (HitAdjustmentMultiplier * speed * direction);
                 curved = true;
             }
-            else newEndPosition = origin + (direction * LaserSpeed);
+            else newEndPosition = origin + (direction * speed);
 
             return newEndPosition;
         }
@@ -189,8 +226,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                             attacker = owner.gameObject,
                             inflictor = owner.gameObject,
                             teamIndex = teamComponent.teamIndex,
-                            baseDamage = owner.damage,
-                            baseForce = Force,
+                            baseDamage = damage,
+                            baseForce = force,
                             position = vertex,
                             radius = Radius,
                             attackerFiltering = AttackerFiltering.NeverHit,

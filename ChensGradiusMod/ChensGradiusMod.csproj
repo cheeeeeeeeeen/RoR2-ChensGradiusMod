@@ -25,16 +25,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Drones\PsyDrone\Laser.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="chensgradiusmod_assets" />
     <EmbeddedResource Include="chensgradiusmod_soundbank.bnk" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Drones\PsyDrone\Laser.cs" />
   </ItemGroup>
 
   <ItemGroup>

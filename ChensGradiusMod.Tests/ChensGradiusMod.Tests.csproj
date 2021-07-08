@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Drones\LaserDrone1.cs" />
     <Compile Include="Drones\LaserDrone2.cs" />
+    <Compile Include="Drones\PsyDrone.cs" />
     <Compile Include="GradiusMod.cs" />
     <Compile Include="Items\OptionSeed\OptionSeed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

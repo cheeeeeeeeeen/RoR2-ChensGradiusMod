@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿#undef DEBUG
 
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;
@@ -25,7 +25,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         public int spawnWeight { get; private set; } = 1;
         public bool hitSoundEffect { get; private set; } = true;
 
-        public override bool canHaveOptions => false;
+        public override bool canHaveOptions => true;
 
         public static InteractableSpawnCard iSpawnCard { get; private set; }
         public static GameObject brokenObject { get; private set; }
@@ -42,6 +42,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         public static GameObject searchLaserSubExplosion { get; private set; }
         public static GameObject mirrorLaserHitEffect { get; private set; }
         public static GameObject searchLaserHitEffect { get; private set; }
+        public static GameObject mirrorLaserMuzzleEffect { get; private set; }
+        public static GameObject searchLaserMuzzleEffect { get; private set; }
 
         protected override GameObject DroneCharacterMasterObject => droneMasterRed;
 
@@ -215,6 +217,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             bodyGreen.portraitIcon = assetBundle.LoadAsset<Texture>("Assets/Drones/PsiBits/Icon/PsiBitGreen.png");
             ModifyDroneModel(bodyRed, bodyGreen);
             ModifySkill();
+            InitializeEffects();
             CharacterDeathBehavior death = bodyRed.GetOrAddComponent<CharacterDeathBehavior>();
             death.deathState = new SerializableEntityStateType(typeof(DeathState));
             death = bodyGreen.GetOrAddComponent<CharacterDeathBehavior>();
@@ -281,6 +284,10 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             };
             locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
             LoadoutAPI.AddSkillFamily(newSkillFamily);
+        }
+
+        private void InitializeEffects()
+        {
             mirrorLaserPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaser.prefab");
             mirrorLaserPrefab.GetOrAddComponent<NetworkIdentity>();
             searchLaserPrefab = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaser.prefab");
@@ -294,6 +301,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             searchLaserHitEffect.GetOrAddComponent<TemporaryParticleSystem>();
             mirrorLaserHitEffect = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaserHitEffect.prefab");
             mirrorLaserHitEffect.GetOrAddComponent<TemporaryParticleSystem>();
+            mirrorLaserMuzzleEffect = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/MirrorLaserMuzzleEffect.prefab");
+            searchLaserMuzzleEffect = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/SearchLaserMuzzleEffect.prefab");
         }
 
         private void ModifyInteractableSpawnCard()

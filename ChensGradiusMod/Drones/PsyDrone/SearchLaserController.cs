@@ -11,6 +11,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 {
     internal class SearchLaserController : MonoBehaviour
     {
+        public const float BaseForce = 1f;
+
         private const float DefaultSpeed = 1f;
         private const float DecelerationStateDuration = 1f;
         private const float AccelerationRate = .03f;
@@ -19,12 +21,11 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private const float MaxAngleDetection = 180f;
         private const float MaxSpeed = 1f;
         private const float MaxSmoothCurveRate = 1f;
-        private const float SmoothCurveRate = .005f;
+        private const float DefaultSmoothCurveRate = .005f;
         private const float Radius = 2f;
-        private const float Force = 1f;
         private const float DamageMultiplier = 2f;
         private const float SubRadius = 8f;
-        private const float SubForce = 8f;
+        private const float SubForceMultiplier = 15f;
         private const float Expiration = 10f;
 
         public CharacterBody owner
@@ -37,12 +38,72 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             }
         }
 
+        public float damage
+        {
+            get
+            {
+                float value = 0f;
+                if (_damage == null)
+                {
+                    if (owner) _damage = value = owner.damage;
+                }
+                else value = (float)_damage;
+                return value;
+            }
+            set => _damage = value;
+        }
+
+        public float force
+        {
+            get
+            {
+                if (_force == null) _force = BaseForce;
+                return (float)_force;
+            }
+            set => _force = value;
+        }
+
+        public float smoothCurveRate
+        {
+            get
+            {
+                if (_smoothCurveRate == null) _smoothCurveRate = DefaultSmoothCurveRate;
+                return (float)_smoothCurveRate;
+            }
+            set => _smoothCurveRate = value;
+        }
+
+        public float acceleration
+        {
+            get
+            {
+                if (_acceleration == null) _acceleration = AccelerationRate;
+                return (float)_acceleration;
+            }
+            set => _acceleration = value;
+        }
+
+        public float maximumSpeed
+        {
+            get
+            {
+                if (_maximumSpeed == null) _maximumSpeed = MaxSpeed;
+                return (float)_maximumSpeed;
+            }
+            set => _maximumSpeed = value;
+        }
+
         private TeamComponent teamComponent { get => _teamComponent ? _teamComponent : owner.teamComponent; set => _teamComponent = value; }
         private Vector3 direction { get => _direction.normalized; set => _direction = value.normalized; }
 
         private CharacterBody _owner;
         private TeamComponent _teamComponent;
         private Vector3 _direction;
+        private float? _damage;
+        private float? _force;
+        private float? _smoothCurveRate;
+        private float? _acceleration;
+        private float? _maximumSpeed;
         private Vector3 computedPosition;
         private States currentState;
         private float timer;
@@ -117,7 +178,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void PerformStraightDecelerate()
         {
-            currentSpeed = Mathf.Max(currentSpeed - AccelerationRate, DecelerateLeastSpeed);
+            currentSpeed = Mathf.Max(currentSpeed - acceleration, DecelerateLeastSpeed);
             computedPosition += direction * currentSpeed;
             if (currentSpeed <= DecelerateLeastSpeed)
             {
@@ -156,10 +217,10 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 HealthComponent targetHealth = target.healthComponent;
                 if (targetHealth && targetHealth.alive)
                 {
-                    currentSpeed = Mathf.Min(currentSpeed + AccelerationRate, MaxSpeed);
+                    currentSpeed = Mathf.Min(currentSpeed + acceleration, maximumSpeed);
                     Vector3 directionToEnemy = (target.transform.position - computedPosition).normalized;
                     direction = Vector3.Lerp(direction, directionToEnemy, smoothCurveValue);
-                    smoothCurveValue = Mathf.Min(smoothCurveValue + SmoothCurveRate, MaxSmoothCurveRate);
+                    smoothCurveValue = Mathf.Min(smoothCurveValue + smoothCurveRate, MaxSmoothCurveRate);
                     int layerMask = LayerIndex.world.mask | LayerIndex.entityPrecise.mask | LayerIndex.defaultLayer.mask;
                     bool hit = Physics.Raycast(computedPosition, direction, out RaycastHit raycastHit, currentSpeed,
                                                layerMask, QueryTriggerInteraction.UseGlobal);
@@ -187,8 +248,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     attacker = owner.gameObject,
                     inflictor = owner.gameObject,
                     teamIndex = teamComponent.teamIndex,
-                    baseDamage = owner.damage * DamageMultiplier,
-                    baseForce = Force,
+                    baseDamage = damage * DamageMultiplier,
+                    baseForce = force,
                     position = computedPosition,
                     radius = Radius,
                     attackerFiltering = AttackerFiltering.NeverHit,
@@ -216,8 +277,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     attacker = owner.gameObject,
                     inflictor = owner.gameObject,
                     teamIndex = teamComponent.teamIndex,
-                    baseDamage = owner.damage,
-                    baseForce = SubForce,
+                    baseDamage = damage,
+                    baseForce = force * SubForceMultiplier,
                     position = computedPosition,
                     radius = SubRadius,
                     attackerFiltering = AttackerFiltering.NeverHit,

@@ -981,6 +981,11 @@
             A field switch to signal that the Game Object owning the particle system can be destroyed as soon as the Particle System stops emitting.
             </summary>
         </member>
+        <member name="F:Chen.Helpers.UnityHelpers.TemporaryParticleSystem.particleSystem">
+            <summary>
+            The Particle System partnered with this component.
+            </summary>
+        </member>
         <member name="M:Chen.Helpers.UnityHelpers.TemporaryParticleSystem.Awake">
             <summary>
             Overrideable Awake method.

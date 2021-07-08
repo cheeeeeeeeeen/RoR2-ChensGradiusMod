@@ -60,6 +60,16 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - The drone will spawn more in Sky Meadow.
 - Options also copy this drone's attacks.
 
+![Psy Drone Red](https://puu.sh/HUKs0.png) ![Psy Drone Green](https://puu.sh/HUKrZ.png)
+**Psy Drones**
+- A drone powered by this mod's API. Check the [wiki](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki).
+- Each drone unleashes strong and unique laser attacks.
+- The drones can be bought as one.
+- If one of them is destroyed, the other will also be decommissioned.
+- Upon being destroyed, the first one to make contact with the map will spawn the interactable again if it is configured to be repurchaseable.
+- The drones may appear as soon as in Stage 1, but it is expensive.
+- Options also copy each drone's attacks, although not completely.
+
 ![Artifact of Machines](https://puu.sh/HQkF4.png)
 **Artifact of Machines**
 - An artifact added to Risk of Rain 2. Survivors will have a TC-280 Prototype drone when they spawn. Enemies, however, will also get drones.
@@ -99,6 +109,13 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.4.0**
+- Implement Psy Drones, a powerful weapon from a different timeline.
+- Allow the other custom drones from this mod to benefit from attack speed bonuses.
+- Fix a very bad bug where the Health Components of custom drones aren't properly assigned.
+- Actually add a config option for custom drones to be repurchaseable.
+- Integrate breaking changes from Chen's Helpers.
+
 **3.3.11**
 - Update the mod so that it works after the breaking changes of Chen's Helpers.
 - Implement a new API for a shortcut way to setup custom broken drone models.
@@ -115,13 +132,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Fix a bad logic in Seed Behavior which causes it to self-destruct.
 - Add API for adjusting rotational radius on the Option Seed.
 - Change default values for horizontal offset within the API due to a bad computation being reworked.
-
-**3.3.7**
-- Remove the jitter movement of the Options.
-- Widen the distance of the seeds from the survivor to avoid self collisions.
-- Increase the damage of Option Seed through the default config.
-- Improve a a lot of the checking so that it also checks when the game is paused without affecting visual computations.
-- Improve the implementation of Gradius' Option so that sound effects will properly register.
-- Warnings reported within the game are actually safe bugs. Finally resolved that and properly disposed of data when possible.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
