@@ -1,4 +1,5 @@
-﻿using RoR2;
+﻿using Chen.GradiusMod.Compatibility;
+using RoR2;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -256,6 +257,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     falloffModel = FalloffModel.None
                 }.InformativeFire();
                 ApplyHitEffects(result);
+                TriggerArmsRace();
             }
             currentState = States.DestroySelf;
             Destroy(transform.Find("Sphere").gameObject);
@@ -272,18 +274,22 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             {
                 Destroy(gameObject);
                 Destroy(endBall);
-                new BlastAttack
+                if (NetworkServer.active && owner)
                 {
-                    attacker = owner.gameObject,
-                    inflictor = owner.gameObject,
-                    teamIndex = teamComponent.teamIndex,
-                    baseDamage = damage,
-                    baseForce = force * SubForceMultiplier,
-                    position = computedPosition,
-                    radius = SubRadius,
-                    attackerFiltering = AttackerFiltering.NeverHit,
-                    falloffModel = FalloffModel.None
-                }.Fire();
+                    new BlastAttack
+                    {
+                        attacker = owner.gameObject,
+                        inflictor = owner.gameObject,
+                        teamIndex = teamComponent.teamIndex,
+                        baseDamage = damage,
+                        baseForce = force * SubForceMultiplier,
+                        position = computedPosition,
+                        radius = SubRadius,
+                        attackerFiltering = AttackerFiltering.NeverHit,
+                        falloffModel = FalloffModel.None
+                    }.Fire();
+                    TriggerArmsRace();
+                }
                 Instantiate(PsyDrone.searchLaserSubExplosion, computedPosition, Quaternion.identity);
             }
         }
@@ -324,6 +330,14 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             {
                 computedPosition = raycastHit.point;
                 currentState = States.DamageEnemy;
+            }
+        }
+
+        private void TriggerArmsRace()
+        {
+            if (ChensClassicItems.enabled)
+            {
+                ChensClassicItems.TriggerArtillery(owner, damage, owner.RollCrit());
             }
         }
 

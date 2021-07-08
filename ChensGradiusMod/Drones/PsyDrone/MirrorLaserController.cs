@@ -1,4 +1,5 @@
-﻿using RoR2;
+﻿using Chen.GradiusMod.Compatibility;
+using RoR2;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -235,6 +236,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                             falloffModel = FalloffModel.None
                         }.InformativeFire();
                         ApplyHitEffect(result);
+                        TriggerArmsRace();
                         interval = DamageAuraInterval;
                     }
                     interval--;
@@ -258,6 +260,14 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                         Instantiate(PsyDrone.mirrorLaserHitEffect, body.transform.position, Quaternion.identity);
                     }
                 }
+            }
+        }
+
+        private void TriggerArmsRace()
+        {
+            if (ChensClassicItems.enabled)
+            {
+                ChensClassicItems.TriggerArtillery(owner, damage, owner.RollCrit());
             }
         }
     }
