@@ -206,14 +206,15 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                 laserEffect.transform.rotation = Util.QuaternionSafeLookRotation(target - origin);
                 laserEffectEnd.position = target;
             }
-            if (fireStopwatch > 1f / fireFrequency)
+            float computedFrequency = 1f / fireFrequency / attackSpeedStat;
+            if (fireStopwatch > computedFrequency)
             {
                 if (!flag)
                 {
                     float damage = damageCoefficient * damageStat;
                     FireBullet(gameObject, damage, force, ray, "Muzzle", (target - ray.origin).magnitude + 0.1f);
                 }
-                fireStopwatch -= 1f / fireFrequency;
+                fireStopwatch -= computedFrequency;
             }
             GradiusOption.instance.FireForAllOptions(characterBody, (option, behavior, optionTarget, direction) =>
             {
@@ -244,7 +245,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                     ((GameObject)behavior.U["laserFire"]).transform.rotation = Util.QuaternionSafeLookRotation(point - position);
                     ((Transform)behavior.U["laserFireEnd"]).position = point;
                 }
-                if (optionFireStopwatch > 1f / fireFrequency)
+                if (optionFireStopwatch > computedFrequency)
                 {
                     if (!optionFlag)
                     {

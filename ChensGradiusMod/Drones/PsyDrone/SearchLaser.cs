@@ -13,7 +13,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private Transform modelTransform;
         private Transform aimOrigin;
         private float fireTimer;
-        private float computedInterval;
         private ParticleSystem muzzleEffect;
 
         public override void OnEnter()
@@ -22,7 +21,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             modelTransform = GetModelTransform();
             aimOrigin = modelTransform.Find("AimOrigin");
             fireTimer = 0f;
-            computedInterval = FireInterval / attackSpeedStat;
             muzzleEffect = aimOrigin.gameObject.GetComponent<ParticleSystem>();
             muzzleEffect.Play();
         }
@@ -31,6 +29,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         {
             base.FixedUpdate();
             fireTimer += Time.fixedDeltaTime;
+            float computedInterval = FireInterval / attackSpeedStat;
             if (fireTimer >= computedInterval)
             {
                 GameObject searchLaser = Object.Instantiate(PsyDrone.searchLaserPrefab, aimOrigin.position, aimOrigin.rotation);

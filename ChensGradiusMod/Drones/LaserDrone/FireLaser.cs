@@ -96,7 +96,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             duration = baseDuration / attackSpeedStat;
             if (characterBody)
             {
-                characterBody.SetAimTimer(baseDuration);
+                characterBody.SetAimTimer(duration);
                 if (isAuthority) AkSoundEngine.PostEvent(ChargeLaserEventId, gameObject);
             }
             muzzle = transform.Find("ModelBase").Find("mdlLaserDrone").Find("AimOrigin").gameObject;
