@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.4.0-orange)
+![Version](https://img.shields.io/badge/Version-3.4.1-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -109,6 +109,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.4.1**
+- Implement Arms Race support for Psy Drones.
+- Fix a bug regarding double damage in multiplayer.
+
 **3.4.0**
 - Implement Psy Drones, a powerful weapon from a different timeline.
 - Allow the other custom drones from this mod to benefit from attack speed bonuses.
@@ -127,10 +131,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **3.3.9**
 - Improve Option Seed Behavior by not letting generated attacks hit the owner, the weapon or the Options themselves.
 - Add an API for easily filtering the owners from the hit registration of the attacks.
-
-**3.3.8**
-- Fix a bad logic in Seed Behavior which causes it to self-destruct.
-- Add API for adjusting rotational radius on the Option Seed.
-- Change default values for horizontal offset within the API due to a bad computation being reworked.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
