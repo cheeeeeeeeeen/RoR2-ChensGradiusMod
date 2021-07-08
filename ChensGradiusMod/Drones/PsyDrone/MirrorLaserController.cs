@@ -105,7 +105,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 maxAngleFilter = MaxAngleDetection,
                 searchOrigin = origin,
                 searchDirection = direction,
-                filterByLoS = false,
+                filterByLoS = true,
                 sortMode = BullseyeSearch.SortMode.Distance,
                 teamMaskFilter = TeamMask.allButNeutral
             };

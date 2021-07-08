@@ -85,14 +85,17 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             {
                 case States.StraightDecelerate:
                     PerformStraightDecelerate();
+                    DetectHits();
                     break;
 
                 case States.FindEnemy:
                     PerformFindEnemy();
+                    DetectHits();
                     break;
 
                 case States.HuntEnemy:
                     PerformHuntEnemy();
+                    DetectHits();
                     break;
 
                 case States.DamageEnemy:
@@ -103,13 +106,13 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     PerformDestroySelf();
                     break;
             }
-            DetectHits();
             ManageEndBall();
         }
 
         private void Update()
         {
             transform.position = computedPosition;
+            if (endBall) endBall.transform.position = computedEndPosition;
         }
 
         private void PerformStraightDecelerate()
@@ -150,26 +153,29 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         {
             if (target)
             {
-                currentSpeed = Mathf.Min(currentSpeed + AccelerationRate, MaxSpeed);
-                Vector3 directionToEnemy = (target.transform.position - computedPosition).normalized;
-                direction = Vector3.Lerp(direction, directionToEnemy, smoothCurveValue);
-                smoothCurveValue = Mathf.Min(smoothCurveValue + SmoothCurveRate, MaxSmoothCurveRate);
-                bool hit = Physics.Raycast(computedPosition, direction, out RaycastHit raycastHit, currentSpeed,
-                                           LayerIndex.world.mask | LayerIndex.entityPrecise.mask | LayerIndex.defaultLayer.mask, QueryTriggerInteraction.UseGlobal);
-                if (hit)
+                HealthComponent targetHealth = target.healthComponent;
+                if (targetHealth && targetHealth.alive)
                 {
-                    computedPosition = raycastHit.point;
-                    currentState = States.DamageEnemy;
+                    currentSpeed = Mathf.Min(currentSpeed + AccelerationRate, MaxSpeed);
+                    Vector3 directionToEnemy = (target.transform.position - computedPosition).normalized;
+                    direction = Vector3.Lerp(direction, directionToEnemy, smoothCurveValue);
+                    smoothCurveValue = Mathf.Min(smoothCurveValue + SmoothCurveRate, MaxSmoothCurveRate);
+                    int layerMask = LayerIndex.world.mask | LayerIndex.entityPrecise.mask | LayerIndex.defaultLayer.mask;
+                    bool hit = Physics.Raycast(computedPosition, direction, out RaycastHit raycastHit, currentSpeed,
+                                               layerMask, QueryTriggerInteraction.UseGlobal);
+                    if (hit)
+                    {
+                        computedPosition = raycastHit.point;
+                        currentState = States.DamageEnemy;
+                    }
+                    else computedPosition += direction * currentSpeed;
+                    return;
                 }
-                else computedPosition += direction * currentSpeed;
             }
-            else
-            {
-                timer = 0f;
-                smoothCurveValue = 0f;
-                currentState = States.StraightDecelerate;
-                PerformStraightDecelerate();
-            }
+            timer = 0f;
+            smoothCurveValue = 0f;
+            currentState = States.StraightDecelerate;
+            PerformStraightDecelerate();
         }
 
         private void PerformDamageEnemy()
@@ -227,7 +233,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             {
                 computedEndPosition = trailRenderer.GetPosition(0);
                 if (!endBall) endBall = Instantiate(PsyDrone.searchLaserSubPrefab, computedEndPosition, transform.rotation);
-                if (endBall) endBall.transform.position = computedEndPosition;
             }
         }
 

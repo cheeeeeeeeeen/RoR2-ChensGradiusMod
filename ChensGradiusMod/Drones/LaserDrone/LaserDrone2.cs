@@ -185,7 +185,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         {
             GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab");
             droneBody.ReplaceModel(customModel);
-            customModel.InitializeDroneModelComponents(body, DebugCheck());
+            customModel.InitializeDroneModelComponents(body, 1.1f, DebugCheck());
             customModel.transform.Find("AimOrigin").gameObject.AddComponent<ChargeEffect>();
             customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
             BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();

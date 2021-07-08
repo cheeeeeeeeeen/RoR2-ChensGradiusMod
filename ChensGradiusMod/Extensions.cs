@@ -113,8 +113,12 @@ namespace Chen.GradiusMod
         /// </summary>
         /// <param name="droneModel">The custom drone model to initialize.</param>
         /// <param name="droneBody">The associated body of the model.</param>
+        /// <param name="colliderMultiplier">
+        /// Collider size multiplier to be applied to the collider in the CharacterBody object.
+        /// The basis would be the collider found within the model. A small collider may result in clipping through the map.
+        /// </param>
         /// <param name="debug">Set to true to attach the Material Controller for modifying materials in-game.</param>
-        public static void InitializeDroneModelComponents(this GameObject droneModel, CharacterBody droneBody, bool debug = false)
+        public static void InitializeDroneModelComponents(this GameObject droneModel, CharacterBody droneBody, float colliderMultiplier, bool debug = false)
         {
             CapsuleCollider hurtBoxCapsuleCollider = droneModel.GetComponentInChildren<CapsuleCollider>();
             if (!hurtBoxCapsuleCollider)
@@ -143,8 +147,8 @@ namespace Chen.GradiusMod
             if (capsuleCollider)
             {
                 capsuleCollider.center = hurtBoxCapsuleCollider.center;
-                capsuleCollider.radius = hurtBoxCapsuleCollider.radius * 3f;
-                capsuleCollider.height = hurtBoxCapsuleCollider.height * 3f;
+                capsuleCollider.radius = hurtBoxCapsuleCollider.radius * colliderMultiplier;
+                capsuleCollider.height = hurtBoxCapsuleCollider.height * colliderMultiplier;
                 capsuleCollider.direction = hurtBoxCapsuleCollider.direction;
             }
             if (debug) droneModel.AddComponent<MaterialController>();

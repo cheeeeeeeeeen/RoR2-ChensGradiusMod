@@ -14,6 +14,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private Transform aimOrigin;
         private float fireTimer;
         private float computedInterval;
+        private ParticleSystem muzzleEffect;
 
         public override void OnEnter()
         {
@@ -22,6 +23,8 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             aimOrigin = modelTransform.Find("AimOrigin");
             fireTimer = 0f;
             computedInterval = FireInterval / attackSpeedStat;
+            muzzleEffect = aimOrigin.gameObject.GetComponent<ParticleSystem>();
+            muzzleEffect.Play();
         }
 
         public override void FixedUpdate()
@@ -37,6 +40,12 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 fireTimer -= computedInterval;
             }
             if (fixedAge >= Duration) outer.SetNextStateToMain();
+        }
+
+        public override void OnExit()
+        {
+            muzzleEffect.Stop();
+            base.OnExit();
         }
     }
 }

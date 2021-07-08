@@ -15,6 +15,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private MirrorLaserController thirdLC;
         private MirrorLaserController fourthLC;
         private MirrorLaserController fifthLC;
+        private ParticleSystem muzzleEffect;
 
         public override void OnEnter()
         {
@@ -39,12 +40,20 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             fifthLC = laserObject.GetOrAddComponent<MirrorLaserController>();
             fifthLC.direction = ComputeDirection(new Vector3(1, -1, 1));
             firstLC.owner = secondLC.owner = thirdLC.owner = fourthLC.owner = fifthLC.owner = characterBody;
+            muzzleEffect = aimOrigin.gameObject.GetComponent<ParticleSystem>();
+            muzzleEffect.Play();
         }
 
         public override void FixedUpdate()
         {
             base.FixedUpdate();
             if (AllLasersComplete()) outer.SetNextStateToMain();
+        }
+
+        public override void OnExit()
+        {
+            muzzleEffect.Stop();
+            base.OnExit();
         }
 
         private Vector3 ComputeDirection(Vector3 localDirection)
