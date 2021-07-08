@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static R2API.DirectorAPI;
+using static RoR2.CharacterAI.AISkillDriver;
 
 namespace Chen.GradiusMod.Drones.PsyDrone
 {
@@ -139,10 +140,45 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void ModifyDroneMaster()
         {
-            AISkillDriver[] skillDrivers = droneMasterRed.GetComponents<AISkillDriver>();
-            skillDrivers.SetAllDriversToAimTowardsEnemies();
-            skillDrivers = droneMasterGreen.GetComponents<AISkillDriver>();
-            skillDrivers.SetAllDriversToAimTowardsEnemies();
+            DestroySkillDrivers(droneMasterRed);
+            DestroySkillDrivers(droneMasterGreen);
+            AISkillDriver skillDriver = droneMasterRed.AddComponent<AISkillDriver>();
+            skillDriver.customName = "Attack";
+            skillDriver.skillSlot = SkillSlot.Primary;
+            skillDriver.moveTargetType = TargetType.CurrentLeader;
+            skillDriver.movementType = MovementType.ChaseMoveTarget;
+            skillDriver.aimType = AimType.AtCurrentEnemy;
+            skillDriver.buttonPressType = ButtonPressType.Hold;
+            skillDriver = droneMasterRed.AddComponent<AISkillDriver>();
+            skillDriver.customName = "LeashToLeader";
+            skillDriver.moveTargetType = TargetType.CurrentLeader;
+            skillDriver.movementType = MovementType.ChaseMoveTarget;
+            skillDriver.aimType = AimType.AtCurrentEnemy;
+            skillDriver.buttonPressType = ButtonPressType.Hold;
+            skillDriver.resetCurrentEnemyOnNextDriverSelection = true;
+            skillDriver.minDistance = 20f;
+            skillDriver = droneMasterRed.AddComponent<AISkillDriver>();
+            skillDriver.customName = "Standby";
+            skillDriver.maxDistance = 20f;
+            skillDriver.moveTargetType = TargetType.CurrentLeader;
+            skillDriver.movementType = MovementType.StrafeMovetarget;
+            skillDriver.aimType = AimType.AtCurrentEnemy;
+            skillDriver.buttonPressType = ButtonPressType.Hold;
+            skillDriver = droneMasterRed.AddComponent<AISkillDriver>();
+            skillDriver.customName = "RoamAttack";
+            skillDriver.skillSlot = SkillSlot.Primary;
+            skillDriver.moveTargetType = TargetType.CurrentEnemy;
+            skillDriver.movementType = MovementType.ChaseMoveTarget;
+            skillDriver.aimType = AimType.AtCurrentEnemy;
+            skillDriver.buttonPressType = ButtonPressType.Hold;
+            skillDriver = droneMasterRed.AddComponent<AISkillDriver>();
+            skillDriver.customName = "RoamMove";
+            skillDriver.moveTargetType = TargetType.CurrentEnemy;
+            skillDriver.movementType = MovementType.ChaseMoveTarget;
+            skillDriver.aimType = AimType.AtCurrentEnemy;
+            skillDriver.buttonPressType = ButtonPressType.Hold;
+            skillDriver.resetCurrentEnemyOnNextDriverSelection = true;
+            droneMasterGreen.DeepCopyComponentsFrom<AISkillDriver>(droneMasterRed);
         }
 
         private void ModifyDroneBody()
@@ -266,6 +302,15 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             iSpawnCard.prefab = brokenObject;
             iSpawnCard.slightlyRandomizeOrientation = false;
             iSpawnCard.orientToFloor = true;
+        }
+
+        private void DestroySkillDrivers(GameObject masterObject)
+        {
+            AISkillDriver[] skillDrivers = masterObject.GetComponents<AISkillDriver>();
+            foreach (var skillDriver in skillDrivers)
+            {
+                Object.DestroyImmediate(skillDriver);
+            }
         }
 
         private void DirectorAPI_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
