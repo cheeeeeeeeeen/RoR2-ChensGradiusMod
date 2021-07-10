@@ -138,11 +138,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private void FixedUpdate()
         {
             age += Time.fixedDeltaTime;
-            if (!expired && age >= Expiration)
-            {
-                currentState = States.DamageEnemy;
-                expired = true;
-            }
+            if (!expired && age >= Expiration) SetState(States.DamageEnemy);
             switch (currentState)
             {
                 case States.StraightDecelerate:
@@ -184,11 +180,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             if (currentSpeed <= DecelerateLeastSpeed)
             {
                 timer += Time.fixedDeltaTime;
-                if (timer >= DecelerationStateDuration)
-                {
-                    currentState = States.FindEnemy;
-                    timer = 0f;
-                }
+                if (timer >= DecelerationStateDuration) SetState(States.FindEnemy);
             }
         }
 
@@ -207,7 +199,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             if (teamComponent) enemyFinder.teamMaskFilter.RemoveTeam(teamComponent.teamIndex);
             enemyFinder.RefreshCandidates();
             target = enemyFinder.GetResults().FirstOrDefault();
-            if (target) currentState = States.HuntEnemy;
+            if (target) SetState(States.HuntEnemy);
             computedPosition += direction * currentSpeed;
         }
 
@@ -228,7 +220,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     if (hit)
                     {
                         computedPosition = raycastHit.point;
-                        currentState = States.DamageEnemy;
+                        SetState(States.DamageEnemy);
                     }
                     else computedPosition += direction * currentSpeed;
                     return;
@@ -236,7 +228,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             }
             timer = 0f;
             smoothCurveValue = 0f;
-            currentState = States.StraightDecelerate;
+            SetState(States.StraightDecelerate);
             PerformStraightDecelerate();
         }
 
@@ -259,7 +251,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 ApplyHitEffects(result);
                 TriggerArmsRace();
             }
-            currentState = States.DestroySelf;
+            SetState(States.DestroySelf);
             Destroy(transform.Find("Sphere").gameObject);
         }
 
@@ -329,7 +321,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             if (hit)
             {
                 computedPosition = raycastHit.point;
-                currentState = States.DamageEnemy;
+                SetState(States.DamageEnemy);
             }
         }
 
@@ -339,6 +331,26 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             {
                 ChensClassicItems.TriggerArtillery(owner, damage, owner.RollCrit());
             }
+        }
+
+        private void SetState(States newState)
+        {
+            switch (newState)
+            {
+                case States.FindEnemy:
+                    timer = 0;
+                    break;
+
+                case States.DamageEnemy:
+                    expired = true;
+                    break;
+
+                case States.StraightDecelerate:
+                case States.HuntEnemy:
+                case States.DestroySelf:
+                    break;
+            }
+            currentState = newState;
         }
 
         private enum States
