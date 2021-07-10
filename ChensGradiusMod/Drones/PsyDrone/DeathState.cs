@@ -11,7 +11,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         public override void OnImpactServer(Vector3 contactPoint)
         {
-            Twins twinComponent = GetComponent<Twins>();
+            TwinsDeath twinComponent = GetComponent<TwinsDeath>();
             if (twinComponent)
             {
                 base.OnImpactServer(contactPoint);

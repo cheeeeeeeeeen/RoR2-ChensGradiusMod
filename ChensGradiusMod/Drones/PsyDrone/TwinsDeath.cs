@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Chen.GradiusMod.Drones.PsyDrone
 {
-    internal class Twins : MonoBehaviour
+    internal class TwinsDeath : MonoBehaviour
     {
         public GameObject twin;
 
-        public Twins twinTwinComponent { get => twin.GetComponent<Twins>(); }
+        public TwinsDeath twinTwinComponent { get => twin.GetComponent<TwinsDeath>(); }
 
         private CharacterBody twinBody { get => twin.GetComponent<CharacterBody>(); }
         private HealthComponent twinHealthComponent { get => twinBody ? twinBody.healthComponent : null; }

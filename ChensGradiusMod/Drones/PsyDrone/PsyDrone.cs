@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;
@@ -352,35 +352,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
         {
             if (!NetworkServer.active || obj.isPlayerControlled || !obj.name.Contains("PsyDroneRed")) return;
-            CharacterMaster characterMaster = new MasterSummon
-            {
-                masterPrefab = droneMasterGreen,
-                position = obj.transform.position + Vector3.up,
-                rotation = obj.transform.rotation,
-                summonerBodyObject = obj.master.minionOwnership.ownerMaster.GetBodyObject(),
-                ignoreTeamMemberLimit = true,
-                useAmbientLevel = true
-            }.Perform();
-            if (characterMaster)
-            {
-                GameObject bodyObject = characterMaster.GetBodyObject();
-                if (bodyObject)
-                {
-                    ModelLocator component = bodyObject.GetComponent<ModelLocator>();
-                    if (component && component.modelTransform)
-                    {
-                        TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
-                        temporaryOverlay.duration = 0.5f;
-                        temporaryOverlay.animateShaderAlpha = true;
-                        temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
-                        temporaryOverlay.destroyComponentOnEnd = true;
-                        temporaryOverlay.originalMaterial = summonDroneMaterial;
-                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
-                    }
-                    obj.GetOrAddComponent<Twins>().twin = bodyObject;
-                    bodyObject.GetOrAddComponent<Twins>().twin = obj.gameObject;
-                }
-            }
+            obj.master.GetOrAddComponent<TwinsSpawn>();
         }
 
         internal static bool DebugCheck()
