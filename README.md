@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.4.1-orange)
+![Version](https://img.shields.io/badge/Version-3.4.2-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -109,6 +109,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.4.2**
+- Fix a bug in the yellow laser attack of the Green Psy Drone where an exception may occur.
+- Fix a bug where as the Green Psy Drone is duplicated upon going to the next stage.
+
 **3.4.1**
 - Implement Arms Race support for Psy Drones.
 - Fix a bug regarding double damage in multiplayer.
@@ -127,9 +131,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **3.3.10**
 - Recompile the code so that it properly registers dependencies.
 - There's no change from 3.3.9 really. Just a hope that it fixes an issue for somebody with a dependency error.
-
-**3.3.9**
-- Improve Option Seed Behavior by not letting generated attacks hit the owner, the weapon or the Options themselves.
-- Add an API for easily filtering the owners from the hit registration of the attacks.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
