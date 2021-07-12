@@ -128,7 +128,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE2_NAME";
             GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDroneBroken.prefab");
-            brokenObject.ReplaceModel(customBrokenModel);
+            brokenObject.ReplaceModel(customBrokenModel, DebugCheck());
             Highlight highlight = brokenObject.GetComponent<Highlight>();
             highlight.targetRenderer = customBrokenModel.transform.Find("_mdlLaserDroneBroken").gameObject.GetComponent<MeshRenderer>();
             EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
@@ -184,8 +184,8 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         private void ModifyDroneModel(CharacterBody body)
         {
             GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab");
-            droneBody.ReplaceModel(customModel);
-            customModel.InitializeDroneModelComponents(body, 1.1f, DebugCheck());
+            droneBody.ReplaceModel(customModel, DebugCheck());
+            customModel.InitializeDroneModelComponents(body, 1.1f);
             customModel.transform.Find("AimOrigin").gameObject.AddComponent<ChargeEffect>();
             customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
             BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();

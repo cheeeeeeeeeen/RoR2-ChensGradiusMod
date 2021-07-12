@@ -427,7 +427,7 @@
             </summary>
             <param name="bulletAttack">The bullet attack being worked on.</param>
         </member>
-        <member name="M:Chen.GradiusMod.Extensions.InitializeDroneModelComponents(UnityEngine.GameObject,RoR2.CharacterBody,System.Single,System.Boolean)">
+        <member name="M:Chen.GradiusMod.Extensions.InitializeDroneModelComponents(UnityEngine.GameObject,RoR2.CharacterBody,System.Single)">
             <summary>
             Shortcut for initializing a custom drone model. Only applies when work flow is followed the same as this mod's drones.
             </summary>
@@ -437,7 +437,6 @@
             Collider size multiplier to be applied to the collider in the CharacterBody object.
             The basis would be the collider found within the model. A small collider may result in clipping through the map.
             </param>
-            <param name="debug">Set to true to attach the Material Controller for modifying materials in-game.</param>
         </member>
         <member name="T:Chen.GradiusMod.GradiusModPlugin">
             <summary>

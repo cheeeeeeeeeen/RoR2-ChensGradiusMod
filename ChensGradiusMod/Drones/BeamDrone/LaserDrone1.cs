@@ -128,7 +128,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE1_NAME";
             GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone1/Model/mdlBeamDroneBroken.prefab");
-            brokenObject.ReplaceModel(customBrokenModel);
+            brokenObject.ReplaceModel(customBrokenModel, DebugCheck());
             Highlight highlight = brokenObject.GetComponent<Highlight>();
             highlight.targetRenderer = customBrokenModel.transform.Find("_mdlBeamDrone").gameObject.GetComponent<MeshRenderer>();
             EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
@@ -180,8 +180,8 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         private void ModifyDroneModel(CharacterBody body)
         {
             GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone1/Model/mdlBeamDrone.prefab");
-            droneBody.ReplaceModel(customModel);
-            customModel.InitializeDroneModelComponents(body, 1.1f, DebugCheck());
+            droneBody.ReplaceModel(customModel, DebugCheck());
+            customModel.InitializeDroneModelComponents(body, 1.1f);
             customModel.AddComponent<ThrusterFlicker>();
             BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();
             rotationComponent.maxRotationSpeed = rotationComponent.rotationSpeed = 4f;

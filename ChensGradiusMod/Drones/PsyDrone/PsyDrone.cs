@@ -114,7 +114,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "PSI_BIT_NAME";
             GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/mdlPsiBitsBroken.prefab");
-            brokenObject.ReplaceModel(customBrokenModel);
+            brokenObject.ReplaceModel(customBrokenModel, DebugCheck());
             Highlight highlight = brokenObject.GetComponent<Highlight>();
             GameObject coreObject = customBrokenModel.transform.Find("_mdlPsiBitsBroken").gameObject;
             highlight.targetRenderer = coreObject.GetComponent<MeshRenderer>();
@@ -227,17 +227,17 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         private void ModifyDroneModel(CharacterBody bodyRed, CharacterBody bodyGreen)
         {
             GameObject customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/mdlPsiBitRed.prefab");
-            droneBodyRed.ReplaceModel(customModel);
+            droneBodyRed.ReplaceModel(customModel, DebugCheck());
             customModel.transform.localRotation = Util.QuaternionSafeLookRotation(Vector3.left);
-            customModel.InitializeDroneModelComponents(bodyRed, 3f, DebugCheck());
+            customModel.InitializeDroneModelComponents(bodyRed, 3f);
             customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
             BodyRotation rotationComponent = customModel.transform.parent.gameObject.AddComponent<BodyRotation>();
             rotationComponent.rotationDirection = -1;
             rotationComponent.rotationSpeed = 6f;
             customModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/mdlPsiBitGreen.prefab");
-            droneBodyGreen.ReplaceModel(customModel);
+            droneBodyGreen.ReplaceModel(customModel, DebugCheck());
             customModel.transform.localRotation = Util.QuaternionSafeLookRotation(Vector3.left);
-            customModel.InitializeDroneModelComponents(bodyGreen, 3f, DebugCheck());
+            customModel.InitializeDroneModelComponents(bodyGreen, 3f);
             customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
             rotationComponent = customModel.transform.parent.gameObject.AddComponent<BodyRotation>();
             rotationComponent.rotationDirection = 1;
