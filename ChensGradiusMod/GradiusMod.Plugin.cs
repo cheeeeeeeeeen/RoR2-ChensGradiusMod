@@ -6,9 +6,6 @@ using BepInEx.Configuration;
 using Chen.ClassicItems;
 using Chen.GradiusMod.Compatibility;
 using Chen.GradiusMod.Drones;
-using Chen.GradiusMod.Drones.LaserDrone;
-using Chen.GradiusMod.Items.GradiusOption;
-using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
@@ -102,7 +99,7 @@ namespace Chen.GradiusMod
                 Transform trans = body.gameObject.transform;
                 if (i9)
                 {
-                    OptionMasterTracker.SpawnOption(trans.gameObject, 1);
+                    Items.GradiusOption.Components.OptionMasterTracker.SpawnOption(trans.gameObject, 1);
                     return;
                 }
             }
@@ -118,10 +115,10 @@ namespace Chen.GradiusMod
 
 #if DEBUG
             MultiplayerTest.Enable(Log);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha1, FireLaser.ChargeLaserEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha2, FireLaser.DissipateLaserEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha3, GradiusOption.GetOptionEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha4, GradiusOption.LoseOptionEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha1, Drones.LaserDrone.FireLaser.ChargeLaserEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha2, Drones.LaserDrone.FireLaser.DissipateLaserEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha3, Items.GradiusOption.GradiusOption.GetOptionEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha4, Items.GradiusOption.GradiusOption.LoseOptionEventId);
 #endif
 
             Log.Debug("Loading assets...");
