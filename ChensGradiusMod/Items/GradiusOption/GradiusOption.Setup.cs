@@ -157,6 +157,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         {
             modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/optionmodel.prefab");
             iconResource = assetBundle.LoadAsset<Sprite>("assets/option/icon/gradiusoption_icon.png");
+            //modelResource.AddComponent<MaterialController>();
         }
 
         public override void SetupConfig()

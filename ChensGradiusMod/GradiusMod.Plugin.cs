@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using Aetherium;
 using BepInEx;
@@ -53,11 +53,7 @@ namespace Chen.GradiusMod
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public const string ModVer =
-#if DEBUG
-            "0." +
-#endif
-            "3.4.2";
+        public const string ModVer = "3.4.2";
 
         /// <summary>
         /// The name of the mod.
@@ -122,10 +118,10 @@ namespace Chen.GradiusMod
 
 #if DEBUG
             MultiplayerTest.Enable(Log);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha1, FireLaser.chargeLaserEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha2, FireLaser.dissipateLaserEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha3, GradiusOption.getOptionEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha4, GradiusOption.loseOptionEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha1, FireLaser.ChargeLaserEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha2, FireLaser.DissipateLaserEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha3, GradiusOption.GetOptionEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha4, GradiusOption.LoseOptionEventId);
 #endif
 
             Log.Debug("Loading assets...");

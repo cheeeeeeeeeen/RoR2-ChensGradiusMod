@@ -121,6 +121,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/seedmodel.prefab");
             iconResource = assetBundle.LoadAsset<Sprite>("assets/option/icon/optionseed_icon.png");
+            //modelResource.AddComponent<Helpers.GeneralHelpers.MaterialController>();
         }
 
         public override void SetupConfig()
