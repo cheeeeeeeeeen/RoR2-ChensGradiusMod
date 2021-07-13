@@ -1,6 +1,7 @@
 ﻿using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.GradiusMod.Items.OptionSeed.Components;
 using RoR2;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TILER2;
@@ -113,9 +114,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
             { "CrocoBody", .5f },
         };
 
-        private static GameObject loaderZapCone { get => Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone"); }
+        private static readonly Lazy<GameObject> _loaderZapCone = new Lazy<GameObject>(() => Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone"));
+        private static readonly Lazy<Material> _evisTargetMaterial = new Lazy<Material>(() => Resources.Load<Material>("Materials/matMercEvisTarget"));
 
-        private static Material evisTargetMaterial { get => Resources.Load<Material>("Materials/matMercEvisTarget"); }
+        private static GameObject loaderZapCone { get => _loaderZapCone.Value; }
+
+        private static Material evisTargetMaterial { get => _evisTargetMaterial.Value; }
 
         public OptionSeed()
         {

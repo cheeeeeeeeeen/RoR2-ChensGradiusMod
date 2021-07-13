@@ -14,6 +14,7 @@ using R2API.Networking;
 using R2API.Utils;
 using RoR2;
 using RoR2.Skills;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TILER2;
@@ -69,20 +70,35 @@ namespace Chen.GradiusMod
         internal static AssetBundle assetBundle;
         internal static ContentProvider contentProvider;
 
-        internal static GameObject backupDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster"); }
-        internal static GameObject drone1Master { get => Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master"); }
-        internal static GameObject drone2Master { get => Resources.Load<GameObject>("prefabs/charactermasters/Drone2Master"); }
-        internal static GameObject emergencyDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/EmergencyDroneMaster"); }
-        internal static GameObject flameDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/FlameDroneMaster"); }
-        internal static GameObject missileDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster"); }
-        internal static GameObject turret1Master { get => Resources.Load<GameObject>("prefabs/charactermasters/Turret1Master"); }
-        internal static GameObject tc280DroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"); }
-        internal static GameObject equipmentDroneMaster { get => Resources.Load<GameObject>("prefabs/charactermasters/EquipmentDroneMaster"); }
-        internal static GameObject helperPrefab { get => Resources.Load<GameObject>("SpawnCards/HelperPrefab"); }
-        internal static SpawnCard turret1SpawnCard { get => Resources.Load<SpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1"); }
-        internal static InteractableSpawnCard drone1SpawnCard { get => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1"); }
-        internal static SkillDef drone1Skill { get => Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun"); }
-        internal static Material summonDroneMaterial { get => Resources.Load<Material>("Materials/matSummonDrone"); }
+        private static readonly Lazy<GameObject> _backupDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster"));
+        private static readonly Lazy<GameObject> _drone1Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master"));
+        private static readonly Lazy<GameObject> _drone2Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Drone2Master"));
+        private static readonly Lazy<GameObject> _emergencyDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/EmergencyDroneMaster"));
+        private static readonly Lazy<GameObject> _flameDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/FlameDroneMaster"));
+        private static readonly Lazy<GameObject> _missileDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster"));
+        private static readonly Lazy<GameObject> _turret1Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Turret1Master"));
+        private static readonly Lazy<GameObject> _tc280DroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"));
+        private static readonly Lazy<GameObject> _equipmentDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/EquipmentDroneMaster"));
+        private static readonly Lazy<GameObject> _helperPrefab = new Lazy<GameObject>(() => Resources.Load<GameObject>("SpawnCards/HelperPrefab"));
+        private static readonly Lazy<SpawnCard> _turret1SpawnCard = new Lazy<SpawnCard>(() => Resources.Load<SpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1"));
+        private static readonly Lazy<InteractableSpawnCard> _drone1SpawnCard = new Lazy<InteractableSpawnCard>(() => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1"));
+        private static readonly Lazy<SkillDef> _drone1Skill = new Lazy<SkillDef>(() => Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun"));
+        private static readonly Lazy<Material> _summonDroneMaterial = new Lazy<Material>(() => Resources.Load<Material>("Materials/matSummonDrone"));
+
+        internal static GameObject backupDroneMaster { get => _backupDroneMaster.Value; }
+        internal static GameObject drone1Master { get => _drone1Master.Value; }
+        internal static GameObject drone2Master { get => _drone2Master.Value; }
+        internal static GameObject emergencyDroneMaster { get => _emergencyDroneMaster.Value; }
+        internal static GameObject flameDroneMaster { get => _flameDroneMaster.Value; }
+        internal static GameObject missileDroneMaster { get => _missileDroneMaster.Value; }
+        internal static GameObject turret1Master { get => _turret1Master.Value; }
+        internal static GameObject tc280DroneMaster { get => _tc280DroneMaster.Value; }
+        internal static GameObject equipmentDroneMaster { get => _equipmentDroneMaster.Value; }
+        internal static GameObject helperPrefab { get => _helperPrefab.Value; }
+        internal static SpawnCard turret1SpawnCard { get => _turret1SpawnCard.Value; }
+        internal static InteractableSpawnCard drone1SpawnCard { get => _drone1SpawnCard.Value; }
+        internal static SkillDef drone1Skill { get => _drone1Skill.Value; }
+        internal static Material summonDroneMaterial { get => _summonDroneMaterial.Value; }
 
 #if DEBUG
 

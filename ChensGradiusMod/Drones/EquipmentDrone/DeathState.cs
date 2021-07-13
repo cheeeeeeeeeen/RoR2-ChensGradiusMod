@@ -1,4 +1,5 @@
 ﻿using RoR2;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
@@ -8,9 +9,12 @@ namespace Chen.GradiusMod.Drones.EquipmentDrone
 {
     internal class DeathState : DroneDeathState
     {
+        private static readonly Lazy<InteractableSpawnCard> _iSpawnCard =
+            new Lazy<InteractableSpawnCard>(() => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenEquipmentDrone"));
+
         protected override bool SpawnInteractable { get; set; } = generalCfg.equipmentDronesAreRepurchaseable;
 
-        protected override InteractableSpawnCard GetInteractableSpawnCard => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenEquipmentDrone");
+        protected override InteractableSpawnCard GetInteractableSpawnCard => _iSpawnCard.Value;
 
         protected override void OnInteractableSpawn(GameObject spawnedObject)
         {

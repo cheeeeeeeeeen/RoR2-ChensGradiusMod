@@ -1,4 +1,5 @@
 ﻿using RoR2;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
@@ -11,9 +12,12 @@ namespace Chen.GradiusMod.Drones.TC280
         private ChildLocator childLocator;
         private Transform modelTransform;
 
+        private static readonly Lazy<InteractableSpawnCard> _iSpawnCard =
+            new Lazy<InteractableSpawnCard>(() => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenMegaDrone"));
+
         protected override bool SpawnInteractable { get; set; } = generalCfg.megaDronesAreRepurchaseable;
 
-        protected override InteractableSpawnCard GetInteractableSpawnCard => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenMegaDrone");
+        protected override InteractableSpawnCard GetInteractableSpawnCard => _iSpawnCard.Value;
 
         public override void OnEnter()
         {
