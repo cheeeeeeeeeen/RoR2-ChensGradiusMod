@@ -1,4 +1,4 @@
-﻿#undef DEBUG
+﻿#define DEBUG
 
 using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;

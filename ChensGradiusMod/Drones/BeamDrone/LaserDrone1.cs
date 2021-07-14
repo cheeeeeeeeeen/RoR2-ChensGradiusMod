@@ -186,6 +186,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             BodyRotation rotationComponent = customModel.AddComponent<BodyRotation>();
             rotationComponent.maxRotationSpeed = rotationComponent.rotationSpeed = 4f;
             rotationComponent.rotationDirection = 1;
+            customModel.transform.Find("Core").gameObject.AddComponent<CoreFlicker>();
         }
 
         private void ModifySkill()

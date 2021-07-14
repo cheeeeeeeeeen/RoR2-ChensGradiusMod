@@ -124,6 +124,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public OptionSeed()
         {
             modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/seedmodel.prefab");
+            modelResource = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDroneBroken.prefab");
             iconResource = assetBundle.LoadAsset<Sprite>("assets/option/icon/optionseed_icon.png");
             //modelResource.AddComponent<Helpers.GeneralHelpers.MaterialController>();
         }

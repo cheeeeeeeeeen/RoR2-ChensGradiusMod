@@ -156,6 +156,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         public GradiusOption()
         {
             modelResource = assetBundle.LoadAsset<GameObject>("assets/option/model/optionmodel.prefab");
+            modelResource = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab");
             iconResource = assetBundle.LoadAsset<Sprite>("assets/option/icon/gradiusoption_icon.png");
         }
 
