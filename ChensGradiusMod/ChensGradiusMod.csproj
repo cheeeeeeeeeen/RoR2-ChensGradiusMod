@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ChensGradiusMod</AssemblyName>
     <RootNamespace>Chen.GradiusMod</RootNamespace>
-    <Version>3.4.2</Version>
+    <Version>3.4.3</Version>
     <PackageProjectUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</RepositoryUrl>
     <Copyright />
@@ -110,7 +110,7 @@
   </ProjectExtensions>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mkdir &quot;$(ProjectDir)Build&quot;&#xD;&#xA;cd &quot;$(ProjectDir)Build&quot;&#xD;&#xA;del * /Q&#xD;&#xA;copy &quot;$(TargetPath)&quot; . /Y&#xD;&#xA;&#xD;&#xA;if '$(ConfigurationName)' == 'Debug' GOTO debuglabel&#xD;&#xA;if '$(ConfigurationName)' == 'Test' GOTO debuglabel&#xD;&#xA;&#xD;&#xA;:debuglabel&#xD;&#xA;copy &quot;$(ProjectDir)ModMeta&quot; . /Y&#xD;&#xA;copy &quot;$(SolutionDir)README.md&quot; . /Y&#xD;&#xA;copy &quot;$(SolutionDir)LICENSE.txt&quot; . /Y&#xD;&#xA;copy &quot;$(SolutionDir)docs\$(TargetName).xml&quot; . /Y&#xD;&#xA;7z a Build.zip .\* -x!Build.zip -x!old_*&#xD;&#xA;copy &quot;$(TargetName).xml&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;copy &quot;$(TargetFileName)&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;&#xD;&#xA;if '$(ConfigurationName)' == 'Debug' GOTO end&#xD;&#xA;start steam://rungameid/9455760154495549440&#xD;&#xA;&#xD;&#xA;:end" />
+    <Exec Command="mkdir &quot;$(ProjectDir)Build&quot;&#xD;&#xA;cd &quot;$(ProjectDir)Build&quot;&#xD;&#xA;del * /Q&#xD;&#xA;copy &quot;$(TargetPath)&quot; . /Y&#xD;&#xA;&#xD;&#xA;if '$(ConfigurationName)' == 'Debug' GOTO debuglabel&#xD;&#xA;if '$(ConfigurationName)' == 'Test' GOTO debuglabel&#xD;&#xA;&#xD;&#xA;GOTO end&#xD;&#xA;&#xD;&#xA;:debuglabel&#xD;&#xA;copy &quot;$(ProjectDir)ModMeta&quot; . /Y&#xD;&#xA;copy &quot;$(SolutionDir)README.md&quot; . /Y&#xD;&#xA;copy &quot;$(SolutionDir)LICENSE.txt&quot; . /Y&#xD;&#xA;copy &quot;$(SolutionDir)docs\$(TargetName).xml&quot; . /Y&#xD;&#xA;7z a Build.zip .\* -x!Build.zip -x!old_*&#xD;&#xA;copy &quot;$(TargetName).xml&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;copy &quot;$(TargetFileName)&quot; &quot;C:\Users\Chen\AppData\Roaming\Thunderstore Mod Manager\DataFolder\RiskOfRain2\profiles\Default\BepInEx\plugins\Chen-ChensGradiusMod&quot; /Y&#xD;&#xA;&#xD;&#xA;if '$(ConfigurationName)' == 'Debug' GOTO end&#xD;&#xA;start steam://rungameid/9455760154495549440&#xD;&#xA;&#xD;&#xA;:end" />
   </Target>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
