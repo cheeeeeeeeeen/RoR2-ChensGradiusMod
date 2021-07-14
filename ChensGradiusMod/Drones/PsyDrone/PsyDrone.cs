@@ -135,9 +135,11 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             sparksShape.meshShapeType = ParticleSystemMeshShapeType.Edge;
             sparksShape.meshRenderer = meshRenderer;
             GameObject damagePoint = brokenEffects.transform.Find("Damage Point").gameObject;
-            damagePoint.transform.localPosition = Vector3.zero;
+            damagePoint.transform.localPosition = new Vector3(.4f, 0f, .6f);
             damagePoint.transform.localRotation = Quaternion.identity;
             damagePoint.transform.localScale = Vector3.one;
+            damagePoint = Object.Instantiate(damagePoint, damagePoint.transform.parent);
+            damagePoint.transform.localPosition = new Vector3(0f, 0f, -.9f);
         }
 
         private void ModifyDroneMaster()

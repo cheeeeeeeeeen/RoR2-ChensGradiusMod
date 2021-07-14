@@ -2,9 +2,9 @@
 {
     internal class CoreFlicker : SineFlicker
     {
-        public float _baseValue = 1.2f;
-        public float _amplitude = .2f;
-        public float _frequency = .3f;
+        public float _baseValue = .6f;
+        public float _amplitude = .1f;
+        public float _frequency = .4f;
 
         public override float baseValue => _baseValue;
         public override float amplitude => _amplitude;
