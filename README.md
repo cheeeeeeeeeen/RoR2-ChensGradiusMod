@@ -1,11 +1,11 @@
-![Version](https://img.shields.io/badge/Version-3.4.3-orange)
+![Version](https://img.shields.io/badge/Version-3.4.4-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
 
 [![GitHub issues](https://img.shields.io/github/issues/cheeeeeeeeeen/RoR2-ChensGradiusMod)](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/cheeeeeeeeeen/RoR2-ChensGradiusMod)](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/pulls)
-![Maintenance Status](https://img.shields.io/badge/Maintainance-Active-brightgreen)
+![Maintenance Status](https://img.shields.io/badge/Maintenance-Inactive-orange)
 
 ![RoR2: Chen's Gradius Mod](https://i.imgur.com/yIMFu24.png)
 
@@ -108,6 +108,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Contact: Through Discord.
 
 ## Changelog
+
+**3.4.4**
+- Integrate with Aetherium's Engineers Toolbelt for custom drone support from this mod.
 
 **3.4.3**
 - Properly apply HGStandrad Shaders to the mod assets. They should look better now.
