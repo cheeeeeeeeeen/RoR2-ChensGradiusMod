@@ -51,7 +51,7 @@ namespace Chen.GradiusMod
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public const string ModVer = "3.4.4";
+        public const string ModVer = "3.4.5";
 
         /// <summary>
         /// The name of the mod.
@@ -136,7 +136,6 @@ namespace Chen.GradiusMod
             soundPlayer.RegisterKeybind(KeyCode.Alpha3, Items.GradiusOption.GradiusOption.GetOptionEventId);
             soundPlayer.RegisterKeybind(KeyCode.Alpha4, Items.GradiusOption.GradiusOption.LoseOptionEventId);
 #endif
-
             Log.Debug("Loading assets...");
             BundleInfo models = new BundleInfo("Chen.GradiusMod.chensgradiusmod_assets", BundleType.UnityAssetBundle);
             BundleInfo sounds = new BundleInfo("Chen.GradiusMod.chensgradiusmod_soundbank.bnk", BundleType.WWiseSoundBank);

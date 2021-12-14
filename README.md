@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.4.4-orange)
+![Version](https://img.shields.io/badge/Version-3.4.5-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -108,6 +108,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Contact: Through Discord.
 
 ## Changelog
+
+**3.4.5**
+- Fix a bug where Empathy Core minions and Carbonizer Turrets have huge proc coefficients due to bad computation.
 
 **3.4.4**
 - Integrate with Aetherium's Engineers Toolbelt for custom drone support from this mod.
