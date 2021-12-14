@@ -1030,7 +1030,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                             maxSpread = self.maxSpread,
                             bulletCount = 1U,
                             damage = self.damageCoefficient * self.damageStat / self.fireFrequency,
-                            procCoefficient = self.procCoefficient * self.fireFrequency,
+                            procCoefficient = self.procCoefficient / self.fireFrequency,
                             force = self.force,
                             muzzleName = self.muzzleString,
                             hitEffectPrefab = self.hitEffectPrefab,
