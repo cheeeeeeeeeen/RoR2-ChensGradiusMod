@@ -161,7 +161,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
                                 maxSpread = self.maxSpread,
                                 bulletCount = 1U,
                                 damage = self.damageCoefficient * self.damageStat / self.fireFrequency * damageMultiplier,
-                                procCoefficient = self.procCoefficient * self.fireFrequency,
+                                procCoefficient = self.procCoefficient / self.fireFrequency,
                                 force = self.force * damageMultiplier,
                                 muzzleName = self.muzzleString,
                                 hitEffectPrefab = self.hitEffectPrefab,

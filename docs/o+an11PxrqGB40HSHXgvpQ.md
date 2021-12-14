@@ -18,6 +18,7 @@ Derived
 | Properties | |
 | :--- | :--- |
 | [affectedByDroneRepairKit](LtK+HDvGfEOAosyKriPOxA 'Chen.GradiusMod.Drones.Drone.affectedByDroneRepairKit') | Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.<br/> |
+| [affectedByEngineersToolbelt](hIGvXe1jJtDPy92xP16Uhw 'Chen.GradiusMod.Drones.Drone.affectedByEngineersToolbelt') | Aetherium Compatibility: Determines if this drone can be revived and duplicated by Engineers Toolbelt.<br/> |
 | [alreadySetup](N9oYEvtp1qDnSIojdZai9Q 'Chen.GradiusMod.Drones.Drone.alreadySetup') | Used to determine if the custom drone was already set up.<br/> |
 | [canBeInspired](LxERhX2G1JKf7yIDtI0HSg 'Chen.GradiusMod.Drones.Drone.canBeInspired') | Aetherium Compatibility: Determines if this drone can be inspired by the Inspiring Drone.<br/> |
 | [canBeRepurchased](f2oRMOxLiXgv5ah965pGcg 'Chen.GradiusMod.Drones.Drone.canBeRepurchased') | Allow the drone to be repurchased upon being decommissioned.<br/>The implementation of this config is manual and cannot be automated.<br/>Use the config option by inheriting DroneDeathState and implementing SpawnInteractable.<br/> |

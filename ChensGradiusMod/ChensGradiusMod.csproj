@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ChensGradiusMod</AssemblyName>
     <RootNamespace>Chen.GradiusMod</RootNamespace>
-    <Version>3.4.3</Version>
+    <Version>3.4.5</Version>
     <PackageProjectUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</RepositoryUrl>
     <Copyright />

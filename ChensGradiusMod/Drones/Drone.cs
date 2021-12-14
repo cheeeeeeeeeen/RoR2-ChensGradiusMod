@@ -56,6 +56,11 @@ namespace Chen.GradiusMod.Drones
         public bool canBeInspired { get; protected set; } = true;
 
         /// <summary>
+        /// Aetherium Compatibility: Determines if this drone can be revived and duplicated by Engineers Toolbelt.
+        /// </summary>
+        public bool affectedByEngineersToolbelt { get; protected set; } = true;
+
+        /// <summary>
         /// Chen's Classic Items Compatibility: Determines if this drone can be healed by Drone Repair Kit.
         /// </summary>
         public bool affectedByDroneRepairKit { get; protected set; } = true;
@@ -142,6 +147,12 @@ namespace Chen.GradiusMod.Drones
                 "Aetherium Compatibility: Allow this drone to be Inspired by Inspiring Drone."
             ).Value;
 
+            affectedByEngineersToolbelt = config.Bind(configCategory,
+                "AffectedByEngineersToolbelt", affectedByEngineersToolbelt,
+                "Chen's Classic Items Compatibility: Allow this drone to be affected by Engineers Toolbelt. " +
+                "Some drones may override this config, such as the Psy Drones who will never be affected."
+            ).Value;
+
             affectedByDroneRepairKit = config.Bind(configCategory,
                 "AffectedByDroneRepairKit", affectedByDroneRepairKit,
                 "Chen's Classic Items Compatibility: Allow this drone to be healed by Drone Repair Kit."
@@ -163,11 +174,12 @@ namespace Chen.GradiusMod.Drones
         {
             if (canHaveOptions) GradiusOption.instance.SupportMinionType(name);
             Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject, spawnWeightWithMachinesArtifact);
-            if (canBeInspired && Compatibility.Aetherium.enabled)
+            if (Compatibility.Aetherium.enabled)
             {
-                Compatibility.Aetherium.AddCustomDrone(name);
+                if (canBeInspired) Compatibility.Aetherium.AddInspiredCustomDrone(name);
+                if (affectedByEngineersToolbelt) Compatibility.Aetherium.AddEngineersToolbeltCustomDrone(name);
             }
-            if (affectedByDroneRepairKit && Compatibility.ChensClassicItems.enabled)
+            if (Compatibility.ChensClassicItems.enabled && affectedByDroneRepairKit)
             {
                 Compatibility.ChensClassicItems.DroneRepairKitSupport(name);
             }

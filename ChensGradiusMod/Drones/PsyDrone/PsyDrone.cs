@@ -76,6 +76,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         protected override void SetupBehavior()
         {
+            affectedByEngineersToolbelt = false;
             base.SetupBehavior();
             InteractableActions += DirectorAPI_InteractableActions;
             CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;

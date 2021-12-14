@@ -76,6 +76,7 @@ namespace Chen.GradiusMod.Drones
             hardCutoffDuration = maxFallDuration = bodyPreservationDuration = deathDuration = 12f;
             destroyOnImpact = true;
             SpawnInteractable &= !Machines.instance.IsActiveAndEnabled();
+            if (Compatibility.Aetherium.enabled) SpawnInteractable &= !Compatibility.Aetherium.RevivedByEngineersToolbelt(characterBody);
             base.OnEnter();
         }
 
