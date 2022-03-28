@@ -34,12 +34,12 @@ namespace Chen.GradiusMod.Tests
             Assert.AreEqual(ModGuid, result);
         }
 
-        [TestMethod]
-        public void DebugCheck_Toggled_ReturnsFalse()
-        {
-            bool result = GradiusModPlugin.DebugCheck();
+        //[TestMethod]
+        //public void DebugCheck_Toggled_ReturnsFalse()
+        //{
+        //    bool result = GradiusModPlugin.DebugCheck();
 
-            Assert.IsFalse(result);
-        }
+        //    Assert.IsFalse(result);
+        //}
     }
 }
