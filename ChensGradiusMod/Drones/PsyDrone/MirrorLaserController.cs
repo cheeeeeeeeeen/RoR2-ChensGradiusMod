@@ -231,7 +231,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                             baseForce = force,
                             position = vertex,
                             radius = Radius,
-                            attackerFiltering = AttackerFiltering.NeverHit,
+                            attackerFiltering = AttackerFiltering.NeverHitSelf,
                             damageType = DamageType.Stun1s,
                             falloffModel = FalloffModel.None
                         }.InformativeFire();

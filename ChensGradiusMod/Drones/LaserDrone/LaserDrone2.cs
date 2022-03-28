@@ -243,7 +243,6 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 minimumStageCompletions = minimumStageCompletions,
 #endif
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
-                allowAmbushSpawn = true,
                 preventOverhead = false
             };
             DirectorCard heavyDirectorCard = new DirectorCard
@@ -252,7 +251,6 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 selectionWeight = skyMeadowSpawnWeight,
                 minimumStageCompletions = skyMeadowMinimumStageCompletions,
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
-                allowAmbushSpawn = true,
                 preventOverhead = false
             };
             iDirectorCardHolder = new DirectorCardHolder

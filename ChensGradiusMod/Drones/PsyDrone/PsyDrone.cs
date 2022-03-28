@@ -341,7 +341,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 selectionWeight = spawnWeight,
 #endif
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
-                allowAmbushSpawn = true,
                 preventOverhead = false
             };
             iDirectorCardHolder = new DirectorCardHolder

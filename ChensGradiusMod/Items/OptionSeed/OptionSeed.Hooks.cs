@@ -242,7 +242,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     procCoefficient = BaseLeap.blastProcCoefficient,
                     radius = BaseLeap.blastRadius,
                     position = seed.transform.position,
-                    attackerFiltering = AttackerFiltering.NeverHit,
+                    attackerFiltering = AttackerFiltering.NeverHitSelf,
                     impactEffect = EffectCatalog.FindEffectIndexFromPrefab(self.blastImpactEffectPrefab),
                     teamIndex = self.teamComponent.teamIndex
                 }.Fire();
@@ -267,7 +267,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                     procCoefficient = GroundSlam.blastProcCoefficient,
                     radius = GroundSlam.blastRadius,
                     position = seed.transform.position,
-                    attackerFiltering = AttackerFiltering.NeverHit,
+                    attackerFiltering = AttackerFiltering.NeverHitSelf,
                     impactEffect = EffectCatalog.FindEffectIndexFromPrefab(GroundSlam.blastImpactEffectPrefab),
                     teamIndex = self.teamComponent.teamIndex
                 }.Fire();
