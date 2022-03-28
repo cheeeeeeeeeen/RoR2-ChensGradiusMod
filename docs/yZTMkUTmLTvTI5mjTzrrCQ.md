@@ -3,14 +3,14 @@
 ## DroneCatalog.Initialize(string, ConfigFile) Method
 Generates a list of data containing the custom drones of the mod that called this method.  
 ```csharp
-public static System.Collections.Generic.List<Chen.GradiusMod.Drones.DroneInfo> Initialize(string modGuid, BepInEx.Configuration.ConfigFile configFile);
+public static System.Collections.Generic.List<Chen.GradiusMod.Drones.DroneInfo> Initialize(string modGuid, ConfigFile configFile);
 ```
 #### Parameters
-<a name='Chen_GradiusMod_Drones_DroneCatalog_Initialize(string_BepInEx_Configuration_ConfigFile)_modGuid'></a>
+<a name='Chen_GradiusMod_Drones_DroneCatalog_Initialize(string_ConfigFile)_modGuid'></a>
 `modGuid` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The mod GUID
   
-<a name='Chen_GradiusMod_Drones_DroneCatalog_Initialize(string_BepInEx_Configuration_ConfigFile)_configFile'></a>
+<a name='Chen_GradiusMod_Drones_DroneCatalog_Initialize(string_ConfigFile)_configFile'></a>
 `configFile` [BepInEx.Configuration.ConfigFile](https://docs.microsoft.com/en-us/dotnet/api/BepInEx.Configuration.ConfigFile 'BepInEx.Configuration.ConfigFile')  
 The file where the mod's custom drones will bind their configs
   

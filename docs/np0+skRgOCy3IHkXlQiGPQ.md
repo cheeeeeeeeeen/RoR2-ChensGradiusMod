@@ -3,7 +3,7 @@
 ## SeedTracker.inputBankTest Property
 Input Bank Test of this Game Object.  
 ```csharp
-public RoR2.InputBankTest inputBankTest { get; set; }
+public InputBankTest inputBankTest { get; set; }
 ```
 #### Property Value
 [RoR2.InputBankTest](https://docs.microsoft.com/en-us/dotnet/api/RoR2.InputBankTest 'RoR2.InputBankTest')

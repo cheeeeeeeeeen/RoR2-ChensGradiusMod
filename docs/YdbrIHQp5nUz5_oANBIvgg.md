@@ -4,9 +4,9 @@
 A method that can be overridden to add or change the logic when the interactable is spawned.  
 Default logic is to compute for the scaled cost of the drone.  
 ```csharp
-protected virtual void OnInteractableSpawn(UnityEngine.GameObject spawnedObject);
+protected virtual void OnInteractableSpawn(GameObject spawnedObject);
 ```
 #### Parameters
-<a name='Chen_GradiusMod_Drones_DroneDeathState_OnInteractableSpawn(UnityEngine_GameObject)_spawnedObject'></a>
+<a name='Chen_GradiusMod_Drones_DroneDeathState_OnInteractableSpawn(GameObject)_spawnedObject'></a>
 `spawnedObject` [UnityEngine.GameObject](https://docs.microsoft.com/en-us/dotnet/api/UnityEngine.GameObject 'UnityEngine.GameObject')  
   

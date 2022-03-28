@@ -3,14 +3,14 @@
 ## GradiusOption.SetRotateOptionOffset(string, Vector3) Method
 Sets the offset center position for a minion type. Options will rotate around the offset.  
 ```csharp
-public bool SetRotateOptionOffset(string masterName, UnityEngine.Vector3 newValue);
+public bool SetRotateOptionOffset(string masterName, Vector3 newValue);
 ```
 #### Parameters
-<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_SetRotateOptionOffset(string_UnityEngine_Vector3)_masterName'></a>
+<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_SetRotateOptionOffset(string_Vector3)_masterName'></a>
 `masterName` [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')  
 The CharacterMaster name of the minion.
   
-<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_SetRotateOptionOffset(string_UnityEngine_Vector3)_newValue'></a>
+<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_SetRotateOptionOffset(string_Vector3)_newValue'></a>
 `newValue` [UnityEngine.Vector3](https://docs.microsoft.com/en-us/dotnet/api/UnityEngine.Vector3 'UnityEngine.Vector3')  
 The offset value.
   

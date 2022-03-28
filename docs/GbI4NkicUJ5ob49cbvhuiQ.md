@@ -3,10 +3,10 @@
 ## Aetherium.RevivedByEngineersToolbelt(CharacterBody) Method
 Determines if the CharacterBody is revived by Engineers Toolbelt.  
 ```csharp
-public static bool RevivedByEngineersToolbelt(RoR2.CharacterBody body);
+public static bool RevivedByEngineersToolbelt(CharacterBody body);
 ```
 #### Parameters
-<a name='Chen_GradiusMod_Compatibility_Aetherium_RevivedByEngineersToolbelt(RoR2_CharacterBody)_body'></a>
+<a name='Chen_GradiusMod_Compatibility_Aetherium_RevivedByEngineersToolbelt(CharacterBody)_body'></a>
 `body` [RoR2.CharacterBody](https://docs.microsoft.com/en-us/dotnet/api/RoR2.CharacterBody 'RoR2.CharacterBody')  
 CharacterBody to check on.
   

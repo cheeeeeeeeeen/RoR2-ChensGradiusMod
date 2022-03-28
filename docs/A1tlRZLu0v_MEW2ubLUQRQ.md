@@ -4,7 +4,7 @@
 This refers to the CharacterMaster GameObject of the drone.  
 Implement this method in the drone class and have it return the CharacterMaster GameObject.  
 ```csharp
-protected abstract UnityEngine.GameObject DroneCharacterMasterObject { get; }
+protected abstract GameObject DroneCharacterMasterObject { get; }
 ```
 #### Property Value
 [UnityEngine.GameObject](https://docs.microsoft.com/en-us/dotnet/api/UnityEngine.GameObject 'UnityEngine.GameObject')

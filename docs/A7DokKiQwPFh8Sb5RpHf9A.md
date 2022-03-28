@@ -16,4 +16,4 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 | :--- | :--- |
 | [AddEngineersToolbeltCustomDrone(string)](fM34Bwg+NtdEMeQF5ptGZw 'Chen.GradiusMod.Compatibility.Aetherium.AddEngineersToolbeltCustomDrone(string)') | Allows the Engineers Toolbelt to revive and duplicate the custom drone.<br/> |
 | [AddInspiredCustomDrone(string)](eOnP_YXzZST6HNCR0dUheg 'Chen.GradiusMod.Compatibility.Aetherium.AddInspiredCustomDrone(string)') | Allows the Inspiring Drone to inspire the custom drone.<br/> |
-| [RevivedByEngineersToolbelt(CharacterBody)](UlIsAJlvQvoTOJSWY0qTag 'Chen.GradiusMod.Compatibility.Aetherium.RevivedByEngineersToolbelt(RoR2.CharacterBody)') | Determines if the CharacterBody is revived by Engineers Toolbelt.<br/> |
+| [RevivedByEngineersToolbelt(CharacterBody)](GbI4NkicUJ5ob49cbvhuiQ 'Chen.GradiusMod.Compatibility.Aetherium.RevivedByEngineersToolbelt(CharacterBody)') | Determines if the CharacterBody is revived by Engineers Toolbelt.<br/> |

@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.4.5-orange)
+![Version](https://img.shields.io/badge/Version-3.5.0-orange)
 ![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -109,6 +109,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.5.0**
+- Update the code so that it works with the latest version.
+- The code still has deprecation warnings.
+
 **3.4.5**
 - Fix a bug where Empathy Core minions and Carbonizer Turrets have huge proc coefficients due to bad computation.
 
@@ -127,16 +131,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **3.4.1**
 - Implement Arms Race support for Psy Drones.
 - Fix a bug regarding double damage in multiplayer.
-
-**3.4.0**
-- Implement Psy Drones, a powerful weapon from a different timeline.
-- Allow the other custom drones from this mod to benefit from attack speed bonuses.
-- Fix a very bad bug where the Health Components of custom drones aren't properly assigned.
-- Actually add a config option for custom drones to be repurchaseable.
-- Integrate breaking changes from Chen's Helpers.
-
-**3.3.11**
-- Update the mod so that it works after the breaking changes of Chen's Helpers.
-- Implement a new API for a shortcut way to setup custom broken drone models.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*

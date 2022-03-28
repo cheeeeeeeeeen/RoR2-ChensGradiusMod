@@ -3,10 +3,10 @@
 ## Machines.RemoveEnemyDroneType(GameObject) Method
 Removes a drone from the spawn pool for the enemies.  
 ```csharp
-public bool RemoveEnemyDroneType(UnityEngine.GameObject masterObject);
+public bool RemoveEnemyDroneType(GameObject masterObject);
 ```
 #### Parameters
-<a name='Chen_GradiusMod_Artifacts_Machines_Machines_RemoveEnemyDroneType(UnityEngine_GameObject)_masterObject'></a>
+<a name='Chen_GradiusMod_Artifacts_Machines_Machines_RemoveEnemyDroneType(GameObject)_masterObject'></a>
 `masterObject` [UnityEngine.GameObject](https://docs.microsoft.com/en-us/dotnet/api/UnityEngine.GameObject 'UnityEngine.GameObject')  
 CharacterMaster GameObject of the drone.
   

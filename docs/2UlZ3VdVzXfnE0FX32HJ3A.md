@@ -3,18 +3,18 @@
 ## GradiusOption.OptionMuzzleEffect(GameObject, GameObject, bool) Method
 Deprecated method that provides an easy way of displaying the effect prefab on Options.  
 ```csharp
-public void OptionMuzzleEffect(UnityEngine.GameObject prefab, UnityEngine.GameObject option, bool transmit);
+public void OptionMuzzleEffect(GameObject prefab, GameObject option, bool transmit);
 ```
 #### Parameters
-<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_OptionMuzzleEffect(UnityEngine_GameObject_UnityEngine_GameObject_bool)_prefab'></a>
+<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_OptionMuzzleEffect(GameObject_GameObject_bool)_prefab'></a>
 `prefab` [UnityEngine.GameObject](https://docs.microsoft.com/en-us/dotnet/api/UnityEngine.GameObject 'UnityEngine.GameObject')  
 Effect prefab to display
   
-<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_OptionMuzzleEffect(UnityEngine_GameObject_UnityEngine_GameObject_bool)_option'></a>
+<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_OptionMuzzleEffect(GameObject_GameObject_bool)_option'></a>
 `option` [UnityEngine.GameObject](https://docs.microsoft.com/en-us/dotnet/api/UnityEngine.GameObject 'UnityEngine.GameObject')  
 The Option Game Object
   
-<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_OptionMuzzleEffect(UnityEngine_GameObject_UnityEngine_GameObject_bool)_transmit'></a>
+<a name='Chen_GradiusMod_Items_GradiusOption_GradiusOption_OptionMuzzleEffect(GameObject_GameObject_bool)_transmit'></a>
 `transmit` [System.Boolean](https://docs.microsoft.com/en-us/dotnet/api/System.Boolean 'System.Boolean')  
 Determines whether this effect should be networked
   
