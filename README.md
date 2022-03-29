@@ -125,8 +125,4 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 - Properly add smoke broken effect for each Psy Drone.
 - Optimize resource loading.
 
-**3.4.2**
-- Fix a bug in the yellow laser attack of the Green Psy Drone where an exception may occur.
-- Fix a bug where as the Green Psy Drone is duplicated upon going to the next stage.
-
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
