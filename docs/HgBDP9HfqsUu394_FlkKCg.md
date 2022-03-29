@@ -11,7 +11,7 @@ Implements [System.IEquatable&lt;](https://docs.microsoft.com/en-us/dotnet/api/S
 
 | Constructors | |
 | :--- | :--- |
-| [DroneInfo(string, Drone, ConfigFile)](LIAmd3gVRwFC4_RvHHGoNw 'Chen.GradiusMod.Drones.DroneInfo.DroneInfo(string, Chen.GradiusMod.Drones.Drone, BepInEx.Configuration.ConfigFile)') | Basic constructor that stores the data of a custom drone.<br/> |
+| [DroneInfo(string, Drone, ConfigFile)](bAc8Fl5yUI1kaNCG4VtBYw 'Chen.GradiusMod.Drones.DroneInfo.DroneInfo(string, Chen.GradiusMod.Drones.Drone, ConfigFile)') | Basic constructor that stores the data of a custom drone.<br/> |
 
 | Fields | |
 | :--- | :--- |

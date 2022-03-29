@@ -3,7 +3,7 @@
 ## OptionBehavior.DecidePosition(float) Method
 Computes for the actual position of the Option based on the owner's rotational variables and its numbering.  
 ```csharp
-public UnityEngine.Vector3 DecidePosition(float baseAngle);
+public Vector3 DecidePosition(float baseAngle);
 ```
 #### Parameters
 <a name='Chen_GradiusMod_Items_GradiusOption_Components_OptionBehavior_DecidePosition(float)_baseAngle'></a>

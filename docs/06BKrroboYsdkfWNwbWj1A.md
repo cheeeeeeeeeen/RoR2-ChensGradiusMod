@@ -10,7 +10,7 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 
 | Methods | |
 | :--- | :--- |
-| [AddEnemyDroneType(GameObject, int)](uwkirow3FE0V6ozwq7FSSQ 'Chen.GradiusMod.Artifacts.Machines.Machines.AddEnemyDroneType(UnityEngine.GameObject, int)') | Adds a drone to the spawn pool for the enemies.<br/> |
+| [AddEnemyDroneType(GameObject, int)](rBlf05VZ6caiITwwVUBbzA 'Chen.GradiusMod.Artifacts.Machines.Machines.AddEnemyDroneType(GameObject, int)') | Adds a drone to the spawn pool for the enemies.<br/> |
 | [AssignEnemyDroneAsGrounded(string)](ujVsLUGxMgrFCppqzzg4zQ 'Chen.GradiusMod.Artifacts.Machines.Machines.AssignEnemyDroneAsGrounded(string)') | Assigns a drone as grounded. This will be used to determine if the drone should be repositioned to the ground to avoid floating stationary drones.<br/> |
-| [RemoveEnemyDroneType(GameObject)](Jb22Pbm943Sl+FSDV7KCiA 'Chen.GradiusMod.Artifacts.Machines.Machines.RemoveEnemyDroneType(UnityEngine.GameObject)') | Removes a drone from the spawn pool for the enemies.<br/> |
+| [RemoveEnemyDroneType(GameObject)](1LqF8kU18SL6Omn8Y+dMoA 'Chen.GradiusMod.Artifacts.Machines.Machines.RemoveEnemyDroneType(GameObject)') | Removes a drone from the spawn pool for the enemies.<br/> |
 | [UnassignEnemyDroneAsGrounded(string)](XJdp1Eubm6eDxnF6IddfZw 'Chen.GradiusMod.Artifacts.Machines.Machines.UnassignEnemyDroneAsGrounded(string)') | Unassigns a drone from being grounded.<br/> |

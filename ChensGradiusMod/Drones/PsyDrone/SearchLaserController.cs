@@ -245,7 +245,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     baseForce = force,
                     position = computedPosition,
                     radius = Radius,
-                    attackerFiltering = AttackerFiltering.NeverHit,
+                    attackerFiltering = AttackerFiltering.NeverHitSelf,
                     falloffModel = FalloffModel.None
                 }.InformativeFire();
                 ApplyHitEffects(result);
@@ -277,7 +277,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                         baseForce = force * SubForceMultiplier,
                         position = computedPosition,
                         radius = SubRadius,
-                        attackerFiltering = AttackerFiltering.NeverHit,
+                        attackerFiltering = AttackerFiltering.NeverHitSelf,
                         falloffModel = FalloffModel.None
                     }.Fire();
                     TriggerArmsRace();

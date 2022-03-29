@@ -3,7 +3,7 @@
 ## DroneDeathState.GetInteractableSpawnCard Property
 A method that should be implemented by the child class. This will be the Spawn Card that will be used to spawn when the drone is destroyed.  
 ```csharp
-protected abstract RoR2.InteractableSpawnCard GetInteractableSpawnCard { get; }
+protected abstract InteractableSpawnCard GetInteractableSpawnCard { get; }
 ```
 #### Property Value
 [RoR2.InteractableSpawnCard](https://docs.microsoft.com/en-us/dotnet/api/RoR2.InteractableSpawnCard 'RoR2.InteractableSpawnCard')

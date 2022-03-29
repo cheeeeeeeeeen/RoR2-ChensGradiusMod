@@ -249,15 +249,15 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void ModifySkill()
         {
-            LoadoutAPI.AddSkill(typeof(MirrorLaser));
-            LoadoutAPI.AddSkill(typeof(SearchLaser));
+            ContentAddition.AddEntityState<MirrorLaser>(out _);
+            ContentAddition.AddEntityState<SearchLaser>(out _);
             SkillDef newSkillDefRed = Object.Instantiate(drone1Skill);
             newSkillDefRed.activationState = new SerializableEntityStateType(typeof(MirrorLaser));
             newSkillDefRed.baseRechargeInterval = 5f;
             newSkillDefRed.beginSkillCooldownOnSkillEnd = true;
             newSkillDefRed.baseMaxStock = 1;
             newSkillDefRed.fullRestockOnAssign = false;
-            LoadoutAPI.AddSkillDef(newSkillDefRed);
+            ContentAddition.AddSkillDef(newSkillDefRed);
             SkillLocator locator = droneBodyRed.GetComponent<SkillLocator>();
             SkillFamily newSkillFamily = Object.Instantiate(locator.primary.skillFamily);
             newSkillFamily.variants = new SkillFamily.Variant[1];
@@ -268,14 +268,14 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 viewableNode = new ViewablesCatalog.Node("", false, null)
             };
             locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
-            LoadoutAPI.AddSkillFamily(newSkillFamily);
+            ContentAddition.AddSkillFamily(newSkillFamily);
             SkillDef newSkillDefGreen = Object.Instantiate(drone1Skill);
             newSkillDefGreen.activationState = new SerializableEntityStateType(typeof(SearchLaser));
             newSkillDefGreen.baseRechargeInterval = newSkillDefRed.baseRechargeInterval;
             newSkillDefGreen.beginSkillCooldownOnSkillEnd = newSkillDefRed.beginSkillCooldownOnSkillEnd;
             newSkillDefGreen.baseMaxStock = newSkillDefRed.baseMaxStock;
             newSkillDefGreen.fullRestockOnAssign = newSkillDefRed.fullRestockOnAssign;
-            LoadoutAPI.AddSkillDef(newSkillDefGreen);
+            ContentAddition.AddSkillDef(newSkillDefGreen);
             locator = droneBodyGreen.GetComponent<SkillLocator>();
             newSkillFamily = Object.Instantiate(locator.primary.skillFamily);
             newSkillFamily.variants = new SkillFamily.Variant[1];
@@ -286,7 +286,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 viewableNode = new ViewablesCatalog.Node("", false, null)
             };
             locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
-            LoadoutAPI.AddSkillFamily(newSkillFamily);
+            ContentAddition.AddSkillFamily(newSkillFamily);
         }
 
         private void InitializeEffects()
@@ -341,7 +341,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                 selectionWeight = spawnWeight,
 #endif
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close,
-                allowAmbushSpawn = true,
                 preventOverhead = false
             };
             iDirectorCardHolder = new DirectorCardHolder

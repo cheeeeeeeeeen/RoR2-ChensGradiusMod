@@ -93,18 +93,18 @@ namespace Chen.GradiusMod
         /// <param name="bulletAttack">The bullet attack being worked on.</param>
         public static void FilterOutOwnerFromAttack(this BulletAttack bulletAttack)
         {
-            bulletAttack.filterCallback = (ref BulletHit hitInfo) =>
+            bulletAttack.filterCallback = (BulletAttack attack, ref BulletHit hitInfo) =>
             {
                 if (bulletAttack.owner == hitInfo.entityObject || bulletAttack.weapon == hitInfo.entityObject) return false;
 
-                return bulletAttack.DefaultFilterCallback(ref hitInfo);
+                return defaultFilterCallback(attack, ref hitInfo);
             };
 
-            bulletAttack.hitCallback = (ref BulletHit hitInfo) =>
+            bulletAttack.hitCallback = (BulletAttack attack, ref BulletHit hitInfo) =>
             {
                 if (bulletAttack.owner == hitInfo.entityObject || bulletAttack.weapon == hitInfo.entityObject) return false;
 
-                return bulletAttack.DefaultHitCallback(ref hitInfo);
+                return defaultHitCallback(attack, ref hitInfo);
             };
         }
 

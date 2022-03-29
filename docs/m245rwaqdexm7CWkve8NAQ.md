@@ -15,4 +15,4 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 | Methods | |
 | :--- | :--- |
 | [DroneRepairKitSupport(string, bool)](du9fuzKdsx5MczZZlzZpGw 'Chen.GradiusMod.Compatibility.ChensClassicItems.DroneRepairKitSupport(string, bool)') | Uses the API to allow Drone Repair Kit to support custom drones.<br/> |
-| [TriggerArtillery(CharacterBody, float, bool, ProcChainMask)](ZY2ShE4vubIoib6qZvnj6w 'Chen.GradiusMod.Compatibility.ChensClassicItems.TriggerArtillery(RoR2.CharacterBody, float, bool, RoR2.ProcChainMask)') | Uses the API to allow Arms Race item to be triggered when invoked.<br/> |
+| [TriggerArtillery(CharacterBody, float, bool, ProcChainMask)](MSqAWLt49lzxgQueQJTnrg 'Chen.GradiusMod.Compatibility.ChensClassicItems.TriggerArtillery(CharacterBody, float, bool, ProcChainMask)') | Uses the API to allow Arms Race item to be triggered when invoked.<br/> |
