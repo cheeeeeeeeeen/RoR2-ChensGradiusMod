@@ -1,10 +1,7 @@
-![Version](https://img.shields.io/badge/Version-3.5.0-orange)
-![Build](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/workflows/Build/badge.svg)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
-
+![Version](https://img.shields.io/badge/Version-3.5.1-orange)
 [![GitHub issues](https://img.shields.io/github/issues/cheeeeeeeeeen/RoR2-ChensGradiusMod)](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/cheeeeeeeeeen/RoR2-ChensGradiusMod)](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/pulls)
+[![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
 ![Maintenance Status](https://img.shields.io/badge/Maintenance-Inactive-orange)
 
 ![RoR2: Chen's Gradius Mod](https://i.imgur.com/yIMFu24.png)
@@ -109,6 +106,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.5.1**
+- Get rid of deprecation.
+- Remove tests to reduce complexity for new maintainers.
+
 **3.5.0**
 - Update the code so that it works with the latest version.
 - The code still has deprecation warnings.
@@ -127,9 +128,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 **3.4.2**
 - Fix a bug in the yellow laser attack of the Green Psy Drone where an exception may occur.
 - Fix a bug where as the Green Psy Drone is duplicated upon going to the next stage.
-
-**3.4.1**
-- Implement Arms Race support for Psy Drones.
-- Fix a bug regarding double damage in multiplayer.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
