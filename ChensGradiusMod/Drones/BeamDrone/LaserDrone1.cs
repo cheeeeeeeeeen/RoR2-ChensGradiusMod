@@ -191,14 +191,14 @@ namespace Chen.GradiusMod.Drones.BeamDrone
 
         private void ModifySkill()
         {
-            LoadoutAPI.AddSkill(typeof(FireBeam));
+            ContentAddition.AddEntityState<FireBeam>(out _);
             SkillDef newSkillDef = Object.Instantiate(drone1Skill);
             newSkillDef.activationState = new SerializableEntityStateType(typeof(FireBeam));
             newSkillDef.baseRechargeInterval = laserCooldown;
             newSkillDef.beginSkillCooldownOnSkillEnd = true;
             newSkillDef.baseMaxStock = 1;
             newSkillDef.fullRestockOnAssign = false;
-            LoadoutAPI.AddSkillDef(newSkillDef);
+            ContentAddition.AddSkillDef(newSkillDef);
             SkillLocator locator = droneBody.GetComponent<SkillLocator>();
             SkillFamily newSkillFamily = Object.Instantiate(locator.primary.skillFamily);
             newSkillFamily.variants = new SkillFamily.Variant[1];
@@ -209,7 +209,7 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                 viewableNode = new ViewablesCatalog.Node("", false, null)
             };
             locator.primary.SetFieldValue("_skillFamily", newSkillFamily);
-            LoadoutAPI.AddSkillFamily(newSkillFamily);
+            ContentAddition.AddSkillFamily(newSkillFamily);
         }
 
         private void ModifyInteractableSpawnCard()
