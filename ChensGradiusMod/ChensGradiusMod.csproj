@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ChensGradiusMod</AssemblyName>
     <RootNamespace>Chen.GradiusMod</RootNamespace>
-    <Version>3.5.1</Version>
+    <Version>3.5.2</Version>
     <PackageProjectUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod</RepositoryUrl>
     <Copyright />
@@ -43,7 +43,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Unity.Analyzers" Version="1.11.0">
+    <PackageReference Include="Microsoft.Unity.Analyzers" Version="1.12.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -55,8 +55,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="BepInEx.Core" Version="5.4.19" />
-    <PackageReference Include="R2API" Version="4.2.1" />
-    <PackageReference Include="RiskOfRain2.GameLibs" Version="1.2.1-r.1" />
+    <PackageReference Include="R2API" Version="4.3.3" />
+    <PackageReference Include="RiskOfRain2.GameLibs" Version="1.2.2-r.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.26" />
   </ItemGroup>
 

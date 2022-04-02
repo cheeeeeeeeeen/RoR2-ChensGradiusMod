@@ -224,7 +224,7 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             iSpawnCard.orientToFloor = true;
         }
 
-        private void DirectorAPI_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void DirectorAPI_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
         {
             if (!arg2.CheckStage(Stage.SkyMeadow)) arg1.ConditionalAdd(iDirectorCardHolder, card => iDirectorCardHolder == card);
             else arg1.ConditionalAdd(iHeavyDirectorCardHolder, card => iHeavyDirectorCardHolder == card);
@@ -256,13 +256,13 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             iDirectorCardHolder = new DirectorCardHolder
             {
                 Card = directorCard,
-                MonsterCategory = MonsterCategory.None,
+                MonsterCategory = MonsterCategory.Invalid,
                 InteractableCategory = InteractableCategory.Drones,
             };
             iHeavyDirectorCardHolder = new DirectorCardHolder
             {
                 Card = heavyDirectorCard,
-                MonsterCategory = MonsterCategory.None,
+                MonsterCategory = MonsterCategory.Invalid,
                 InteractableCategory = InteractableCategory.Drones,
             };
         }
