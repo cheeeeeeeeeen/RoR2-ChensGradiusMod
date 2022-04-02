@@ -325,7 +325,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             }
         }
 
-        private void DirectorAPI_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void DirectorAPI_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
         {
             arg1.ConditionalAdd(iDirectorCardHolder, card => iDirectorCardHolder == card);
         }
@@ -346,7 +346,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             iDirectorCardHolder = new DirectorCardHolder
             {
                 Card = directorCard,
-                MonsterCategory = MonsterCategory.None,
+                MonsterCategory = MonsterCategory.Invalid,
                 InteractableCategory = InteractableCategory.Drones,
             };
         }

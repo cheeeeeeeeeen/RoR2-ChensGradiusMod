@@ -36,7 +36,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        private void GradiusModPlugin_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void GradiusModPlugin_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
         {
             List<DirectorCardHolder> cardHolders = arg1.FindAll(item =>
             {
@@ -50,7 +50,7 @@ namespace Chen.GradiusMod
             }
         }
 
-        private void FlameDrone_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void FlameDrone_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
         {
             DirectorCard dcFlameDrone = null;
             foreach (DirectorCardHolder dch in arg1)
