@@ -112,11 +112,11 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         {
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
             droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}Master", true);
-            contentProvider.masterObjects.Add(droneMaster);
+            ContentAddition.AddMaster(droneMaster);
             ModifyDroneMaster();
             CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
             droneBody = master.bodyPrefab.InstantiateClone($"{name}Body", true);
-            contentProvider.bodyObjects.Add(droneBody);
+            ContentAddition.AddBody(droneBody);
             ModifyDroneBody();
             master.bodyPrefab = droneBody;
             summonMasterBehavior.masterPrefab = droneMaster;

@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TILER2;
 using UnityEngine;
-using static R2API.DirectorAPI;
-using R2APIStage = R2API.DirectorAPI.Stage;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
 
@@ -24,56 +22,57 @@ namespace Chen.GradiusMod
                 Log.Debug("Vanilla Fix: Applying Emergency Drone Fix.");
                 On.RoR2.HealBeamController.HealBeamAlreadyExists_GameObject_HealthComponent += HealBeamController_HealBeamAlreadyExists_GO_HC;
             }
-            if (generalCfg.flameDroneWeightScorchedAcres > 1 || generalCfg.flameDroneWeightAbyssalDepths > 1)
-            {
-                Log.Debug("Vanilla Change: Modifying Flame Drone spawn weight on Abyssal Depths or Scorched Acres (or both).");
-                InteractableActions += FlameDrone_InteractableActions;
-            }
-            if (generalCfg.turretsAsDroneCategory)
-            {
-                Log.Debug("Vanilla Change: Modifying category of Gunner Turrets to Drones category.");
-                InteractableActions += GradiusModPlugin_InteractableActions;
-            }
+            //Unimplemented: New changes were made into how the drones spawn. New maintainers may be able to re-implement this feature.
+            //if (generalCfg.flameDroneWeightScorchedAcres > 1 || generalCfg.flameDroneWeightAbyssalDepths > 1)
+            //{
+            //    Log.Debug("Vanilla Change: Modifying Flame Drone spawn weight on Abyssal Depths or Scorched Acres (or both).");
+            //    InteractableActions += FlameDrone_InteractableActions;
+            //}
+            //if (generalCfg.turretsAsDroneCategory)
+            //{
+            //    Log.Debug("Vanilla Change: Modifying category of Gunner Turrets to Drones category.");
+            //    InteractableActions += GradiusModPlugin_InteractableActions;
+            //}
         }
 
-        private void GradiusModPlugin_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
-        {
-            List<DirectorCardHolder> cardHolders = arg1.FindAll(item =>
-            {
-                return item.InteractableCategory == InteractableCategory.Misc &&
-                       item.Card.spawnCard == turret1SpawnCard;
-            });
-            foreach (var cardHolder in cardHolders)
-            {
-                cardHolder.InteractableCategory = InteractableCategory.Drones;
-                cardHolder.Card.selectionWeight = 1;
-            }
-        }
+        //private void GradiusModPlugin_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
+        //{
+        //    List<DirectorCardHolder> cardHolders = arg1.FindAll(item =>
+        //    {
+        //        return item.InteractableCategory == InteractableCategory.Misc &&
+        //               item.Card.spawnCard == turret1SpawnCard;
+        //    });
+        //    foreach (var cardHolder in cardHolders)
+        //    {
+        //        cardHolder.InteractableCategory = InteractableCategory.Drones;
+        //        cardHolder.Card.selectionWeight = 1;
+        //    }
+        //}
 
-        private void FlameDrone_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
-        {
-            DirectorCard dcFlameDrone = null;
-            foreach (DirectorCardHolder dch in arg1)
-            {
-                if (dcFlameDrone == null && dch.Card.spawnCard.name.Contains("FlameDrone"))
-                {
-                    dcFlameDrone = dch.Card;
-                    break;
-                }
-            }
-            if (dcFlameDrone != null)
-            {
-                if (generalCfg.flameDroneWeightAbyssalDepths > 1 && arg2.stage == R2APIStage.AbyssalDepths)
-                {
-                    dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightAbyssalDepths;
-                }
-                else if (generalCfg.flameDroneWeightScorchedAcres > 1 && arg2.stage == R2APIStage.ScorchedAcres)
-                {
-                    dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightScorchedAcres;
-                }
-            }
-            else Log.Warning("GradiusModPlugin.FlameDrone_InteractableActions: Flame Drone Director Card not found!");
-        }
+        //private void FlameDrone_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
+        //{
+        //    DirectorCard dcFlameDrone = null;
+        //    foreach (DirectorCardHolder dch in arg1)
+        //    {
+        //        if (dcFlameDrone == null && dch.Card.spawnCard.name.Contains("FlameDrone"))
+        //        {
+        //            dcFlameDrone = dch.Card;
+        //            break;
+        //        }
+        //    }
+        //    if (dcFlameDrone != null)
+        //    {
+        //        if (generalCfg.flameDroneWeightAbyssalDepths > 1 && arg2.stage == R2APIStage.AbyssalDepths)
+        //        {
+        //            dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightAbyssalDepths;
+        //        }
+        //        else if (generalCfg.flameDroneWeightScorchedAcres > 1 && arg2.stage == R2APIStage.ScorchedAcres)
+        //        {
+        //            dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightScorchedAcres;
+        //        }
+        //    }
+        //    else Log.Warning("GradiusModPlugin.FlameDrone_InteractableActions: Flame Drone Director Card not found!");
+        //}
 
         private bool HealBeamController_HealBeamAlreadyExists_GO_HC(
             On.RoR2.HealBeamController.orig_HealBeamAlreadyExists_GameObject_HealthComponent orig,
@@ -147,15 +146,15 @@ namespace Chen.GradiusMod
                         AutoConfigFlags.PreventNetMismatch, 0f, 100f)]
             public float dropEquipFromDroneChance { get; private set; } = 0f;
 
-            [AutoConfig("Flame Drone spawn weight multiplier in Scorched Acres. Set to 1 for default.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
-            public int flameDroneWeightScorchedAcres { get; private set; } = 1;
+            //[AutoConfig("Flame Drone spawn weight multiplier in Scorched Acres. Set to 1 for default.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
+            //public int flameDroneWeightScorchedAcres { get; private set; } = 1;
 
-            [AutoConfig("Flame Drone spawn weight multiplier in Abyssal Depths. Set to 1 for default.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
-            public int flameDroneWeightAbyssalDepths { get; private set; } = 3;
+            //[AutoConfig("Flame Drone spawn weight multiplier in Abyssal Depths. Set to 1 for default.", AutoConfigFlags.PreventNetMismatch, 1, int.MaxValue)]
+            //public int flameDroneWeightAbyssalDepths { get; private set; } = 3;
 
-            [AutoConfig("Gunner Turrets are not treated as Drones by the Director and they fall under Miscellaneous Category, hence why gunner turrets spawn more often. " +
-                        "Setting this to true will change the category of turrets to Drones as well.", AutoConfigFlags.PreventNetMismatch)]
-            public bool turretsAsDroneCategory { get; private set; } = true;
+            //[AutoConfig("Gunner Turrets are not treated as Drones by the Director and they fall under Miscellaneous Category, hence why gunner turrets spawn more often. " +
+            //            "Setting this to true will change the category of turrets to Drones as well.", AutoConfigFlags.PreventNetMismatch)]
+            //public bool turretsAsDroneCategory { get; private set; } = true;
 
             [AutoConfig("Aetherium Compatibility: Allow Equipment Drones to be Inspired by Inspiring Drone.", AutoConfigFlags.PreventNetMismatch)]
             public bool equipmentDroneInspire { get; private set; } = true;

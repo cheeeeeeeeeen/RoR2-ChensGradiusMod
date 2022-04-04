@@ -45,7 +45,7 @@ namespace Chen.GradiusMod
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ClassicItemsPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
-    [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI))]
+    [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI), nameof(ContentAddition))]
     public partial class GradiusModPlugin : BaseUnityPlugin
     {
         /// <summary>
@@ -68,7 +68,6 @@ namespace Chen.GradiusMod
         internal static List<DroneInfo> gradiusDronesList = new List<DroneInfo>();
         internal static Log Log;
         internal static AssetBundle assetBundle;
-        internal static ContentProvider contentProvider;
 
         private static readonly Lazy<GameObject> _backupDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster"));
         private static readonly Lazy<GameObject> _drone1Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master"));
@@ -127,7 +126,6 @@ namespace Chen.GradiusMod
         private void Awake()
         {
             Log = new Log(Logger);
-            contentProvider = new ContentProvider();
 
 #if DEBUG
             MultiplayerTest.Enable(Log);
@@ -168,8 +166,6 @@ namespace Chen.GradiusMod
             Log.Debug("Instantiating custom drones...");
             gradiusDronesList = DroneCatalog.Initialize(ModGuid, cfgFile);
             DroneCatalog.EfficientSetupAll(gradiusDronesList);
-
-            contentProvider.Initialize();
 
             Log.Debug("Applying vanilla changes and fixes...");
             RegisterVanillaChanges();
