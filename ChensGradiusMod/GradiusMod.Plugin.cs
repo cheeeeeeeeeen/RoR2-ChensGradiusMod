@@ -51,7 +51,7 @@ namespace Chen.GradiusMod
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public const string ModVer = "3.5.2";
+        public const string ModVer = "3.5.3";
 
         /// <summary>
         /// The name of the mod.

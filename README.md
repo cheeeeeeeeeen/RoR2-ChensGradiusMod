@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/Version-3.5.2-orange)
+![Version](https://img.shields.io/badge/Version-3.5.3-orange)
 [![GitHub issues](https://img.shields.io/github/issues/cheeeeeeeeeen/RoR2-ChensGradiusMod)](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/cheeeeeeeeeen/RoR2-ChensGradiusMod)](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/pulls)
 [![Support Chen](https://img.shields.io/badge/Support-Chen-ff69b4)](https://ko-fi.com/cheeeeeeeeeen)
@@ -106,6 +106,10 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
+**3.5.3**
+- With the changes of how things spawn in a map, the code must be updated to allow drones to spawn as well.
+- Implement changes of new DirectorAPI.
+
 **3.5.2**
 - Update references to fetch the new R2API and the new DirectorAPI changes.
 
@@ -119,8 +123,5 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 **3.4.5**
 - Fix a bug where Empathy Core minions and Carbonizer Turrets have huge proc coefficients due to bad computation.
-
-**3.4.4**
-- Integrate with Aetherium's Engineers Toolbelt for custom drone support from this mod.
 
 *For the full changelog, check this [wiki page](https://github.com/cheeeeeeeeeen/RoR2-ChensGradiusMod/wiki/Changelog).*
