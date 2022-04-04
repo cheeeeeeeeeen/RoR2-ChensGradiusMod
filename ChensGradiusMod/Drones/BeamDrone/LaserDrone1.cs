@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static R2API.DirectorAPI;
+using static R2API.DirectorAPI.Helpers;
 using Stage = R2API.DirectorAPI.Stage;
 
 namespace Chen.GradiusMod.Drones.BeamDrone
@@ -220,10 +221,18 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             iSpawnCard.orientToFloor = true;
         }
 
-        private void DirectorAPI_InteractableActions(DccsPool arg0, List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void DirectorAPI_InteractableActions(DccsPool arg1, StageInfo arg2)
         {
-            if (!arg2.CheckStage(Stage.SkyMeadow)) arg1.ConditionalAdd(iDirectorCardHolder, card => iDirectorCardHolder == card);
-            else arg1.ConditionalAdd(iHeavyDirectorCardHolder, card => iHeavyDirectorCardHolder == card);
+            if (!arg1) return;
+
+            if (arg2.CheckStage(Stage.SkyMeadow))
+            {
+                ForEachPoolEntryInDccsPool(arg1, (poolEntry) => poolEntry.dccs.AddCard(iDirectorCardHolder));
+            }
+            else
+            {
+                ForEachPoolEntryInDccsPool(arg1, (poolEntry) => poolEntry.dccs.AddCard(iHeavyDirectorCardHolder));
+            }
         }
 
         private void InitializeDirectorCards()
