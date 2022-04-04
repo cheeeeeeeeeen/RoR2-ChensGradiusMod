@@ -79,7 +79,6 @@ namespace Chen.GradiusMod
         private static readonly Lazy<GameObject> _tc280DroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"));
         private static readonly Lazy<GameObject> _equipmentDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/EquipmentDroneMaster"));
         private static readonly Lazy<GameObject> _helperPrefab = new Lazy<GameObject>(() => Resources.Load<GameObject>("SpawnCards/HelperPrefab"));
-        private static readonly Lazy<SpawnCard> _turret1SpawnCard = new Lazy<SpawnCard>(() => Resources.Load<SpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1"));
         private static readonly Lazy<InteractableSpawnCard> _drone1SpawnCard = new Lazy<InteractableSpawnCard>(() => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1"));
         private static readonly Lazy<SkillDef> _drone1Skill = new Lazy<SkillDef>(() => Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun"));
         private static readonly Lazy<Material> _summonDroneMaterial = new Lazy<Material>(() => Resources.Load<Material>("Materials/matSummonDrone"));
@@ -94,7 +93,6 @@ namespace Chen.GradiusMod
         internal static GameObject tc280DroneMaster { get => _tc280DroneMaster.Value; }
         internal static GameObject equipmentDroneMaster { get => _equipmentDroneMaster.Value; }
         internal static GameObject helperPrefab { get => _helperPrefab.Value; }
-        internal static SpawnCard turret1SpawnCard { get => _turret1SpawnCard.Value; }
         internal static InteractableSpawnCard drone1SpawnCard { get => _drone1SpawnCard.Value; }
         internal static SkillDef drone1Skill { get => _drone1Skill.Value; }
         internal static Material summonDroneMaterial { get => _summonDroneMaterial.Value; }

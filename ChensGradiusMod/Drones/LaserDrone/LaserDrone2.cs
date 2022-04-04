@@ -1,6 +1,5 @@
 ﻿#undef DEBUG
 
-using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
@@ -9,7 +8,6 @@ using R2API.Utils;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Skills;
-using System.Collections.Generic;
 using UnityEngine;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static R2API.DirectorAPI;

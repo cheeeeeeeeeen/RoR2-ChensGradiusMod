@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
-using static Chen.GradiusMod.GradiusModPlugin;
 using EngiMissilePainterFire = EntityStates.Engi.EngiMissilePainter.Fire;
 using MageFlamethrower = EntityStates.Mage.Weapon.Flamethrower;
 
