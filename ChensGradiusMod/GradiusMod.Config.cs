@@ -50,11 +50,11 @@ namespace Chen.GradiusMod
                     if (dCard.spawnCard.name.Contains("Turret1"))
                     {
                         turretDirectorCard = dCard;
-                        return true;
+                        return false;
                     }
                     else
                     {
-                        return false;
+                        return true;
                     }
                 });
                 if (turretDirectorCard != null)
@@ -62,7 +62,7 @@ namespace Chen.GradiusMod
                     DirectorCard newDirectorCard = new DirectorCard
                     {
                         spawnCard = turretDirectorCard.spawnCard,
-                        selectionWeight = 1,
+                        selectionWeight = turretDirectorCard.selectionWeight,
                         minimumStageCompletions = turretDirectorCard.minimumStageCompletions,
                         spawnDistance = turretDirectorCard.spawnDistance,
                         preventOverhead = turretDirectorCard.preventOverhead
@@ -95,11 +95,11 @@ namespace Chen.GradiusMod
                         if (dCard.spawnCard.name.Contains("FlameDrone"))
                         {
                             flameDroneDirectorCard = dCard;
-                            return true;
+                            return false;
                         }
                         else
                         {
-                            return false;
+                            return true;
                         }
                     });
                     if (flameDroneDirectorCard != null)
