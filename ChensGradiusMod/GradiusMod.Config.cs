@@ -1,12 +1,14 @@
 ﻿#undef DEBUG
 
 using Chen.Helpers.LogHelpers;
+using R2API;
 using RoR2;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TILER2;
 using UnityEngine;
 using static R2API.DirectorAPI;
+using static R2API.DirectorAPI.Helpers;
 using R2APIStage = R2API.DirectorAPI.Stage;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
@@ -32,47 +34,95 @@ namespace Chen.GradiusMod
             if (generalCfg.turretsAsDroneCategory)
             {
                 Log.Debug("Vanilla Change: Modifying category of Gunner Turrets to Drones category.");
-                InteractableActions += GradiusModPlugin_InteractableActions;
+                InteractableActions += Turret1_InteractableActions;
             }
         }
 
-        private void GradiusModPlugin_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void Turret1_InteractableActions(DccsPool arg1, StageInfo arg2)
         {
-            List<DirectorCardHolder> cardHolders = arg1.FindAll(item =>
+            if (!arg1) return;
+
+            ForEachPoolEntryInDccsPool(arg1, (poolEntry) =>
             {
-                return item.InteractableCategory == InteractableCategory.Misc &&
-                       item.Card.spawnCard == turret1SpawnCard;
+                DirectorCard turretDirectorCard = null;
+                poolEntry.dccs.RemoveCardsThatFailFilter(dCard =>
+                {
+                    if (dCard.spawnCard.name.Contains("Turret1"))
+                    {
+                        turretDirectorCard = dCard;
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                });
+                if (turretDirectorCard != null)
+                {
+                    DirectorCard newDirectorCard = new DirectorCard
+                    {
+                        spawnCard = turretDirectorCard.spawnCard,
+                        selectionWeight = turretDirectorCard.selectionWeight,
+                        minimumStageCompletions = turretDirectorCard.minimumStageCompletions,
+                        spawnDistance = turretDirectorCard.spawnDistance,
+                        preventOverhead = turretDirectorCard.preventOverhead
+                    };
+                    DirectorCardHolder newDirectorCardHolder = new DirectorCardHolder
+                    {
+                        Card = newDirectorCard,
+                        MonsterCategory = MonsterCategory.Invalid,
+                        InteractableCategory = InteractableCategory.Drones,
+                    };
+                    poolEntry.dccs.AddCard(newDirectorCardHolder);
+                }
+                else Log.Warning($"GradiusModPlugin.Turret1_InteractableActions: Turret Director Card not found. (arg1: {arg1.name}, arg2: {arg2.ToInternalStageName()})");
             });
-            foreach (var cardHolder in cardHolders)
-            {
-                cardHolder.InteractableCategory = InteractableCategory.Drones;
-                cardHolder.Card.selectionWeight = 1;
-            }
         }
 
-        private void FlameDrone_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void FlameDrone_InteractableActions(DccsPool arg1, StageInfo arg2)
         {
-            DirectorCard dcFlameDrone = null;
-            foreach (DirectorCardHolder dch in arg1)
+            if (arg1 && arg2.CheckStage(R2APIStage.AbyssalDepths) || arg2.CheckStage(R2APIStage.ScorchedAcres))
             {
-                if (dcFlameDrone == null && dch.Card.spawnCard.name.Contains("FlameDrone"))
+                float weightMultiplier = 1f;
+                if (arg2.CheckStage(R2APIStage.AbyssalDepths)) weightMultiplier = generalCfg.flameDroneWeightAbyssalDepths;
+                else if (arg2.CheckStage(R2APIStage.ScorchedAcres)) weightMultiplier = generalCfg.flameDroneWeightScorchedAcres;
+
+                ForEachPoolEntryInDccsPool(arg1, (poolEntry) =>
                 {
-                    dcFlameDrone = dch.Card;
-                    break;
-                }
+                    DirectorCard flameDroneDirectorCard = null;
+                    poolEntry.dccs.RemoveCardsThatFailFilter(dCard =>
+                    {
+                        if (dCard.spawnCard.name.Contains("FlameDrone"))
+                        {
+                            flameDroneDirectorCard = dCard;
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    });
+                    if (flameDroneDirectorCard != null)
+                    {
+                        DirectorCard newDirectorCard = new DirectorCard
+                        {
+                            spawnCard = flameDroneDirectorCard.spawnCard,
+                            selectionWeight = Mathf.RoundToInt(flameDroneDirectorCard.selectionWeight * weightMultiplier),
+                            minimumStageCompletions = flameDroneDirectorCard.minimumStageCompletions,
+                            spawnDistance = flameDroneDirectorCard.spawnDistance,
+                            preventOverhead = flameDroneDirectorCard.preventOverhead
+                        };
+                        DirectorCardHolder newDirectorCardHolder = new DirectorCardHolder
+                        {
+                            Card = newDirectorCard,
+                            MonsterCategory = MonsterCategory.Invalid,
+                            InteractableCategory = InteractableCategory.Drones,
+                        };
+                        poolEntry.dccs.AddCard(newDirectorCardHolder);
+                    }
+                    else Log.Warning($"GradiusModPlugin.FlameDrone_InteractableActions: Flame Drone Director Card not found. (arg1: {arg1.name}, arg2: {arg2.ToInternalStageName()})");
+                });
             }
-            if (dcFlameDrone != null)
-            {
-                if (generalCfg.flameDroneWeightAbyssalDepths > 1 && arg2.stage == R2APIStage.AbyssalDepths)
-                {
-                    dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightAbyssalDepths;
-                }
-                else if (generalCfg.flameDroneWeightScorchedAcres > 1 && arg2.stage == R2APIStage.ScorchedAcres)
-                {
-                    dcFlameDrone.selectionWeight *= generalCfg.flameDroneWeightScorchedAcres;
-                }
-            }
-            else Log.Warning("GradiusModPlugin.FlameDrone_InteractableActions: Flame Drone Director Card not found!");
         }
 
         private bool HealBeamController_HealBeamAlreadyExists_GO_HC(

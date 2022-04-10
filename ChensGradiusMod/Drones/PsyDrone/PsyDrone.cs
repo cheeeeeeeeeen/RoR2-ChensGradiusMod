@@ -1,6 +1,5 @@
 ﻿#undef DEBUG
 
-using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
@@ -9,11 +8,11 @@ using R2API.Utils;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Skills;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static R2API.DirectorAPI;
+using static R2API.DirectorAPI.Helpers;
 using static RoR2.CharacterAI.AISkillDriver;
 
 namespace Chen.GradiusMod.Drones.PsyDrone
@@ -78,7 +77,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         {
             affectedByEngineersToolbelt = false;
             base.SetupBehavior();
-            InteractableActions += DirectorAPI_InteractableActions;
+            AddNewInteractable(iDirectorCardHolder);
             CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
         }
 
@@ -94,15 +93,15 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
             droneMasterRed = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}RedMaster", true);
             droneMasterGreen = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}GreenMaster", true);
-            contentProvider.masterObjects.Add(droneMasterRed);
-            contentProvider.masterObjects.Add(droneMasterGreen);
+            ContentAddition.AddMaster(droneMasterRed);
+            ContentAddition.AddMaster(droneMasterGreen);
             ModifyDroneMaster();
             CharacterMaster masterRed = droneMasterRed.GetComponent<CharacterMaster>();
             CharacterMaster masterGreen = droneMasterGreen.GetComponent<CharacterMaster>();
             droneBodyRed = masterRed.bodyPrefab.InstantiateClone($"{name}RedBody", true);
             droneBodyGreen = masterGreen.bodyPrefab.InstantiateClone($"{name}GreenBody", true);
-            contentProvider.bodyObjects.Add(droneBodyRed);
-            contentProvider.bodyObjects.Add(droneBodyGreen);
+            ContentAddition.AddBody(droneBodyRed);
+            ContentAddition.AddBody(droneBodyGreen);
             ModifyDroneBody();
             masterRed.bodyPrefab = droneBodyRed;
             masterGreen.bodyPrefab = droneBodyGreen;
@@ -325,11 +324,6 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             }
         }
 
-        private void DirectorAPI_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
-        {
-            arg1.ConditionalAdd(iDirectorCardHolder, card => iDirectorCardHolder == card);
-        }
-
         private void InitializeDirectorCards()
         {
             DirectorCard directorCard = new DirectorCard
@@ -346,7 +340,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             iDirectorCardHolder = new DirectorCardHolder
             {
                 Card = directorCard,
-                MonsterCategory = MonsterCategory.None,
+                MonsterCategory = MonsterCategory.Invalid,
                 InteractableCategory = InteractableCategory.Drones,
             };
         }

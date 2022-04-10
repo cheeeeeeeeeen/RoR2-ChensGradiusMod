@@ -1,6 +1,5 @@
 ﻿#undef DEBUG
 
-using Chen.Helpers.CollectionHelpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.UnityHelpers;
 using EntityStates;
@@ -9,10 +8,10 @@ using R2API.Utils;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Skills;
-using System.Collections.Generic;
 using UnityEngine;
 using static Chen.GradiusMod.GradiusModPlugin;
 using static R2API.DirectorAPI;
+using static R2API.DirectorAPI.Helpers;
 using Stage = R2API.DirectorAPI.Stage;
 
 namespace Chen.GradiusMod.Drones.BeamDrone
@@ -112,11 +111,11 @@ namespace Chen.GradiusMod.Drones.BeamDrone
         {
             SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
             droneMaster = summonMasterBehavior.masterPrefab.InstantiateClone($"{name}Master", true);
-            contentProvider.masterObjects.Add(droneMaster);
+            ContentAddition.AddMaster(droneMaster);
             ModifyDroneMaster();
             CharacterMaster master = droneMaster.GetComponent<CharacterMaster>();
             droneBody = master.bodyPrefab.InstantiateClone($"{name}Body", true);
-            contentProvider.bodyObjects.Add(droneBody);
+            ContentAddition.AddBody(droneBody);
             ModifyDroneBody();
             master.bodyPrefab = droneBody;
             summonMasterBehavior.masterPrefab = droneMaster;
@@ -220,10 +219,18 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             iSpawnCard.orientToFloor = true;
         }
 
-        private void DirectorAPI_InteractableActions(List<DirectorCardHolder> arg1, StageInfo arg2)
+        private void DirectorAPI_InteractableActions(DccsPool arg1, StageInfo arg2)
         {
-            if (!arg2.CheckStage(Stage.SkyMeadow)) arg1.ConditionalAdd(iDirectorCardHolder, card => iDirectorCardHolder == card);
-            else arg1.ConditionalAdd(iHeavyDirectorCardHolder, card => iHeavyDirectorCardHolder == card);
+            if (!arg1) return;
+
+            if (arg2.CheckStage(Stage.SkyMeadow))
+            {
+                ForEachPoolEntryInDccsPool(arg1, (poolEntry) => poolEntry.dccs.AddCard(iDirectorCardHolder));
+            }
+            else
+            {
+                ForEachPoolEntryInDccsPool(arg1, (poolEntry) => poolEntry.dccs.AddCard(iHeavyDirectorCardHolder));
+            }
         }
 
         private void InitializeDirectorCards()
@@ -252,13 +259,13 @@ namespace Chen.GradiusMod.Drones.BeamDrone
             iDirectorCardHolder = new DirectorCardHolder
             {
                 Card = directorCard,
-                MonsterCategory = MonsterCategory.None,
+                MonsterCategory = MonsterCategory.Invalid,
                 InteractableCategory = InteractableCategory.Drones,
             };
             iHeavyDirectorCardHolder = new DirectorCardHolder
             {
                 Card = heavyDirectorCard,
-                MonsterCategory = MonsterCategory.None,
+                MonsterCategory = MonsterCategory.Invalid,
                 InteractableCategory = InteractableCategory.Drones,
             };
         }

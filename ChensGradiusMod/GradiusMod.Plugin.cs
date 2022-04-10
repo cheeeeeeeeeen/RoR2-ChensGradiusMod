@@ -45,13 +45,13 @@ namespace Chen.GradiusMod
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency(ClassicItemsPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
-    [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI))]
+    [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI), nameof(ContentAddition))]
     public partial class GradiusModPlugin : BaseUnityPlugin
     {
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public const string ModVer = "3.5.1";
+        public const string ModVer = "3.5.3";
 
         /// <summary>
         /// The name of the mod.
@@ -68,7 +68,6 @@ namespace Chen.GradiusMod
         internal static List<DroneInfo> gradiusDronesList = new List<DroneInfo>();
         internal static Log Log;
         internal static AssetBundle assetBundle;
-        internal static ContentProvider contentProvider;
 
         private static readonly Lazy<GameObject> _backupDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster"));
         private static readonly Lazy<GameObject> _drone1Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master"));
@@ -80,7 +79,6 @@ namespace Chen.GradiusMod
         private static readonly Lazy<GameObject> _tc280DroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"));
         private static readonly Lazy<GameObject> _equipmentDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/EquipmentDroneMaster"));
         private static readonly Lazy<GameObject> _helperPrefab = new Lazy<GameObject>(() => Resources.Load<GameObject>("SpawnCards/HelperPrefab"));
-        private static readonly Lazy<SpawnCard> _turret1SpawnCard = new Lazy<SpawnCard>(() => Resources.Load<SpawnCard>("spawncards/interactablespawncard/iscBrokenTurret1"));
         private static readonly Lazy<InteractableSpawnCard> _drone1SpawnCard = new Lazy<InteractableSpawnCard>(() => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1"));
         private static readonly Lazy<SkillDef> _drone1Skill = new Lazy<SkillDef>(() => Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun"));
         private static readonly Lazy<Material> _summonDroneMaterial = new Lazy<Material>(() => Resources.Load<Material>("Materials/matSummonDrone"));
@@ -95,7 +93,6 @@ namespace Chen.GradiusMod
         internal static GameObject tc280DroneMaster { get => _tc280DroneMaster.Value; }
         internal static GameObject equipmentDroneMaster { get => _equipmentDroneMaster.Value; }
         internal static GameObject helperPrefab { get => _helperPrefab.Value; }
-        internal static SpawnCard turret1SpawnCard { get => _turret1SpawnCard.Value; }
         internal static InteractableSpawnCard drone1SpawnCard { get => _drone1SpawnCard.Value; }
         internal static SkillDef drone1Skill { get => _drone1Skill.Value; }
         internal static Material summonDroneMaterial { get => _summonDroneMaterial.Value; }
@@ -127,7 +124,6 @@ namespace Chen.GradiusMod
         private void Awake()
         {
             Log = new Log(Logger);
-            contentProvider = new ContentProvider();
 
 #if DEBUG
             MultiplayerTest.Enable(Log);
@@ -168,8 +164,6 @@ namespace Chen.GradiusMod
             Log.Debug("Instantiating custom drones...");
             gradiusDronesList = DroneCatalog.Initialize(ModGuid, cfgFile);
             DroneCatalog.EfficientSetupAll(gradiusDronesList);
-
-            contentProvider.Initialize();
 
             Log.Debug("Applying vanilla changes and fixes...");
             RegisterVanillaChanges();
