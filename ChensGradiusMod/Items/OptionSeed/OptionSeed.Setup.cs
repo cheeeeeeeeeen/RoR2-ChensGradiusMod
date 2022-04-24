@@ -137,14 +137,14 @@ namespace Chen.GradiusMod.Items.OptionSeed
         {
             base.SetupBehavior();
             InitializeAssets();
-            if (Compat_ItemStats.enabled)
-            {
-                Compat_ItemStats.CreateItemStatDef(itemDef,
-                (
-                    (count, inv, master) => ComputeMultiplier((int)count),
-                    (value, inv, master) => $"Damage: {Pct(value)}"
-                ));
-            }
+            //if (Compat_ItemStats.enabled)
+            //{
+            //    Compat_ItemStats.CreateItemStatDef(itemDef,
+            //    (
+            //        (count, inv, master) => ComputeMultiplier((int)count),
+            //        (value, inv, master) => $"Damage: {Pct(value)}"
+            //    ));
+            //}
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

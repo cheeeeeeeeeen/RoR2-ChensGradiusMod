@@ -188,18 +188,18 @@ namespace Chen.GradiusMod.Items.GradiusOption
             base.SetupBehavior();
             InitializeAssets();
             RegisterNetworkMessages();
-            if (Compat_ItemStats.enabled)
-            {
-                Compat_ItemStats.CreateItemStatDef(itemDef,
-                (
-                    (count, inv, master) => { return count; },
-                    (value, inv, master) => { return $"Options per Drone: {value}"; }
-                ),
-                (
-                    (count, inv, master) => { return damageMultiplier; },
-                    (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
-                ));
-            }
+            //if (Compat_ItemStats.enabled)
+            //{
+            //    Compat_ItemStats.CreateItemStatDef(itemDef,
+            //    (
+            //        (count, inv, master) => { return count; },
+            //        (value, inv, master) => { return $"Options per Drone: {value}"; }
+            //    ),
+            //    (
+            //        (count, inv, master) => { return damageMultiplier; },
+            //        (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
+            //    ));
+            //}
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
