@@ -1,6 +1,6 @@
 ﻿using Chen.Helpers.CollectionHelpers;
-using TILER2;
 using UnityEngine;
+using TILER2;
 
 namespace Chen.GradiusMod.Artifacts.Machines
 {

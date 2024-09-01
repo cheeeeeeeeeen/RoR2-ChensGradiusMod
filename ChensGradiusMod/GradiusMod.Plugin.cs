@@ -1,9 +1,6 @@
-﻿#undef DEBUG
-
-using Aetherium;
+﻿using Aetherium;
 using BepInEx;
 using BepInEx.Configuration;
-using Chen.ClassicItems;
 using Chen.GradiusMod.Compatibility;
 using Chen.GradiusMod.Drones;
 using Chen.Helpers;
@@ -44,14 +41,13 @@ namespace Chen.GradiusMod
     [BepInDependency(HelperPlugin.ModGuid, HelperPlugin.ModVer)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency(ClassicItemsPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
     [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI), nameof(ContentAddition))]
     public partial class GradiusModPlugin : BaseUnityPlugin
     {
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public const string ModVer = "3.5.4";
+        public const string ModVer = "3.5.5";
 
         /// <summary>
         /// The name of the mod.
@@ -170,7 +166,7 @@ namespace Chen.GradiusMod
 
             Log.Debug("Applying compatibility changes...");
             if (Compatibility.Aetherium.enabled) Compatibility.Aetherium.Setup();
-            if (ChensClassicItems.enabled) ChensClassicItems.Setup();
+            //if (ChensClassicItems.enabled) ChensClassicItems.Setup();
         }
 
         private void ModifyVanillaDroneDeathBehaviors()

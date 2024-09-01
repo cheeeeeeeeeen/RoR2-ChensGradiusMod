@@ -179,10 +179,10 @@ namespace Chen.GradiusMod.Drones
                 if (canBeInspired) Compatibility.Aetherium.AddInspiredCustomDrone(name);
                 if (affectedByEngineersToolbelt) Compatibility.Aetherium.AddEngineersToolbeltCustomDrone(name);
             }
-            if (Compatibility.ChensClassicItems.enabled && affectedByDroneRepairKit)
+            /*if (Compatibility.ChensClassicItems.enabled && affectedByDroneRepairKit)
             {
                 Compatibility.ChensClassicItems.DroneRepairKitSupport(name);
-            }
+            }*/
         }
 
         /// <summary>

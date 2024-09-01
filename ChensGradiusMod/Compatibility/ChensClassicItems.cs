@@ -1,4 +1,4 @@
-﻿using Chen.ClassicItems;
+﻿/*using Chen.ClassicItems;
 using Chen.ClassicItems.Items.Equipment;
 using Chen.ClassicItems.Items.Uncommon;
 using RoR2;
@@ -67,4 +67,6 @@ namespace Chen.GradiusMod.Compatibility
             else DroneRepairKit.instance.UnsupportCustomDrone(masterName);
         }
     }
-}
+}*/
+
+/* I think maintaining this is not a wise idea, given another team is topping not only ClassicItems but also LostInTransit, so my apologies */

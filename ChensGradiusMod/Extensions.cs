@@ -130,7 +130,7 @@ namespace Chen.GradiusMod
             characterModel.BuildRendererInfos(droneModel);
             characterModel.autoPopulateLightInfos = true;
             characterModel.invisibilityCount = 0;
-            characterModel.temporaryOverlays = new List<TemporaryOverlay>();
+            characterModel.temporaryOverlays = new List<TemporaryOverlayInstance>(); //I used this bootleg aah method in Titans of the Rift so hopefully it works here too..?
             HurtBoxGroup hurtBoxGroup = droneModel.AddComponent<HurtBoxGroup>();
             HurtBox hurtBox = hurtBoxCapsuleCollider.gameObject.AddComponent<HurtBox>();
             hurtBox.gameObject.layer = LayerIndex.entityPrecise.intVal;

@@ -77,10 +77,10 @@ namespace Chen.GradiusMod.Drones.BeamDrone
                     radius = 0f,
                     maxDistance = maxDistance
                 }.Fire();
-                if (ChensClassicItems.enabled)
+                /*if (ChensClassicItems.enabled)
                 {
                     ChensClassicItems.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
-                }
+                }*/
             }
         }
 

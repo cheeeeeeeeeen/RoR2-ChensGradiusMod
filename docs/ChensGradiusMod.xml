@@ -68,33 +68,6 @@
             <param name="body">CharacterBody to check on.</param>
             <returns>True if revived by the item's effect. False if not.</returns>
         </member>
-        <member name="T:Chen.GradiusMod.Compatibility.ChensClassicItems">
-            <summary>
-            A static class that contains compatibility features from Chen's Classic Items.
-            </summary>
-        </member>
-        <member name="P:Chen.GradiusMod.Compatibility.ChensClassicItems.enabled">
-            <summary>
-            The check to use if Chen's Classic Items mod is enabled.
-            Always do an if check before invoking methods in this class or else unexpected errors will happen in-game.
-            </summary>
-        </member>
-        <member name="M:Chen.GradiusMod.Compatibility.ChensClassicItems.TriggerArtillery(RoR2.CharacterBody,System.Single,System.Boolean,RoR2.ProcChainMask)">
-            <summary>
-            Uses the API to allow Arms Race item to be triggered when invoked.
-            </summary>
-            <param name="body">Body of the object that triggered the proc</param>
-            <param name="damage">Final damage output</param>
-            <param name="crit">Determines if the artillery will be a critical</param>
-            <param name="procChainMask">Proc Chain Mask</param>
-        </member>
-        <member name="M:Chen.GradiusMod.Compatibility.ChensClassicItems.DroneRepairKitSupport(System.String,System.Boolean)">
-            <summary>
-            Uses the API to allow Drone Repair Kit to support custom drones.
-            </summary>
-            <param name="masterName"></param>
-            <param name="support"></param>
-        </member>
         <member name="T:Chen.GradiusMod.Drones.BodyRotation">
             <summary>
             A component that allows the model to be rotated along the Z-axis.

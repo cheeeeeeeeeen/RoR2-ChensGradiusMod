@@ -249,7 +249,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     falloffModel = FalloffModel.None
                 }.InformativeFire();
                 ApplyHitEffects(result);
-                TriggerArmsRace();
+                //TriggerArmsRace();
             }
             SetState(States.DestroySelf);
             Destroy(transform.Find("Sphere").gameObject);
@@ -280,7 +280,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                         attackerFiltering = AttackerFiltering.NeverHitSelf,
                         falloffModel = FalloffModel.None
                     }.Fire();
-                    TriggerArmsRace();
+                    //TriggerArmsRace();
                 }
                 Instantiate(PsyDrone.searchLaserSubExplosion, computedPosition, Quaternion.identity);
             }
@@ -325,13 +325,13 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             }
         }
 
-        private void TriggerArmsRace()
+        /*private void TriggerArmsRace()
         {
             if (ChensClassicItems.enabled)
             {
                 ChensClassicItems.TriggerArtillery(owner, damage, owner.RollCrit());
             }
-        }
+        }*/
 
         private void SetState(States newState)
         {

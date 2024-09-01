@@ -64,10 +64,10 @@ namespace Chen.GradiusMod.Drones.LaserDrone
                 EffectManager.SpawnEffect(tracerEffectPrefab, effectData, true);
                 EffectManager.SpawnEffect(hitEffectPrefab, effectData, true);
             }
-            if (ChensClassicItems.enabled)
+            /*if (ChensClassicItems.enabled)
             {
                 ChensClassicItems.TriggerArtillery(characterBody, damage, Util.CheckRoll(critStat, characterBody.master));
-            }
+            }*/
         }
 
         private static void Initialize()

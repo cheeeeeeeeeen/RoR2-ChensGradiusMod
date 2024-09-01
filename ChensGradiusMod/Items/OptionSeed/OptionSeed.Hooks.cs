@@ -187,7 +187,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
                 if (self.isAuthority)
                 {
-                    DamageType value = self.crocoDamageTypeController ? self.crocoDamageTypeController.GetDamageType() : DamageType.Generic;
+                    DamageType value = self.crocoDamageTypeController != null ? (DamageType)self.crocoDamageTypeController.GetDamageType() : DamageType.Generic;
                     FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
                     {
                         projectilePrefab = self.projectilePrefab,

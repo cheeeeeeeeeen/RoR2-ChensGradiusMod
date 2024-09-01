@@ -236,7 +236,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                             falloffModel = FalloffModel.None
                         }.InformativeFire();
                         ApplyHitEffect(result);
-                        TriggerArmsRace();
+                        //TriggerArmsRace();
                         interval = DamageAuraInterval;
                     }
                     interval--;
@@ -263,12 +263,12 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             }
         }
 
-        private void TriggerArmsRace()
+        /*private void TriggerArmsRace()
         {
             if (ChensClassicItems.enabled)
             {
                 ChensClassicItems.TriggerArtillery(owner, damage, owner.RollCrit());
             }
-        }
+        }*/
     }
 }
