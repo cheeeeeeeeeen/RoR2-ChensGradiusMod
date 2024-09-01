@@ -95,6 +95,9 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## More Information
 
+**Phreelosu** continued to maintain the mod in working order for the latest updates (as of September 1, 2024).
+- Contact: [GitHub Account](https://github.com/Phreelosu)
+
 **Kirbsuke#0352** made the 3D model for the Option/Multiple, and later used for the icon.
 - Contact: `kirbydamaster@gmail.com` or through Discord.
 
