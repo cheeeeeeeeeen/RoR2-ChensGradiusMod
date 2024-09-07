@@ -3,7 +3,6 @@
 | Namespaces | |
 | :--- | :--- |
 | [Chen.GradiusMod](neHTXX+yFsk1RpXqjkv9zg 'Chen.GradiusMod') |  |
-| [Chen.GradiusMod.Artifacts.Machines](ayrCd5wE1fGIQOox6GFHYA 'Chen.GradiusMod.Artifacts.Machines') |  |
 | [Chen.GradiusMod.Compatibility](F8aFQlqLO5uD9A4izEhK_Q 'Chen.GradiusMod.Compatibility') |  |
 | [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones') |  |
 | [Chen.GradiusMod.Items.GradiusOption](mfb9nYomeqOwYy2EkL_v0Q 'Chen.GradiusMod.Items.GradiusOption') |  |

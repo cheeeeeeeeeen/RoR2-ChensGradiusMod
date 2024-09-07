@@ -4,40 +4,6 @@
         <name>ChensGradiusMod</name>
     </assembly>
     <members>
-        <member name="T:Chen.GradiusMod.Artifacts.Machines.Machines">
-            <summary>
-            As artifact class which provides the main API related to the controlling which drones the enemy may spawn with. It is powered by TILER2.
-            </summary>
-        </member>
-        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.AddEnemyDroneType(UnityEngine.GameObject,System.Int32)">
-            <summary>
-            Adds a drone to the spawn pool for the enemies.
-            </summary>
-            <param name="masterObject">CharacterMaster GameObject of the drone.</param>
-            <param name="spawnWeight">Spawn Weight of the drone.</param>
-            <returns>True if the drone is added to the pool. False if it is already in the pool, or it was not added.</returns>
-        </member>
-        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.RemoveEnemyDroneType(UnityEngine.GameObject)">
-            <summary>
-            Removes a drone from the spawn pool for the enemies.
-            </summary>
-            <param name="masterObject">CharacterMaster GameObject of the drone.</param>
-            <returns>True if the drone is removed from the pool. False if it is not in the pool.</returns>
-        </member>
-        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.AssignEnemyDroneAsGrounded(System.String)">
-            <summary>
-            Assigns a drone as grounded. This will be used to determine if the drone should be repositioned to the ground to avoid floating stationary drones.
-            </summary>
-            <param name="bodyName">CharacterBody name of the drone.</param>
-            <returns>True if the drone name is assigned. False if the name already exists.</returns>
-        </member>
-        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.UnassignEnemyDroneAsGrounded(System.String)">
-            <summary>
-            Unassigns a drone from being grounded.
-            </summary>
-            <param name="bodyName">CharacterBody name of the drone.</param>
-            <returns>True if the drone name is removed. False if the name did not exist.</returns>
-        </member>
         <member name="T:Chen.GradiusMod.Compatibility.Aetherium">
             <summary>
             A static class that contains compatibility features from Aetherium mod.

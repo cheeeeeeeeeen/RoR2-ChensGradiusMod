@@ -1,5 +1,5 @@
 ﻿using BepInEx.Configuration;
-using Chen.GradiusMod.Artifacts.Machines;
+//using Chen.GradiusMod.Artifacts.Machines;
 using Chen.GradiusMod.Items.GradiusOption;
 using System;
 using UnityEngine;
@@ -173,7 +173,7 @@ namespace Chen.GradiusMod.Drones
         protected virtual void SetupBehavior()
         {
             if (canHaveOptions) GradiusOption.instance.SupportMinionType(name);
-            Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject, spawnWeightWithMachinesArtifact);
+            //Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject, spawnWeightWithMachinesArtifact);
             if (Compatibility.Aetherium.enabled)
             {
                 if (canBeInspired) Compatibility.Aetherium.AddInspiredCustomDrone(name);

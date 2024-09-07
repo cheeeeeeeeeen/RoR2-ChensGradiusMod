@@ -1,7 +1,8 @@
 ﻿using Aetherium;
-using Aetherium.Items;
 using RoR2;
-using static Aetherium.Items.EngineersToolbelt;
+using Aetherium.Items.Tier2;
+using Aetherium.Items.Tier3;
+using static Aetherium.Items.Tier2.EngineersToolbelt;
 using static Chen.GradiusMod.GradiusModPlugin;
 
 namespace Chen.GradiusMod.Compatibility

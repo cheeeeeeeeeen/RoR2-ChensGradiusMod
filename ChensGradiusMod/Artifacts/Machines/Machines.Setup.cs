@@ -1,4 +1,5 @@
 ﻿using Chen.Helpers.GeneralHelpers;
+using R2API;
 using RoR2;
 using System.Collections.Generic;
 using TILER2;
@@ -107,6 +108,13 @@ namespace Chen.GradiusMod.Artifacts.Machines
             AddEnemyDroneType(missileDroneMaster, missileDroneSpawnWeight);
             AddEnemyDroneType(turret1Master, gunnerTurretSpawnWeight);
             AddEnemyDroneType(tc280DroneMaster, tc280SpawnWeight);
+            AddLanguageTokens();
+        }
+
+        private void AddLanguageTokens()
+        {
+            LanguageAPI.Add("CHENSGRADIUSMOD_MACHINES_NAME_RENDERED", "Artifact of Machines");
+            LanguageAPI.Add("CHENSGRADIUSMOD_MACHINES_DESC_RENDERED", GetDescString());
         }
 
         private bool IsPrototypeCountUncapped(CharacterMaster master)
@@ -149,13 +157,23 @@ namespace Chen.GradiusMod.Artifacts.Machines
                     ModelLocator component = bodyObject.GetComponent<ModelLocator>();
                     if (component && component.modelTransform)
                     {
-                        TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
+                        var overlay = TemporaryOverlayManager.AddOverlay(component.modelTransform.gameObject);
+                        overlay.duration = 0.5f;
+                        overlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+                        overlay.animateShaderAlpha = true;
+                        overlay.destroyComponentOnEnd = true;
+                        overlay.originalMaterial = summonDroneMaterial;
+                        overlay.AddToCharacterModel(component.modelTransform.GetComponent<RoR2.CharacterModel>());
+
+                        /*TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
                         temporaryOverlay.duration = 0.5f;
                         temporaryOverlay.animateShaderAlpha = true;
                         temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
                         temporaryOverlay.destroyComponentOnEnd = true;
                         temporaryOverlay.originalMaterial = summonDroneMaterial;
-                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
+                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());*/
+
+                        //this above is outdated and caused NREs so I just used what modding discord suggested via TemporaryOverlayManager
                     }
                 }
                 RepositionGroundedDrones(characterMaster.GetBody(), ownerBody.transform.position);

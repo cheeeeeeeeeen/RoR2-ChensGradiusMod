@@ -1,5 +1,6 @@
 ﻿using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.Helpers.GeneralHelpers;
+using R2API;
 using R2API.Networking;
 using RoR2;
 using System.Collections.Generic;
@@ -186,6 +187,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
         public override void SetupBehavior()
         {
             base.SetupBehavior();
+            AddLanguageTokens();
             InitializeAssets();
             RegisterNetworkMessages();
             //if (Compat_ItemStats.enabled)
@@ -200,6 +202,14 @@ namespace Chen.GradiusMod.Items.GradiusOption
             //        (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
             //    ));
             //}
+        }
+
+        private void AddLanguageTokens()
+        {
+            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_NAME_RENDERED", "Gradius' Option");
+            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_PICKUP_RENDERED", GetPickupString());
+            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_DESC_RENDERED", GetDescString());
+            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_LORE_RENDERED", GetLoreString());
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

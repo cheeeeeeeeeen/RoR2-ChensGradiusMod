@@ -1,4 +1,4 @@
-using Chen.GradiusMod.Artifacts.Machines;
+//using Chen.GradiusMod.Artifacts.Machines;
 using RoR2;
 using UnityEngine;
 using VanillaDeathState = EntityStates.Drone.DeathState;
@@ -75,7 +75,7 @@ namespace Chen.GradiusMod.Drones
             forceAmount = originalState.forceAmount;
             hardCutoffDuration = maxFallDuration = bodyPreservationDuration = deathDuration = 12f;
             destroyOnImpact = true;
-            SpawnInteractable &= !Machines.instance.IsActiveAndEnabled();
+            //SpawnInteractable &= !Machines.instance.IsActiveAndEnabled();
             if (Compatibility.Aetherium.enabled) SpawnInteractable &= !Compatibility.Aetherium.RevivedByEngineersToolbelt(characterBody);
             base.OnEnter();
         }

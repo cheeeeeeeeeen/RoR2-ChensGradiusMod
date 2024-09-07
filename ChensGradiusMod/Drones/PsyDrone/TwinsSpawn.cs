@@ -29,13 +29,21 @@ namespace Chen.GradiusMod.Drones.PsyDrone
                     ModelLocator component = bodyObject.GetComponent<ModelLocator>();
                     if (component && component.modelTransform)
                     {
-                        TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
+                        var overlay = TemporaryOverlayManager.AddOverlay(component.modelTransform.gameObject);
+                        overlay.duration = 0.5f;
+                        overlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
+                        overlay.animateShaderAlpha = true;
+                        overlay.destroyComponentOnEnd = true;
+                        overlay.originalMaterial = summonDroneMaterial;
+                        overlay.AddToCharacterModel(component.modelTransform.GetComponent<RoR2.CharacterModel>());
+
+                        /*TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
                         temporaryOverlay.duration = 0.5f;
                         temporaryOverlay.animateShaderAlpha = true;
                         temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
                         temporaryOverlay.destroyComponentOnEnd = true;
                         temporaryOverlay.originalMaterial = summonDroneMaterial;
-                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
+                        temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());*/
                     }
                     body.GetOrAddComponent<TwinsDeath>().twin = bodyObject;
                     bodyObject.GetOrAddComponent<TwinsDeath>().twin = body.gameObject;

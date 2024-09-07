@@ -39,6 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Artifacts\Machines\Machines.API.cs" />
+    <Compile Remove="Artifacts\Machines\Machines.Hooks.cs" />
+    <Compile Remove="Artifacts\Machines\Machines.Setup.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DefaultDocumentation" Version="0.7.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -71,7 +77,7 @@
 
   <ItemGroup>
     <Reference Include="Aetherium">
-      <HintPath>lib\Aetherium.dll</HintPath>
+      <HintPath>..\..\..\aetherium\AetheriumMod-SotS\Aetherium\bin\Debug\netstandard2.1\Aetherium.dll</HintPath>
     </Reference>
     <Reference Include="ChensHelpers">
       <HintPath>lib\ChensHelpers.dll</HintPath>
