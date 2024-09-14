@@ -47,7 +47,7 @@ namespace Chen.GradiusMod
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public const string ModVer = "3.5.5";
+        public const string ModVer = "3.6.1";
 
         /// <summary>
         /// The name of the mod.
@@ -122,11 +122,11 @@ namespace Chen.GradiusMod
             Log = new Log(Logger);
 
 #if DEBUG
-            MultiplayerTest.Enable(Log);
+            /*MultiplayerTest.Enable(Log);
             soundPlayer.RegisterKeybind(KeyCode.Alpha1, Drones.LaserDrone.FireLaser.ChargeLaserEventId);
             soundPlayer.RegisterKeybind(KeyCode.Alpha2, Drones.LaserDrone.FireLaser.DissipateLaserEventId);
             soundPlayer.RegisterKeybind(KeyCode.Alpha3, Items.GradiusOption.GradiusOption.GetOptionEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha4, Items.GradiusOption.GradiusOption.LoseOptionEventId);
+            soundPlayer.RegisterKeybind(KeyCode.Alpha4, Items.GradiusOption.GradiusOption.LoseOptionEventId);*/
 #endif
             Log.Debug("Loading assets...");
             BundleInfo models = new BundleInfo("Chen.GradiusMod.chensgradiusmod_assets", BundleType.UnityAssetBundle);

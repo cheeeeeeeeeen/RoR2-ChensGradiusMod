@@ -16,6 +16,11 @@ using EntityStates.Mage.Weapon;
 using EntityStates.Merc;
 using EntityStates.Toolbot;
 using EntityStates.Treebot.Weapon;
+using EntityStates.Railgunner.Weapon;
+using EntityStates.VoidSurvivor.Weapon;
+using EntityStates.Seeker;
+using EntityStates.Chef;
+using EntityStates.FalseSon;
 using RoR2;
 using RoR2.Orbs;
 using RoR2.Projectile;
@@ -32,6 +37,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
     {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+        private int punchUseCounter = 0;
+        
         public override void Install()
         {
             base.Install();
@@ -81,6 +88,20 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Croco.BaseLeap.DropAcidPoolAuthority += BaseLeap_DropAcidPoolAuthority;
             On.EntityStates.Croco.FireSpit.OnEnter += FireSpit_OnEnter;
             On.EntityStates.Captain.Weapon.FireTazer.Fire += FireTazer_Fire;
+            On.EntityStates.Railgunner.Weapon.FirePistol.OnEnter += FirePistol_OnEnter;
+            On.EntityStates.Railgunner.Weapon.BaseFireSnipe.OnEnter += BaseFireSnipe_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireBlasterBase.OnEnter += FireBlasterBase_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireCorruptDisks.OnEnter += FireCorruptDisks_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireCorruptHandBeam.OnEnter += FireCorruptHandBeam_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireHandBeam.OnEnter += FireHandBeam_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireMegaBlasterBase.OnEnter += FireMegaBlasterBase_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireTwinBlaster.OnEnter += FireTwinBlaster_OnEnter;
+            On.EntityStates.Seeker.SpiritPunch.OnEnter += SpiritPunch_OnEnter;
+            On.EntityStates.Chef.Dice.OnEnter += Dice_OnEnter;
+            On.EntityStates.Chef.Glaze.OnEnter += Glaze_OnEnter;
+            On.EntityStates.FalseSon.LunarSpikes.OnEnter += LunarSpikes_OnEnter;
+            On.EntityStates.FalseSon.LunarSpikesShotgun.OnEnter += LunarSpikesShotgun_OnEnter;
+            
 #if DEBUG
             On.EntityStates.EntityState.OnEnter += EntityState_OnEnter;
 #endif
@@ -135,6 +156,19 @@ namespace Chen.GradiusMod.Items.OptionSeed
             On.EntityStates.Croco.BaseLeap.DropAcidPoolAuthority -= BaseLeap_DropAcidPoolAuthority;
             On.EntityStates.Croco.FireSpit.OnEnter -= FireSpit_OnEnter;
             On.EntityStates.Captain.Weapon.FireTazer.Fire -= FireTazer_Fire;
+            On.EntityStates.Railgunner.Weapon.FirePistol.OnEnter -= FirePistol_OnEnter;
+            On.EntityStates.Railgunner.Weapon.BaseFireSnipe.OnEnter -= BaseFireSnipe_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireBlasterBase.OnEnter -= FireBlasterBase_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireCorruptDisks.OnEnter -= FireCorruptDisks_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireCorruptHandBeam.OnEnter -= FireCorruptHandBeam_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireHandBeam.OnEnter -= FireHandBeam_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireMegaBlasterBase.OnEnter -= FireMegaBlasterBase_OnEnter;
+            On.EntityStates.VoidSurvivor.Weapon.FireTwinBlaster.OnEnter -= FireTwinBlaster_OnEnter;
+            On.EntityStates.Seeker.SpiritPunch.OnEnter -= SpiritPunch_OnEnter;
+            On.EntityStates.Chef.Dice.OnEnter -= Dice_OnEnter;
+            On.EntityStates.Chef.Glaze.OnEnter -= Glaze_OnEnter;
+            On.EntityStates.FalseSon.LunarSpikes.OnEnter -= LunarSpikes_OnEnter;
+            On.EntityStates.FalseSon.LunarSpikesShotgun.OnEnter -= LunarSpikesShotgun_OnEnter;
 #if DEBUG
             On.EntityStates.EntityState.OnEnter -= EntityState_OnEnter;
 #endif
@@ -659,6 +693,367 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         force = self.force * multiplier,
                         crit = self.RollCrit(),
                         damageTypeOverride = new DamageType?(DamageType.SuperBleedOnCrit)
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        /*private void BaseFireMine_OnEnter(On.EntityStates.Railgunner.Weapon.BaseFireMine.orig_OnEnter orig, BaseFireMine self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }*/
+
+        private void FirePistol_OnEnter(On.EntityStates.Railgunner.Weapon.FirePistol.orig_OnEnter orig, FirePistol self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void BaseFireSnipe_OnEnter(On.EntityStates.Railgunner.Weapon.BaseFireSnipe.orig_OnEnter orig, BaseFireSnipe self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.muzzleFlashPrefab) seed.MuzzleEffect(self.muzzleFlashPrefab, false);
+                if (self.isAuthority)
+                {
+                    BulletAttack bulletAttack = new BulletAttack
+                    {
+                        owner = self.gameObject,
+                        weapon = seed,
+                        origin = seed.transform.position,
+                        aimVector = self.GetAimRay().direction,
+                        minSpread = self.minSpread,
+                        maxSpread = self.maxSpread,
+                        bulletCount = 1U,
+                        damage = self.damageCoefficient * self.damageStat,
+                        force = self.force,
+                        falloffModel = BulletAttack.FalloffModel.None,
+                        tracerEffectPrefab = self.tracerEffectPrefab,
+                        muzzleName = "MuzzleRailgun",
+                        hitEffectPrefab = self.hitEffectPrefab,
+                        isCrit = self.RollCrit(),
+                        HitEffectNormal = false,
+                        smartCollision = true,
+                        radius = self.bulletRadius
+                    };
+                    bulletAttack.damageType |= DamageType.WeakPointHit;
+                    self.ModifyBullet(bulletAttack);
+                    bulletAttack.damage *= multiplier;
+                    bulletAttack.force *= multiplier;
+                    bulletAttack.FilterOutOwnerFromAttack();
+                    bulletAttack.Fire();
+                }
+            });
+        }
+
+        private void FireBlasterBase_OnEnter(On.EntityStates.VoidSurvivor.Weapon.FireBlasterBase.orig_OnEnter orig, FireBlasterBase self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void FireCorruptDisks_OnEnter(On.EntityStates.VoidSurvivor.Weapon.FireCorruptDisks.orig_OnEnter orig, FireCorruptDisks self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void FireCorruptHandBeam_OnEnter(On.EntityStates.VoidSurvivor.Weapon.FireCorruptHandBeam.orig_OnEnter orig, FireCorruptHandBeam self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.muzzleflashEffectPrefab) seed.MuzzleEffect(self.muzzleflashEffectPrefab, false);
+                if (self.isAuthority)
+                {
+                    BulletAttack bulletAttack = new BulletAttack
+                    {
+                        owner = self.gameObject,
+                        weapon = seed,
+                        origin = seed.transform.position,
+                        aimVector = self.GetAimRay().direction,
+                        minSpread = self.spreadBloomValue,
+                        maxSpread = self.maxSpread,
+                        bulletCount = 1U,
+                        damage = self.damageCoefficientPerSecond * self.damageStat,
+                        force = self.forcePerSecond,
+                        falloffModel = BulletAttack.FalloffModel.None,
+                        tracerEffectPrefab = self.muzzleflashEffectPrefab,
+                        muzzleName = "MuzzleCorruptHandbeam",
+                        hitEffectPrefab = self.hitEffectPrefab,
+                        isCrit = self.RollCrit(),
+                        HitEffectNormal = false,
+                        smartCollision = true,
+                        radius = self.bulletRadius
+                    };
+                    bulletAttack.FilterOutOwnerFromAttack();
+                    bulletAttack.Fire();
+                }
+            });
+        }
+
+        private void FireHandBeam_OnEnter(On.EntityStates.VoidSurvivor.Weapon.FireHandBeam.orig_OnEnter orig, FireHandBeam self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.muzzleflashEffectPrefab) seed.MuzzleEffect(self.muzzleflashEffectPrefab, false);
+                if (self.isAuthority)
+                {
+                    BulletAttack bulletAttack = new BulletAttack
+                    {
+                        owner = self.gameObject,
+                        weapon = seed,
+                        origin = seed.transform.position,
+                        aimVector = self.GetAimRay().direction,
+                        minSpread = self.spreadBloomValue,
+                        maxSpread = self.maxSpread,
+                        bulletCount = 1U,
+                        damage = self.damageCoefficient * self.damageStat,
+                        force = self.force,
+                        falloffModel = BulletAttack.FalloffModel.None,
+                        tracerEffectPrefab = self.muzzleflashEffectPrefab,
+                        muzzleName = "MuzzleHandbeam",
+                        hitEffectPrefab = self.hitEffectPrefab,
+                        isCrit = self.RollCrit(),
+                        HitEffectNormal = false,
+                        smartCollision = true,
+                        radius = self.bulletRadius
+                    };
+                    bulletAttack.FilterOutOwnerFromAttack();
+                    bulletAttack.Fire();
+                }
+            });
+        }
+
+        private void FireMegaBlasterBase_OnEnter(On.EntityStates.VoidSurvivor.Weapon.FireMegaBlasterBase.orig_OnEnter orig, FireMegaBlasterBase self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void FireTwinBlaster_OnEnter(On.EntityStates.VoidSurvivor.Weapon.FireTwinBlaster.orig_OnEnter orig, FireTwinBlaster self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectile1Prefab && self.projectile2Prefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectile1Prefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void SpiritPunch_OnEnter(On.EntityStates.Seeker.SpiritPunch.orig_OnEnter orig, SpiritPunch self)
+        {
+            orig(self);
+            punchUseCounter++;
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    bool isFinisher = (punchUseCounter % 3 == 0);
+
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = isFinisher ? self.projectileFinisherPrefab : self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+
+            if (punchUseCounter % 3 == 0)
+            {
+                punchUseCounter = 0;
+            }
+        }
+
+        private void Dice_OnEnter(On.EntityStates.Chef.Dice.orig_OnEnter orig, Dice self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void Glaze_OnEnter(On.EntityStates.Chef.Glaze.orig_OnEnter orig, Glaze self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority)
+                {
+                    Ray aimRay = self.GetAimRay();
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        crit = self.RollCrit(),
+                        damage = Glaze.damageCoefficient * self.damageStat * multiplier,
+                        damageColorIndex = DamageColorIndex.Default,
+                        force = 0f,
+                        owner = self.gameObject,
+                        position = seed.transform.position,
+                        procChainMask = default,
+                        projectilePrefab = Glaze.projectilePrefab,
+                        rotation = Quaternion.LookRotation(aimRay.direction),
+                        useSpeedOverride = false
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void LunarSpikes_OnEnter(On.EntityStates.FalseSon.LunarSpikes.orig_OnEnter orig, LunarSpikes self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
+                    };
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                }
+            });
+        }
+
+        private void LunarSpikesShotgun_OnEnter(On.EntityStates.FalseSon.LunarSpikesShotgun.orig_OnEnter orig, LunarSpikesShotgun self)
+        {
+            orig(self);
+            FireForSeeds(self.characterBody, (seed, _b, _t, multiplier) =>
+            {
+                if (self.isAuthority && self.projectilePrefab)
+                {
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = seed.transform.position,
+                        rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient * multiplier,
+                        force = self.force * multiplier,
+                        crit = self.RollCrit(),
                     };
                     ProjectileManager.instance.FireProjectile(fireProjectileInfo);
                 }

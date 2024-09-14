@@ -218,9 +218,9 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         private void ModifyInteractableSpawnCard()
         {
             iSpawnCard.name = $"iscBroken{name}";
+            iSpawnCard.orientToFloor = true;
             iSpawnCard.prefab = brokenObject;
             iSpawnCard.slightlyRandomizeOrientation = false;
-            iSpawnCard.orientToFloor = true;
         }
 
         private void DirectorAPI_InteractableActions(DccsPool arg1, StageInfo arg2)
