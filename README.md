@@ -110,7 +110,7 @@ If one does not want to use a mod manager, then get the DLL from **[Thunderstore
 
 ## Changelog
 
-**3.7.0**
+**4.0.0**
 - Updated for Alloyed Collective. TILER2 is no longer required.
 - Beam Drone, Laser Drone and Psy Drones are now registered to the new drone system, the same way as vanilla drones. They can drop as drone pickups, be scrapped by the Drone Scrapper, be upgraded by the Drone Combiner, carry their upgrades when broken, and show up in drone notifications and inspect mode.
 - Vanilla drones keep their own death and repair behavior so drone upgrades work correctly. The repurchase configs still apply.
