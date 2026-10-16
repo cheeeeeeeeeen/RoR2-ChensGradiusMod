@@ -55,17 +55,17 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
-    <PackageReference Include="R2API.ContentManagement" Version="1.0.11" />
-    <PackageReference Include="R2API.Items" Version="1.0.8" />
-    <PackageReference Include="R2API.Language" Version="1.1.0" />
-    <PackageReference Include="R2API.Director" Version="3.1.2" />
-    <PackageReference Include="R2API.Prefab" Version="1.1.1" />
-    <PackageReference Include="R2API.Sound" Version="1.0.3" />
-    <PackageReference Include="R2API.Networking" Version="1.0.4" />
-    <PackageReference Include="RiskOfRain2.GameLibs" Version="1.5.0-r.1" />
+    <PackageReference Include="R2API.ContentManagement" Version="*" />
+    <PackageReference Include="R2API.Items" Version="*" />
+    <PackageReference Include="R2API.Language" Version="*" />
+    <PackageReference Include="R2API.Director" Version="*" />
+    <PackageReference Include="R2API.Prefab" Version="*" />
+    <PackageReference Include="R2API.Sound" Version="*" />
+    <PackageReference Include="R2API.Networking" Version="*" />
+    <PackageReference Include="RiskOfRain2.GameLibs" Version="*-*" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.45" />
-    <PackageReference Include="MMHOOK.RoR2" Version="2026.10.8" />
-    <PackageReference Include="RoR2BepInExPack" Version="1.46.0">
+    <PackageReference Include="MMHOOK.RoR2" Version="*" />
+    <PackageReference Include="RoR2BepInExPack" Version="*">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
   </ItemGroup>
