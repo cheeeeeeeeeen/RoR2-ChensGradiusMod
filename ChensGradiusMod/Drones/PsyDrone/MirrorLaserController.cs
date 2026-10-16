@@ -1,5 +1,4 @@
-﻿using Chen.GradiusMod.Compatibility;
-using RoR2;
+﻿using RoR2;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;

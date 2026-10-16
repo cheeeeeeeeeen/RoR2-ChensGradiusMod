@@ -52,9 +52,24 @@ namespace Chen.GradiusMod
         /// <param name="masterObject">The CharacterMaster GameObject whose Skill Drivers are being modified.</param>
         public static void SetAllDriversToAimTowardsEnemies(this GameObject masterObject)
         {
+            if (masterObject == null)
+            {
+                Debug.LogError("SetAllDriversToAimTowardsEnemies: masterObject is null.");
+                return;
+            }
+
             AISkillDriver[] skillDrivers = masterObject.GetComponents<AISkillDriver>();
-            SetAllDriversToAimTowardsEnemies(skillDrivers);
+
+            if (skillDrivers == null || skillDrivers.Length == 0)
+            {
+                Debug.LogError($"SetAllDriversToAimTowardsEnemies: No AISkillDrivers found on '{masterObject.name}'.");
+                return;
+            }
+
+            // Call the other method to process the drivers
+            skillDrivers.SetAllDriversToAimTowardsEnemies();
         }
+
 
         /// <summary>
         /// Sets all Skill Drivers within the array to aim towards the enemy.
@@ -64,9 +79,13 @@ namespace Chen.GradiusMod
         {
             foreach (var skillDriver in skillDrivers)
             {
-                skillDriver.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+                if (skillDriver != null)  // why is there a null skilldriver array now after december 10th????
+                {
+                    skillDriver.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+                }
             }
         }
+
 
         /// <summary>
         /// Assigns the Death Behavior of the CharacterMaster GameObject.

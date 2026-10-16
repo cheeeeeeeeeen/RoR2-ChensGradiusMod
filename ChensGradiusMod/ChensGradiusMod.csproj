@@ -39,12 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Artifacts\Machines\Machines.API.cs" />
-    <Compile Remove="Artifacts\Machines\Machines.Hooks.cs" />
-    <Compile Remove="Artifacts\Machines\Machines.Setup.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="DefaultDocumentation" Version="0.7.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -61,32 +55,27 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
-    <PackageReference Include="R2API.Items" Version="1.0.*" />
-    <PackageReference Include="R2API.Language" Version="1.0.*" />
-    <PackageReference Include="R2API.Director" Version="2.1.3" />
-    <PackageReference Include="R2API.Prefab" Version="1.0.*" />
-    <PackageReference Include="R2API.Sound" Version="1.0.*" />
-    <PackageReference Include="R2API.Networking" Version="1.0.*" />
-    <PackageReference Include="RiskOfRain2.GameLibs" Version="1.3.6-r.0" />
-    <PackageReference Include="UnityEngine.Modules" Version="2021.3.33" />
-    <PackageReference Include="MMHOOK.RoR2" Version="2024.12.10" />
-    <PackageReference Include="RoR2BepInExPack" Version="1.7.0">
+    <PackageReference Include="R2API.ContentManagement" Version="1.0.11" />
+    <PackageReference Include="R2API.Items" Version="1.0.8" />
+    <PackageReference Include="R2API.Language" Version="1.1.0" />
+    <PackageReference Include="R2API.Director" Version="3.1.2" />
+    <PackageReference Include="R2API.Prefab" Version="1.1.1" />
+    <PackageReference Include="R2API.Sound" Version="1.0.3" />
+    <PackageReference Include="R2API.Networking" Version="1.0.4" />
+    <PackageReference Include="RiskOfRain2.GameLibs" Version="1.5.0-r.1" />
+    <PackageReference Include="UnityEngine.Modules" Version="2021.3.45" />
+    <PackageReference Include="MMHOOK.RoR2" Version="2026.10.8" />
+    <PackageReference Include="RoR2BepInExPack" Version="1.46.0">
       <NoWarn>NU1701</NoWarn>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Aetherium">
-      <HintPath>..\..\..\aetherium\AetheriumMod-SotS\Aetherium\bin\Debug\netstandard2.1\Aetherium.dll</HintPath>
-    </Reference>
     <Reference Include="ChensHelpers">
       <HintPath>lib\ChensHelpers.dll</HintPath>
     </Reference>
     <Reference Include="HGCSharpUtils">
       <HintPath>lib\HGCSharpUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="TILER2">
-      <HintPath>lib\TILER2.dll</HintPath>
     </Reference>
   </ItemGroup>
 

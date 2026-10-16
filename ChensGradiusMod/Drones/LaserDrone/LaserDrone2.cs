@@ -86,12 +86,15 @@ namespace Chen.GradiusMod.Drones.LaserDrone
         {
             base.SetupComponents();
             AddLanguageTokens();
+            GameObject pickupDisplay = CreatePickupDisplay(assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDrone.prefab"));
             InteractableSpawnCard origIsc = drone1SpawnCard;
             brokenObject = origIsc.prefab.InstantiateClone($"{name}Broken", true);
             ModifyBrokenObject();
             iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
             InitializeDirectorCards();
+            droneDef = CreateDroneDef(LoadVanillaDroneDef("RoR2/Base/Drones/MissileDrone.asset"), droneBody, brokenObject, iSpawnCard, "LASER_DRONE2",
+                                      droneBody.GetComponent<CharacterBody>().portraitIcon, pickupDisplay, LoadVanillaDroneDef("RoR2/Base/Drones/Drone1.asset"));
         }
 
         protected override void SetupBehavior()
@@ -105,6 +108,12 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             LanguageAPI.Add("LASER_DRONE2_NAME", "Laser Drone");
             LanguageAPI.Add("LASER_DRONE2_CONTEXT", "Repair Laser Drone");
             LanguageAPI.Add("LASER_DRONE2_INTERACTABLE_NAME", "Broken Laser Drone");
+            LanguageAPI.Add("LASER_DRONE2_PICKUP", "Charges and fires a devastating piercing laser.");
+            LanguageAPI.Add("LASER_DRONE2_DESCRIPTION",
+                $"Charges for <style=cIsUtility>{chargeTime} seconds</style>, then fires a focused laser that <style=cIsDamage>pierces</style> through enemies " +
+                $"for <style=cIsDamage>massive damage</style>. Recharges in <style=cIsUtility>{laserCooldown} seconds</style>.");
+            LanguageAPI.Add("LASER_DRONE2_SKILL_DESCRIPTION",
+                $"Focused Laser: Charge for {chargeTime} seconds, then fire a piercing laser for <style=cIsDamage>massive damage</style>.");
         }
 
         private void ModifyBrokenObject()
@@ -127,37 +136,26 @@ namespace Chen.GradiusMod.Drones.LaserDrone
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "LASER_DRONE2_NAME";
             GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/LaserDrone2/Model/mdlLaserDroneBroken.prefab");
-            brokenObject.ReplaceModel(customBrokenModel, DebugCheck());
-            Highlight highlight = brokenObject.GetComponent<Highlight>();
-            highlight.targetRenderer = customBrokenModel.transform.Find("_mdlLaserDroneBroken").gameObject.GetComponent<MeshRenderer>();
-            EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
-            entityLocator.entity = brokenObject;
-            GameObject coreObject = customBrokenModel.transform.Find("Core").gameObject;
-            EntityLocator coreEntityLocator = coreObject.AddComponent<EntityLocator>();
-            coreEntityLocator.entity = brokenObject;
-            AddBrokenEffects(customBrokenModel, (MeshRenderer)highlight.targetRenderer);
-        }
-
-        private void AddBrokenEffects(GameObject customBrokenModel, MeshRenderer meshRenderer)
-        {
-            GameObject brokenEffects = brokenObject.transform.Find("ModelBase").Find("BrokenDroneVFX").gameObject;
-            brokenEffects.transform.parent = customBrokenModel.transform;
-            GameObject sparks = brokenEffects.transform.Find("Small Sparks, Mesh").gameObject;
-            ParticleSystem.ShapeModule sparksShape = sparks.GetComponent<ParticleSystem>().shape;
-            sparksShape.shapeType = ParticleSystemShapeType.MeshRenderer;
-            sparksShape.meshShapeType = ParticleSystemMeshShapeType.Edge;
-            sparksShape.meshRenderer = meshRenderer;
-            GameObject damagePoint = brokenEffects.transform.Find("Damage Point").gameObject;
-            damagePoint.transform.localPosition = Vector3.zero;
-            damagePoint.transform.localRotation = Quaternion.identity;
-            damagePoint.transform.localScale = Vector3.one;
+            MeshRenderer highlightRenderer = customBrokenModel.transform.Find("_mdlLaserDroneBroken").GetComponent<MeshRenderer>();
+            ReplaceBrokenModel(brokenObject, customBrokenModel, highlightRenderer, customBrokenModel.transform.Find("Core").gameObject);
+            Transform damagePoint = FindBrokenDamagePoint(customBrokenModel);
+            if (damagePoint)
+            {
+                damagePoint.localPosition = Vector3.zero;
+                damagePoint.localRotation = Quaternion.identity;
+                damagePoint.localScale = Vector3.one;
+            }
         }
 
         private void ModifyDroneMaster()
         {
             AISkillDriver[] skillDrivers = droneMaster.GetComponents<AISkillDriver>();
-            skillDrivers[3].maxDistance = 30f;
-            skillDrivers[4].maxDistance = 90f;
+            if (skillDrivers.Length > 4)
+            {
+                skillDrivers[3].maxDistance = 30f;
+                skillDrivers[4].maxDistance = 90f;
+            }
+            else Log.Warning($"{name}: The Gunner Drone skill drivers changed. Attack ranges are left at their default values.");
             skillDrivers.SetAllDriversToAimTowardsEnemies();
         }
 

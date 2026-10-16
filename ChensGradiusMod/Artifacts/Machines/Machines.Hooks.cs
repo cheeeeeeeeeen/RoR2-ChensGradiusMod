@@ -1,71 +1,86 @@
-﻿using Chen.Helpers.GeneralHelpers;
-using RoR2;
-using TILER2;
-using UnityEngine;
+﻿using RoR2;
+using RoR2.CharacterAI;
 using UnityEngine.Networking;
-using static Chen.GradiusMod.GradiusModPlugin;
-using DeathState = EntityStates.Drone.DeathState;
 using Random = UnityEngine.Random;
 
 namespace Chen.GradiusMod.Artifacts.Machines
 {
-    public partial class Machines : Artifact<Machines>
+    public partial class Machines
     {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
         public override void Install()
         {
             base.Install();
-            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
-            On.RoR2.CharacterMaster.OnBodyDeath += CharacterMaster_OnBodyDeath;
-            On.EntityStates.Drone.DeathState.OnImpactServer += DeathState_OnImpactServer;
+            RunArtifactManager.onArtifactEnabledGlobal += RunArtifactManager_onArtifactEnabledGlobal;
+            RunArtifactManager.onArtifactDisabledGlobal += RunArtifactManager_onArtifactDisabledGlobal;
         }
 
         public override void Uninstall()
         {
             base.Uninstall();
-            CharacterBody.onBodyStartGlobal -= CharacterBody_onBodyStartGlobal;
-            On.RoR2.CharacterMaster.OnBodyDeath -= CharacterMaster_OnBodyDeath;
-            On.EntityStates.Drone.DeathState.OnImpactServer -= DeathState_OnImpactServer;
+            RunArtifactManager.onArtifactEnabledGlobal -= RunArtifactManager_onArtifactEnabledGlobal;
+            RunArtifactManager.onArtifactDisabledGlobal -= RunArtifactManager_onArtifactDisabledGlobal;
+            UnhookRunBehavior();
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
-        private void DeathState_OnImpactServer(On.EntityStates.Drone.DeathState.orig_OnImpactServer orig, DeathState self, Vector3 contactPoint)
+        private void RunArtifactManager_onArtifactEnabledGlobal(RunArtifactManager runArtifactManager, ArtifactDef artifact)
         {
-            if (!IsActiveAndEnabled()) orig(self, contactPoint);
+            if (!NetworkServer.active || artifact != artifactDef) return;
+            UnhookRunBehavior();
+            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
         }
 
-        private void CharacterMaster_OnBodyDeath(On.RoR2.CharacterMaster.orig_OnBodyDeath orig, CharacterMaster self, CharacterBody body)
+        private void RunArtifactManager_onArtifactDisabledGlobal(RunArtifactManager runArtifactManager, ArtifactDef artifact)
         {
-            orig(self, body);
-            if (!NetworkServer.active || !IsActiveAndEnabled() || !self || !self.minionOwnership || self.minionOwnership.ownerMaster) return;
-            self.LoopMinions(minion =>
-            {
-                CharacterBody minionBody = minion.GetBody();
-                if (minionBody && minionBody.healthComponent) minionBody.healthComponent.Suicide();
-            });
+            if (artifact != artifactDef) return;
+            UnhookRunBehavior();
         }
 
-        private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
+        private void UnhookRunBehavior()
         {
-            if (!NetworkServer.active || !IsActiveAndEnabled() || !obj || !obj.master || !obj.master.minionOwnership) return;
-            if (obj.master.minionOwnership.ownerMaster || !obj.teamComponent) return;
-            switch (obj.teamComponent.teamIndex)
+            CharacterBody.onBodyStartGlobal -= CharacterBody_onBodyStartGlobal;
+        }
+
+        private void CharacterBody_onBodyStartGlobal(CharacterBody body)
+        {
+            if (!NetworkServer.active || !IsActiveAndEnabled() || !body || !body.teamComponent) return;
+            CharacterMaster master = body.master;
+            if (!master || !master.minionOwnership || master.minionOwnership.ownerMaster) return;
+            // The artifact only processes a master once so that revived characters and respawned survivors do not stack drones.
+            if (master.GetComponent<MachinesProcessed>()) return;
+
+            TeamIndex team = body.teamComponent.teamIndex;
+            if (team == TeamIndex.Player)
             {
-                case TeamIndex.Monster:
-                    if (!Util.CheckRoll(hasDroneChance, obj.master)) return;
-                    int droneNumber = Random.Range(minimumEnemyDroneCount, maximumEnemyDroneCount + 1 + Run.instance.loopClearCount);
-                    for (int i = 1; i <= droneNumber; i++) SummonDrone(obj, RandomlySelectDrone(), i);
-                    return;
-
-                case TeamIndex.Player:
-                    if (IsPrototypeCountUncapped(obj.master)) SummonDrone(obj, tc280DroneMaster);
-                    return;
-
-                default:
-                    return;
+                if (!body.isPlayerControlled) return;
+                if (maxPrototypePlayerCount > 0 && IsPrototypeCountUncapped(master)) SummonDrone(body, GradiusModPlugin.tc280DroneMaster, false);
+                return;
             }
+            if (team == TeamIndex.None || team == TeamIndex.Neutral) return;
+            if ((body.bodyFlags & CharacterBody.BodyFlags.Drone) == CharacterBody.BodyFlags.Drone) return;
+            if (!master.GetComponent<BaseAI>()) return;
+
+            master.gameObject.AddComponent<MachinesProcessed>();
+            if (!Util.CheckRoll(hasDroneChance, 0f, null)) return;
+            int loopClearCount = Run.instance ? Run.instance.loopClearCount : 0;
+            int droneNumber = Random.Range(minimumEnemyDroneCount, maximumEnemyDroneCount + 1 + loopClearCount);
+            for (int i = 1; i <= droneNumber; i++) SummonDrone(body, RandomlySelectDrone(), true, i);
+        }
+
+        /// <summary>
+        /// Checks if the drone should not leave a repurchasable broken drone behind upon death.
+        /// Drones owned by enemies, and drones that were given by this artifact, are never repurchasable.
+        /// </summary>
+        /// <param name="droneBody">The body of the drone that died.</param>
+        /// <returns>True if the broken drone should not spawn.</returns>
+        public bool ShouldSuppressBrokenDrone(CharacterBody droneBody)
+        {
+            if (!droneBody) return false;
+            if (droneBody.teamComponent && droneBody.teamComponent.teamIndex != TeamIndex.Player) return true;
+            return droneBody.master && droneBody.master.GetComponent<MachinesDrone>();
         }
     }
 }

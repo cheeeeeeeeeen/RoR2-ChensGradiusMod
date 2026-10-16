@@ -1,5 +1,4 @@
-﻿using Chen.GradiusMod.Compatibility;
-using Chen.GradiusMod.Items.GradiusOption;
+﻿using Chen.GradiusMod.Items.GradiusOption;
 using EntityStates;
 using RoR2;
 using UnityEngine;

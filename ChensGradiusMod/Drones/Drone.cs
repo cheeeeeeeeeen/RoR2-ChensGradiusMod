@@ -1,9 +1,14 @@
 ﻿using BepInEx.Configuration;
-//using Chen.GradiusMod.Artifacts.Machines;
+using Chen.GradiusMod.Artifacts.Machines;
 using Chen.GradiusMod.Items.GradiusOption;
+using Chen.Helpers.GeneralHelpers;
+using R2API;
+using RoR2;
 using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using static Chen.GradiusMod.GradiusModPlugin;
+using Object = UnityEngine.Object;
 
 namespace Chen.GradiusMod.Drones
 {
@@ -99,6 +104,13 @@ namespace Chen.GradiusMod.Drones
             }
         }
 
+        /// <summary>
+        /// The DroneDef of the custom drone. This registers the drone to the game's drone systems introduced in Alloyed Collective,
+        /// such as drone pickups, the Drone Scrapper, the Drone Combiner, drone upgrades and the drone purchase notifications.
+        /// Create it with CreateDroneDef during SetupComponents.
+        /// </summary>
+        public DroneDef droneDef { get; protected set; }
+
         internal DroneInfo info;
 
         private string _name;
@@ -172,17 +184,174 @@ namespace Chen.GradiusMod.Drones
         /// </summary>
         protected virtual void SetupBehavior()
         {
-            if (canHaveOptions) GradiusOption.instance.SupportMinionType(name);
-            //Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject, spawnWeightWithMachinesArtifact);
-            if (Compatibility.Aetherium.enabled)
+            if (canHaveOptions && GradiusOption.instance != null) GradiusOption.instance.SupportMinionType(name);
+            if (Machines.instance != null) Machines.instance.AddEnemyDroneType(DroneCharacterMasterObject, spawnWeightWithMachinesArtifact);
+        }
+
+        /// <summary>
+        /// Loads a vanilla DroneDef to be used as a template in CreateDroneDef.
+        /// </summary>
+        /// <param name="addressableKey">The addressable key of the DroneDef, e.g. "RoR2/Base/Drones/Drone1.asset".</param>
+        /// <returns>The vanilla DroneDef</returns>
+        protected static DroneDef LoadVanillaDroneDef(string addressableKey)
+        {
+            return Addressables.LoadAssetAsync<DroneDef>(addressableKey).WaitForCompletion();
+        }
+
+        /// <summary>
+        /// Creates and registers the DroneDef of the custom drone, and links it to the broken interactable so it behaves like a vanilla drone.
+        /// The language tokens used are {tokenPrefix}_NAME, {tokenPrefix}_PICKUP, {tokenPrefix}_DESCRIPTION and {tokenPrefix}_SKILL_DESCRIPTION.
+        /// </summary>
+        /// <param name="tierTemplate">A vanilla DroneDef where the tier, type and other gameplay flags are copied from.</param>
+        /// <param name="bodyPrefab">The CharacterBody prefab of the drone.</param>
+        /// <param name="brokenObject">The broken interactable prefab of the drone.</param>
+        /// <param name="spawnCard">The spawn card of the broken interactable.</param>
+        /// <param name="tokenPrefix">The prefix of the language tokens of the drone.</param>
+        /// <param name="icon">The icon of the drone.</param>
+        /// <param name="displayPrefab">The model displayed when the drone is a pickup. Use CreatePickupDisplay to make one.</param>
+        /// <param name="commandTemplate">The vanilla DroneDef the drone body was cloned from. Its Drone Tech command text is reused since the command behavior is inherited.</param>
+        /// <returns>The registered DroneDef</returns>
+        protected DroneDef CreateDroneDef(DroneDef tierTemplate, GameObject bodyPrefab, GameObject brokenObject, InteractableSpawnCard spawnCard,
+                                          string tokenPrefix, Texture icon, GameObject displayPrefab, DroneDef commandTemplate = null)
+        {
+            DroneDef newDroneDef = tierTemplate ? Object.Instantiate(tierTemplate) : ScriptableObject.CreateInstance<DroneDef>();
+            newDroneDef.name = name;
+            newDroneDef.bodyPrefab = bodyPrefab;
+            newDroneDef.displayPrefab = displayPrefab;
+            newDroneDef.droneBrokenSpawnCard = spawnCard;
+            newDroneDef.remoteOpBody = null;
+            newDroneDef.remoteOpCost = 0;
+            newDroneDef.requiredExpansion = null;
+#pragma warning disable CS0618 // The direct sprite reference is still the supported way for content that is not in the addressables catalog.
+            newDroneDef.iconSprite = CreateSprite(icon);
+#pragma warning restore CS0618
+            // The template points to the icon of the vanilla drone, which would take priority over the direct sprite.
+            newDroneDef.iconSpriteReference = null;
+            newDroneDef.nameToken = $"{tokenPrefix}_NAME";
+            newDroneDef.pickupToken = $"{tokenPrefix}_PICKUP";
+            newDroneDef.descriptionToken = $"{tokenPrefix}_DESCRIPTION";
+            newDroneDef.skillDescriptionToken = $"{tokenPrefix}_SKILL_DESCRIPTION";
+            if (commandTemplate) newDroneDef.droneTechCommandToken = commandTemplate.droneTechCommandToken;
+            if (tierTemplate) newDroneDef.desiredSortPosition = tierTemplate.desiredSortPosition + .5f;
+            if (!ContentAddition.AddDroneDef(newDroneDef)) Log.Warning($"Drone.CreateDroneDef: Failed to add the DroneDef of {name}.");
+            LinkBrokenObjectToDroneDef(brokenObject, newDroneDef);
+            return newDroneDef;
+        }
+
+        /// <summary>
+        /// Creates a model that is displayed when the drone is dropped as a pickup.
+        /// Call this before the original model is used for the body, as replacing the body model changes the original object.
+        /// </summary>
+        /// <param name="model">The model of the drone.</param>
+        /// <param name="scale">The scale of the display model.</param>
+        /// <returns>The display prefab</returns>
+        protected GameObject CreatePickupDisplay(GameObject model, float scale = 1f)
+        {
+            GameObject display = PrefabAPI.InstantiateClone(model, $"Pickup{name}", false);
+            foreach (Collider collider in display.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(collider);
+            display.transform.localScale *= scale;
+            return display;
+        }
+
+        /// <summary>
+        /// Replaces the model of the broken interactable that was cloned from a vanilla broken drone, and makes the new model interactable and highlightable.
+        /// </summary>
+        /// <param name="brokenObject">The cloned broken interactable.</param>
+        /// <param name="customBrokenModel">The new model of the broken interactable.</param>
+        /// <param name="highlightRenderer">The renderer that is highlighted when looking at the interactable.</param>
+        /// <param name="extraInteractableParts">Other parts of the model with colliders that should also be interactable.</param>
+        protected void ReplaceBrokenModel(GameObject brokenObject, GameObject customBrokenModel, Renderer highlightRenderer, params GameObject[] extraInteractableParts)
+        {
+            if (!brokenObject.GetComponent<ModelLocator>()) brokenObject.AddComponent<ModelLocator>();
+            Transform oldVfx = FindChildRecursive(brokenObject.transform, "BrokenDroneVFX");
+            brokenObject.ReplaceModel(customBrokenModel, false);
+            Highlight highlight = brokenObject.GetComponent<Highlight>();
+            if (!highlight)
             {
-                if (canBeInspired) Compatibility.Aetherium.AddInspiredCustomDrone(name);
-                if (affectedByEngineersToolbelt) Compatibility.Aetherium.AddEngineersToolbeltCustomDrone(name);
+                highlight = brokenObject.AddComponent<Highlight>();
+                highlight.highlightColor = Highlight.HighlightColor.interactive;
+                highlight.strength = 1f;
             }
-            /*if (Compatibility.ChensClassicItems.enabled && affectedByDroneRepairKit)
+            highlight.targetRenderer = highlightRenderer;
+            customBrokenModel.AddComponent<EntityLocator>().entity = brokenObject;
+            foreach (GameObject part in extraInteractableParts)
             {
-                Compatibility.ChensClassicItems.DroneRepairKitSupport(name);
-            }*/
+                if (part && !part.GetComponent<EntityLocator>()) part.AddComponent<EntityLocator>().entity = brokenObject;
+            }
+            if (oldVfx)
+            {
+                oldVfx.SetParent(customBrokenModel.transform, false);
+                Transform sparks = FindChildRecursive(oldVfx, "Small Sparks, Mesh");
+                ParticleSystem sparksSystem = sparks ? sparks.GetComponent<ParticleSystem>() : null;
+                if (sparksSystem && highlightRenderer is MeshRenderer meshRenderer)
+                {
+                    ParticleSystem.ShapeModule sparksShape = sparksSystem.shape;
+                    sparksShape.shapeType = ParticleSystemShapeType.MeshRenderer;
+                    sparksShape.meshShapeType = ParticleSystemMeshShapeType.Edge;
+                    sparksShape.meshRenderer = meshRenderer;
+                }
+            }
+            else Log.Warning($"Drone.ReplaceBrokenModel: The broken drone effects of {name} were not found. The broken drone will not have sparks.");
+        }
+
+        /// <summary>
+        /// Finds the damage point effect in the broken drone effects carried over by ReplaceBrokenModel.
+        /// </summary>
+        /// <param name="customBrokenModel">The model passed to ReplaceBrokenModel.</param>
+        /// <returns>The transform of the damage point effect, or null if it was not found.</returns>
+        protected static Transform FindBrokenDamagePoint(GameObject customBrokenModel)
+        {
+            return FindChildRecursive(customBrokenModel.transform, "Damage Point");
+        }
+
+        /// <summary>
+        /// Finds a child transform by name anywhere in the hierarchy.
+        /// </summary>
+        /// <param name="root">The transform to search under.</param>
+        /// <param name="childName">The name of the child.</param>
+        /// <returns>The first transform found with the name, or null.</returns>
+        protected static Transform FindChildRecursive(Transform root, string childName)
+        {
+            if (!root) return null;
+            foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (child.name == childName) return child;
+            }
+            return null;
+        }
+
+        private void LinkBrokenObjectToDroneDef(GameObject brokenObject, DroneDef linkedDroneDef)
+        {
+            if (!brokenObject) return;
+            // The broken interactable is cloned from a vanilla drone, so it still refers to the vanilla DroneDef.
+            // Without this, disabling the vanilla drone in the lobby would also remove this drone from the stages.
+            DroneAvailability availability = brokenObject.GetComponent<DroneAvailability>();
+            if (availability) availability.droneDef = linkedDroneDef;
+
+            GenericInspectInfoProvider inspectProvider = brokenObject.GetComponent<GenericInspectInfoProvider>();
+            SummonMasterBehavior summonMasterBehavior = brokenObject.GetComponent<SummonMasterBehavior>();
+            InspectDef templateInspectDef = null;
+            if (inspectProvider && inspectProvider.InspectInfo) templateInspectDef = inspectProvider.InspectInfo;
+            else if (summonMasterBehavior && summonMasterBehavior.inspectDef) templateInspectDef = summonMasterBehavior.inspectDef;
+            if (!templateInspectDef) return;
+            InspectDef newInspectDef = Object.Instantiate(templateInspectDef);
+            newInspectDef.name = $"{name}BrokenInspectDef";
+            if (newInspectDef.Info != null)
+            {
+                newInspectDef.Info.Visual = linkedDroneDef.iconSprite;
+                newInspectDef.Info.VisualReference = null;
+                newInspectDef.Info.TitleToken = linkedDroneDef.nameToken;
+                newInspectDef.Info.DescriptionToken = linkedDroneDef.descriptionToken;
+                RoR2Application.onLoad += () => newInspectDef.Info.TitleColor = ColorCatalog.GetColor(linkedDroneDef.color);
+            }
+            if (inspectProvider) inspectProvider.InspectInfo = newInspectDef;
+            if (summonMasterBehavior) summonMasterBehavior.inspectDef = newInspectDef;
+        }
+
+        private static Sprite CreateSprite(Texture icon)
+        {
+            if (!(icon is Texture2D texture)) return null;
+            return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(.5f, .5f));
         }
 
         /// <summary>

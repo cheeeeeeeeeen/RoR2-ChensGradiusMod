@@ -1,130 +1,167 @@
-﻿/*using BepInEx.Configuration;
-using MonoMod.Cil;
+using Chen.GradiusMod.Modules;
 using R2API;
 using RoR2;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using RoR2.Achievements;
-using HarmonyLib;
-using On.RoR2.Items;
+using UnityEngine.AddressableAssets;
 
 namespace Chen.GradiusMod.Items
 {
-	public abstract class ItemBase<T> : ItemBase where T : ItemBase<T>
-	{
-		public static T instance { get; private set; }
+    /// <summary>
+    /// Allows for making item classes into singleton classes.
+    /// </summary>
+    /// <typeparam name="T">The item class name</typeparam>
+    public abstract class ItemBase<T> : ItemBase where T : ItemBase<T>
+    {
+        /// <summary>
+        /// The instance of the singleton class.
+        /// </summary>
+        public static T instance { get; private set; }
 
-		public ItemBase()
-		{
-			if (instance != null)
-			{
-				throw new InvalidOperationException("Singleton class \"" + typeof(T).Name + "\" inheriting ItemBase was instantiated twice");
-			}
-			instance = this as T;
-		}
-	}
-	public abstract class ItemBase
-	{
-		public ItemDef ItemDef;
+        /// <summary>
+        /// Constructor that creates the instance of the singleton class.
+        /// </summary>
+        protected ItemBase()
+        {
+            if (instance != null) throw new InvalidOperationException($"Singleton class \"{typeof(T).Name}\" instantiated twice.");
+            instance = this as T;
+        }
+    }
 
-		public virtual string Name { get; }
+    /// <summary>
+    /// The base class of the items of this mod.
+    /// </summary>
+    public abstract class ItemBase : ModuleBase
+    {
+        /// <summary>
+        /// The ItemDef of this item. Available after SetupAttributes.
+        /// </summary>
+        public ItemDef itemDef { get; private set; }
 
-		public abstract string ItemName { get; }
+        /// <summary>
+        /// The display name of the item.
+        /// </summary>
+        public abstract string displayName { get; }
 
-		public abstract string ItemLangTokenName { get; }
+        /// <summary>
+        /// The tier of the item.
+        /// </summary>
+        public abstract ItemTier itemTier { get; }
 
-		public abstract string ItemPickupDesc { get; }
+        /// <summary>
+        /// The tags of the item.
+        /// </summary>
+        public virtual ItemTag[] itemTags => new ItemTag[0];
 
-		public abstract string ItemFullDescription { get; }
+        /// <summary>
+        /// If true, AI will not receive this item.
+        /// </summary>
+        public virtual bool itemIsAIBlacklisted => false;
 
-		public abstract string ItemLore { get; }
+        /// <summary>
+        /// The pickup model of the item.
+        /// </summary>
+        protected GameObject modelResource { get; set; }
 
-		public abstract ItemTier Tier { get; }
+        /// <summary>
+        /// The icon of the item.
+        /// </summary>
+        protected Sprite iconResource { get; set; }
 
-		public virtual ItemTag[] ItemTags { get; set; } = new ItemTag[0];
+        /// <inheritdoc/>
+        protected override string configCategoryPrefix => "Items";
 
+        /// <summary>
+        /// The prefix of the language tokens of the item.
+        /// </summary>
+        protected string tokenPrefix => $"CHENSGRADIUSMOD_{name.ToUpperInvariant()}";
 
-		public abstract GameObject ItemModel { get; }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-		public abstract Sprite ItemIcon { get; }
+        protected abstract string GetNameString(string langid = null);
 
-		public virtual bool CanRemove { get; } = true;
+        protected abstract string GetPickupString(string langid = null);
 
+        protected abstract string GetDescString(string langid = null);
 
-		public virtual bool AIBlacklisted { get; set; } = false;
+        protected abstract string GetLoreString(string langid = null);
 
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
-		public abstract void Init(ConfigFile config);
+        /// <inheritdoc/>
+        public override void SetupAttributes()
+        {
+            List<ItemTag> tags = new List<ItemTag>(itemTags);
+            if (itemIsAIBlacklisted && !tags.Contains(ItemTag.AIBlacklist)) tags.Add(ItemTag.AIBlacklist);
 
-		public virtual void CreateConfig(ConfigFile config)
-		{
-		}
+            itemDef = ScriptableObject.CreateInstance<ItemDef>();
+            itemDef.name = $"CGM{name}";
+            itemDef.nameToken = $"{tokenPrefix}_NAME_RENDERED";
+            itemDef.pickupToken = $"{tokenPrefix}_PICKUP_RENDERED";
+            itemDef.descriptionToken = $"{tokenPrefix}_DESC_RENDERED";
+            itemDef.loreToken = $"{tokenPrefix}_LORE_RENDERED";
+            itemDef.pickupModelPrefab = modelResource;
+            itemDef.pickupIconSprite = iconResource;
+            itemDef.tags = tags.ToArray();
+            itemDef.canRemove = true;
+            itemDef.hidden = false;
+            // The tier setter needs the ItemTierCatalog, which is not available yet at this point. Assign the ItemTierDef directly instead.
+            itemDef._itemTierDef = LoadItemTierDef(itemTier);
 
-		protected virtual void CreateLang()
-		{
-			LanguageAPI.Add("ITEM_" + ItemLangTokenName + "_NAME", ItemName);
-			LanguageAPI.Add("ITEM_" + ItemLangTokenName + "_PICKUP", ItemPickupDesc);
-			LanguageAPI.Add("ITEM_" + ItemLangTokenName + "_DESCRIPTION", ItemFullDescription);
-			LanguageAPI.Add("ITEM_" + ItemLangTokenName + "_LORE", ItemLore);
-		}
+            LanguageAPI.Add(itemDef.nameToken, GetNameString());
+            LanguageAPI.Add(itemDef.pickupToken, GetPickupString());
+            LanguageAPI.Add(itemDef.descriptionToken, GetDescString());
+            LanguageAPI.Add(itemDef.loreToken, GetLoreString());
 
-		public abstract ItemDisplayRuleDict CreateItemDisplayRules();
+            ItemAPI.Add(new CustomItem(itemDef, new ItemDisplayRuleDict()));
+        }
 
-		protected void CreateItem()
-		{
-			if (AIBlacklisted)
-			{
-				ItemTags = new List<ItemTag>(ItemTags) { ItemTag.AIBlacklist }.ToArray();
-			}
+        /// <summary>
+        /// Gets the number of this item the body has.
+        /// </summary>
+        /// <param name="body">The body to check</param>
+        /// <returns>The item count. 0 if the body or its inventory is missing.</returns>
+        public int GetCount(CharacterBody body)
+        {
+            if (!itemDef || !body || !body.inventory) return 0;
+            return body.inventory.GetItemCountEffective(itemDef);
+        }
 
-			ItemDef = ScriptableObject.CreateInstance<ItemDef>();
-			ItemDef.name = "ITEM_" + ItemLangTokenName;
-			ItemDef.nameToken = "ITEM_" + ItemLangTokenName + "_NAME";
-			ItemDef.pickupToken = "ITEM_" + ItemLangTokenName + "_PICKUP";
-			ItemDef.descriptionToken = "ITEM_" + ItemLangTokenName + "_DESCRIPTION";
-			ItemDef.loreToken = "ITEM_" + ItemLangTokenName + "_LORE";
-			ItemDef.pickupModelPrefab = ItemModel;
-			ItemDef.pickupIconSprite = ItemIcon;
-			ItemDef.hidden = false;
-			ItemDef.canRemove = CanRemove;
-			ItemDef.deprecatedTier = Tier;
+        /// <summary>
+        /// Gets the number of this item the master has.
+        /// </summary>
+        /// <param name="master">The master to check</param>
+        /// <returns>The item count. 0 if the master or its inventory is missing.</returns>
+        public int GetCount(CharacterMaster master)
+        {
+            if (!itemDef || !master || !master.inventory) return 0;
+            return master.inventory.GetItemCountEffective(itemDef);
+        }
 
-			if (ItemTags.Length > 0) { ItemDef.tags = ItemTags; }
-			ItemAPI.Add(new CustomItem(ItemDef, CreateItemDisplayRules()));
-		}
+        /// <summary>
+        /// Gets the number of a specific item the body has.
+        /// </summary>
+        /// <param name="body">The body to check</param>
+        /// <param name="specificItemDef">The item to count</param>
+        /// <returns>The item count. 0 if the body or its inventory is missing.</returns>
+        public int GetCountSpecific(CharacterBody body, ItemDef specificItemDef)
+        {
+            if (!specificItemDef || !body || !body.inventory) return 0;
+            return body.inventory.GetItemCountEffective(specificItemDef);
+        }
 
-		public virtual void Hooks()
-		{
-		}
-
-		public int GetCount(CharacterBody body)
-		{
-			if (!(UnityEngine.Object)(object)body || !(UnityEngine.Object)(object)body.inventory)
-			{
-				return 0;
-			}
-			return body.inventory.GetItemCount(ItemDef);
-		}
-
-		public int GetCount(CharacterMaster master)
-		{
-			if (!(UnityEngine.Object)(object)master || !(UnityEngine.Object)(object)master.inventory)
-			{
-				return 0;
-			}
-			return master.inventory.GetItemCount(ItemDef);
-		}
-
-		public int GetCountSpecific(CharacterBody body, ItemDef itemDef)
-		{
-			if (!(UnityEngine.Object)(object)body || !(UnityEngine.Object)(object)body.inventory)
-			{
-				return 0;
-			}
-			return body.inventory.GetItemCount(itemDef);
-		}
-	}
+        private static ItemTierDef LoadItemTierDef(ItemTier tier)
+        {
+            string key;
+            switch (tier)
+            {
+                case ItemTier.Tier1: key = "RoR2/Base/Common/Tier1Def.asset"; break;
+                case ItemTier.Tier2: key = "RoR2/Base/Common/Tier2Def.asset"; break;
+                case ItemTier.Tier3: key = "RoR2/Base/Common/Tier3Def.asset"; break;
+                default: return null;
+            }
+            return Addressables.LoadAssetAsync<ItemTierDef>(key).WaitForCompletion();
+        }
+    }
 }
-*/
