@@ -1,4 +1,4 @@
-﻿using Aetherium;
+﻿/*using Aetherium;
 using RoR2;
 using Aetherium.Items.Tier2;
 using Aetherium.Items.Tier3;
@@ -72,4 +72,4 @@ namespace Chen.GradiusMod.Compatibility
             return body.gameObject.GetComponent<EngineersToolbeltRevivalFlag>();
         }
     }
-}
+}*/

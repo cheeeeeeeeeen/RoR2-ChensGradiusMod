@@ -4,35 +4,116 @@
         <name>ChensGradiusMod</name>
     </assembly>
     <members>
-        <member name="T:Chen.GradiusMod.Compatibility.Aetherium">
+        <member name="T:Chen.GradiusMod.Artifacts.ArtifactBase`1">
             <summary>
-            A static class that contains compatibility features from Aetherium mod.
+            Allows for making artifact classes into singleton classes.
+            </summary>
+            <typeparam name="T">The artifact class name</typeparam>
+        </member>
+        <member name="P:Chen.GradiusMod.Artifacts.ArtifactBase`1.instance">
+            <summary>
+            The instance of the singleton class.
             </summary>
         </member>
-        <member name="P:Chen.GradiusMod.Compatibility.Aetherium.enabled">
+        <member name="M:Chen.GradiusMod.Artifacts.ArtifactBase`1.#ctor">
             <summary>
-            The check to use if Aetherium mod is enabled.
-            Always do an if check before invoking methods in this class or else unexpected errors will happen in-game.
+            Constructor that creates the instance of the singleton class.
             </summary>
         </member>
-        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.AddInspiredCustomDrone(System.String)">
+        <member name="T:Chen.GradiusMod.Artifacts.ArtifactBase">
             <summary>
-            Allows the Inspiring Drone to inspire the custom drone.
+            The base class of the artifacts of this mod.
             </summary>
-            <param name="masterName">The Character Master name of the drone to add.</param>
         </member>
-        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.AddEngineersToolbeltCustomDrone(System.String)">
+        <member name="P:Chen.GradiusMod.Artifacts.ArtifactBase.artifactDef">
             <summary>
-            Allows the Engineers Toolbelt to revive and duplicate the custom drone.
+            The ArtifactDef of this artifact. Available after SetupAttributes.
             </summary>
-            <param name="masterName">The Character Master name of the drone to add.</param>
         </member>
-        <member name="M:Chen.GradiusMod.Compatibility.Aetherium.RevivedByEngineersToolbelt(RoR2.CharacterBody)">
+        <member name="P:Chen.GradiusMod.Artifacts.ArtifactBase.displayName">
             <summary>
-            Determines if the CharacterBody is revived by Engineers Toolbelt.
+            The display name of the artifact.
             </summary>
-            <param name="body">CharacterBody to check on.</param>
-            <returns>True if revived by the item's effect. False if not.</returns>
+        </member>
+        <member name="P:Chen.GradiusMod.Artifacts.ArtifactBase.iconResource">
+            <summary>
+            The icon of the artifact when it is enabled.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Artifacts.ArtifactBase.iconResourceDisabled">
+            <summary>
+            The icon of the artifact when it is disabled.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Artifacts.ArtifactBase.configCategoryPrefix">
+            <inheritdoc/>
+        </member>
+        <member name="P:Chen.GradiusMod.Artifacts.ArtifactBase.tokenPrefix">
+            <summary>
+            The prefix of the language tokens of the artifact.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.ArtifactBase.SetupAttributes">
+            <inheritdoc/>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.ArtifactBase.IsActiveAndEnabled">
+            <summary>
+            Checks if the artifact is enabled in the current run.
+            </summary>
+            <returns>True if the artifact is enabled in the current run.</returns>
+        </member>
+        <member name="T:Chen.GradiusMod.Artifacts.Machines.Machines">
+            <summary>
+            An artifact class which provides the main API related to controlling which drones the enemy may spawn with.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.AddEnemyDroneType(UnityEngine.GameObject,System.Int32)">
+            <summary>
+            Adds a drone to the spawn pool for the enemies.
+            </summary>
+            <param name="masterObject">CharacterMaster GameObject of the drone.</param>
+            <param name="spawnWeight">Spawn Weight of the drone.</param>
+            <returns>True if the drone is added to the pool. False if it is already in the pool, or it was not added.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.RemoveEnemyDroneType(UnityEngine.GameObject)">
+            <summary>
+            Removes a drone from the spawn pool for the enemies.
+            </summary>
+            <param name="masterObject">CharacterMaster GameObject of the drone.</param>
+            <returns>True if the drone is removed from the pool. False if it is not in the pool.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.AssignEnemyDroneAsGrounded(System.String)">
+            <summary>
+            Assigns a drone as grounded. This will be used to determine if the drone should be repositioned to the ground to avoid floating stationary drones.
+            </summary>
+            <param name="bodyName">CharacterBody name of the drone.</param>
+            <returns>True if the drone name is assigned. False if the name already exists.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.UnassignEnemyDroneAsGrounded(System.String)">
+            <summary>
+            Unassigns a drone from being grounded.
+            </summary>
+            <param name="bodyName">CharacterBody name of the drone.</param>
+            <returns>True if the drone name is removed. False if the name did not exist.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Artifacts.Machines.Machines.ShouldSuppressBrokenDrone(RoR2.CharacterBody)">
+            <summary>
+            Checks if the drone should not leave a repurchasable broken drone behind upon death.
+            Drones owned by enemies, and drones that were given by this artifact, are never repurchasable.
+            </summary>
+            <param name="droneBody">The body of the drone that died.</param>
+            <returns>True if the broken drone should not spawn.</returns>
+        </member>
+        <member name="T:Chen.GradiusMod.Artifacts.Machines.MachinesDrone">
+            <summary>
+            Marks a CharacterMaster as a drone that was given by the Artifact of Machines.
+            Server-side only. Drones given to enemies are destroyed once their owner is gone.
+            </summary>
+        </member>
+        <member name="T:Chen.GradiusMod.Artifacts.Machines.MachinesProcessed">
+            <summary>
+            Marks a CharacterMaster as already processed by the Artifact of Machines.
+            </summary>
         </member>
         <member name="T:Chen.GradiusMod.Drones.BodyRotation">
             <summary>
@@ -139,6 +220,13 @@
             The category that will be used in the config file that contains the custom drone's config options.
             </summary>
         </member>
+        <member name="P:Chen.GradiusMod.Drones.Drone.droneDef">
+            <summary>
+            The DroneDef of the custom drone. This registers the drone to the game's drone systems introduced in Alloyed Collective,
+            such as drone pickups, the Drone Scrapper, the Drone Combiner, drone upgrades and the drone purchase notifications.
+            Create it with CreateDroneDef during SetupComponents.
+            </summary>
+        </member>
         <member name="F:Chen.GradiusMod.Drones.Drone.config">
             <summary>
             The config file assigned to this custom drone. Use this to bind config options.
@@ -170,6 +258,61 @@
             The fourth step in the setup process. Place here the code related to the drone's behavior.
             One may place here mod compatibility code. Hooks should also go here.
             </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.Drone.LoadVanillaDroneDef(System.String)">
+            <summary>
+            Loads a vanilla DroneDef to be used as a template in CreateDroneDef.
+            </summary>
+            <param name="addressableKey">The addressable key of the DroneDef, e.g. "RoR2/Base/Drones/Drone1.asset".</param>
+            <returns>The vanilla DroneDef</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.Drone.CreateDroneDef(RoR2.DroneDef,UnityEngine.GameObject,UnityEngine.GameObject,RoR2.InteractableSpawnCard,System.String,UnityEngine.Texture,UnityEngine.GameObject,RoR2.DroneDef)">
+            <summary>
+            Creates and registers the DroneDef of the custom drone, and links it to the broken interactable so it behaves like a vanilla drone.
+            The language tokens used are {tokenPrefix}_NAME, {tokenPrefix}_PICKUP, {tokenPrefix}_DESCRIPTION and {tokenPrefix}_SKILL_DESCRIPTION.
+            </summary>
+            <param name="tierTemplate">A vanilla DroneDef where the tier, type and other gameplay flags are copied from.</param>
+            <param name="bodyPrefab">The CharacterBody prefab of the drone.</param>
+            <param name="brokenObject">The broken interactable prefab of the drone.</param>
+            <param name="spawnCard">The spawn card of the broken interactable.</param>
+            <param name="tokenPrefix">The prefix of the language tokens of the drone.</param>
+            <param name="icon">The icon of the drone.</param>
+            <param name="displayPrefab">The model displayed when the drone is a pickup. Use CreatePickupDisplay to make one.</param>
+            <param name="commandTemplate">The vanilla DroneDef the drone body was cloned from. Its Drone Tech command text is reused since the command behavior is inherited.</param>
+            <returns>The registered DroneDef</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.Drone.CreatePickupDisplay(UnityEngine.GameObject,System.Single)">
+            <summary>
+            Creates a model that is displayed when the drone is dropped as a pickup.
+            Call this before the original model is used for the body, as replacing the body model changes the original object.
+            </summary>
+            <param name="model">The model of the drone.</param>
+            <param name="scale">The scale of the display model.</param>
+            <returns>The display prefab</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.Drone.ReplaceBrokenModel(UnityEngine.GameObject,UnityEngine.GameObject,UnityEngine.Renderer,UnityEngine.GameObject[])">
+            <summary>
+            Replaces the model of the broken interactable that was cloned from a vanilla broken drone, and makes the new model interactable and highlightable.
+            </summary>
+            <param name="brokenObject">The cloned broken interactable.</param>
+            <param name="customBrokenModel">The new model of the broken interactable.</param>
+            <param name="highlightRenderer">The renderer that is highlighted when looking at the interactable.</param>
+            <param name="extraInteractableParts">Other parts of the model with colliders that should also be interactable.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.Drone.FindBrokenDamagePoint(UnityEngine.GameObject)">
+            <summary>
+            Finds the damage point effect in the broken drone effects carried over by ReplaceBrokenModel.
+            </summary>
+            <param name="customBrokenModel">The model passed to ReplaceBrokenModel.</param>
+            <returns>The transform of the damage point effect, or null if it was not found.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.Drone.FindChildRecursive(UnityEngine.Transform,System.String)">
+            <summary>
+            Finds a child transform by name anywhere in the hierarchy.
+            </summary>
+            <param name="root">The transform to search under.</param>
+            <param name="childName">The name of the child.</param>
+            <returns>The first transform found with the name, or null.</returns>
         </member>
         <member name="M:Chen.GradiusMod.Drones.Drone.PostSetup">
             <summary>
@@ -267,10 +410,15 @@
         </member>
         <member name="T:Chen.GradiusMod.Drones.DroneDeathState">
             <summary>
-            An Entity State that should inherit from the original EntityStates.Drone.DeathState.
-            The original code does not support custom spawn cards to be detected when dying so that the interactable can spawn again.
-            This state will cater to custom drones so they are also able to spawn interactables upon death.
+            An Entity State that inherits from the original EntityStates.Drone.DeathState.
+            It spawns the drone's broken interactable upon death the same way vanilla drones do, including drone upgrades from the Drone Combiner,
+            while letting custom drones decide which spawn card to use and if the interactable should spawn at all.
             Do not use this class directly. Always inherit from this class and implement the interactable property.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Drones.DroneDeathState.CostMultiplierPerUpgrade">
+            <summary>
+            The additional cost multiplier of the broken drone per drone upgrade. Matches vanilla.
             </summary>
         </member>
         <member name="P:Chen.GradiusMod.Drones.DroneDeathState.SpawnInteractable">
@@ -285,10 +433,15 @@
             </summary>
             <returns>The spawn card of the interactable if implemented.</returns>
         </member>
+        <member name="P:Chen.GradiusMod.Drones.DroneDeathState.upgradeCount">
+            <summary>
+            The number of drone upgrades the drone had when it died.
+            </summary>
+        </member>
         <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnInteractableSpawn(UnityEngine.GameObject)">
             <summary>
             A method that can be overridden to add or change the logic when the interactable is spawned.
-            Default logic is to compute for the scaled cost of the drone.
+            Default logic is to compute for the scaled cost of the drone, and to carry over the drone upgrades to the interactable.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnImpactServer(UnityEngine.Vector3)">
@@ -307,13 +460,31 @@
         </member>
         <member name="M:Chen.GradiusMod.Drones.DroneDeathState.OnExit">
             <summary>
-            Overrideable OnEnter method from the original state. Always call base.OnExit.
+            Overrideable OnExit method from the original state. Always call base.OnExit.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Drones.DroneDeathState.FixedUpdate">
             <summary>
-            Overrideable OnEnter method from the original state. Always call base.FixedUpdate.
+            Overrideable FixedUpdate method from the original state. Always call base.FixedUpdate.
             </summary>
+        </member>
+        <member name="T:Chen.GradiusMod.Drones.PsyDrone.TwinsDeath">
+            <summary>
+            Lives on the CharacterMaster of the green Psy Drone and refers back to the red drone that summoned it.
+            </summary>
+        </member>
+        <member name="T:Chen.GradiusMod.Drones.PsyDrone.TwinsSpawn">
+            <summary>
+            Lives on the CharacterMaster of the red Psy Drone. It summons the green twin and links both drones together.
+            The link is kept on the masters because drone bodies are recreated every stage.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Drones.PsyDrone.TwinsSpawn.FindTwinBody(RoR2.CharacterMaster)">
+            <summary>
+            Finds the body of the other twin.
+            </summary>
+            <param name="psyDroneMaster">The master of either of the twins.</param>
+            <returns>The body of the other twin, or null if it cannot be found.</returns>
         </member>
         <member name="T:Chen.GradiusMod.Drones.SineFlicker">
             <summary>
@@ -502,7 +673,7 @@
         </member>
         <member name="T:Chen.GradiusMod.Items.GradiusOption.GradiusOption">
             <summary>
-            An item class which provides the main API related to the Options/Multiples. It is powered by TILER2.
+            An item class which provides the main API related to the Options/Multiples.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SupportMinionType(System.String)">
@@ -568,6 +739,12 @@
             <param name="actionToRun">An action to execute for each Option. The inputs are as follows:
             GameObject option, OptionBehavior behavior, GameObject target, Vector3 direction.</param>
         </member>
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.ForEachOption(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.Items.GradiusOption.Components.OptionBehavior,UnityEngine.GameObject,UnityEngine.Vector3})">
+            <summary>
+            Same as FireForAllOptions, but also runs for minions that use automatic mirroring.
+            Only use this for attacks that the automatic mirroring cannot copy, such as orbs.
+            </summary>
+        </member>
         <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.OptionSync(RoR2.CharacterBody,System.Action{UnityEngine.Networking.NetworkIdentity,Chen.GradiusMod.Items.GradiusOption.Components.OptionTracker},System.Boolean)">
             <summary>
             Method that provides the Network Identity and Option Tracker for easier syncing. Sync logic should be provided in actionToRun.
@@ -583,6 +760,110 @@
             <param name="prefab">Effect prefab to display</param>
             <param name="option">The Option Game Object</param>
             <param name="transmit">Determines whether this effect should be networked</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.SetAutoMirroring(System.String,System.Boolean)">
+            <summary>
+            Sets if a minion type gains Options that copy its attacks automatically, by copying the bullets, projectiles, melee hits and explosions it creates.
+            Use this for modded drones and minions. Minions supported with SupportMinionType rely on manual support with FireForAllOptions instead.
+            </summary>
+            <param name="masterName">The CharacterMaster name of the minion. Partial names are matched, the same way as SupportMinionType.</param>
+            <param name="enabled">True to give the minion Options that copy attacks automatically, false to disable it.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.GradiusOption.GradiusOption.UsesAutoMirroring(RoR2.CharacterMaster)">
+            <summary>
+            Checks if the minion's Options copy its attacks automatically.
+            </summary>
+            <param name="master">The minion to check.</param>
+            <returns>True if the attacks are copied automatically. False if the minion relies on manual support or is not supported.</returns>
+        </member>
+        <member name="T:Chen.GradiusMod.Items.ItemBase`1">
+            <summary>
+            Allows for making item classes into singleton classes.
+            </summary>
+            <typeparam name="T">The item class name</typeparam>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase`1.instance">
+            <summary>
+            The instance of the singleton class.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.ItemBase`1.#ctor">
+            <summary>
+            Constructor that creates the instance of the singleton class.
+            </summary>
+        </member>
+        <member name="T:Chen.GradiusMod.Items.ItemBase">
+            <summary>
+            The base class of the items of this mod.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.itemDef">
+            <summary>
+            The ItemDef of this item. Available after SetupAttributes.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.displayName">
+            <summary>
+            The display name of the item.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.itemTier">
+            <summary>
+            The tier of the item.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.itemTags">
+            <summary>
+            The tags of the item.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.itemIsAIBlacklisted">
+            <summary>
+            If true, AI will not receive this item.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.modelResource">
+            <summary>
+            The pickup model of the item.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.iconResource">
+            <summary>
+            The icon of the item.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.configCategoryPrefix">
+            <inheritdoc/>
+        </member>
+        <member name="P:Chen.GradiusMod.Items.ItemBase.tokenPrefix">
+            <summary>
+            The prefix of the language tokens of the item.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.ItemBase.SetupAttributes">
+            <inheritdoc/>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.ItemBase.GetCount(RoR2.CharacterBody)">
+            <summary>
+            Gets the number of this item the body has.
+            </summary>
+            <param name="body">The body to check</param>
+            <returns>The item count. 0 if the body or its inventory is missing.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.ItemBase.GetCount(RoR2.CharacterMaster)">
+            <summary>
+            Gets the number of this item the master has.
+            </summary>
+            <param name="master">The master to check</param>
+            <returns>The item count. 0 if the master or its inventory is missing.</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.ItemBase.GetCountSpecific(RoR2.CharacterBody,RoR2.ItemDef)">
+            <summary>
+            Gets the number of a specific item the body has.
+            </summary>
+            <param name="body">The body to check</param>
+            <param name="specificItemDef">The item to count</param>
+            <returns>The item count. 0 if the body or its inventory is missing.</returns>
         </member>
         <member name="T:Chen.GradiusMod.Items.OptionSeed.Components.SeedBehavior">
             <summary>
@@ -652,7 +933,7 @@
         </member>
         <member name="T:Chen.GradiusMod.Items.OptionSeed.OptionSeed">
             <summary>
-            An item class which provides the main API related to the Option Seeds. It is powered by TILER2.
+            An item class which provides the main API related to the Option Seeds.
             </summary>
         </member>
         <member name="M:Chen.GradiusMod.Items.OptionSeed.OptionSeed.FireForSeeds(RoR2.CharacterBody,System.Action{UnityEngine.GameObject,Chen.GradiusMod.Items.OptionSeed.Components.SeedBehavior,Chen.GradiusMod.Items.OptionSeed.Components.SeedTracker,System.Single})">
@@ -687,6 +968,165 @@
             </summary>
             <param name="bodyName">The CharacterBody name of the character.</param>
             <param name="newValue">The multiplier value.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.OptionSeed.OptionSeed.SetAutoMirroring(System.String,System.Boolean)">
+            <summary>
+            Sets if the Option Seeds of the survivor copy its attacks automatically, by copying the bullets, projectiles, melee hits and explosions it creates.
+            Use this for modded survivors. Set to false if the survivor's skills are supported manually with FireForSeeds instead.
+            </summary>
+            <param name="bodyName">The CharacterBody name of the survivor, e.g. "CommandoBody".</param>
+            <param name="enabled">True to copy attacks automatically, false to only use manual support.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Items.OptionSeed.OptionSeed.UsesAutoMirroring(RoR2.CharacterBody)">
+            <summary>
+            Checks if the Option Seeds of the character copy its attacks automatically.
+            </summary>
+            <param name="body">The character to check.</param>
+            <returns>True if the attacks are copied automatically. False if the character relies on manual support through FireForSeeds.</returns>
+        </member>
+        <member name="T:Chen.GradiusMod.Mirroring.MirrorPoint">
+            <summary>
+            A point where a mirrored attack is copied from, such as an Option Seed or an Option.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Mirroring.MirrorPoint.origin">
+            <summary>
+            The object the copied attack comes out of.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Mirroring.MirrorPoint.multiplier">
+            <summary>
+            The damage multiplier of the copied attack.
+            </summary>
+        </member>
+        <member name="F:Chen.GradiusMod.Mirroring.MirrorPoint.direction">
+            <summary>
+            The direction the copied attack is aimed at. If null, the direction of the original attack is used.
+            </summary>
+        </member>
+        <member name="T:Chen.GradiusMod.Mirroring.IMirrorProvider">
+            <summary>
+            Provides the points where attacks of a character are copied from.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Mirroring.IMirrorProvider.CollectMirrorPoints(RoR2.CharacterBody,System.Collections.Generic.List{Chen.GradiusMod.Mirroring.MirrorPoint})">
+            <summary>
+            Adds the mirror points of the attacker to the list. Add nothing if the attacker's attacks should not be copied by this provider.
+            </summary>
+            <param name="attacker">The character that performed the attack.</param>
+            <param name="points">The list to add the mirror points to.</param>
+        </member>
+        <member name="T:Chen.GradiusMod.Mirroring.AttackMirror">
+            <summary>
+            Copies attacks automatically by hooking into the basic attack types of the game: bullets, projectiles, melee hitboxes and explosions.
+            This is how Option Seeds and Options support characters that do not have dedicated support, such as modded survivors and drones.
+            Only attacks that come from skills are copied. Item procs, equipment and attacks that are spawned by projectiles are ignored.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Mirroring.AttackMirror.ExcludeEntityState(System.Type)">
+            <summary>
+            Prevents attacks from being copied while the character is in the given state. Useful for skills that should not be duplicated,
+            such as skills that throw something unique.
+            </summary>
+            <param name="stateType">The type of the entity state.</param>
+        </member>
+        <member name="M:Chen.GradiusMod.Mirroring.AttackMirror.ExcludeProjectile(UnityEngine.GameObject)">
+            <summary>
+            Prevents a projectile from being copied.
+            </summary>
+            <param name="projectilePrefab">The projectile prefab.</param>
+        </member>
+        <member name="T:Chen.GradiusMod.Modules.ModuleBase">
+            <summary>
+            The base class of the items and artifacts of this mod. It replaces the module system that TILER2 used to provide.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Modules.ModuleBase.enabled">
+            <summary>
+            Determines if the module is enabled. Disabled modules are not registered to the game.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Modules.ModuleBase.name">
+            <summary>
+            The internal name of the module, which is the class name.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Modules.ModuleBase.configCategoryPrefix">
+            <summary>
+            The prefix of the config section that is used by the module, e.g. "Items" or "Artifacts".
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Modules.ModuleBase.configCategory">
+            <summary>
+            The config section used by the module. This follows the same format TILER2 used so old config files are preserved.
+            </summary>
+        </member>
+        <member name="P:Chen.GradiusMod.Modules.ModuleBase.config">
+            <summary>
+            The config file where the module binds its config options.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.SetupConfig">
+            <summary>
+            Binds the config options of the module. Always call base.SetupConfig when overriding.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.SetupAttributes">
+            <summary>
+            Creates and registers the definitions of the module to the game, such as the ItemDef or the ArtifactDef.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.SetupBehavior">
+            <summary>
+            Sets up the behavior of the module such as language tokens and assets.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.Install">
+            <summary>
+            Applies the hooks of the module.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.Uninstall">
+            <summary>
+            Removes the hooks of the module.
+            </summary>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.Bind``1(System.String,``0,System.String)">
+            <summary>
+            Binds a config option under the module's config section.
+            </summary>
+            <typeparam name="T">Type of the config option</typeparam>
+            <param name="propertyName">Name of the property that holds the value. It is turned to PascalCase for the config key.</param>
+            <param name="defaultValue">Default value of the config option</param>
+            <param name="description">Description of the config option</param>
+            <returns>The value of the config option</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.Bind``1(System.String,``0,System.String,``0,``0)">
+            <summary>
+            Binds a config option under the module's config section, clamped within a range.
+            </summary>
+            <typeparam name="T">Type of the config option</typeparam>
+            <param name="propertyName">Name of the property that holds the value. It is turned to PascalCase for the config key.</param>
+            <param name="defaultValue">Default value of the config option</param>
+            <param name="description">Description of the config option</param>
+            <param name="min">Minimum value of the config option</param>
+            <param name="max">Maximum value of the config option</param>
+            <returns>The value of the config option</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.Pct(System.Single,System.UInt32)">
+            <summary>
+            Formats a number into a percentage string, e.g. 0.25 becomes "25%".
+            </summary>
+            <param name="value">The number to format</param>
+            <param name="precision">The number of decimal places</param>
+            <returns>The formatted percentage string</returns>
+        </member>
+        <member name="M:Chen.GradiusMod.Modules.ModuleBase.NPlur(System.Int32)">
+            <summary>
+            Returns the plural suffix "s" when the number is not 1.
+            </summary>
+            <param name="number">The number to check</param>
+            <returns>"s" if plural, empty string if singular</returns>
         </member>
     </members>
 </doc>

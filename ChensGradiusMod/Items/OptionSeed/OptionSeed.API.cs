@@ -20,6 +20,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public void FireForSeeds(CharacterBody optionSeedOwner, Action<GameObject, SeedBehavior, SeedTracker, float> actionToRun)
         {
             if (!optionSeedOwner) return;
+            // Characters that use automatic mirroring already get their attacks copied, so manual support must not copy them again.
+            if (UsesAutoMirroring(optionSeedOwner)) return;
             SeedTracker seedTracker = optionSeedOwner.GetComponent<SeedTracker>();
             if (!seedTracker) return;
             InputBankTest inputBankTest = seedTracker.inputBankTest;

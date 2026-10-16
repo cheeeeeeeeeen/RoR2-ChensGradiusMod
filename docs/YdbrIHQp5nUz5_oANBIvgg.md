@@ -2,7 +2,7 @@
 ### [Chen.GradiusMod.Drones](Y_iPobZkdIiJ9feSuBjDaQ 'Chen.GradiusMod.Drones').[DroneDeathState](8ui+PJgGZL18czsU0lHbsw 'Chen.GradiusMod.Drones.DroneDeathState')
 ## DroneDeathState.OnInteractableSpawn(GameObject) Method
 A method that can be overridden to add or change the logic when the interactable is spawned.  
-Default logic is to compute for the scaled cost of the drone.  
+Default logic is to compute for the scaled cost of the drone, and to carry over the drone upgrades to the interactable.  
 ```csharp
 protected virtual void OnInteractableSpawn(GameObject spawnedObject);
 ```

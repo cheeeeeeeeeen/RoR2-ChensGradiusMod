@@ -1,83 +1,39 @@
 ﻿using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.Helpers.GeneralHelpers;
-using R2API;
 using R2API.Networking;
 using RoR2;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using TILER2;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
-using static TILER2.MiscUtil;
 using RoR2Items = RoR2.RoR2Content.Items;
 
 namespace Chen.GradiusMod.Items.GradiusOption
 {
     /// <summary>
-    /// An item class which provides the main API related to the Options/Multiples. It is powered by TILER2.
+    /// An item class which provides the main API related to the Options/Multiples.
     /// </summary>
-    public partial class GradiusOption : Item<GradiusOption>
+    public partial class GradiusOption : ItemBase<GradiusOption>
     {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public override string displayName => "Gradius' Option";
         public override ItemTier itemTier => ItemTier.Tier3;
-        public override ReadOnlyCollection<ItemTag> itemTags => new ReadOnlyCollection<ItemTag>(new[] { ItemTag.Utility });
+        public override ItemTag[] itemTags => new[] { ItemTag.Utility };
+        public override bool itemIsAIBlacklisted => true;
 
-        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Damage multiplier of Options/Multiples. Also applies for Healing Drones. 1 = 100%. Server only.", AutoConfigFlags.None, 0f, float.MaxValue)]
         public float damageMultiplier { get; private set; } = 1f;
-
-        [AutoConfig("Whether to support Aurelionite in using Options. Set to true to enable. All attacks of Aurelionite will be copied by the Options/Multiples. " +
-                    "Server and Client.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowAurelionite { get; private set; } = false;
-
-        [AutoConfig("Whether to support Beetle Guards in using Options. Set to true to enable. Only their ranged attacks are copied. " +
-                    "Their melee damage is multiplied instead. Server and Client.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowBeetleGuard { get; private set; } = false;
-
-        [AutoConfig("Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactions with other mods. " +
-                    "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowSquidPolyp { get; private set; } = true;
-
-        [AutoConfig("Whether to support Empathy Core probes in using Options. Set to false to disable." +
-                    "Server and Client. Disable if the Options/Multiples are misbehaving.", AutoConfigFlags.PreventNetMismatch)]
         public bool allowEmpathyCores { get; private set; } = true;
-
-        [AutoConfig("Determines the Option/Multiple movement type. 0 = Regular, 1 = Rotate. Server and Client.",
-                    AutoConfigFlags.PreventNetMismatch, 0, 1)]
         public int beetleGuardOptionType { get; private set; } = 1;
-
-        [AutoConfig("Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
-                    "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
-                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool flamethrowerOptionSyncEffect { get; private set; } = true;
-
-        [AutoConfig("Allows displaying and syncing some of Aurelionite's Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
-                    "Server and Client. The server and client must have the same settings for an optimized experience. " +
-                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool aurelioniteOptionSyncEffect { get; private set; } = true;
-
-        [AutoConfig("Allows displaying and syncing some of allied Beetle Guards' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
-                    "Server and Client. The server and client must have the same settings for an optimized experience. " +
-                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool beetleGuardOptionSyncEffect { get; private set; } = true;
-
-        [AutoConfig("Allows displaying and syncing some of allied Empathy Cores' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
-                    "Server and Client. The server and client must have the same settings for an optimized experience. " +
-                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool empathyCoresOptionSyncEffect { get; private set; } = true;
-
-        [AutoConfig("Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
-                    "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
-
-        [AutoConfig("For Equipment Drones. Determines the number of uses the Equipment Drone will perform the equipment's effect. e.g. " +
-                    "A value of 0.3 and having an Option number of 4 will result to the Equipment Drone performing the effect 1 more time. " +
-                    "(4 * 0.3 = 1.2 -> Floored to 1). Having a value of 0 will disable the config.", AutoConfigFlags.None, 0f, 1f)]
         public float equipmentDuplicationMultiplier { get; private set; } = .5f;
-
-        public override bool itemIsAIBlacklisted { get; protected set; } = true;
+        public bool autoSupportModdedDrones { get; private set; } = true;
 
         protected override string GetNameString(string langid = null) => displayName;
 
@@ -127,7 +83,15 @@ namespace Chen.GradiusMod.Items.GradiusOption
             "SquidTurret",
             "EquipmentDrone",
             "RoboBallGreenBuddy",
-            "RoboBallRedBuddy"
+            "RoboBallRedBuddy",
+            "DroneCommander",
+            "DTGunnerDrone",
+            "DTHeal",
+            "DroneBomber",
+            "RechargeDrone",
+            "BombardmentDrone",
+            "JailerDrone",
+            "CopycatDrone"
         };
 
         private static readonly List<string> RotateUsers = new List<string>
@@ -163,6 +127,63 @@ namespace Chen.GradiusMod.Items.GradiusOption
         public override void SetupConfig()
         {
             base.SetupConfig();
+
+            damageMultiplier = Bind(nameof(damageMultiplier), damageMultiplier,
+                "Damage multiplier of Options/Multiples. Also applies for Healing Drones. 1 = 100%. Server only.", 0f, float.MaxValue);
+
+            allowAurelionite = Bind(nameof(allowAurelionite), allowAurelionite,
+                "Whether to support Aurelionite in using Options. Set to true to enable. All attacks of Aurelionite will be copied by the Options/Multiples. " +
+                "Server and Client.");
+
+            allowBeetleGuard = Bind(nameof(allowBeetleGuard), allowBeetleGuard,
+                "Whether to support Beetle Guards in using Options. Set to true to enable. Only their ranged attacks are copied. " +
+                "Their melee damage is multiplied instead. Server and Client.");
+
+            allowSquidPolyp = Bind(nameof(allowSquidPolyp), allowSquidPolyp,
+                "Whether to support Squid Turrets in using Options. Set to false to disable. Squid Polyps may have weird interactions with other mods. " +
+                "Server and Client. Disable if the Options/Multiples are misbehaving.");
+
+            allowEmpathyCores = Bind(nameof(allowEmpathyCores), allowEmpathyCores,
+                "Whether to support Empathy Core probes in using Options. Set to false to disable." +
+                "Server and Client. Disable if the Options/Multiples are misbehaving.");
+
+            beetleGuardOptionType = Bind(nameof(beetleGuardOptionType), beetleGuardOptionType,
+                "Determines the Option/Multiple movement type. 0 = Regular, 1 = Rotate. Server and Client.", 0, 1);
+
+            flamethrowerOptionSyncEffect = Bind(nameof(flamethrowerOptionSyncEffect), flamethrowerOptionSyncEffect,
+                "Allows displaying and syncing the flamethrower effect of Options/Multiples. Disabling this will replace the effect with bullets. " +
+                "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
+                "Disable this if you are experiencing FPS drops or network lag.");
+
+            aurelioniteOptionSyncEffect = Bind(nameof(aurelioniteOptionSyncEffect), aurelioniteOptionSyncEffect,
+                "Allows displaying and syncing some of Aurelionite's Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+                "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                "Disable this if you are experiencing FPS drops or network lag.");
+
+            beetleGuardOptionSyncEffect = Bind(nameof(beetleGuardOptionSyncEffect), beetleGuardOptionSyncEffect,
+                "Allows displaying and syncing some of allied Beetle Guards' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+                "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                "Disable this if you are experiencing FPS drops or network lag.");
+
+            empathyCoresOptionSyncEffect = Bind(nameof(empathyCoresOptionSyncEffect), empathyCoresOptionSyncEffect,
+                "Allows displaying and syncing some of allied Empathy Cores' Options/Multiples. This reduces the effects generated. Damage will stay the same. " +
+                "Server and Client. The server and client must have the same settings for an optimized experience. " +
+                "Disable this if you are experiencing FPS drops or network lag.");
+
+            includeModelInsideOrb = Bind(nameof(includeModelInsideOrb), includeModelInsideOrb,
+                "Set to true for the Orbs to have the Option Pickup model in the center. Server and Client. Cosmetic only. " +
+                "Turning this off could lessen resource usage.");
+
+            equipmentDuplicationMultiplier = Bind(nameof(equipmentDuplicationMultiplier), equipmentDuplicationMultiplier,
+                "For Equipment Drones. Determines the number of uses the Equipment Drone will perform the equipment's effect. e.g. " +
+                "A value of 0.3 and having an Option number of 4 will result to the Equipment Drone performing the effect 1 more time. " +
+                "(4 * 0.3 = 1.2 -> Floored to 1). Having a value of 0 will disable the config.", 0f, 1f);
+
+            autoSupportModdedDrones = Bind(nameof(autoSupportModdedDrones), autoSupportModdedDrones,
+                "Allows drones that have no dedicated support, such as modded drones, to gain Options. " +
+                "Their bullets, projectiles, melee hits and explosions from skills are copied automatically. " +
+                "Best Buddy is always supported this way.");
+
             if (!allowAurelionite)
             {
                 MinionsList.Remove("TitanGoldAlly");
@@ -175,7 +196,11 @@ namespace Chen.GradiusMod.Items.GradiusOption
             }
             if (beetleGuardOptionType != 1) RotateUsers.Remove("BeetleGuardAlly");
             if (!allowSquidPolyp) MinionsList.Remove("SquidTurret");
-            if (equipmentDuplicationMultiplier <= 0) MinionsList.Remove("EquipmentDrone");
+            if (equipmentDuplicationMultiplier <= 0)
+            {
+                MinionsList.Remove("EquipmentDrone");
+                SetAutoMirroring("EquipmentDrone", false);
+            }
             if (!allowEmpathyCores)
             {
                 MinionsList.Remove("RoboBallGreenBuddy");
@@ -187,29 +212,9 @@ namespace Chen.GradiusMod.Items.GradiusOption
         public override void SetupBehavior()
         {
             base.SetupBehavior();
-            AddLanguageTokens();
             InitializeAssets();
             RegisterNetworkMessages();
-            //if (Compat_ItemStats.enabled)
-            //{
-            //    Compat_ItemStats.CreateItemStatDef(itemDef,
-            //    (
-            //        (count, inv, master) => { return count; },
-            //        (value, inv, master) => { return $"Options per Drone: {value}"; }
-            //    ),
-            //    (
-            //        (count, inv, master) => { return damageMultiplier; },
-            //        (value, inv, master) => { return $"Damage: {Pct(value, 0)}"; }
-            //    ));
-            //}
-        }
-
-        private void AddLanguageTokens()
-        {
-            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_NAME_RENDERED", "Gradius' Option");
-            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_PICKUP_RENDERED", GetPickupString());
-            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_DESC_RENDERED", GetDescString());
-            LanguageAPI.Add("CHENSGRADIUSMOD_GRADIUSOPTION_LORE_RENDERED", GetLoreString());
+            SetupAttackMirroring();
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
@@ -238,7 +243,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             NetworkingAPI.RegisterMessageType<SyncOptionTarget>();
         }
 
-        private bool FilterMinions(CharacterMaster master) => master && MinionsList.Exists((item) => master.name.Contains(item));
+        private bool FilterMinions(CharacterMaster master) => master && (MinionsList.Exists((item) => master.name.Contains(item)) || UsesAutoMirroring(master));
 
         private void AssignAurelioniteOwner(CharacterMaster goldMaster)
         {
@@ -246,7 +251,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             CharacterMaster trueMaster = null;
             foreach (PlayerCharacterMasterController pcmc in PlayerCharacterMasterController.instances)
             {
-                if (!trueMaster || pcmc.master.inventory.GetItemCount(RoR2Items.TitanGoldDuringTP) > trueMaster.inventory.GetItemCount(RoR2Items.TitanGoldDuringTP))
+                if (!trueMaster || pcmc.master.inventory.GetItemCountEffective(RoR2Items.TitanGoldDuringTP) > trueMaster.inventory.GetItemCountEffective(RoR2Items.TitanGoldDuringTP))
                 {
                     trueMaster = pcmc.master;
                 }

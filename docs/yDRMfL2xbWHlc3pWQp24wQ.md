@@ -3,7 +3,7 @@
 ## GradiusModPlugin.ModVer Field
 The version of the mod.  
 ```csharp
-public const string ModVer = 3.6.1;
+public const string ModVer = 4.0.0;
 ```
 #### Field Value
 [System.String](https://docs.microsoft.com/en-us/dotnet/api/System.String 'System.String')

@@ -65,12 +65,16 @@ namespace Chen.GradiusMod.Drones.PsyDrone
         {
             base.SetupComponents();
             AddLanguageTokens();
+            GameObject pickupDisplay = CreatePickupDisplay(assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/mdlPsiBitRed.prefab"), 2f);
             InteractableSpawnCard origIsc = drone1SpawnCard;
             brokenObject = origIsc.prefab.InstantiateClone($"{name}Broken", true);
             ModifyBrokenObject();
             iSpawnCard = Object.Instantiate(origIsc);
             ModifyInteractableSpawnCard();
             InitializeDirectorCards();
+            // Only the red drone is registered. It is the one summoned by the game, and it summons its green twin on its own.
+            droneDef = CreateDroneDef(LoadVanillaDroneDef("RoR2/Base/Drones/MegaDrone.asset"), droneBodyRed, brokenObject, iSpawnCard, "PSI_BIT",
+                                      droneBodyRed.GetComponent<CharacterBody>().portraitIcon, pickupDisplay, LoadVanillaDroneDef("RoR2/Base/Drones/Drone1.asset"));
         }
 
         protected override void SetupBehavior()
@@ -86,6 +90,13 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             LanguageAPI.Add("PSI_BIT_NAME", "Psy Drone");
             LanguageAPI.Add("PSI_BIT_CONTEXT", "Repair Psy Drones");
             LanguageAPI.Add("PSI_BIT_INTERACTABLE_NAME", "Broken Psy Drones");
+            LanguageAPI.Add("PSI_BIT_PICKUP", "A pair of twin drones wielding psychic lasers.");
+            LanguageAPI.Add("PSI_BIT_DESCRIPTION",
+                "Deploys <style=cIsUtility>two</style> Psy Drones that live and die together. " +
+                "The red drone fires a <style=cIsDamage>Mirror Laser</style> that reflects between enemies. " +
+                "The green drone fires a <style=cIsDamage>Search Laser</style> that seeks out its targets.");
+            LanguageAPI.Add("PSI_BIT_SKILL_DESCRIPTION",
+                "Mirror Laser and Search Laser: The twins fire psychic lasers that reflect between and seek out enemies.");
         }
 
         private void ModifyBrokenObject()
@@ -114,32 +125,17 @@ namespace Chen.GradiusMod.Drones.PsyDrone
             GenericDisplayNameProvider nameProvider = brokenObject.GetComponent<GenericDisplayNameProvider>();
             nameProvider.displayToken = "PSI_BIT_NAME";
             GameObject customBrokenModel = assetBundle.LoadAsset<GameObject>("Assets/Drones/PsiBits/Model/mdlPsiBitsBroken.prefab");
-            brokenObject.ReplaceModel(customBrokenModel, DebugCheck());
-            Highlight highlight = brokenObject.GetComponent<Highlight>();
             GameObject coreObject = customBrokenModel.transform.Find("_mdlPsiBitsBroken").gameObject;
-            highlight.targetRenderer = coreObject.GetComponent<MeshRenderer>();
-            EntityLocator entityLocator = customBrokenModel.AddComponent<EntityLocator>();
-            entityLocator.entity = brokenObject;
-            EntityLocator coreEntityLocator = coreObject.AddComponent<EntityLocator>();
-            coreEntityLocator.entity = brokenObject;
-            AddBrokenEffects(customBrokenModel, (MeshRenderer)highlight.targetRenderer);
-        }
-
-        private void AddBrokenEffects(GameObject customBrokenModel, MeshRenderer meshRenderer)
-        {
-            GameObject brokenEffects = brokenObject.transform.Find("ModelBase").Find("BrokenDroneVFX").gameObject;
-            brokenEffects.transform.parent = customBrokenModel.transform;
-            GameObject sparks = brokenEffects.transform.Find("Small Sparks, Mesh").gameObject;
-            ParticleSystem.ShapeModule sparksShape = sparks.GetComponent<ParticleSystem>().shape;
-            sparksShape.shapeType = ParticleSystemShapeType.MeshRenderer;
-            sparksShape.meshShapeType = ParticleSystemMeshShapeType.Edge;
-            sparksShape.meshRenderer = meshRenderer;
-            GameObject damagePoint = brokenEffects.transform.Find("Damage Point").gameObject;
-            damagePoint.transform.localPosition = new Vector3(.4f, 0f, .6f);
-            damagePoint.transform.localRotation = Quaternion.identity;
-            damagePoint.transform.localScale = Vector3.one;
-            damagePoint = Object.Instantiate(damagePoint, damagePoint.transform.parent);
-            damagePoint.transform.localPosition = new Vector3(0f, 0f, -.9f);
+            ReplaceBrokenModel(brokenObject, customBrokenModel, coreObject.GetComponent<MeshRenderer>(), coreObject);
+            Transform damagePoint = FindBrokenDamagePoint(customBrokenModel);
+            if (damagePoint)
+            {
+                damagePoint.localPosition = new Vector3(.4f, 0f, .6f);
+                damagePoint.localRotation = Quaternion.identity;
+                damagePoint.localScale = Vector3.one;
+                Transform secondDamagePoint = Object.Instantiate(damagePoint.gameObject, damagePoint.parent).transform;
+                secondDamagePoint.localPosition = new Vector3(0f, 0f, -.9f);
+            }
         }
 
         private void ModifyDroneMaster()
@@ -347,7 +343,7 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         private void CharacterBody_onBodyStartGlobal(CharacterBody obj)
         {
-            if (!NetworkServer.active || obj.isPlayerControlled || !obj.name.Contains("PsyDroneRed")) return;
+            if (!NetworkServer.active || obj.isPlayerControlled || !obj.master || !obj.name.Contains("PsyDroneRed")) return;
             obj.master.GetOrAddComponent<TwinsSpawn>();
         }
 

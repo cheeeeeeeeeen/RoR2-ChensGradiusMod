@@ -1,8 +1,10 @@
-﻿using Aetherium;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
-using Chen.GradiusMod.Compatibility;
+using Chen.GradiusMod.Artifacts.Machines;
 using Chen.GradiusMod.Drones;
+using Chen.GradiusMod.Items.GradiusOption;
+using Chen.GradiusMod.Items.OptionSeed;
+using Chen.GradiusMod.Modules;
 using Chen.Helpers;
 using Chen.Helpers.GeneralHelpers;
 using Chen.Helpers.LogHelpers;
@@ -14,19 +16,10 @@ using RoR2.Skills;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using TILER2;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using static Chen.Helpers.GeneralHelpers.AssetsManager;
-using static TILER2.MiscUtil;
-using EmergencyDroneDeathState = Chen.GradiusMod.Drones.EmergencyDrone.DeathState;
-using EquipmentDroneDeathState = Chen.GradiusMod.Drones.EquipmentDrone.DeathState;
-using GunnerDroneDeathState = Chen.GradiusMod.Drones.GunnerDrone.DeathState;
-using GunnerTurretDeathState = Chen.GradiusMod.Drones.GunnerTurret.DeathState;
-using HealingDroneDeathState = Chen.GradiusMod.Drones.HealingDrone.DeathState;
-using IncineratorDroneDeathState = Chen.GradiusMod.Drones.IncineratorDrone.DeathState;
-using MissileDroneDeathState = Chen.GradiusMod.Drones.MissileDrone.DeathState;
 using Path = System.IO.Path;
-using TC280DeathState = Chen.GradiusMod.Drones.TC280.DeathState;
 
 [assembly: InternalsVisibleTo("ChensGradiusMod.Tests")]
 
@@ -37,17 +30,14 @@ namespace Chen.GradiusMod
     /// </summary>
     [BepInPlugin(ModGuid, ModName, ModVer)]
     [BepInDependency(R2API.R2API.PluginGUID, R2API.R2API.PluginVersion)]
-    [BepInDependency(TILER2Plugin.ModGuid, TILER2Plugin.ModVer)]
     [BepInDependency(HelperPlugin.ModGuid, HelperPlugin.ModVer)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
-    [BepInDependency(AetheriumPlugin.ModGuid, BepInDependency.DependencyFlags.SoftDependency)]
-    [R2APISubmoduleDependency(nameof(NetworkingAPI), nameof(DirectorAPI), nameof(ContentAddition))]
     public partial class GradiusModPlugin : BaseUnityPlugin
     {
         /// <summary>
         /// The version of the mod.
         /// </summary>
-        public const string ModVer = "3.6.1";
+        public const string ModVer = "4.0.0";
 
         /// <summary>
         /// The name of the mod.
@@ -60,24 +50,26 @@ namespace Chen.GradiusMod
         public const string ModGuid = "com.Chen.ChensGradiusMod";
 
         internal static ConfigFile cfgFile;
-        internal static FilingDictionary<CatalogBoilerplate> chensItemList = new FilingDictionary<CatalogBoilerplate>();
-        internal static List<DroneInfo> gradiusDronesList = new List<DroneInfo>();
+        internal static List<ModuleBase> chensItemList = new List<ModuleBase>();
+        internal static List<Drones.DroneInfo> gradiusDronesList = new List<Drones.DroneInfo>();
         internal static Log Log;
         internal static AssetBundle assetBundle;
 
-        private static readonly Lazy<GameObject> _backupDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/DroneBackupMaster"));
-        private static readonly Lazy<GameObject> _drone1Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Drone1Master"));
-        private static readonly Lazy<GameObject> _drone2Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Drone2Master"));
-        private static readonly Lazy<GameObject> _emergencyDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/EmergencyDroneMaster"));
-        private static readonly Lazy<GameObject> _flameDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/FlameDroneMaster"));
-        private static readonly Lazy<GameObject> _missileDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/DroneMissileMaster"));
-        private static readonly Lazy<GameObject> _turret1Master = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/Turret1Master"));
-        private static readonly Lazy<GameObject> _tc280DroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/MegaDroneMaster"));
-        private static readonly Lazy<GameObject> _equipmentDroneMaster = new Lazy<GameObject>(() => Resources.Load<GameObject>("prefabs/charactermasters/EquipmentDroneMaster"));
-        private static readonly Lazy<GameObject> _helperPrefab = new Lazy<GameObject>(() => Resources.Load<GameObject>("SpawnCards/HelperPrefab"));
-        private static readonly Lazy<InteractableSpawnCard> _drone1SpawnCard = new Lazy<InteractableSpawnCard>(() => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenDrone1"));
-        private static readonly Lazy<SkillDef> _drone1Skill = new Lazy<SkillDef>(() => Resources.Load<SkillDef>("skilldefs/drone1body/Drone1BodyGun"));
-        private static readonly Lazy<Material> _summonDroneMaterial = new Lazy<Material>(() => Resources.Load<Material>("Materials/matSummonDrone"));
+        private static readonly Lazy<GameObject> _backupDroneMaster = LazyAddressable<GameObject>("RoR2/Base/Drones/DroneBackupMaster.prefab");
+        private static readonly Lazy<GameObject> _drone1Master = LazyAddressable<GameObject>("RoR2/Base/Drones/Drone1Master.prefab");
+        private static readonly Lazy<GameObject> _drone2Master = LazyAddressable<GameObject>("RoR2/Base/Drones/Drone2Master.prefab");
+        private static readonly Lazy<GameObject> _emergencyDroneMaster = LazyAddressable<GameObject>("RoR2/Base/Drones/EmergencyDroneMaster.prefab");
+        private static readonly Lazy<GameObject> _flameDroneMaster = LazyAddressable<GameObject>("RoR2/Base/Drones/FlameDroneMaster.prefab");
+        private static readonly Lazy<GameObject> _missileDroneMaster = LazyAddressable<GameObject>("RoR2/Base/Drones/DroneMissileMaster.prefab");
+        private static readonly Lazy<GameObject> _turret1Master = LazyAddressable<GameObject>("RoR2/Base/Drones/Turret1Master.prefab");
+        private static readonly Lazy<GameObject> _tc280DroneMaster = LazyAddressable<GameObject>("RoR2/Base/Drones/MegaDroneMaster.prefab");
+        private static readonly Lazy<GameObject> _equipmentDroneMaster = LazyAddressable<GameObject>("RoR2/Base/Drones/EquipmentDroneMaster.prefab");
+        private static readonly Lazy<GameObject> _colDronemanMaster = LazyAddressable<GameObject>("RoR2/DLC1/DroneCommander/DroneCommanderMaster.prefab");
+        private static readonly Lazy<GameObject> _alphaConstructMaster = LazyAddressable<GameObject>("RoR2/DLC1/MajorAndMinorConstruct/MinorConstructMaster.prefab");
+        private static readonly Lazy<InteractableSpawnCard> _drone1SpawnCard = LazyAddressable<InteractableSpawnCard>("RoR2/Base/Drones/iscBrokenDrone1.asset");
+        private static readonly Lazy<SkillDef> _drone1Skill = LazyAddressable<SkillDef>("RoR2/Base/Drones/Drone1BodyGun.asset");
+        private static readonly Lazy<GameObject> _helperPrefab = new Lazy<GameObject>(() => LegacyResourcesAPI.Load<GameObject>("SpawnCards/HelperPrefab"));
+        private static readonly Lazy<Material> _summonDroneMaterial = new Lazy<Material>(() => LegacyResourcesAPI.Load<Material>("Materials/matSummonDrone"));
 
         internal static GameObject backupDroneMaster { get => _backupDroneMaster.Value; }
         internal static GameObject drone1Master { get => _drone1Master.Value; }
@@ -88,6 +80,8 @@ namespace Chen.GradiusMod
         internal static GameObject turret1Master { get => _turret1Master.Value; }
         internal static GameObject tc280DroneMaster { get => _tc280DroneMaster.Value; }
         internal static GameObject equipmentDroneMaster { get => _equipmentDroneMaster.Value; }
+        internal static GameObject colDronemanMaster { get => _colDronemanMaster.Value; }
+        internal static GameObject alphaConstructMaster { get => _alphaConstructMaster.Value; }
         internal static GameObject helperPrefab { get => _helperPrefab.Value; }
         internal static InteractableSpawnCard drone1SpawnCard { get => _drone1SpawnCard.Value; }
         internal static SkillDef drone1Skill { get => _drone1Skill.Value; }
@@ -100,17 +94,11 @@ namespace Chen.GradiusMod
         private void Update()
         {
             DropletGenerator.Update();
-            var i9 = Input.GetKeyDown(KeyCode.F9);
-            if (i9)
+            if (Input.GetKeyDown(KeyCode.F9))
             {
-                RoR2.CharacterMaster master = RoR2.PlayerCharacterMasterController.instances[0].master;
-                RoR2.CharacterBody body = master.GetBody();
-                Transform trans = body.gameObject.transform;
-                if (i9)
-                {
-                    Items.GradiusOption.Components.OptionMasterTracker.SpawnOption(trans.gameObject, 1);
-                    return;
-                }
+                CharacterMaster master = PlayerCharacterMasterController.instances[0].master;
+                Items.GradiusOption.Components.OptionMasterTracker.SpawnOption(master.GetBody().gameObject, 1);
+                return;
             }
             soundPlayer.Update();
         }
@@ -121,13 +109,6 @@ namespace Chen.GradiusMod
         {
             Log = new Log(Logger);
 
-#if DEBUG
-            /*MultiplayerTest.Enable(Log);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha1, Drones.LaserDrone.FireLaser.ChargeLaserEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha2, Drones.LaserDrone.FireLaser.DissipateLaserEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha3, Items.GradiusOption.GradiusOption.GetOptionEventId);
-            soundPlayer.RegisterKeybind(KeyCode.Alpha4, Items.GradiusOption.GradiusOption.LoseOptionEventId);*/
-#endif
             Log.Debug("Loading assets...");
             BundleInfo models = new BundleInfo("Chen.GradiusMod.chensgradiusmod_assets", BundleType.UnityAssetBundle);
             BundleInfo sounds = new BundleInfo("Chen.GradiusMod.chensgradiusmod_soundbank.bnk", BundleType.WWiseSoundBank);
@@ -140,45 +121,54 @@ namespace Chen.GradiusMod
             cfgFile = new ConfigFile(Path.Combine(Paths.ConfigPath, ModGuid + ".cfg"), true);
 
             Log.Debug("Loading global configs...");
-            generalCfg.BindAll(cfgFile, ModName, "General");
+            generalCfg.Bind(cfgFile);
 
             Log.Debug("Modifying vanilla drone behavior...");
             ModifyVanillaDroneDeathBehaviors();
             ModifyVanillaDronesSkillDrivers();
 
-            Log.Debug("Instantiating item classes...");
-            chensItemList = T2Module.InitAll<CatalogBoilerplate>(new T2Module.ModInfo
-            {
-                displayName = "Chen's Gradius Mod",
-                longIdentifier = "ChensGradiusMod",
-                shortIdentifier = "CGM",
-                mainConfigFile = cfgFile
-            });
-            T2Module.SetupAll_PluginAwake(chensItemList);
-            T2Module.SetupAll_PluginStart(chensItemList);
+            Log.Debug("Instantiating item and artifact classes...");
+            chensItemList = SetupModules(new ModuleBase[] { new GradiusOption(), new OptionSeed(), new Machines() });
 
             Log.Debug("Instantiating custom drones...");
-            gradiusDronesList = DroneCatalog.Initialize(ModGuid, cfgFile);
-            DroneCatalog.EfficientSetupAll(gradiusDronesList);
+            gradiusDronesList = Drones.DroneCatalog.Initialize(ModGuid, cfgFile);
+            Drones.DroneCatalog.EfficientSetupAll(gradiusDronesList);
 
             Log.Debug("Applying vanilla changes and fixes...");
             RegisterVanillaChanges();
+        }
 
-            Log.Debug("Applying compatibility changes...");
-            if (Compatibility.Aetherium.enabled) Compatibility.Aetherium.Setup();
-            //if (ChensClassicItems.enabled) ChensClassicItems.Setup();
+        private List<ModuleBase> SetupModules(IEnumerable<ModuleBase> modules)
+        {
+            List<ModuleBase> enabledModules = new List<ModuleBase>();
+            foreach (ModuleBase module in modules)
+            {
+                module.BindConfigFile(cfgFile);
+                module.SetupConfig();
+                if (module.enabled) enabledModules.Add(module);
+                else Log.Warning($"{module.name} is disabled in the config. Skipping.");
+            }
+            foreach (ModuleBase module in enabledModules) module.SetupAttributes();
+            foreach (ModuleBase module in enabledModules) module.SetupBehavior();
+            foreach (ModuleBase module in enabledModules) module.Install();
+            return enabledModules;
+        }
+
+        private static Lazy<T> LazyAddressable<T>(string key)
+        {
+            return new Lazy<T>(() =>
+            {
+                T asset = Addressables.LoadAssetAsync<T>(key).WaitForCompletion();
+                if (asset == null) Log.Error($"Failed to load the addressable asset {key}.");
+                return asset;
+            });
         }
 
         private void ModifyVanillaDroneDeathBehaviors()
         {
-            emergencyDroneMaster.AssignDeathBehavior(typeof(EmergencyDroneDeathState));
-            equipmentDroneMaster.AssignDeathBehavior(typeof(EquipmentDroneDeathState));
-            drone1Master.AssignDeathBehavior(typeof(GunnerDroneDeathState));
-            turret1Master.AssignDeathBehavior(typeof(GunnerTurretDeathState));
-            drone2Master.AssignDeathBehavior(typeof(HealingDroneDeathState));
-            flameDroneMaster.AssignDeathBehavior(typeof(IncineratorDroneDeathState));
-            missileDroneMaster.AssignDeathBehavior(typeof(MissileDroneDeathState));
-            tc280DroneMaster.AssignDeathBehavior(typeof(TC280DeathState));
+            // Vanilla drones handle their broken interactables on their own since Alloyed Collective, including drone upgrades.
+            // Only the TC-280 Prototype needs a custom death state, since it never leaves a broken drone in vanilla.
+            if (generalCfg.megaDronesAreRepurchaseable) tc280DroneMaster.AssignDeathBehavior(typeof(Drones.TC280.DeathState));
         }
 
         private void ModifyVanillaDronesSkillDrivers()
@@ -189,15 +179,13 @@ namespace Chen.GradiusMod
             backupDroneMaster.SetAllDriversToAimTowardsEnemies();
             flameDroneMaster.SetAllDriversToAimTowardsEnemies();
             equipmentDroneMaster.SetAllDriversToAimTowardsEnemies();
+            colDronemanMaster.SetAllDriversToAimTowardsEnemies();
+            alphaConstructMaster.SetAllDriversToAimTowardsEnemies();
         }
 
         internal static bool DebugCheck()
         {
-#if DEBUG
-            return true;
-#else
             return false;
-#endif
         }
     }
 }

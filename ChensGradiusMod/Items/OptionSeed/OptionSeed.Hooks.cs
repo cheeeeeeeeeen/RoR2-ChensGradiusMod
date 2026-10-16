@@ -1012,6 +1012,12 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         useSpeedOverride = false
                     };
                     ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo); //CHEF fires it 7 times so the seeds should as well, nice 21x glaze effect, I love balanced runs
                 }
             });
         }
@@ -1030,7 +1036,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
                         rotation = Util.QuaternionSafeLookRotation(self.GetAimRay().direction),
                         owner = self.gameObject,
                         damage = self.damageStat * self.damageCoefficient * multiplier,
-                        force = self.force * multiplier,
+                        force = 0f,
                         crit = self.RollCrit(),
                     };
                     ProjectileManager.instance.FireProjectile(fireProjectileInfo);
@@ -1402,7 +1408,7 @@ namespace Chen.GradiusMod.Items.OptionSeed
 
         private void FireBeam_FixedUpdate(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_FixedUpdate orig, FireBeam self)
         {
-            float seedFireTimer = self.fireTimer + Time.fixedDeltaTime;
+            float seedFireTimer = self.fireStopwatch + Time.fixedDeltaTime;
             orig(self);
             FireForSeeds(self.characterBody, (seed, behavior, _t, multiplier) =>
             {
@@ -1544,13 +1550,27 @@ namespace Chen.GradiusMod.Items.OptionSeed
                 if (self.effectPrefab) seed.MuzzleEffect(self.effectPrefab, false);
                 if (self.isAuthority)
                 {
-                    Ray aimRay = self.GetAimRay();
+                    // Mirrors GenericProjectileBaseState.FireProjectile so that skills customizing their projectile through the overrides are copied correctly.
+                    Ray aimRay = self.aimRayOverride ?? self.GetAimRay();
                     aimRay = self.ModifyProjectileAimRay(aimRay);
                     aimRay.direction = Util.ApplySpread(aimRay.direction, self.minSpread, self.maxSpread, 1f, 1f, 0f, self.projectilePitchBonus);
-                    ProjectileManager.instance.FireProjectile(self.projectilePrefab, seed.transform.position, Util.QuaternionSafeLookRotation(aimRay.direction),
-                                                              self.gameObject, self.damageStat * self.damageCoefficient * multiplier,
-                                                              self.force * multiplier, Util.CheckRoll(self.critStat, self.characterBody.master),
-                                                              DamageColorIndex.Default, null, -1f);
+                    FireProjectileInfo fireProjectileInfo = new FireProjectileInfo
+                    {
+                        projectilePrefab = self.projectilePrefab,
+                        position = aimRay.origin,
+                        rotation = Util.QuaternionSafeLookRotation(aimRay.direction),
+                        owner = self.gameObject,
+                        damage = self.damageStat * self.damageCoefficient,
+                        force = self.force,
+                        crit = Util.CheckRoll(self.critStat, self.characterBody.master),
+                        fuseOverride = self.projectileFuseOverride ?? -1f,
+                        speedOverride = self.projectileSpeedOverride ?? -1f
+                    };
+                    self.ModifyProjectileInfo(ref fireProjectileInfo);
+                    fireProjectileInfo.position = seed.transform.position;
+                    fireProjectileInfo.damage *= multiplier;
+                    fireProjectileInfo.force *= multiplier;
+                    ProjectileManager.instance.FireProjectile(fireProjectileInfo);
                 }
             });
         }

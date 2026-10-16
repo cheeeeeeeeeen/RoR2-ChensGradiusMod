@@ -1,61 +1,35 @@
 ﻿using Chen.GradiusMod.Items.GradiusOption.Components;
 using Chen.GradiusMod.Items.OptionSeed.Components;
-using R2API;
 using RoR2;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using TILER2;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
-using static TILER2.MiscUtil;
 using GradiusOptionItem = Chen.GradiusMod.Items.GradiusOption.GradiusOption;
 
 namespace Chen.GradiusMod.Items.OptionSeed
 {
     /// <summary>
-    /// An item class which provides the main API related to the Option Seeds. It is powered by TILER2.
+    /// An item class which provides the main API related to the Option Seeds.
     /// </summary>
-    public partial class OptionSeed : Item<OptionSeed>
+    public partial class OptionSeed : ItemBase<OptionSeed>
     {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public override string displayName => "Gradius' Option Seed";
-
         public override ItemTier itemTier => ItemTier.Tier2;
-        public override ReadOnlyCollection<ItemTag> itemTags => new ReadOnlyCollection<ItemTag>(new[] { ItemTag.Utility });
+        public override ItemTag[] itemTags => new[] { ItemTag.Utility };
+        public override bool itemIsAIBlacklisted => true;
 
-        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Damage multiplier of Option Seeds. This also affects the knockback force of the attack. " +
-                    "1 = 100%. Server only.", AutoConfigFlags.None, 0f, float.MaxValue)]
         public float damageMultiplier { get; private set; } = .2f;
-
-        [AutoConfigUpdateActions(AutoConfigUpdateActionTypes.InvalidateLanguage)]
-        [AutoConfig("Additive increase to the damage multiplier when the item is stacked.", AutoConfigFlags.None, 0f, float.MaxValue)]
         public float stackDamageMultiplier { get; private set; } = .05f;
-
-        [AutoConfig("Allows displaying and syncing the laser effect of Option Seeds. Disabling this will replace the effect with bullets. " +
-                    "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
-                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool mobileTurretsSeedSyncEffect { get; private set; } = true;
-
-        [AutoConfig("Allows displaying and syncing the flamethrower effect of Option Seeds. Disabling this will replace the effect with bullets. " +
-                    "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
-                    "Disable this if you are experiencing FPS drops or network lag.", AutoConfigFlags.PreventNetMismatch)]
         public bool flamethrowerSeedSyncEffect { get; private set; } = true;
-
-        [AutoConfig("Set to true for the Orbs to have the Option Seed Pickup model in the center. Server and Client. Cosmetic only. " +
-                    "Turning this off could lessen resource usage.", AutoConfigFlags.PreventNetMismatch)]
         public bool includeModelInsideOrb { get; private set; } = true;
-
-        [AutoConfig("Sets the position of the Option Seeds to be static instead of them rotating.", AutoConfigFlags.PreventNetMismatch)]
         public bool staticPositions { get; private set; } = false;
-
-        [AutoConfig("The rotational speed of the seeds in angle difference. A value of 10 means that the angular computation is increased by 10 every frame.",
-                    AutoConfigFlags.PreventNetMismatch)]
         public float rotationSpeed { get; private set; } = 10f;
-
-        public override bool itemIsAIBlacklisted { get; protected set; } = true;
+        public bool autoSupportModdedSurvivors { get; private set; } = true;
 
         protected override string GetNameString(string langid = null) => displayName;
 
@@ -115,8 +89,8 @@ namespace Chen.GradiusMod.Items.OptionSeed
             { "CrocoBody", .5f },
         };
 
-        private static readonly Lazy<GameObject> _loaderZapCone = new Lazy<GameObject>(() => Resources.Load<GameObject>("Prefabs/Projectiles/LoaderZapCone"));
-        private static readonly Lazy<Material> _evisTargetMaterial = new Lazy<Material>(() => Resources.Load<Material>("Materials/matMercEvisTarget"));
+        private static readonly Lazy<GameObject> _loaderZapCone = new Lazy<GameObject>(() => Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Loader/LoaderZapCone.prefab").WaitForCompletion());
+        private static readonly Lazy<Material> _evisTargetMaterial = new Lazy<Material>(() => Addressables.LoadAssetAsync<Material>("RoR2/Base/Merc/matMercEvisTarget.mat").WaitForCompletion());
 
         private static GameObject loaderZapCone { get => _loaderZapCone.Value; }
 
@@ -132,29 +106,44 @@ namespace Chen.GradiusMod.Items.OptionSeed
         public override void SetupConfig()
         {
             base.SetupConfig();
+
+            damageMultiplier = Bind(nameof(damageMultiplier), damageMultiplier,
+                "Damage multiplier of Option Seeds. This also affects the knockback force of the attack. 1 = 100%. Server only.", 0f, float.MaxValue);
+
+            stackDamageMultiplier = Bind(nameof(stackDamageMultiplier), stackDamageMultiplier,
+                "Additive increase to the damage multiplier when the item is stacked.", 0f, float.MaxValue);
+
+            mobileTurretsSeedSyncEffect = Bind(nameof(mobileTurretsSeedSyncEffect), mobileTurretsSeedSyncEffect,
+                "Allows displaying and syncing the laser effect of Option Seeds. Disabling this will replace the effect with bullets. " +
+                "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
+                "Disable this if you are experiencing FPS drops or network lag.");
+
+            flamethrowerSeedSyncEffect = Bind(nameof(flamethrowerSeedSyncEffect), flamethrowerSeedSyncEffect,
+                "Allows displaying and syncing the flamethrower effect of Option Seeds. Disabling this will replace the effect with bullets. " +
+                "Damage will stay the same. Server and Client. The server and client must have the same settings for an optimized experience. " +
+                "Disable this if you are experiencing FPS drops or network lag.");
+
+            includeModelInsideOrb = Bind(nameof(includeModelInsideOrb), includeModelInsideOrb,
+                "Set to true for the Orbs to have the Option Seed Pickup model in the center. Server and Client. Cosmetic only. " +
+                "Turning this off could lessen resource usage.");
+
+            staticPositions = Bind(nameof(staticPositions), staticPositions,
+                "Sets the position of the Option Seeds to be static instead of them rotating.");
+
+            rotationSpeed = Bind(nameof(rotationSpeed), rotationSpeed,
+                "The rotational speed of the seeds in angle difference. A value of 10 means that the angular computation is increased by 10 every frame.");
+
+            autoSupportModdedSurvivors = Bind(nameof(autoSupportModdedSurvivors), autoSupportModdedSurvivors,
+                "Allows Option Seeds to copy the attacks of survivors that have no dedicated support, such as modded survivors. " +
+                "Their bullets, projectiles, melee hits and explosions from skills are copied automatically. " +
+                "Acolyte, Drifter, Enforcer and Operator are always supported this way.");
         }
 
         public override void SetupBehavior()
         {
             base.SetupBehavior();
-            AddLanguageTokens();
             InitializeAssets();
-            //if (Compat_ItemStats.enabled)
-            //{
-            //    Compat_ItemStats.CreateItemStatDef(itemDef,
-            //    (
-            //        (count, inv, master) => ComputeMultiplier((int)count),
-            //        (value, inv, master) => $"Damage: {Pct(value)}"
-            //    ));
-            //}
-        }
-
-        private void AddLanguageTokens()
-        {
-            LanguageAPI.Add("CHENSGRADIUSMOD_OPTIONSEED_NAME_RENDERED", "Gradius' Option Seed");
-            LanguageAPI.Add("CHENSGRADIUSMOD_OPTIONSEED_PICKUP_RENDERED", GetPickupString());
-            LanguageAPI.Add("CHENSGRADIUSMOD_OPTIONSEED_DESC_RENDERED", GetDescString());
-            LanguageAPI.Add("CHENSGRADIUSMOD_OPTIONSEED_LORE_RENDERED", GetLoreString());
+            SetupAttackMirroring();
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

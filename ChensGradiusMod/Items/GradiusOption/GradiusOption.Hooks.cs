@@ -57,6 +57,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.FixedUpdate += FireBeam_FixedUpdate;
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnEnter += FireBeam_OnEnter;
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnExit += FireBeam_OnExit;
+            InstallDroneHooks();
         }
 
         public override void Uninstall()
@@ -93,6 +94,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.FixedUpdate -= FireBeam_FixedUpdate;
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnEnter -= FireBeam_OnEnter;
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.OnExit -= FireBeam_OnExit;
+            UninstallDroneHooks();
         }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
@@ -137,7 +139,7 @@ namespace Chen.GradiusMod.Items.GradiusOption
 
         private void FireBeam_FixedUpdate(On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.orig_FixedUpdate orig, FireBeam self)
         {
-            float optionFireTimer = self.fireTimer + Time.fixedDeltaTime;
+            float optionFireTimer = self.fireStopwatch + Time.fixedDeltaTime;
             orig(self);
             if (DroneNameCheck(self.characterBody, "RoboBallGreenBuddy") || DroneNameCheck(self.characterBody, "RoboBallRedBuddy"))
             {

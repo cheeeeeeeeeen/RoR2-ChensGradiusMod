@@ -124,14 +124,26 @@ namespace Chen.GradiusMod.Items.GradiusOption
         public void FireForAllOptions(CharacterBody optionOwner, Action<GameObject, OptionBehavior, GameObject, Vector3> actionToRun)
         {
             if (!optionOwner) return;
+            // Minions that use automatic mirroring already get their attacks copied, so manual support must not copy them again.
+            if (UsesAutoMirroring(optionOwner.master)) return;
+            ForEachOption(optionOwner, actionToRun);
+        }
+
+        /// <summary>
+        /// Same as FireForAllOptions, but also runs for minions that use automatic mirroring.
+        /// Only use this for attacks that the automatic mirroring cannot copy, such as orbs.
+        /// </summary>
+        internal void ForEachOption(CharacterBody optionOwner, Action<GameObject, OptionBehavior, GameObject, Vector3> actionToRun)
+        {
+            if (!optionOwner) return;
             OptionTracker optionTracker = optionOwner.GetComponent<OptionTracker>();
             if (!optionTracker) return;
 
             GameObject target = null;
             GameObject masterObject = optionOwner.masterObject;
-            if (masterObject)
+            BaseAI ai = masterObject ? masterObject.GetComponent<BaseAI>() : null;
+            if (ai)
             {
-                BaseAI ai = masterObject.GetComponent<BaseAI>();
                 BaseAI.Target mainTarget = ai.currentEnemy;
                 if (mainTarget != null && mainTarget.gameObject)
                 {

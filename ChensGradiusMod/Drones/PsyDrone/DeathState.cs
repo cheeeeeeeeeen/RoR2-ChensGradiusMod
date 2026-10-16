@@ -11,13 +11,22 @@ namespace Chen.GradiusMod.Drones.PsyDrone
 
         public override void OnImpactServer(Vector3 contactPoint)
         {
-            TwinsDeath twinComponent = GetComponent<TwinsDeath>();
-            if (twinComponent)
+            // Both twins die together, but only one broken drone should be left behind for the pair.
+            // The claim is stored on the dying bodies since the masters can be destroyed while the bodies are still falling.
+            BrokenDroneClaim claim = GetComponent<BrokenDroneClaim>();
+            if (!claim)
             {
-                base.OnImpactServer(contactPoint);
-                Destroy(twinComponent);
-                Destroy(twinComponent.twinTwinComponent);
+                gameObject.AddComponent<BrokenDroneClaim>().claimant = gameObject;
+                CharacterBody twinBody = TwinsSpawn.FindTwinBody(characterBody ? characterBody.master : null);
+                if (twinBody && !twinBody.GetComponent<BrokenDroneClaim>()) twinBody.gameObject.AddComponent<BrokenDroneClaim>().claimant = gameObject;
             }
+            else if (claim.claimant != gameObject) return;
+            base.OnImpactServer(contactPoint);
         }
+    }
+
+    internal class BrokenDroneClaim : MonoBehaviour
+    {
+        public GameObject claimant;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using RoR2;
 using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 using static Chen.GradiusMod.GradiusModPlugin;
 using VanillaMegaDroneState = EntityStates.Drone.MegaDroneDeathState;
@@ -12,8 +13,8 @@ namespace Chen.GradiusMod.Drones.TC280
         private ChildLocator childLocator;
         private Transform modelTransform;
 
-        private static readonly Lazy<InteractableSpawnCard> _iSpawnCard =
-            new Lazy<InteractableSpawnCard>(() => Resources.Load<InteractableSpawnCard>("spawncards/interactablespawncard/iscBrokenMegaDrone"));
+        private static readonly Lazy<InteractableSpawnCard> _iSpawnCard = new Lazy<InteractableSpawnCard>(() =>
+            Addressables.LoadAssetAsync<InteractableSpawnCard>("RoR2/Base/Drones/iscBrokenMegaDrone.asset").WaitForCompletion());
 
         protected override bool SpawnInteractable { get; set; } = generalCfg.megaDronesAreRepurchaseable;
 
@@ -45,7 +46,7 @@ namespace Chen.GradiusMod.Drones.TC280
                     scale = VanillaMegaDroneState.initialEffectScale
                 }, true);
             }
-            ExplodeRigidbodiesOnStart explodeComponent = modelTransform.GetComponent<ExplodeRigidbodiesOnStart>();
+            ExplodeRigidbodiesOnStart explodeComponent = modelTransform ? modelTransform.GetComponent<ExplodeRigidbodiesOnStart>() : null;
             if (explodeComponent)
             {
                 explodeComponent.force = VanillaMegaDroneState.explosionForce;
